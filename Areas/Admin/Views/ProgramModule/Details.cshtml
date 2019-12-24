@@ -1,0 +1,26 @@
+﻿@model AJSolutions.Models.ModuleMaster
+
+@{
+    ViewBag.Title = "Details";
+}
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h3>Module Details</h3>
+            </div>
+            <div class="col_half">
+                <b>  @Html.DisplayNameFor(model => model.ModuleId)</b>
+                @Html.DisplayFor(model => model.ModuleId)
+            </div>
+            <div class="col_half col_last">
+                <b>  @Html.DisplayNameFor(model => model.Module)</b>
+                @Html.DisplayFor(model => model.Module)
+            </div>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.ModuleId }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+</div>

@@ -1,0 +1,214 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.Holiday
+@{
+    ViewBag.Title = "Add Holiday";
+    string role = ViewBag.UserRole;
+    IEnumerable<Holiday> holiday = ViewData["HolidayPlanner"] as IEnumerable<Holiday>;
+    if (role == "Admin") { Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml"; }
+    else { Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml"; }
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("Holiday", "TMS", FormMethod.Post, new { @class = "form-horizontal", id = "Holiday", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Add Holidays</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">My Holidays</h5>
+                <div class="card-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.Hidden("HolidayId", ViewBag.HolidayId as string)
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 travel-date-group">
+                        <label>Holiday Schedule</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" class="form-control daterange1 required" value="@ViewBag.Schedule" id="Schedule" />
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <label>Holiday Type</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                            @Html.EditorFor(model => model.HolidayType, new { htmlAttributes = new { @class = "form-control required", placeholder = "Holiday Name", id = "HolidayType", required = "required" } })
+                        </div>
+
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <label>Reason<small>*</small></label>
+                        @Html.TextAreaFor(model => model.Remarks, 5, 124, htmlAttributes: new { @class = "form-control required", @Maxlength = 2048, id = "Remarks", @placeholder = "Reason here..", required = "required" })
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <input type="submit" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" id="SubmitForm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    if (holiday.Count() > 0)
+    {
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+
+                    <tr>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Holiday Name</th>
+                        <th>Remarks</th>
+                        <th>Actions</th>
+                    </tr>
+                    @foreach (var item in holiday)
+                    {
+                        <tr>
+                            <td>
+                                @item.FromDate.ToString("dd-MMM-yyyy")
+                            </td>
+                            <td>
+                                @item.ToDate.ToString("dd-MMM-yyyy")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.HolidayType)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Remarks)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Holiday", "TMS", new { HolidayId = item.HolidayId, useraction = "Edit" }, new { title = "Edit" })
+                                /
+                                @Html.ActionLink("Delete", "Holiday", "TMS", new { HolidayId = item.HolidayId, useraction = "Delete" }, new { title = "Delete" })
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    }
+    @Html.Hidden("RedirectTo", Url.Action("RemovePlan", "TMS"))
+    @Html.Hidden("RedirectToHome", Url.Action("Holiday", "TMS"))
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                In this page there is a facility of adding holidays of your organization, you can add all holidays of a year and show as a holiday calender to your employees.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/holidaycalender.png" target="_blank" data-lightbox="gallery-item">
+
+                                        <img src="~/images/HelpImages/holidaycalender.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#Holiday").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/Holiday",
+                data: {
+                    HolidayId: $('#HolidayId').val(),
+                    Remarks: $('#Remarks').val(),
+                    Schedule: $('#Schedule').val(),
+                    HolidayType: $('#HolidayType').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Holiday saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+
+            });
+
+        }
+    });
+    function ConfirmationDialog(HolidayId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + HolidayId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+
+
+

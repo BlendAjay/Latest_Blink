@@ -1,0 +1,180 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.UserViewModel
+@{
+    ViewBag.Title = "Client Profile";
+    if (ViewBag.UserRole == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    }
+}
+}
+@{
+
+    IEnumerable<AddressViewModel> clientaddress = ViewData["Address"] as IEnumerable<AddressViewModel>;
+    CompanyProfile companyprofile = ViewData["Company"] as CompanyProfile;
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>General Details</h4>
+                </div>
+                <br />
+                @if (Model != null)
+                {
+                    <div class="col_half">
+                        <label><i class="icon-list"></i> Name : @Model.Name</label>
+                        <br />
+                        <label><i class="icon-location-arrow"></i> Nationality :</label> @Model.Nationality
+                        <br />
+                        <label><i class="icon-phone"></i> Contact :</label> @Model.PhoneNumber
+                        <br />
+                    </div>
+                    <div class="col_half col_last">
+
+                        <label><i class="icon-phone"></i> Alternate Contact :</label> @Model.AlternateContact
+                        <br />
+                        <label><i class="icon-email"></i> Email :</label> @Model.Email
+                        <br />
+                        <label><i class="icon-email"></i> Alternate Email :</label> @Model.AlternateEmail
+                        <br />
+                    </div>
+                }
+            </div>
+            <br />
+            @if (clientaddress != null && clientaddress.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Address</h4>
+                    </div>
+                    <br />
+                    <div class="col_full">
+                        @foreach (var item in clientaddress)
+                        {
+                            if (item.AddressType == "CO")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">Correspondence Address </div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "PR")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">Present Address </div>
+                                        <ul class="iconlist nobottommargin">
+                                            <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                            @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                            {
+                                                <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                            }
+                                            <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                            <li>
+                                                <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                { <i> - </i> @item.PostalCode}
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "PE")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">Permanent Address</div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "CM")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading">Company Address </div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            <br />
+            @if (companyprofile != null)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Company Profile</h4>
+                    </div>
+                    <br />
+
+                    <div class="col_half">
+                        <label><i class="icon-building"></i> Company Name :</label> @companyprofile.CompanyName
+                        <br />
+                        <label><i class="icon-line2-size-actual"></i> Company Size :</label> @companyprofile.CompanySize
+                        <br />
+                    </div>
+                    <div class="col_half col_last">
+                        <label><i class="icon-line-paper-stack"></i> Company Type :</label> @companyprofile.CompanyType
+                        <br />
+                        <label><i class="icon-link"></i> Website :</label> @companyprofile.Website
+                        <br />
+                    </div>
+                </div>
+            }
+            <br />
+        </div>
+    </div>
+}

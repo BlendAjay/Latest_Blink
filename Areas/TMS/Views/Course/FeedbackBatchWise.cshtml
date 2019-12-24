@@ -1,0 +1,1024 @@
+﻿@using AJSolutions.Models
+@model EndUserTrainingOrderView
+@{
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "FeedbackBatchWise";
+    List<EndUserTrainingOrderView> trainee = ViewData["TrainingOrderTrainee"] as List<EndUserTrainingOrderView>;
+    //var IppbBranchValues = ViewData["IppbBranch"] as IEnumerable<AJSolutions.Models.BranchMaster>;
+    List<BranchMaster> branchs = ViewData["Branch"] as List<BranchMaster>;
+}
+@using (Html.BeginForm("FeedbackBatchWise", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "FeedbackBatchWise", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.Hidden("Result", ViewBag.Result as string)
+    @Html.Hidden("TrainingOrderId", ViewBag.TrainingOrderId as string)
+    @Html.Hidden("TrainingExist", ViewBag.TrainingExist as string)
+
+    var showGDS = "display: none";
+    var showPA = "display: none";
+    if (Model != null)
+    {
+        if (Model.TrainingType == "PA")
+        {
+            showPA = "display: block";
+        }
+        else
+        {
+            showGDS = "display: block";
+        }
+    }
+    <div class="container-fullwidth small">
+        <div class="row" id="contact-form-overlay">
+            <div class="form-process"></div>
+            <div class="fancy-title title-dotted-border title-center">
+                <h6><span>Training Order</span> for End User</h6>
+            </div>
+            <div class="col_full">
+                <div class="col_one_fourth">
+                    <label class="small">Select Wave</label>
+                    <select name="Wave" id="Wave" class="form-control required">
+                        <option value="">-- Select --</option>
+                        @if (Model != null)
+                        {
+                            if (Model.Wave == "Wave 3")
+                            {
+                                <option value="Wave 3" selected="selected">Wave 3 (November)</option>
+                                <option value="Wave 4">Wave 4 (December)</option>
+                            }
+                            else if (Model.Wave == "Wave 4")
+                            {
+                                <option value="Wave 3">Wave 3 (November)</option>
+                                <option value="Wave 4" selected="selected">Wave 4 (December)</option>
+                            }
+                            else
+                            {
+                                <option value="Wave 3">Wave 3 (November)</option>
+                                <option value="Wave 4">Wave 4 (December)</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="Wave 3">Wave 3 (November)</option>
+                            <option value="Wave 4">Wave 4 (December)</option>
+                        }
+                    </select>
+                </div>
+               
+                <div class="col_one_fourth">
+                    <label class="small">Name of Circle</label>
+                    <div id="IPPBCircle">
+                        @Html.DropDownList("Circle", null, "---  Select Circle ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Circle", id = "Circle" })
+                    </div>
+                </div>
+              
+                <div class="col_one_fourth">
+                    <label class="small">DO Contact Number</label>
+                    @Html.EditorFor(m => m.DOContact, new { htmlAttributes = new { @class = "form-control number required", @placeholder = "Divisional Officer Mobile Number", @maxlength = "10", @id = "DOContact", @size = "22" } })
+                    @* <input type="text" name="DOContact" id="DOContact" value="" size="22" class="form-control number required" placeholder="Divisional Officer Mobile Number" maxlength="10" />*@
+                </div>
+                <div class="col_one_fourth col_last">
+                    <label class="small">Training Type</label>
+                    <select name="TrainingType" id="TrainingType" class="form-control required" onchange="showDiv(this)">
+                        <option value="">-- Select --</option>
+                        @if (Model != null)
+                        {
+                            if (Model.TrainingType == "PA")
+                            {
+                                <option value="PA" selected="selected">PA / Finacle</option>
+                                <option value="GDS">Postmen / GDS / Mobile App</option>
+                            }
+                            else if (Model.TrainingType == "GDS")
+                            {
+                                <option value="PA">PA / Finacle</option>
+                                <option value="GDS" selected="selected">Postmen / GDS / Mobile App</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="PA">PA / Finacle</option>
+                            <option value="GDS">Postmen / GDS / Mobile App</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="col_full" id="active_sub" style="@showPA">
+                <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h6><span>Training Location</span> WCTC</h6>
+                    </div>
+
+                    <label class="small">Name of the Office</label>
+                    @Html.EditorFor(m => m.PAOfficeName, new { htmlAttributes = new { @id = "PAOfficeName", @class = "form-control  required", @placeholder = "Name of the Office" } })
+                    @* <input type="text" id="PAOfficeName" name="PAOfficeName" value="" class="form-control required" placeholder="Name of the Office" />*@
+                </div>
+                <div class="col_full" @*style="background-color:Highlight"*@>
+
+                    <div class="col_one_fourth ">
+                        <label class="small">State </label>
+                        <div id="State">
+                            @Html.DropDownList("StateId", null, "---  Select Circle ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select State", id = "StateId" })
+                        </div>
+                    </div>
+
+                    <div class="col_one_fourth ">
+                        <label class="small">City / Town </label>
+                        <div id="City">
+                            @Html.DropDownList("CityId", null, "---  Select City / Town ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select City", id = "PACityId" })
+                        </div>
+                    </div>
+                    <div class="col_one_fourth ">
+                        <label class="small">Region</label>
+                        @*@Html.EditorFor(m => m.PADivision, new { htmlAttributes = new { @id = "PADivision", @class = "form-control  required", @placeholder = "Division" } })*@
+                        <div id="IPPBPARegions">
+                            @Html.DropDownList("Regions", null, "---  Select Region ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Region", id = "PARegion" })
+                        </div>
+                    </div>
+                    <div class="col_one_fourth col_last">
+                        <label class="small">Division <small>(End User belongs to this division)</small></label>
+                        @*@Html.EditorFor(m => m.PADivision, new { htmlAttributes = new { @id = "PADivision", @class = "form-control  required", @placeholder = "Division" } })*@
+                        <div id="IPPBPADivision">
+                            @Html.DropDownList("Divisions", null, "---  Select Division ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Division", id = "PADivision" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h6><span>Master Trainer Details</span> For Finacle Training</h6>
+                    </div>
+
+                </div>
+                <div class="col_full">
+                    <div class="col_one_fourth ">
+                        <label class="small">Name </label>
+                        @Html.EditorFor(m => m.PAMTName, new { htmlAttributes = new { @id = "PAMTName", @class = "form-control  required", @placeholder = "Enter Name" } })
+                        @* <input type="text" id="PAMTName" name="PAMTName" value="" class=" form-control required" placeholder="Enter Name" />*@
+                    </div>
+                    <div class="col_one_fourth">
+                        <label class="small">Designation </label>
+                        @Html.EditorFor(m => m.PAMTDesignation, new { htmlAttributes = new { @id = "PAMTDesignation", @class = "form-control required", size = "22", @placeholder = "Enter Designation" } })
+                        @* <input type="text" name="PAMTDesignation" id="PAMTDesignation" value="" size="22" class="form-control required" placeholder="Enter Designation" />*@
+                    </div>
+                    <div class="col_one_fourth ">
+                        <label class="small">Contact Number</label>
+                        @Html.EditorFor(m => m.PAMTContact, new { htmlAttributes = new { @id = "PAMTContact", @maxlength = "10", @class = "form-control number required", size = "22", @placeholder = "Enter Contact Number" } })
+                        @*<input type="text" name="PAMTContact" id="PAMTContact" value="" maxlength="10" size="22" class="form-control number required" placeholder="Enter Contact Number" />*@
+                    </div>
+                    <div class="col_one_fourth col_last">
+                        <label class="small">E-Mail </label>
+                        @Html.EditorFor(m => m.PAMTEmail, new { htmlAttributes = new { @id = "PAMTEmail", @class = "form-control email", size = "22", @placeholder = "Enter E-Mail" } })
+                        @*<input type="email" name="PAMTEmail" id="PAMTEmail" value="" size="22" class="form-control email" placeholder="Enter E-Mail" />*@
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h6><span>Training Date</span></h6>
+                    </div>
+                    <label class="small">Training Schdule Date</label>
+                    @if (Model != null)
+                    {
+                        <input type="text" class="form-control daterange2 required" value="@ViewBag.SchedulePA" id="Schedule" name="Schedule" />
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control daterange2 required" value="" id="Schedule" name="Schedule" />
+                    }
+
+                    @*<div class="col_half">
+                            <label class="small">Training Start Date</label>
+                            <input type="date" name="PATrainingStartDate" id="PATrainingStartDate" value="" size="22" class="form-control required" placeholder="dd-mm-yyyy" />
+                        </div>
+                        <div class="col_half col_last">
+                            <label class="small">Training End Date</label>
+                            <input type="date" name="PATrainingEndDate" id="PATrainingEndDate" value="" size="22" class="form-control required" placeholder="dd-mm-yyyy" />
+                        </div>*@
+                </div>
+            </div>
+
+            <div class="col_full" id="active_GDS" style="@showGDS">
+                <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h6><span>Training Location</span></h6>
+                    </div>
+                    <label class="small">Name of the Office</label>
+                    @Html.EditorFor(m => m.GDSOfficeName, new { htmlAttributes = new { @id = "GDSOfficeName", @class = "form-control required", @placeholder = "Name of the Office" } })
+                    @* <input type="text" id="GDSOfficeName" name="GDSOfficeName" value="" class="form-control required" placeholder="Name of the Office" />*@
+                </div>
+                <div class="col_full" @*style="background-color:Highlight"*@>
+                    <div class="col_one_fourth">
+                        <label class="small">State </label>
+                        <div id="IPPBGDSState">
+                            @Html.DropDownList("StateId", null, "---  Select Circle ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select State", id = "GDSStateId" })
+                        </div>
+                    </div>
+                    <div class="col_one_fourth ">
+                        <label class="small">City / Town </label>
+                        <div id="IPPBGDSCity">
+                            @Html.DropDownList("CityId", null, "---  Select City / Town ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select City", id = "GDSCityId" })
+                        </div>
+                    </div>
+                    <div class="col_one_fourth">
+                        <label class="small">Region</label>
+                        @*@Html.EditorFor(m => m.PADivision, new { htmlAttributes = new { @id = "PADivision", @class = "form-control  required", @placeholder = "Division" } })*@
+                        <div id="IPPBGDSRegions">
+                            @Html.DropDownList("Regions", null, "---  Select Region ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Region", id = "GDSRegion" })
+                        </div>
+                    </div>
+                    <div class="col_one_fourth col_last">
+                        <label class="small">Division<small>(End User belongs to this division)</small></label>
+                        <div id="IPPBGDSDivision">
+                            @Html.DropDownList("Divisions", null, "---  Select Division ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Division", id = "GDSDivision" })
+                        </div>
+                        @*@Html.EditorFor(m => m.GDSDivision, new { htmlAttributes = new { @id = "GDSDivision", @class = "form-control required", @placeholder = "Division" } })*@
+                        @* <input type="text" id="GDSDivision" name="GDSDivision" value="" class="form-control required" placeholder="Division" />*@
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h6><span>Master Trainer Details</span> For GDS Training</h6>
+                    </div>
+                    <div class="col_one_fourth ">
+                        <label class="small">Name </label>
+                        @Html.EditorFor(m => m.GDSMTName, new { htmlAttributes = new { @id = "GDSMTName", @class = "form-control required", @placeholder = "Enter Name" } })
+                        @*<input type="text" id="GDSMTName" name="GDSMTName" value="" class="  form-control required" placeholder="Enter Name" />*@
+                    </div>
+                    <div class="col_one_fourth">
+                        <label class="small">Designation </label>
+                        @Html.EditorFor(m => m.GDSMTDesignation, new { htmlAttributes = new { @id = "GDSMTDesignation", size = "22", @class = "form-control required", @placeholder = "Enter Designation" } })
+                        @*<input type="text" name="GDSMTDesignation" id="GDSMTDesignation" value="" size="22" class="form-control required" placeholder="Enter Designation" />*@
+                    </div>
+                    <div class="col_one_fourth ">
+                        <label class="small">Contact Number</label>
+                        @Html.EditorFor(m => m.GDSMTContact, new { htmlAttributes = new { @id = "GDSMTContact", maxlength = "10", size = "22", @class = "form-control number required", @placeholder = "Enter Contact Number" } })
+                        @*<input type="text" name="GDSMTContact" id="GDSMTContact" value="" maxlength="10" size="22" class="form-control number required" placeholder="Enter Contact Number" />*@
+                    </div>
+                    <div class="col_one_fourth col_last">
+                        <label class="small">E-Mail </label>
+                        @Html.EditorFor(m => m.GDSMTEmail, new { htmlAttributes = new { @id = "GDSMTEmail", size = "22", @class = "form-control email", @placeholder = "Enter E-Mail" } })
+                        @* <input type="email" name="GDSMTEmail" id="GDSMTEmail" value="" size="22" class="form-control email" placeholder="Enter E-Mail" />*@
+                    </div>
+                </div>
+                <div class="col_full" @*style="background-color:Highlight"*@>
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h6><span>Training Date</span></h6>
+                    </div>
+                    <label class="small">Training Schdule Date</label>
+                    @if (Model != null)
+                    {
+                        <input type="text" class="form-control daterange2 required" value="@ViewBag.ScheduleGDS" id="GDSSchedule" name="GDSSchedule" />
+                    }
+                    else
+                    {
+                        <input type="text" class="form-control daterange2 required" value="" id="GDSSchedule" name="GDSSchedule" />
+                    }
+                    @*<div class="col_half">
+                            <label class="small">Training Start Date</label>
+                            <input type="date" name="GDSTrainingStartDate" id="GDSTrainingStartDate" value="" size="22" class="form-control required" placeholder="dd-mm-yyyy" />
+                        </div>
+                        <div class="col_half col_last">
+                            <label class="small">Training End Date</label>
+                            <input type="date" name="GDSTrainingEndDate" id="GDSTrainingEndDate" value="" size="22" class="form-control required" placeholder="dd-mm-yyyy" />
+                        </div>*@
+                </div>
+            </div>
+
+            <div class="col_full">
+                <div class="fancy-title title-dotted-border title-center">
+                    <h6><span>Trainee(s) Details</span></h6>
+                </div>
+                <div class="table-responsive">
+                    <table id="customFields" class="table table-bordered nobottommargin">
+                        <tr>
+                            <th><nobr>Tracker Id</nobr></th>
+                            <th><nobr> Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</nobr></th>
+                            <th><nobr> Phone Number</nobr></th>
+                            <th><nobr> Gender &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</nobr></th>
+                            <th><nobr>CSI Employee Id</nobr></th>
+                            <th><nobr>Designation</nobr></th>
+                            <th>Facility Id Of Access Point</th>
+                            <th><nobr>Access Point Name</nobr></th>
+                            <th><nobr>IPPB Branch</nobr></th>
+
+                            <th>Action</th>
+                        <tr />
+                        @if (trainee != null)
+                        {
+                            var cnt = 0;
+                            foreach (var item in trainee)
+                            {
+                        <tr>
+                            <td>
+                                <input type="text" class="EUTraineeId form-control hidden " id="EUTraineeId" name="EUTraineeId[]" value="@item.EUTraineeId" placeholder="Tracker Id" />
+
+                                <input type="text" class="TrackerId form-control" id="TrackerId" name="TrackerId[]" value="@item.TrackerId" placeholder="Tracker Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="Name form-control required" id="Name" name="Name[]" value="@item.Name" placeholder="e.g.john smith" />
+                            </td>
+                            <td>
+                                <input type="text" class="PhoneNumber form-control required" id="PhoneNumber" minlength=10, maxlength=10 name="PhoneNumber[]" value="@item.PhoneNumber" placeholder="1234567890" />
+                            </td>
+                            <td>
+                                <select class="IPPBGender form-control required" id="IPPBGender" name="IPPBGender[]">
+                                    <option value="">-- Select --</option>
+                                    @if (item.Gender == "Male")
+                                            {
+                                            <option value="Male" selected="selected">Male</option>
+                                            <option value="FeMale">Female</option>
+                                            }
+                                            else
+                                            {
+                                            <option value="Male">Male</option>
+                                            <option value="FeMale" selected="selected">Female</option>
+                                            }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="IPPBEmpId form-control required" id="IPPBEmpId" name="IPPBEmpId[]" value="@item.EmpId" placeholder="Employee Id" />
+                            </td>
+                            <td>
+                                <select class="Designation form-control required" id="Designation" name="Designation[]">
+                                    <option value="">-- Select --</option>
+                                    @if (item.Designation == "Postal Assistants")
+                                            {
+                                            <option value="Postal Assistants" selected="selected">Postal Assistants</option>
+                                            <option value="GDS">GDS</option>
+                                            <option value="PostMen">PostMen</option>
+                                            <option value="Super User Finacle">Super User Finacle</option>
+                                            <option value="Super User Micro ATM">Super User Micro ATM</option>
+                                            }
+                                            else if (item.Designation == "GDS")
+                                            {
+                                            <option value="Postal Assistants">Postal Assistants</option>
+                                            <option value="GDS" selected="selected">GDS</option>
+                                            <option value="PostMen">PostMen</option>
+                                            <option value="Super User Finacle">Super User Finacle</option>
+                                            <option value="Super User Micro ATM">Super User Micro ATM</option>
+                                            }
+                                            else if (item.Designation == "PostMen")
+                                            {
+                                            <option value="Postal Assistants">Postal Assistants</option>
+                                            <option value="GDS">GDS</option>
+                                            <option value="PostMen" selected="selected">PostMen</option>
+                                            <option value="Super User Finacle">Super User Finacle</option>
+                                            <option value="Super User Micro ATM">Super User Micro ATM</option>
+
+                                            }
+                                            else if (item.Designation == "Super User Finacle")
+                                            {
+                                            <option value="Postal Assistants">Postal Assistants</option>
+                                            <option value="GDS">GDS</option>
+                                            <option value="PostMen">PostMen</option>
+                                            <option value="Super User Finacle" selected="selected">Super User Finacle</option>
+                                            <option value="Super User Micro ATM">Super User Micro ATM</option>
+                                            }
+                                            else if (item.Designation == "Super User Micro ATM")
+                                            {
+                                            <option value="Postal Assistants">Postal Assistants</option>
+                                            <option value="GDS">GDS</option>
+                                            <option value="PostMen">PostMen</option>
+                                            <option value="Super User Finacle">Super User Finacle</option>
+                                            <option value="Super User Micro ATM" selected="selected">Super User Micro ATM</option>
+                                            }
+                                            else
+                                            {
+                                            <option value="Postal Assistants">Postal Assistants</option>
+                                            <option value="GDS">GDS</option>
+                                            <option value="PostMen">PostMen</option>
+                                            <option value="Super User Finacle">Super User Finacle</option>
+                                            <option value="Super User Micro ATM">Super User Micro ATM</option>
+                                            }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="FaciltyId form-control required" minlength=13 maxlength="13" id="FaciltyId" name="FaciltyId[]" value="@item.FaciltyId" placeholder="Facilty Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="AccessPoint form-control required" id="AccessPoint" name="AccessPoint[]" value="@item.Accesspoint" placeholder="Access Point" />
+                            </td>
+                            <td id="IPPBBranch">
+                                <select class="form-control required" id="Branch" name="Branch[]">
+                                    <option selected="selected" value=""> - - - Select IPPB Branch - - - </option>
+                                    @foreach (var row in branchs)
+                                            {
+                                                if (row.Branch == item.Branch)
+                                                {
+                                            <option value="@row.Branch" selected="selected"> @row.Branch </option>
+                                                }
+                                                else
+                                                {
+                                            <option value="@row.Branch"> @row.Branch </option>
+                                                }
+                                            }
+                                </select>
+
+                                @*@Html.DropDownList("Branch",null, "---  Select Branch ---", htmlAttributes: new { @class = "Branch form-control required", placeholder = "Select Branch", id = "Branch", item.Branch })*@
+
+                                @*<select class="Branch form-control required" id="Branch">
+                                        <option value="">-- Select --</option>
+                                    </select>*@
+                            </td>
+                            <td>
+                                @if (cnt == 0)
+                                        {
+                                        <a href="javascript:void(0);" id="addCF">Add New Row</a>
+                                        }
+                                        else
+                                        {
+                                        <a href="javascript:void(0);" id="delCF">Remove</a>
+                                        }
+                            </td>
+                            <td style = "display:none">
+                                <input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="U" />
+                            </td>
+                        </tr>
+                                        cnt++;
+                            }
+                        }
+                        else
+                        {
+                        <tr>
+                            <td>
+                                <input type="text" class="EUTraineeId form-control hidden" id="EUTraineeId" name="EUTraineeId[]" value="0" placeholder="Tracker Id" />
+                                <input type="text" class="ItemDescription form-control" id="TrackerId" name="TrackerId[]" value="" placeholder="Tracker Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="ItemDescription form-control required" id="Name" name="Name[]" value="" placeholder="e.g.john smith" />
+                            </td>
+                            <td>
+                                <input type="text" class="ItemDescription form-control required" id="PhoneNumber" minlength=10, maxlength=10 name="PhoneNumber[]" value="" placeholder="1234567890" />
+                            </td>
+                            <td>
+                                <select class="form-control required" id="IPPBGender" name="IPPBGender[]">
+                                    <option value="">-- Select --</option>
+                                    <option value="Male">Male</option>
+                                    <option value="FeMale">Female</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="ItemDescription form-control required" id="IPPBEmpId" name="IPPBEmpId[]" value="" placeholder="Employee Id" />
+                            </td>
+                            <td>
+                                <select class="form-control required" id="Designation" name="Designation[]">
+                                    <option value="">-- Select --</option>
+                                    <option value="Postal Assistants">Postal Assistants</option>
+                                    <option value="GDS">GDS</option>
+                                    <option value="PostMen">PostMen</option>
+                                    <option value="Super User Finacle">Super User Finacle</option>
+                                    <option value="Super User Micro ATM">Super User Micro ATM</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="ItemDescription form-control required" minlength=13 maxlength="13" id="FaciltyId" name="FaciltyId[]" value="" placeholder="Facilty Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="ItemDescription form-control required" id="AccessPoint" name="AccessPoint[]" value="" placeholder="Access Point" />
+                            </td>
+                            <td id="IPPBBranch">
+                                @Html.DropDownList("Branch", null, "---  Select Branch ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Branch", id = "Branch" })
+                            </td>
+                            @*<td>
+                                    <select class="form-control required" id="Branch" name="Branch[]">
+                                        <option selected="selected" value=""> - - - Select IPPB Branch - - - </option>
+                                        @foreach (var row in IppbBranchValues)
+                                        {
+                                            <option value="@row.Branch"> @row.Branch </option>
+                                        }
+                                    </select>
+                                </td>*@
+                            <td>
+                                <a href="javascript:void(0);" id="addCF">Add New Row</a>
+                            </td>
+                            <td style = "display:none">
+                                <input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="I" />
+                            </td>
+                        </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+
+            <div class="col_full">
+                <input type="submit" value="Preview Training Order" class="button fright" id="SubmitForm" />
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("EndUserTraineeDetails", "Course", new { area = "TMS" }))
+}
+
+<script type="text/javascript">
+    var IppbBranchValues = [];
+
+    $(document).ready(function () {
+        if ($('#Circle').val() != '') {
+            IppbBranchValues = [];
+            $('.Dynamic').remove();
+            $.ajax({
+                type: "post",
+                url: "/TMS/Course/GetIPPBBranch",
+                data: { Circle: $('#Circle').val() },
+                datatype: "json",
+                success: function (data) {
+                    debugger;
+                    for (var i = 0; i < data.length; i++) {
+                        var opt = new Option(data[i].Value, data[i].Value);
+                        $("#Branch").append(opt);
+                        IppbBranchValues.push([data[i].Value, data[i].Value]);
+                    }
+
+
+                }
+            });
+        }
+    });
+    $('#DOContact').change(function () {
+        {
+            var phoneno = /^\d{10}$/;
+            var contact = $('#DOContact').val()
+            if (contact.match(phoneno)) {
+                return true;
+            }
+            else {
+                $.alert({
+                    title: 'Oops',
+                    content: 'Invalid Contact Number',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+        }
+    });
+
+    $('#PhoneNumber').change(function () {
+        {
+            var phoneno = /^\d{10}$/;
+            var contact = $('#PhoneNumber').val()
+            if (contact.match(phoneno)) {
+                return true;
+            }
+            else {
+                $.alert({
+                    title: 'Oops',
+                    content: 'Invalid Phone Number',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+        }
+    });
+
+    $('#PAMTContact').change(function () {
+        {
+            var phoneno = /^\d{10}$/;
+            var contact = $('#PAMTContact').val()
+            if (contact.match(phoneno)) {
+                return true;
+            }
+            else {
+                $.alert({
+                    title: 'Oops',
+                    content: 'Invalid Contact Number',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+        }
+    });
+
+    $('#GDSMTContact').change(function () {
+        {
+            var phoneno = /^\d{10}$/;
+            var contact = $('#GDSMTContact').val()
+            if (contact.match(phoneno)) {
+                return true;
+            }
+            else {
+                $.alert({
+                    title: 'Oops',
+                    content: 'Invalid Contact Number',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+        }
+    });
+
+    $('#State').change(function () {
+        $('#SelState').val($('#StateId').val());
+        $.ajax({
+            type: "post",
+            url: "/TMS/TMS/GetCity",
+            data: { StateId: $('#StateId').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var city = "  <select class='form-control required' id='PACityId' name = 'PACityId'>";
+                city = city + '<option value="">--- Select City / Town ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                city = city + '</select>';
+                $('#City').html(city);
+            }
+        });
+    });
+
+    $('#IPPBGDSState').change(function () {
+        $('#SelState').val($('#GDSStateId').val());
+        $.ajax({
+            type: "post",
+            url: "/TMS/TMS/GetCity",
+            data: { StateId: $('#GDSStateId').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var city = "  <select class='form-control required' id='GDSCityId'>";
+                city = city + '<option value="">--- Select City / Town ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                city = city + '</select>';
+                $('#IPPBGDSCity').html(city);
+            }
+        });
+    });
+    $('#IPPBCircle').change(function () {
+        $.ajax({
+            type: "post",
+            url: "/TMS/Course/GetBranch",
+            data: { Circle: $('#Circle').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var branch = "  <select class='form-control required' id='Branch'>";
+                branch = branch + '<option value="">--- Select Branch ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    branch = branch + '<option value=' + data[i].Value + '>' + data[i].Value + '</option>';
+                }
+                branch = branch + '</select>';
+                $('#IPPBBranch').html(branch);
+            }
+        });
+    });
+
+    $('#IPPBCircle').change(function () {
+        $.ajax({
+            type: "get",
+            url: "/TMS/Course/GetIppbRegions",
+            data: { Circle: $('#Circle').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var region = "  <select class='form-control required' id='PARegion'>";
+                region = region + '<option value="">--- Select Region ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    region = region + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                region = region + '</select>';
+                $('#IPPBPARegions').html(region);
+            }
+        });
+    });
+
+    $('#IPPBCircle').change(function () {
+        $.ajax({
+            type: "get",
+            url: "/TMS/Course/GetIppbRegions",
+            data: { Circle: $('#Circle').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var region = "  <select class='form-control required' id='GDSRegion'>";
+                region = region + '<option value="">--- Select Region ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    region = region + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                region = region + '</select>';
+                $('#IPPBGDSRegions').html(region);
+            }
+        });
+    });
+
+    $('#IPPBPARegions').change(function () {
+        $.ajax({
+            type: "get",
+            url: "/TMS/Course/GetIppbDivisions",
+            data: { RegionId: $('#PARegion').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var division = "  <select class='form-control required uriName' name='uriName PADivision' id='PADivision'>";
+                division = division + '<option value="">--- Select Division ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    division = division + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                division = division + '</select>';
+                $('#IPPBPADivision').html(division);
+            }
+        });
+    });
+    $('#IPPBGDSRegions').change(function () {
+        $.ajax({
+            type: "get",
+            url: "/TMS/Course/GetIppbDivisions",
+            data: { RegionId: $('#GDSRegion').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var division = "  <select class='form-control required uriName' name='uriName GDSDivision'  id='GDSDivision'>";
+                division = division + '<option value="">--- Select Division ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    division = division + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                division = division + '</select>';
+                $('#IPPBGDSDivision').html(division);
+            }
+        });
+    });
+
+    function showDiv(elem) {
+        if (elem.value == "PA") {
+            document.getElementById('active_sub').style.display = "block";
+            document.getElementById('active_GDS').style.display = "none";
+        }
+        if (elem.value == "GDS") {
+            document.getElementById('active_GDS').style.display = "block";
+            document.getElementById('active_sub').style.display = "none";
+        }
+    }
+
+    $("#FeedbackBatchWise").validate({
+        submitHandler: function (form) {
+            //array for candidate details
+            //var dateRange = new Arrayfa
+            //dateRange = $('#GDSSchedule').val().split("-");
+            //var fromDate = dateRange[0];
+            //var toDate = dateRange[1];
+            var euttraineeId = new Array();
+            $.each($("input[id = 'EUTraineeId']"), function () {
+                euttraineeId.push($(this).val());
+            });
+
+            var trackerId = new Array();
+            $.each($("input[id = 'TrackerId']"), function () {
+                trackerId.push($(this).val());
+            });
+
+            var name = new Array();
+            $.each($("input[id = 'Name']"), function () {
+                name.push($(this).val());
+            });
+
+            var phoneNumber = new Array();
+            $.each($("input[id='PhoneNumber']"), function () {
+                phoneNumber.push($(this).val());
+            });
+            var empId = new Array();
+            $.each($("input[id='IPPBEmpId']"), function () {
+                empId.push($(this).val());
+            });
+
+            var gender = new Array();
+            $.each($("select[id='IPPBGender']"), function () {
+                gender.push($(this).val());
+            });
+
+            var designation = new Array();
+            $.each($("select[id='Designation']"), function () {
+                designation.push($(this).val());
+            });
+            var faciltyId = new Array();
+            $.each($("input[id='FaciltyId']"), function () {
+                faciltyId.push($(this).val());
+            });
+            var accessPoint = new Array();
+            $.each($("input[id='AccessPoint']"), function () {
+                accessPoint.push($(this).val());
+            });
+            var branch = new Array();
+            $.each($("select[id='Branch']"), function () {
+                branch.push($(this).val());
+            });
+            var flag = new Array();
+            $.each($("input[id='Actions']"), function () {
+                flag.push($(this).val());
+            });
+
+            //if ($.confirm({
+            //    title: 'Confirmation',
+            //    content: 'Please recheck once before Final submission. The list cannot be edited after submission.' + "<br />" + 'Are you sure you want to Submit ?',
+            //    confirmButton: 'Yes',
+            //    confirmButtonClass: 'button button-3d button-rounded button-green',
+            //    cancelButton: 'No',
+            //    cancelButtonClass: 'button button-3d button-rounded button-red',
+            //    icon: 'icon-warning-sign icon-2x',
+            //    animation: 'scale',
+            //    animationClose: 'top',
+            //    confirm: function () {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/TMS/Course/FeedbackBatchWise",
+                data: {
+                    Wave: $('#Wave').val(),
+                    Circle: $('#Circle').val(),
+                    DOContact: $('#DOContact').val(),
+                    TrainingType: $('#TrainingType').val(),
+                    PACount: $('#PACount').val(),
+                    SUFinacleCount: $('#SUFinacleCount').val(),
+                    PAOfficeName: $('#PAOfficeName').val(),
+                    PAState: $('#StateId').val(),
+                    PACity: $('#PACityId').val(),
+                    PADivision: $('#PADivision').val(),
+                    PAMTName: $('#PAMTName').val(),
+                    PAMTDesignation: $('#PAMTDesignation').val(),
+                    PAMTContact: $('#PAMTContact').val(),
+                    PAMTEmail: $('#PAMTEmail').val(),
+                    //PATrainingStartDate: $('#PATrainingStartDate').val(),
+                    //PATrainingEndDate: $('#PATrainingEndDate').val(),
+                    GDSCount: $('#PAOfficeName').val(),
+                    PostmenCount: $('#PostmenCount').val(),
+                    GDSSUCount: $('#GDSSUCount').val(),
+                    GDSOfficeName: $('#GDSOfficeName').val(),
+                    GDSState: $('#GDSStateId').val(),
+                    GDSCity: $('#GDSCityId').val(),
+                    GDSDivision: $('#GDSDivision').val(),
+                    GDSMTName: $('#GDSMTName').val(),
+                    GDSMTDesignation: $('#GDSMTDesignation').val(),
+                    GDSMTContact: $('#GDSMTContact').val(),
+                    GDSMTEmail: $('#GDSMTEmail').val(),
+                    PARegion: $('#PARegion').val(),
+                    GDSRegion: $('#GDSRegion').val(),
+                    //GDSTrainingStartDate: $('#GDSTrainingStartDate').val(),
+                    //GDSTrainingEndDate: $('#GDSTrainingEndDate').val(),
+                    Schedule: $('#Schedule').val(),
+                    GDSSchedule: $('#GDSSchedule').val(),
+                    TrackerId: trackerId,
+                    Name: name,
+                    PhoneNumber: phoneNumber,
+                    EmpId: empId,
+                    Gender: gender,
+                    Designation: designation,
+                    FaciltyId: faciltyId,
+                    AccessPoint: accessPoint,
+                    EUTrainingOrderId: $('#TrainingOrderId').val(),
+                    Branch: branch,
+                    Flag: flag,
+                    EUTraineeId: euttraineeId
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    if (data) {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Redirecting to preview page. Please click on <b>SUBMIT Training Order </b> button on preview page, so that Master Trainer can see the training details. ',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectTo").val() + "?Id=" + data.TrainingId;
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                }
+            });
+            //}
+            //}) == true) {
+
+            //}
+            //else {
+            //    $('.form-process').fadeOut();
+            //}
+        }
+    });
+
+
+    //var IppbBranchValues = [];
+    $('#IPPBCircle').change(function () {
+        IppbBranchValues = [];
+        $('.Dynamic').remove();
+        $.ajax({
+            type: "post",
+            url: "/TMS/Course/GetIPPBBranch",
+            data: { Circle: $('#Circle').val() },
+            datatype: "json",
+            success: function (data) {
+                debugger;
+                for (var i = 0; i < data.length; i++) {
+                    var opt = new Option(data[i].Value, data[i].Value);
+                    $("#Branch").append(opt);
+                    IppbBranchValues.push([data[i].Value, data[i].Value]);
+                }
+            }
+        });
+    });
+
+    //for ADD new rows in candidate dynamic table
+    var dynamicCount = 0;
+    $("#addCF").click(function () {
+
+        var designation = '<select class="form-control uriName" id="Designation" name="uriName Designation' + dynamicCount + '">';
+        designation = designation + ' <option selected="selected" value="">---Select---</option>';
+        designation = designation
+                                    + '<option value="Postal Assistants">Postal Assistants</option>' +
+                                    '<option value="GDS">GDS</option>' +
+                                    '<option value="PostMen">PostMen</option>' +
+                                    '<option value="Super User Finacle">Super User Finacle</option>' +
+                                    '<option value="Super User Micro ATM">Super User Micro ATM</option>' +
+                                  + '</select>';
+
+
+        var gender = '<select class="form-control uriName required" id="IPPBGender" name="uriName IPPBGender' + dynamicCount + '">';
+        gender = gender + ' <option selected="selected" value="">---Select---</option>';
+        gender = gender
+                                    + '<option value="Male">Male</option>' +
+                                    '<option value="Female">Female</option>' +
+                                  + '</select>';
+
+        var branch = '<select class="form-control uriName required" id="Branch" name="uriName Branch' + dynamicCount + '">';
+        branch = branch + ' <option selected="selected" value="">--- Select IPPB Branch</option>';
+        for (var i = 0; i < IppbBranchValues.length; i++) {
+            branch = branch + '<option value=' + IppbBranchValues[i][0] + '>' + IppbBranchValues[i][1] + '</option>';
+        }
+        branch = branch + '</select>';
+
+        $("#policy-form").validate({
+            rules: {
+                required: {
+                    required: true
+                }
+            },
+        })
+        $("#customFields").append('<tr class="Dynamic">' +
+                                       '<td style = "display:none"></td>' +
+                                       '<td><input type="text" class="EUTraineeId form-control hidden" id="EUTraineeId" name="EUTraineeId[]" value="0" /><input type="text" class="ItemDescription form-control" id="TrackerId" name="uriName' + dynamicCount + '" value="" placeholder="Tracker Id" /></td>' +
+                                        '<td><input type="text" class="ItemDescription form-control uriName" id="Name" name="uriName Name' + dynamicCount + '" value="" placeholder="e.g.john smith" /></td>' +
+                                        '<td><input type="text" class="ItemDescription form-control number uriName" minlength="10", maxlength="10",  id="PhoneNumber" name="uriName PhoneNumber' + dynamicCount + '" value="" placeholder="1234567890" /></td>' +
+                                        '<td>' + gender + '</td>' +
+                                         '<td><input type="text" class="ItemDescription form-control uriName" id="IPPBEmpId" name="uriName IPPBEmpId' + dynamicCount + '" value="" placeholder="Employee Id" /></td>' +
+                                         '<td>' + designation + '</td>' +
+                                         '<td><input type="text" class="ItemDescription form-control uriName" minlength="13", maxlength="13" id="FaciltyId" name="uriName FaciltyId' + dynamicCount + '" value="" placeholder="Facilty Id" /></td>' +
+                                         '<td><input type="text" class="ItemDescription form-control uriName" id="AccessPoint" name="uriName AccessPoint' + dynamicCount + '" value="" placeholder="Access Point" /></td>' +
+                                         '<td>' + branch + '</td>' +
+                                        '<td><a href="javascript:void(0);" id="remCF">Remove</a></td></tr>' +
+                                        '<td style = "display:none"><input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="I" /></td>'
+                                  );
+
+        $("#customFields").on('click', '#remCF', function () {
+
+            $(this).closest('tr').remove();
+
+        });
+        $('#IPPBCircle').change(function () {
+            $(this).closest('customFields').remove();
+        });
+        $.validator.addClassRules({
+            uriName: {  // here authUrl is one of the class Name for the input row..
+                required: true
+            }
+        });
+
+        dynamicCount++;
+    });
+    $("#customFields").on('click', '#delCF', function () {
+
+        var row = $(this).closest('tr')
+        row.find('.Actions').val('D');
+        row.hide();
+    });
+</script>

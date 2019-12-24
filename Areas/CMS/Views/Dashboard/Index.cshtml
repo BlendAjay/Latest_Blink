@@ -1,0 +1,152 @@
+﻿@using AJSolutions.Models
+@model GetCountEntryView
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    List<TrainingScheduleView> Training = ViewData["myTraining"] as List<TrainingScheduleView>;
+    List<AJSolutions.Areas.Candidate.Models.CandidateTransactionViewModel> Fee = ViewData["FeeDetails"] as List<AJSolutions.Areas.Candidate.Models.CandidateTransactionViewModel>;
+}
+<section>
+    @using (Html.BeginForm("Index", "Dashboard", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        var isClientView = false;
+        if (user.Role != "Admin" && user.DepartmentId == "CLI")
+        {
+            isClientView = true;
+        }
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header">
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Admin</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ecommerce-widget">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header"><a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "CND" })"> Add <span>Candidate</span></a></h5>
+                        <div class="card-header">
+                            <span>@Model.TOTALSTUDENT Candidate </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="gauge1"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header"><a href="@Url.Action("AddEmployee", "User", new { Area = "CMS", Id = "EMP" })">Add <span>Employee</span></a></h5>
+                        <div class="card-header">
+                            <span>@Model.TOTALEMPLOYEE Employee </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="gauge2"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header"><a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "TPU" })">Add <span>Client</span></a></h5>
+                        <div class="card-header">
+                            <span>@Model.TOTALCLINT Client </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="gauge3"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header"><a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "VND" })">Add <span>Vendor</span></a></h5>
+                        <div class="card-header">
+                            <span>@Model.TOTALVENDOR Vendor </span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="gauge4"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header">My Trainings</h5>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    @if (Training.Count > 0)
+                                    {
+                                        <thead class="bg-light">
+                                            <tr class="border-0">
+                                                <th class="border-0">Batch</th>
+                                                <th class="border-0">Start Date</th>
+                                                <th class="border-0">End Date</th>
+                                                <th class="border-0">Candidates</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Training)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.ActionLink(item.SubjectLine, "TrainingDetails", "TMS", new {area = "TMS", Id = item.TrainingId }, new { target = "_blank" }) (@item.TrainingId)
+                                                    </td>
+                                                    <td>@item.FromDate.ToString("dd-MMM-yyyy")</td>
+                                                    <td>@item.ToDate.ToString("dd-MMM-yyyy")</td>
+                                                    <td>@item.TotalStudent</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    }
+                                    else
+                                    {
+                                        <div class="row">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                <br />
+                                                <h3 class="text-center">No Record Found</h3>
+                                            </div>
+                                        </div>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+</section>
+<style>
+    .blink {
+        animation-duration: 1s;
+        animation-name: blink;
+        color: red;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-in-out;
+    }
+
+    @@keyframes blink {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: .1;
+        }
+    }
+</style>
+

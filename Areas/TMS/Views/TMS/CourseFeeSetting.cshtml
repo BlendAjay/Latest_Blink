@@ -1,0 +1,685 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model AJSolutions.Areas.Candidate.Models.CandidateViewModel
+@{
+    ViewBag.Title = "CourseFeeSetting";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    //Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    CourseMaster CourseeM = new CourseMaster();
+    FeeDetails FeeModel = new FeeDetails();
+    FeeModel.PaymentDate = DateTime.Now;
+    CourseMasterwithAddtionalView Coursedetail = ViewData["CourseDetail"] as CourseMasterwithAddtionalView;
+    double totalamt = 0;
+    double TotalFeeAmount = 0;
+    CourseMasterView Installment = ViewData["InstallmentDetail"] as CourseMasterView;
+}
+@using (Html.BeginForm("CourseFeeSetting", "TMS", FormMethod.Post, new { area = "TMS", id = "CourseFeeSetting", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h5>Course Fee Setting</h5>
+                </div>
+                <div class="col_full">
+
+                </div>
+                <div class="col_half">
+                    @Html.Label("JEId")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        <input type="text" class="form-control required" placeholder="Enter the JEID..." id="JEID" value="@ViewBag.UserName" />
+                        @*@Html.TextBoxFor(m => Model.Name, new { @class = "form-control required", placeholder = "e.g. john smith", id = "FullName" })*@
+                    </div>
+                </div><br />
+                <div class="col_half col_last">
+                    <button type="button" id="btnSearch" class="btn btn-green btnalignleft" onclick='SendValue()'>Filter</button>
+                </div>
+            </div>
+            @if (Model.RegistrationId != null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email Id</th>
+                                <th>Phone Number</th>
+                                <th>Reference Id</th>
+                            </tr>
+                            <tr>
+                                <td>@Model.Name</td>
+                                <td>@Model.Email</td>
+                                <td>@Model.PhoneNumber</td>
+                                <td>@ViewBag.ReferenceId</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            }
+            <br />
+            <br />
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h5>Course Detail </h5>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => CourseeM.CourseCode, " Select Course")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                        @Html.DropDownList("CourseCode", null, "---  Select Course ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Course", id = "CourseCode" })
+                    </div>
+                    <br>
+                </div>
+
+                <div class="col_half col_last">
+                    @Html.Label("Select Batch")<small>*</small>
+                    <div class="input-group divcenter" id="Batch">
+                        <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                        @Html.DropDownList("BatchId", null, "---  Select Batch ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Batch", id = "BatchId" })
+                    </div>
+                    <br />
+                </div>
+            </div>
+            @if (Coursedetail != null)
+            {
+                TotalFeeAmount = (@Coursedetail.CourseFee + @Coursedetail.Accommodation + @Coursedetail.Transport + @Coursedetail.Others + @Coursedetail.InstallmentInterest) - @Coursedetail.Discount;
+                totalamt = TotalFeeAmount;
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h5>Course Costing</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Fee Details</th>
+                                <th>Amount</th>
+                            </tr>
+                            <tr>
+                                <td>Course Fee</td>
+                                <td>@Coursedetail.CourseFee</td>
+                            </tr>
+                            <tr>
+                                <td>Course Late Fee</td>
+                                <td>@Coursedetail.CourseLateFee</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkBoxClass" value="@Coursedetail.Accommodation" checked="checked" id="Accommodation" />Accommodation</td>
+                                <td>@Coursedetail.Accommodation</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkBoxClass" value="@Coursedetail.Transport" checked="checked" id="Transport" />Transport</td>
+                                <td>@Coursedetail.Transport</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkBoxClass" value="@Coursedetail.Others" checked="checked" id="Others" />Others</td>
+                                <td>@Coursedetail.Others</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkBoxClass" value="@Coursedetail.InstallmentInterest" checked="checked" id="InstallmentInterest" />Installment Interest</td>
+                                <td>@Coursedetail.InstallmentInterest</td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="checkBoxClass" value="@Coursedetail.Discount" checked="checked" id="Discount" />Discount</td>
+                                <td>@Coursedetail.Discount</td>
+                            </tr>
+                            <tr>
+                                <td>Total Fee</td>
+                                <td id="TotalFeeRecord">
+                                    <input type="text" id="TotalAmt" name="TotalAmt" value="@totalamt" readonly="readonly" class="form-control" />
+                                    <input type="text" id="TotalFeeAmount" name="TotalFeeAmount" value="@TotalFeeAmount" class="form-control" style="display:none" />
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="col_full">
+                            <label>Select Installments</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                @Html.DropDownList("Installments", null, "--- Select Installment ---", htmlAttributes: new { @class = "form-control", id = "Installments" })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col_full">
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td>Installment Amount</td>
+                                        <td>
+                                            <input type="text" id="InstallmentAmount" name="InstallmentAmount" value="" placeholder="Enter Amount" class="form-control" />
+                                        </td>
+                                    </tr>
+                                    <tr id="Remaining"></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col_half">
+                            <label>Payment Mode</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-list-ul"> </i></span>
+                                @Html.DropDownList("PaymentModeId", null, "--- Select Payment Mode ---", htmlAttributes: new { @id = "PaymentModeId", @class = "form-control", placeholder = "Payment Mode" })
+                            </div>
+                        </div>
+                        <div class="col_half  col_last" id="bankName">
+                            <label>Bank Name</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-building"> </i></span>
+                                @Html.EditorFor(model => FeeModel.BankName, new { htmlAttributes = new { @id = "PayeeBankName", @class = "form-control", placeholder = "Bank Name" } })
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div id="paymentDate">
+                                <label>Payment Date</label>
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-calendar3"> </i></span>
+
+                                    @Html.EditorFor(model => FeeModel.PaymentDate, new { htmlAttributes = new { @id = "PaymentDate", @class = "form-control", placeholder = "Payment Date"} })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last" id="refno">
+                            <label>Reference No</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-barcode"> </i></span>
+                                @Html.EditorFor(model => FeeModel.ReferenceNumber, new { htmlAttributes = new { @id = "ChequeNo", @class = "form-control", placeholder = "Reference Number" } })
+                            </div>
+                        </div>
+                        <div class="col_full">
+                            <label>Comments</label>
+                            <div class="input-group divcenter">
+                                @Html.TextAreaFor(model => FeeModel.Remarks, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Comments", @placeholder = "Comment here...." })
+                            </div>
+                        </div>
+                        <div class="col_full">
+                            <input type="Submit" value="Submit" id="CourseFeeSetting" name="CourseFeeSetting" style="float: right;" class="button button-3d button-rounded button-teal" />
+                        </div>
+                    </div>
+                </div>
+            }
+            <br />
+
+        </div>
+    </div>
+    @Html.Hidden("UserName", ViewBag.UserName as string)
+    @Html.Hidden("SaveStatus", ViewBag.Status as string)
+    @Html.Hidden("RedirectToHome", Url.Action("CourseFeeSetting", "TMS", new { area = "TMS" }))
+    if (Model != null)
+    {
+
+        @Html.Hidden("RegistrationId", Model.RegistrationId)
+        @Html.Hidden("ReferenceId", ViewBag.ReferenceId as string)
+
+        @Html.Hidden("Name", Model.Name)
+        @Html.Hidden("Email", Model.Email)
+        @Html.Hidden("PhoneNumber", Model.PhoneNumber)
+        @Html.Hidden("CandidateId", Model.UserId as string)
+    }
+    if (Model.CourseCode != null)
+    {
+        @Html.Hidden("BatchId", Model.BatchId)
+        @Html.Hidden("CourseCode", Model.CourseCode)
+        @Html.Hidden("CourseFee", Model.CourseFee)
+    }
+}
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $('#Accommodation').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Accommodation = $('#Accommodation').is(":checked");
+            var Accommodationval = $('#Accommodation').val();
+
+            if (Accommodation == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(Accommodationval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(Accommodationval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+        });
+    });
+
+    $(function () {
+        $('#Transport').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Transport = $('#Transport').is(":checked");
+            var Transportval = $('#Transport').val();
+
+            if (Transport == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(Transportval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(Transportval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+        });
+    });
+
+    $(function () {
+        $('#Others').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Others = $('#Others').is(":checked");
+            var Othersval = $('#Others').val();
+
+            if (Others == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(Othersval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(Othersval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+        });
+    });
+
+    $(function () {
+        $('#InstallmentInterest').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var InstallmentInterest = $('#InstallmentInterest').is(":checked");
+            var InstallmentInterestval = $('#InstallmentInterest').val();
+
+            if (InstallmentInterest == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(InstallmentInterestval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(InstallmentInterestval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+        });
+    });
+
+    $(function () {
+        $('#Discount').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Discount = $('#Discount').is(":checked");
+            var Discountval = $('#Discount').val();
+
+            if (Discount == false) {
+                sum = (parseFloat(TotalAmt) + parseFloat(Discountval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) - parseFloat(Discountval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#TotalFeeRecord").html(total);
+            }
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#paymentDate').fadeOut();
+        $('#bankName').fadeOut();
+        $('#refno').fadeOut();
+
+        $('#PaymentModeId').change(function () {
+            if ($('#PaymentModeId :selected').text().toString().toUpperCase() != "ONLINE") {
+                $('#paymentDate').fadeIn();
+                if ($('#PaymentModeId :selected').text().toString().toUpperCase() != "CASH") {
+                    $('#bankName').fadeIn();
+                } else {
+                    $('#bankName').fadeOut();
+                }
+                $('#refno').fadeIn();
+            }
+            else {
+                $('#paymentDate').fadeOut();
+                $('#bankName').fadeOut();
+                $('#refno').fadeOut();
+            }
+        });
+
+        $('#CourseCode').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/GetBatch",
+                data: { CourseCode: $('#CourseCode').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var batch = "   <span class='input-group-addon'><i class='icon-book3'> </i></span><select class='form-control' id='BatchId'>";
+                    batch = batch + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        batch = batch + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    batch = batch + '</select>';
+                    $('#Batch').html(batch);
+                }
+            });
+        });
+
+        $('#Batch').change(function () {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "get",
+                url: "/TMS/TMS/CourseFeeSetting",
+                data: {
+                    UserName: $("#UserName").val(),
+                    CourseCode: $("#CourseCode").val(),
+                    BatchName: $("#BatchId").val(),
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    var url = "/TMS/TMS/CourseFeeSetting?UserName=" + $("#UserName").val() + "&CourseCode=" + $("#CourseCode").val() + "&BatchName=" + $("#BatchId").val();
+                    window.location.href = url;
+                }
+            });
+        });
+
+    });
+
+    function SendValue() {
+        var UserName = $("#JEID").val();
+        //var url = "/TMS/TMS/CourseFeeSetting?UserName=" + UserName;
+        //window.location.href = url;
+        $('.form-process').fadeIn();
+        $.ajax({
+            type: "get",
+            url: "/TMS/TMS/CourseFeeSetting",
+            data: { UserName: UserName },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('.form-process').fadeOut();
+                if (data == "Unsuccess") {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'You have select Wrong <b> JEID.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                } if (data == "Email already Exists") {
+                    $.alert({
+                        title: 'Sorry',
+                        content: 'JE User already <b> EXISTS.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'icon-info-sign icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                }
+                else {
+                    var url = "/TMS/TMS/CourseFeeSetting?UserName=" + UserName;
+                    window.location.href = url;
+                }
+            }
+        });
+    }
+</script>
+
+<script>
+    $(function () {
+        $('#InstallmentAmount').change(function () {
+            if ($('#Installments :selected').val() != "") {
+                var TotalInstall = $('#Installments :selected').val();
+                var remain = ((($('#TotalAmt').val())) - ($('#InstallmentAmount').val()));
+                $('#Remaining').empty();
+                if (remain > 0) {
+                    $('#Remaining').append('' +
+                     '<td>Remaining Amount</td>' +
+                     '<td>' + Math.round(remain) + '</td>');
+                }
+            }
+            else {
+                $('#Remaining').empty();
+            }
+
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#CourseFeeSetting").validate({
+        submitHandler: function () {
+
+            if ($("#InstallmentAmount").val() == null || $("#InstallmentAmount").val() == '') {
+                $.alert({
+                    title: 'Info',
+                    content: 'Please input Installment Amount',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                return false;
+            }
+            if ($("#PaymentModeId :selected").val() == undefined || $("#PaymentModeId :selected").val() == '' || $("#PaymentModeId :selected").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Payment Mode</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#PaymentDate").focus();
+                return false;
+            }
+
+            if ($('#PaymentModeId :selected').text().toString().toUpperCase() == "CASH") {
+                if ($("#PaymentDate").val() == undefined || $('#PaymentDate').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Payment Date</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#PaymentDate").focus();
+                    return false;
+                }
+
+                if ($("#ChequeNo").val() == undefined || $('#ChequeNo').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Reference No</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#ChequeNo").focus();
+                    return false;
+                }
+            }
+
+            if ($('#PaymentModeId :selected').text().toString().toUpperCase() == "CHEQUE" || $('#PaymentModeId :selected').text().toString().toUpperCase() == "DEMAND DRAFT") {
+                if ($("#PaymentDate").val() == undefined || $('#PaymentDate').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Payment Date</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#PaymentDate").focus();
+                    return false;
+                }
+
+                if ($("#PayeeBankName").val() == undefined || $('#PayeeBankName').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Bank Name</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#PayeeBankName").focus();
+                    return false;
+                }
+
+                if ($("#ChequeNo").val() == undefined || $('#ChequeNo').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Reference No</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#ChequeNo").focus();
+                    return false;
+                }
+            }
+
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/CourseFeeSetting",
+                data: {
+                    Name: $('#Name').val(),
+                    Email: $('#Email').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    RegistrationId: $('#RegistrationId').val(),
+                    ReferenceId: $('#ReferenceId').val(),
+                    CourseCode: $('#CourseCode').val(),
+                    BatchName: $('#BatchId').val(),
+                    TotalAmt: $('#TotalAmt').val(),
+                    //TotalFeeAmount: $('#TotalFeeAmount').val(),
+                    CourseFee: $('#CourseFee').val(),
+                    PaymentDate: $('#PaymentDate').val(),
+                    BankName: $('#BankName').val(),
+                    ReferenceNumber: $('#ChequeNo').val(),
+                    Remarks: $('#Remarks').val(),
+                    InstallmentAmount: $('#InstallmentAmount').val(),
+                    Accommodation: $('#Accommodation').is(":checked"),
+                    Transport: $('#Transport').is(":checked"),
+                    Others: $('#Others').is(":checked"),
+                    InstallmentInterest: $('#InstallmentInterest').is(":checked"),
+                    Discount: $('#Discount').is(":checked"),
+                    PaymentModeId: $('#PaymentModeId').val(),
+                    InstallmentNumber: $('#Installments').val(),
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var strdata = data.startsWith("T");
+                    $('.form-process').fadeOut();
+                    //if (data == "Email already Exists") {
+                    //    $.alert({
+                    //        title: 'Sorry',
+                    //        content: 'Email and Phone Number already <b> EXISTS.</b>',
+                    //        confirmButton: 'OK',
+                    //        confirmButtonClass: 'btn btn-primary',
+                    //        icon: 'icon-info-sign icon-2x ',
+                    //        animation: 'zoom',
+                    //        confirm: function () {
+                    //        }
+                    //    });
+                    //}
+                    if (data == "UnSuccess") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went <b>wrong.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'icon-info-sign icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                            }
+                        });
+                    }
+                    else if (strdata == true) {
+                        $.confirm({
+                            title: 'Confirmation',
+                            content: 'Candidate allocate Successfully would like to download payment receipt?',
+                            confirmButton: 'Yes',
+                            confirmButtonClass: 'btn-info',
+                            cancelButton: 'No',
+                            cancelButtonClass: 'btn-warning',
+                            icon: 'icon-warning-sign',
+                            animation: 'scale',
+                            animationClose: 'top',
+                            confirm: function () {
+                                var url = "/TMS/TMS/DownloadCandidateReceipt?TransactionId=" + data;
+                                location.href = url;
+                            },
+                            cancel: function () {
+                                var url = $('#RedirectToHome').val();
+                                location.href = url;
+                            },
+                        });
+                    }
+                    else
+                    {
+                        $('.form-process').fadeOut()
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'To make Payment click <b> OK</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = data
+                                location.href = url;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+</script>

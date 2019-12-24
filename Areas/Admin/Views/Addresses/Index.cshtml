@@ -1,0 +1,100 @@
+﻿@model IEnumerable<AJSolutions.Models.Address>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+}
+
+<section id="page-title">
+
+    <div class="container clearfix">
+        <h1></h1>
+        <span>Addresses List</span>
+        <ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">View all Addresses</a></li>
+        </ol>
+    </div>
+
+</section><!-- #page-title end -->
+
+<section id="content">
+
+    <div class="content-wrap">
+
+        <div class="container">
+            <div class="row">
+                <button class="button button-3d button-rounded button-teal" style="float:right;">
+                    <i class="icon-repeat"></i>
+                    @Html.ActionLink("Create New", "Create")
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.UserProfile.Name)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.AddressLine1)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.AddressLine2)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.City)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.State)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.PostalCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Country)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FaxNo)
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UserProfile.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AddressLine1)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AddressLine2)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.City)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.State)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PostalCode)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Country)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FaxNo)
+                            </td>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+</section>

@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="alternate" href="https://www.Blink.com" hreflang="en-us" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="SemiColonWeb" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800" rel="stylesheet">
+
+    <!-- Bootstrap CSS File -->
+    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Libraries CSS Files -->
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/lib/venobox/venobox.css" rel="stylesheet">
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Main Stylesheet File -->
+    <link href="~/css/style.css" rel="stylesheet">
+    <!-- Document Title
+    ============================================= -->
+    <title>@ViewBag.Title</title>
+</head>
+<body id="body">
+    <header id="header">
+        <div class="container">
+
+            <div id="logo" class="pull-left">
+                <!-- Uncomment below if you prefer to use a text logo -->
+                <!-- <h1><a href="#main">C<span>o</span>nf</a></h1>-->
+                @*<a href="#intro" class="scrollto"><img src="~/img/NewLogoBlink.png" alt="" title=""></a>*@
+            </div>
+
+            <nav id="nav-menu-container">
+
+                @Html.Partial("_LoginPartialHome")
+            </nav><!-- #nav-menu-container -->
+        </div>
+    </header><!-- #header -->
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+    <!--==========================
+      Footer
+    ============================-->
+    <footer id="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 footer-info">
+                        <img src="~/img/NewLogoBlink.png" alt="TheEvenet">
+                        <p>The Learning Management System of future.</p>
+                    </div>
+                    <div class="col-lg-6 col-md-6 footer-contact">
+                        <h4>Contact Us</h4>
+                        <p>
+                            <br>
+                            <strong>Phone:</strong> +91-98271-85089<br>
+                            <strong>Email:</strong> saurabh.banwar@blendglobal.in<br>
+                        </p>
+
+                        <div class="social-links">
+                            <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
+                            <a href="#" class="facebook"><i class="fa fa-facebook"></i></a>
+                            <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
+                            <a href="#" class="google-plus"><i class="fa fa-google-plus"></i></a>
+                            <a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright <strong>Blink</strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                Designed by <a href="http://blendglobal.in/" target="_blank">Blend Global Training & Development</a>
+            </div>
+        </div>
+    </footer><!-- #footer -->
+
+</body>
+</html>
+<!-- Essential jQuery Plugins
+================================================== -->
+
+<a href="#" class="back-to-top"><i class="fa fa-angle-up"></i></a>
+
+<!-- JavaScript Libraries -->
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script src="~/lib/jquery/jquery-migrate.min.js"></script>
+<script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/easing/easing.min.js"></script>
+<script src="~/lib/superfish/hoverIntent.js"></script>
+<script src="~/lib/superfish/superfish.min.js"></script>
+<script src="~/lib/wow/wow.min.js"></script>
+<script src="~/lib/venobox/venobox.min.js"></script>
+<script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+
+
+<!-- Template Main Javascript File -->
+<script src="~/js/main.js"></script>
+
+
+<script>
+    var wow = new WOW({
+        boxClass: 'wow',      // animated element css class (default is wow)
+        animateClass: 'animated', // animation css class (default is animated)
+        offset: 120,          // distance to the element when triggering the animation (default is 0)
+        mobile: false,       // trigger animations on mobile devices (default is true)
+        live: true        // act on asynchronously loaded content (default is true)
+    }
+    );
+    wow.init();
+</script>
+<!-- Custom Functions -->
+<script src="js/custom.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        /* ========================================================================= */
+        /*	Contact Form
+        /* ========================================================================= */
+
+        $('#contact-form').validate({
+            rules: {
+                name: {
+                    required: true,
+                    minlength: 2
+                },
+                email: {
+                    required: true,
+                    email: true
+                },
+                message: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "come on, you have a name don't you?",
+                    minlength: "your name must consist of at least 2 characters"
+                },
+                email: {
+                    required: "no email, no message"
+                },
+                message: {
+                    required: "um...yea, you have to write something to send this form.",
+                    minlength: "thats all? really?"
+                }
+            },
+            submitHandler: function (form) {
+                $(form).ajaxSubmit({
+                    type: "POST",
+                    data: $(form).serialize(),
+                    url: "process.php",
+                    success: function () {
+                        $('#contact-form :input').attr('disabled', 'disabled');
+                        $('#contact-form').fadeTo("slow", 0.15, function () {
+                            $(this).find(':input').attr('disabled', 'disabled');
+                            $(this).find('label').css('cursor', 'default');
+                            $('#success').fadeIn();
+                        });
+                    },
+                    error: function () {
+                        $('#contact-form').fadeTo("slow", 0.15, function () {
+                            $('#error').fadeIn();
+                        });
+                    }
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,365 @@
+﻿@*@model IEnumerable<AJSolutions.Areas.EMS.Models.EmployeeViewModel>*@
+@using PagedList.Mvc;
+@using AJSolutions.DAL;
+@model  PagedList.IPagedList<AJSolutions.Areas.EMS.Models.EmployeeViewModel>
+@{
+    ViewBag.Title = "Tracker";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    var currPage = ViewBag.page ?? 1;
+    var currPageSize = ViewBag.Paging;
+    string UName = "";
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+            @*<a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "EMP" })" class="btn btn-default btn-xs">Add New Employee</a>*@
+            <a href="@Url.Action("AddEmployee", "User", new { Area = "CMS", Id = "EMP" })" class="btn btn-default btn-xs">Add New Employee</a>
+        </div>
+        <div class="row">
+            @*<div class="fancy-title title-bottom-border title-right">
+            <h4>My Employees (@ViewBag.EmCount)</h4>
+        </div>*@
+            @*<div class="col_one_fourth">
+            Search By  User Name
+            @Html.TextBox("UserName", ViewBag.UserName as string, new { @class = "form-control", @id = "UserName", placeholder = "User Name" })
+        </div>
+        <div class="col_one_fourth">
+            Search By Name
+            @Html.TextBox("Name", ViewBag.Name as string, new { @class = "form-control", @id = "Name", placeholder = "Name" })
+        </div>
+        <div class="col_one_fourth">
+            Search By Email Id
+            @Html.TextBox("EmailId", ViewBag.EmailId as string, new { @class = "form-control", @id = "EmailId", placeholder = "Email Id" })
+        </div>
+        <div class="col_one_fourth col_last">
+            <br /><button type="submit" id="search" class="button_apply" title="click here to Search">Search</button>&nbsp;
+            <button class="button_apply" id="buttonclear" title="click here to Clear Search">Clear</button>
+        </div>*@
+            <br />
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <h5 class="card-header">My Employees (@ViewBag.EmCount)</h5>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="bg-light">
+                                            <tr class="border-0">
+                                                <th class="border-0">
+                                                    S.No.
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Employees", "User", new { sortOrder = ViewBag.NameSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, Designation = ViewBag.Designation, ReportingAuthority = ViewBag.ReportingAuthority, page = ViewBag.Page, PageSize = ViewBag.Paging })">Name&nbsp;<span class="icon-sort"></span></a></nobr>
+
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Employees", "User", new { sortOrder = ViewBag.EmailSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, Designation = ViewBag.Designation, Department = ViewBag.Department, ReportingAuthority = ViewBag.ReportingAuthority, page = ViewBag.Page, PageSize = ViewBag.Paging })">Email&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Employees", "User", new { sortOrder = ViewBag.RegisteredOnSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, Designation = ViewBag.Designation, Department = ViewBag.Department, ReportingAuthority = ViewBag.ReportingAuthority, page = ViewBag.Page, PageSize = ViewBag.Paging })">Registered On&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Employees", "User", new { sortOrder = ViewBag.LastLoggedInSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, Designation = ViewBag.Designation, Department = ViewBag.Department, ReportingAuthority = ViewBag.ReportingAuthority, page = ViewBag.Page, PageSize = ViewBag.Paging })">Last Logged In&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Employees", "User", new { sortOrder = ViewBag.DepartmentSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, Designation = ViewBag.Designation, Department= ViewBag.Department, ReportingAuthority = ViewBag.ReportingAuthority, page = ViewBag.Page, PageSize = ViewBag.Paging })">Department&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    Manager
+                                                </th>
+                                                <th class="border-0">
+                                                    <a href="@Url.Action("Employees", "User", new { sortOrder = ViewBag.ReportingAuthoritySortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, Designation = ViewBag.Designation, Department = ViewBag.Department, ReportingAuthority = ViewBag.ReportingAuthority, page = ViewBag.Page, PageSize = ViewBag.Paging })">Reporting Authority&nbsp;<span class="icon-sort"></span></a>
+                                                </th>
+                                                <th class="border-0">
+                                                    Deactivated
+                                                </th>
+                                                <th class="border-0">Edit</th>
+                                                <th class="border-0">Folder</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int count = (currPageSize * (currPage - 1)) + 1;
+                                                foreach (var item in Model)
+                                                {
+                                                    if (UName != item.UserName)
+                                                    {
+                                                        <tr>
+                                                            <td class="text-center">
+                                                                @count
+                                                            </td>
+                                                            <td>
+                                                                @Html.ActionLink(item.Name, "EmployeeProfile", "Employee", new { area = "EMS", UserId = item.UserId }, htmlAttributes: new { target = "_blank" }) (@item.PhoneNumber)
+                                                                <br />
+                                                                <small>  (@item.UserName)</small>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <a href="mailto:@item.Email" title="mail:@item.Email"><i class="icon-mail"></i></a>&nbsp;
+                                                                <a href="tel:@item.PhoneNumber" title="tel:@item.PhoneNumber"><i class="icon-call"></i></a>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @if (item.RegisteredOn != null)
+                                                                {
+                                                                    @item.RegisteredOn.Value.ToString("dd-MMM-yyyy")
+                                                                }
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @if (item.LastLogin != null)
+                                                                {
+                                                                    @item.LastLogin.Value.ToString("dd-MMM-yyyy")
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.Department)
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @Html.DisplayFor(modelItem => item.ManagerLevel)
+                                                            </td>
+                                                            <td>
+                                                                @Html.DisplayFor(modelItem => item.UName)
+                                                            </td>
+                                                            @if (item.Deactivated == true)
+                                                            {
+                                                                <td class="text-center">
+                                                                    @Html.CheckBoxFor(model => item.Deactivated, new { Id = "Deactivated", onclick = "ActivateUser('" + item.UserId + "','" + item.Name + "');" })
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="text-center">
+                                                                    @Html.CheckBoxFor(model => item.Deactivated, new { Id = "Deactivated", onclick = "DeactivateUser('" + item.UserId + "','" + item.Name + "');" })
+                                                                </td>
+                                                            }
+                                                            <td class="text-center">
+                                                                <a href="@Url.Action("AddEmployee", "User", new { area = "CMS",  Uid = item.UserId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                                            </td>
+                                                            <td>
+                                                                @if (item.FileId != 0)
+                                                                {
+                                                                    <a href="@Url.Action("IssueLetter", "Payroll", new { area = "PMS", UserId = item.UserId})" title="Breficase"><i class="icon-briefcase"></i></a>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        UName = item.UserName;
+                                                        count++;
+                                                    }
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h3 class="text-center">No Employees</h3>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Employees", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Employees", "User"));
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page contain list of employee of different departments, you can get all details regarding them from this page.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/employeelist.png" target="_blank" data-lightbox="gallery-item">
+
+                                        <img src="~/images/HelpImages/employeelist.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function ActivateUser(UId, Name) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to activate user ' + Name + '?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                //Ajax call to deactivate user
+                $.ajax({
+                    type: "post",
+                    url: "/User/ActivateDeactivateUser",
+                    data: {
+                        UId: UId,
+                        Role: "Employee",
+                        action: "activate"
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data != null && data == true) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Activated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-up fa-2x',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            cancel: function () {
+                var PageSize = $("#PageSize :selected").val();
+                var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                location.href = url;
+            }
+        });
+    }
+
+    function DeactivateUser(UId, Name) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to deactivate user ' + Name + '?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                //Ajax call to deactivate user
+                $.ajax({
+                    type: "post",
+                    url: "/User/ActivateDeactivateUser",
+                    data: {
+                        UId: UId,
+                        Role: "Employee",
+                        action: "deactivate"
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data != null && data == true) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Deactivated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+
+
+
+                        if (data == false) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Deactivated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            cancel: function () {
+                var PageSize = $("#PageSize :selected").val();
+                var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                location.href = url;
+            }
+        });
+    }
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var url = $("#RedirectTo").val();
+        location.href = url;
+
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

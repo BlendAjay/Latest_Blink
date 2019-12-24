@@ -1,0 +1,399 @@
+﻿@model AJSolutions.Models.CandidateLeadsView
+@{
+    ViewBag.Title = "Add Leads";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+}
+
+@using (Html.BeginForm("DduGkyLeads", "Candidate", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", id = "DduGkyLeads", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    if (Model != null)
+    {
+        @Html.Hidden("LeadId", Model.LeadId)
+    }
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Lead Details</h4>
+                </div>
+                <div class="col_one_third">
+                    @Html.LabelFor(model => model.Name, " Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control required", id = "Name", placeholder = "Enter Your Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.AadhaarNumber, "Aadhaar Number")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.AadhaarNumber, new { htmlAttributes = new { @class = "form-control required", id = "AadhaarNumber", placeholder = "Enter Your Aadhaar Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AadhaarNumber, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Qualification, "Highest Qualification")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.DropDownList("Qualifications", null, "--- Select Highest Qualifications ---", htmlAttributes: new { @class = "form-control", @id = "Qualifications" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Qualification, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.FatherName, "Father Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.FatherName, new { htmlAttributes = new { @class = "form-control", id = "FatherName", placeholder = "Enter Your Father Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherName, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.CountryId, "Select Country")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("CountryId", null, "---  Select Country ---", htmlAttributes: new { @class = "form-control", placeholder = "Select Country", id = "CountryId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.Address, "Address")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control", id = "Address", placeholder = "Enter Your Address" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    <br />
+
+                    @Html.LabelFor(model => model.PIP, "PIP Number")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.PIP, new { htmlAttributes = new { @class = "form-control", id = "PIP", placeholder = "Enter Your PIP Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PIP, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.MaritalStatus, "Marital Status")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-glass"></i></span>
+                        @Html.DropDownList("MaritalStatus", null, "--- Select Marital Status ---", htmlAttributes: new { @class = "form-control", @id = "MaritalStatus" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaritalStatus, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+
+                <div class="col_one_third">
+                    @Html.LabelFor(model => model.EmailId, " Email Id")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control", id = "EmailId", placeholder = "Enter Your Email Id" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.Label("Date of Birth")
+                    <div class="input-group travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        <input type="text" value="@ViewBag.DOB" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="DOB" name="DOB">
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Category, "Category")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("AllCategory", null, "--- Select Category ---", htmlAttributes: new { @class = "form-control", @id = "AllCategory" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.FatherOccupation, "Father Occupation")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.FatherOccupation, new { htmlAttributes = new { @class = "form-control", id = "FatherOccupation", placeholder = "Enter Your Father Occupation" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherOccupation, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.StateId, "Select State")<small>*</small>
+                    <div class="input-group divcenter" id="State">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("StateId", null, "---  Select State ---", htmlAttributes: new { @class = "form-control", placeholder = "Select State", id = "StateId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                    <br />
+
+                    @Html.LabelFor(model => model.SECC, "SECC Number")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.SECC, new { htmlAttributes = new { @class = "form-control", id = "SECC", placeholder = "Enter Your SECC Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SECC, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.BPL, "BPL Number")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.BPL, new { htmlAttributes = new { @class = "form-control", id = "BPL", placeholder = "Enter Your BPL Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BPL, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.DifferentlyAbled, "Differently Abled")
+                    @Html.CheckBoxFor(model => model.DifferentlyAbled, new { htmlAttributes = new { @class = "form-control", id = "DifferentlyAbled" } })
+                    @Html.ValidationMessageFor(model => model.DifferentlyAbled, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col_one_third col_last">
+                    @Html.LabelFor(model => model.PhoneNumber, "Phone Number")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control required", id = "PhoneNumber", placeholder = "Enter Your Phone Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Gender, "Gender")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                    <br />
+
+                    @Html.LabelFor(model => model.Religion, "Religion")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.DropDownList("Religion", null, "--- Select Religion ---", htmlAttributes: new { @class = "form-control", @id = "Religion" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Religion, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.FamilyIncome, "Family Income")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.FamilyIncome, new { htmlAttributes = new { @class = "form-control", id = "FamilyIncome", placeholder = "Enter Your Family Income" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FamilyIncome, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.StateId, "Select District")<small>*</small>
+                    <div class="input-group divcenter" id="State">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("StateId", null, "---  Select State ---", htmlAttributes: new { @class = "form-control", placeholder = "Select State", id = "StateId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                    <br />
+
+                    @Html.LabelFor(model => model.MNREGA, "MNREGA Number")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.MNREGA, new { htmlAttributes = new { @class = "form-control", id = "MNREGA", placeholder = "Enter Your MNREGA Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MNREGA, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.RelocateId, "Relocate")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.DropDownList("Relocate", null, "---  Select Relocate Options ---", htmlAttributes: new { @class = "form-control", id = "RelocateId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FamilyIncome, "", new { @class = "text-danger" })
+                    <br>
+
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(model => model.Comments, "Enter your Comments", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                @Html.TextAreaFor(model => model.Comments, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Comments", @placeholder = "Comments here.." })
+                <div id="textarea_feedback" class="text-danger"></div>
+            </div>
+            <input type="submit" id="generaldetails" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+        </div>
+        <br />
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("LeadDetails", "Candidate", new { area = "CMS" }));
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page has facility of adding candidate lead.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/candidatedashboard.png" target="_blank" data-lightbox="gallery-item">
+
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var text_max = 512;
+        if ($('#Comments').val() != undefined || $('#Comments').val() != '') {
+            text_max = text_max - $('#Comments').val().length;
+        }
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 512;
+        $('#Comments').keyup(function () {
+            var text_length = $('#Comments').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+    });
+
+
+    $(document).ready(function () {
+
+        $('#CountryId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='StateId'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#State').html(state);
+                }
+            });
+        });
+
+
+        $('#State').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='CityId'>";
+                    city = city + '<option value="">--- Select City ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#City').html(city);
+                }
+            });
+        });
+
+    });
+
+
+</script>
+<script type="text/javascript">
+    $("#LeadDetails").validate({
+        submitHandler: function (form) {
+            if ($('#DifferentlyAbled').is(":checked")) {
+
+                var differentlyAbled = "True";
+            }
+            else {
+                differentlyAbled = "False";
+            }
+            alert($('#DOB').val());
+            alert($('#RelocateId').val());
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/Candidate/LeadDetails",
+                data: {
+                    LeadId: $('#LeadId').val(),
+                    Name: $('#Name').val(),
+                    FatherName: $('#FatherName').val(),
+                    AllCategory: $('#AllCategory').val(),
+                    EmailId: $('#EmailId').val(),
+                    FatherOccupation: $('#FatherOccupation').val(),
+                    Qualifications: $('#Qualifications: selected').val(),
+                    StateId: $('#StateId').val(),
+                    AadhaarNumber: $('#AadhaarNumber').val(),
+                    SECC: $('#SECC').val(),
+                    CountryId: $('#CountryId').val(),
+                    Gender: $('#Gender').val(),
+                    MNREGA: $('#MNREGA').val(),
+                    Religion: $('#Religion').val(),
+                    Address: $('#Address').val(),
+                    DOBirth: $('#DOB').val(),
+                    BPL: $('#BPL').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    MaritalStatus: $('#MaritalStatus').val(),
+                    PIP: $('#PIP').val(),
+                    FamilyIncome: $('#FamilyIncome').val(),
+                    DifferentlyAbled: $('#differentlyAbled').val(),
+                    Relocate: $('#Relocate').val(),
+                    RelocateId: $('#RelocateId').val(),
+                    Comments: $('#Comments').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Lead has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+            });
+        }
+    });
+
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+<link href="~/css/jquery-confirm.css" rel="stylesheet" />
+<script type="text/javascript" src="~/js/jquery-confirm.js"></script>
+

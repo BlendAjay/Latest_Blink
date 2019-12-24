@@ -1,0 +1,152 @@
+﻿@using AJSolutions.DAL;
+@model AJSolutions.Models.EmpSocialDetails
+@{
+    ViewBag.Title = "Social Details";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("SocialDetails", "Employee", FormMethod.Post, new { @class = "form-horizontal", id = "SocialDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Bank Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Bank Account</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="form-process"></div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.Facebook, "Facebook ID")@if (Model != null)
+                            {
+                                if (!string.IsNullOrEmpty(Model.Facebook))
+                                {<small style="float:right"><a href="@Global.ExternalLink(Model.Facebook)" target="_blank">Open Url</a></small>}
+                            }
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-facebook2"> </i></span>
+                                @Html.EditorFor(model => model.Facebook, new { htmlAttributes = new { @class = "form-control", @id = "FBId", placeholder = "https://www.facebook.com/xxxx" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Facebook, "", new { @class = "text-danger" })
+                            <br>
+                            @Html.LabelFor(model => model.GooglePlus, "Google Plus URL")@if (Model != null)
+                            {
+                                if (!string.IsNullOrEmpty(Model.GooglePlus))
+                                {<small style="float:right"><a href="@Global.ExternalLink(Model.GooglePlus)" target="_blank">Open Url</a></small>}
+                            }
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-google-plus"> </i></span>
+                                @Html.EditorFor(model => model.GooglePlus, new { htmlAttributes = new { @class = "form-control", @id = "GoogleId", @placeholder = "https://plus.google.com/xxxx" } })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.GooglePlus, "", new { @class = "text-danger" })
+                            <br>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.LinkedIn, "LinkedIn URL")@if (Model != null)
+                            {
+                                if (!string.IsNullOrEmpty(Model.LinkedIn))
+                                {<small style="float:right"><a href="@Global.ExternalLink(Model.LinkedIn)" target="_blank">Open Url</a></small>}
+                            }
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-linkedin-sign"> </i></span>
+                                @Html.EditorFor(model => model.LinkedIn, new { htmlAttributes = new { @class = "form-control", @id = "LinkedInId", @placeholder = "https://www.linkedin.com/xxxx" } })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.LinkedIn, "", new { @class = "text-danger" })
+                            <br>
+                            @Html.LabelFor(model => model.Skypeid, "Skype ID")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-skype"> </i></span>
+                                @Html.EditorFor(model => model.Skypeid, new { htmlAttributes = new { @class = "form-control", @id = "SkypeId", @placeholder = " Enter your skype Id" } })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Skypeid, "", new { @class = "text-danger" })
+                            <br>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            @Html.Hidden("UserId", ViewBag.UserId as string)
+                            <input type="submit" value="Save" id="SubmitData" name="SubmitData" style="float: right;" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("SocialDetails", "Employee"));
+}
+
+<script type="text/javascript">
+    $("#SocialDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    //$(document).ready(function () {
+
+    //    if ($('#SaveStatus').val() == "Succeeded") {
+
+    //        $.alert({
+    //            title: 'Cheers',
+    //            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'btn btn-primary',
+    //            icon: 'fa fa-thumbs-up fa-2x',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //    }
+
+    //});
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>

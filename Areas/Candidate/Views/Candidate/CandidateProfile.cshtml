@@ -1,0 +1,486 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.UserViewModel
+@{
+    ViewBag.Title = "Candidate Profile";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+
+    if (user.Role == "Admin" || user.Role == "Client")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    }
+}
+}
+
+@{
+    UserProfile Candidateprofile = ViewData["Profile"] as UserProfile;
+    IEnumerable<UserAddressDetails> Candidateaddress = ViewData["Address"] as IEnumerable<UserAddressDetails>;
+    IEnumerable<UserEduactionDetails> Candidateeducation = ViewData["Education"] as IEnumerable<UserEduactionDetails>;
+    IEnumerable<UserExperienceDetails> Candidateexperience = ViewData["Experience"] as IEnumerable<UserExperienceDetails>;
+    IEnumerable<UserSkillDetails> Candidateskill = ViewData["Skill"] as IEnumerable<UserSkillDetails>;
+    UserSocialDetails Candidatesocial = ViewData["Social"] as UserSocialDetails;
+    List<AJSolutions.Models.Certification> certificate = ViewData["Cretifications"] as List<AJSolutions.Models.Certification>;
+
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>General Details</h4>
+                </div>
+                <br />
+                @if (Candidateprofile != null)
+                {
+                    <div class="col_half">
+                        @if (Candidateprofile.Name != null)
+                        {
+                            <label><i class="icon-list"></i> Name : @Candidateprofile.Name (@Model.UserName)</label>
+                            <br />
+                        }
+
+                        @if (Candidateprofile.DOB != null)
+                        {
+                            <label><i class="icon-calendar"></i> Date Of Birth :</label> @Candidateprofile.DOB.Value.ToString("dd-MMM-yyyy")
+                            <br />
+                        }
+                        @if (Candidateprofile.Gender != null)
+                        {
+                            if (Candidateprofile.Gender == "MA")
+                            {
+                                <label><i class="icon-male icon-female"></i> Gender :</label> <span>Male</span>
+                                <br />
+                            }
+                            if (Candidateprofile.Gender == "FE")
+                            {
+                                <label><i class="icon-male icon-female"></i> Gender :</label> <span>Female</span>
+                                <br />
+                            }
+                        }
+
+                        @if (Candidateprofile.MaritalStatus != null)
+                        {
+                            <label><i class="icon-user"></i> Marital Status :</label> @Candidateprofile.MaritalStatus
+                            <br />
+                        }
+                        @if (Candidateprofile.Nationality != null)
+                        {
+                            <label><i class="icon-location-arrow"></i> Nationality :</label> @Candidateprofile.Nationality
+                            <br />
+                        }
+                        @if (Candidateprofile.Branch != null)
+                        {
+                            <label><i class="icon-location-arrow"></i> Branch :</label> @Candidateprofile.Branch
+                            <br />
+                        }
+                        @if (Candidateprofile.BranchCode != null)
+                        {
+                            <label><i class="icon-location-arrow"></i> Branch Code :</label> @Candidateprofile.BranchCode
+                            <br />
+                        }
+                        @if (Candidateprofile.RegistrationId != null)
+                        {
+                            <label><i class="icon-location-arrow"></i> Registration Id / Emp Code :</label> @Candidateprofile.RegistrationId
+                            <br />
+                        }
+                    </div>
+                    <div class="col_half col_last">
+                        @if (Candidateprofile.AlternateContact != null)
+                        {
+                            <label><i class="icon-phone"></i> Alternate Contact :</label> @Candidateprofile.AlternateContact
+                            <br />
+                        }
+                        @if (Model.PhoneNumber != null)
+                        {
+                            <label><i class="icon-phone"></i> Contact :</label> @Model.PhoneNumber
+                            <br />
+                        }
+                        @if (Candidateprofile.AlternateEmail != null)
+                        {
+                            <label><i class="icon-email"></i> Alternate Email :</label> @Candidateprofile.AlternateEmail
+                            <br />
+                        }
+                        @if (Model.Email != null)
+                        {
+                            <label><i class="icon-email"></i> Email :</label> @Model.Email
+                            <br />
+                        }
+                        @if (Candidateprofile.BranchCategory != null)
+                        {
+                            <label><i class="icon-email"></i> BranchCategory :</label> @Candidateprofile.BranchCategory
+                            <br />
+                        }
+                        @if (Candidateprofile.BranchState != null)
+                        {
+                            <label><i class="icon-email"></i> Branch State :</label> @Candidateprofile.BranchState
+                            <br />
+                        }
+                    </div>
+                }
+            </div>
+            <br />
+            @if (Candidateaddress != null && Candidateaddress.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Address</h4>
+                    </div>
+                    <br />
+                    <div class="col_full">
+                        @foreach (var item in Candidateaddress)
+                        {
+                            if (item.AddressType == "CO")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">Correspondence Address </div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.CityId , @item.StateId</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.CountryId @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "PR")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">Present Address </div>
+                                        <ul class="iconlist nobottommargin">
+                                            <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                            @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                            {
+                                                <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                            }
+                                            <li><i class="icon-location"></i> @item.CityId , @item.StateId</li>
+                                            <li>
+                                                <i class="icon-location"></i> @item.CountryId @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                { <i> - </i> @item.PostalCode}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "PE")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">Permanent Address</div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.CityId , @item.StateId</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.CountryId @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "CM")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading">Company Address </div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.CityId , @item.StateId</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.CountryId @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            <br />
+            @if (Candidateeducation != null && Candidateeducation.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Education</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th class="strong-left">
+                                    EducationLevel
+                                </th>
+                                <th class="strong-left">
+                                    Degree
+                                </th>
+                                <th class="strong-left">
+                                    Institution
+                                </th>
+                                <th class="strong-left">
+                                    Percentage
+                                </th>
+                                <th class="strong-left">
+                                    Specialization
+                                </th>
+                                <th>
+                                    University
+                                </th>
+                                <th>
+                                    YearOfPassing
+                                </th>
+                            </tr>
+                            @foreach (var item in Candidateeducation)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (item.EducationLevel == 2)
+                                        {
+                                            <span>10th</span>
+                                        }
+                                        @if (item.EducationLevel == 3)
+                                        {
+                                            <span>12th</span>
+                                        }
+                                        @if (item.EducationLevel == 4)
+                                        {
+                                            <span>Graduation</span>
+                                        }
+                                        @if (item.EducationLevel == 5)
+                                        {
+                                            <span>Post Graduation</span>
+                                        }
+                                        @if (item.EducationLevel == 6)
+                                        {
+                                            <span>Other</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Degree)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Institution)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Percentage)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Specialization)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.University)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                    </td>
+
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            }
+            <br />
+            @if (certificate != null && certificate.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Certificates</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Certificate</th>
+                                <th>Institution</th>
+                                <th>Specialization</th>
+                                <th>Percentage</th>
+                                <th>Year Of Passing</th>
+                            </tr>
+                            @if (certificate != null)
+                            {
+                                foreach (var item in certificate)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Certificate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Institution)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Specialization)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Percentage)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+
+                    </div>
+                </div>
+            }
+            <br />
+            @if (Candidateexperience != null && Candidateexperience.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Experience</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th class="strong-left">
+                                    Company Name
+                                </th>
+                                <th class="strong-left">
+                                    Latest Designation
+                                </th>
+                                <th class="strong-left">
+                                    Work Location
+                                </th>
+                                <th class="strong-left">
+                                    Joining Date
+                                </th>
+                                <th class="strong-left">
+                                    Leaving Date
+                                </th>
+                                <th>
+                                    Working Status
+                                </th>
+                            </tr>
+                            @foreach (var item in Candidateexperience)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ComapanyName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LatestDesignation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.WorkLocation)
+                                    </td>
+                                    <td>
+                                        @item.JoiningDate.ToString("dd-MMM-yyyy")
+                                    </td>
+                                    <td>
+                                        @if (item.LeavingDate != null)
+                                        {
+                                            @item.LeavingDate.Value.ToString("dd-MMM-yyyy")
+                                        }
+                                        else
+                                        {
+                                            @item.LeavingDate
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.WorkingStatus)
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <br />
+                </div>
+            }
+            <br />
+            @if (Candidateskill != null && Candidateskill.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Skills</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+
+                                <th>
+                                    Skill Name
+                                </th>
+                                <th>
+                                    Year of Experience
+                                </th>
+                            </tr>
+
+                            @foreach (var item in Candidateskill)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SkillName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.YearofExperience)
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+
+
+                    </div>
+
+                    <br />
+                </div>
+            }
+            <br />
+            @if (Candidatesocial != null)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Socail</h4>
+                    </div>
+                    <br />
+
+                    <div class="col_full">
+                        <label><i class="icon-facebook"></i> </label>&nbsp; <a href="@Candidatesocial.Facebook" target="_blank">@Candidatesocial.Facebook</a>
+                        <br />
+                        <label><i class="icon-google-plus"> </i> </label>&nbsp; <a href="@Candidatesocial.GooglePlus" target="_blank">@Candidatesocial.GooglePlus</a>
+                        <br />
+                        <label><i class="icon-linkedin"></i> </label>&nbsp; <a href="@Candidatesocial.LinkedIn" target="_blank">@Candidatesocial.LinkedIn</a>
+                        <br />
+                        <label><i class="icon-skype"></i> </label>&nbsp; <a href="@Candidatesocial.Skypeid" target="_blank">@Candidatesocial.Skypeid</a>
+                        <br />
+                    </div>
+                </div>
+            }
+            <br />
+        </div>
+    </div>
+}

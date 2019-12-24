@@ -1,0 +1,51 @@
+﻿@using AJSolutions.Areas.Admin.Models
+@model AJSolutions.Areas.Admin.Models.MeetingMinutesView
+@{
+    ViewBag.Title = "MeetingMinutesDetails";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+
+
+    if (user.Role == "Employee")
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    var userId = ViewBag.UserId as string;
+    int counter = 0;
+}
+
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="fancy-title title-bottom-border col_full">
+            <h3>@Model.MeetingSubject</h3>
+        </div>
+        <div class="col_full">
+            <div align="left">Meeting By:  @Model.UpdatedByName</div>
+            <div align="right">Meeting Date:  @Model.MeetingDate.Value.ToString("dd-MMM-yyyy")</div>
+            @if (!string.IsNullOrEmpty(@Model.Location))
+            {
+                <span style="float:right">Location: @Model.Location</span>
+            }
+        </div>
+        <div class="col_full nobottommargin">
+            <label>Participants</label>
+            <blockquote> <p align="justify">@Model.Name</p></blockquote>
+        </div>
+        <div class="col_full nobottommargin">
+            <label>Minutes of Meeting</label>
+            <blockquote> <p align="justify">@Model.MeetingRemarks</p></blockquote>
+        </div>
+        @if (user.Role == "Admin")
+        {
+            <div class="col_full nobottommargin">
+                <label>Internal Comments</label>
+                <blockquote> <p align="justify">@Model.InternalRemarks</p></blockquote>
+            </div>
+        }
+    </div>
+</div>
+<br /><br />

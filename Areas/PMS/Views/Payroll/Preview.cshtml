@@ -1,0 +1,54 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.CorporateTemplate
+
+@{
+    ViewBag.Title = "Preview";
+    Layout = "~/Areas/PMS/Views/Shared/LayoutNoHeaderNoFooter.cshtml";
+    LetterLogoAttachment LetterLogo = ViewData["Url"] as LetterLogoAttachment;
+    
+}
+
+<div class="col_full">
+    @using (Html.BeginForm("Preview", "Payroll", FormMethod.Post, new { id = "Preview" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("URL", ViewBag.Url as string)
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="container" style="padding-left:-10px;">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Template View</h4>
+                </div>
+                <div class="row" id="divsection">
+                    @Html.Raw(Model.Content.Replace("&nbsp;", " "))
+                </div>
+
+                
+
+                @*<div class="row" style="height:700px;width:750px;margin: 2mm 2mm 2mm 2mm; border:solid;">
+        @if (Model.TemplateId != 0){
+            <div class="col_full" style="height:200px;border:thin">
+                <div class="col_one_third nobottommargin" id="CompanyLogoImage">
+                    <img id="imgdisplay" src="@ViewBag.Url" style="height:120px;width:90px;border: 0;display:none"/>
+                    </div>
+                <div class="col_two_third col_last nobottommargin">
+                    @Html.Raw(Model.Header.Replace("&nbsp;", " "))
+                </div>
+            </div>
+            <hr />
+        }
+    </div>*@
+            </div>
+        </div>
+        }
+</div>
+<script>
+    $(document).ready(function () {
+        $('.form-process').fadeOut();
+    });
+
+    
+
+    
+
+</script>
+

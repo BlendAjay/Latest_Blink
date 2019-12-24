@@ -1,0 +1,685 @@
+﻿@using AJSolutions.DAL
+@using AJSolutions.Models;
+@model AJSolutions.Models.TrainingScheduleView
+@{
+    ViewBag.Title = "Training Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    var userId = ViewBag.UserId as string;
+    List<AJSolutions.Models.TrainingScheduleAttachment> attachments = ViewData["Attachment"] as List<AJSolutions.Models.TrainingScheduleAttachment>;
+    List<AJSolutions.Models.TrainingScheduleFinalAttachment> finalattachments = ViewData["FinalAttach"] as List<AJSolutions.Models.TrainingScheduleFinalAttachment>;
+    CourseBatchViewModel batch = ViewData["CourseBatches"] as CourseBatchViewModel;
+    List<TrainingAssessmentView> assessment = ViewData["TrainingAssessment"] as List<TrainingAssessmentView>;
+    int sno = 0;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    if (Model != null)
+    {
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header" id="top">
+                    <h2 class="pageheader-title">Training Details </h2>
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">My Training</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Training Details</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="page-section" id="overview">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="row">
+                                    <div class="col-xl-7 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <h2>@Model.SubjectLine</h2>
+                                    </div>
+                                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        @if (user.DepartmentId == "ADI")
+                                        {
+                                            <a href="#" id="Notifications" class="badge badge-info" onclick="javascript: Notifications('@Model.TrainingId','@Model.CourseCode');" title="Send Notification">Send Notification</a>
+                                        }
+                                    </div>
+                                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <div class="float-xl-right float-none mt-xl-0 mt-4">
+
+                                            @if (user.Role != "Client")
+                                            {
+                                                <div class="col_full">
+                                                    @if (Model.Status == "Assigned" && userId == Model.TrainerId)
+                                                    {
+                                                        <button type="button" class="btn btn-warning  btn-sm" onclick="location.href='@Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Inprogress" })'">Accept</button>
+                                                    }
+                                                    else if (Model.Status == "Inprogress" && userId == Model.TrainerId)
+                                                    {
+                                                        <button type="button" class="btn btn-warning  btn-sm" onclick="Final('@Model.TrainingId');">Complete</button>
+                                                    }
+                                                    else if (Model.Status == "Assigned" && userId == Model.TrainerId)
+                                                    {
+                                                        <button type="button" class="btn btn-warning  btn-sm" style="float:right;" onclick="location.href='@Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Canceled" })'">Cancel Training</button>
+                                                    }
+                                                    @if (Model.Status == "Assigned" && userId == Model.TrainerId)
+                                                    {
+                                                        <button type="button" class="btn btn-primary btn-sm" onclick="location.href='@Url.Action("MyTraining", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Assigned" })'">Reject</button>
+                                                    }
+                                                    @if (user.DepartmentId == "FAC" && Model.Status == "Inprogress" && (user.UserId != Model.TrainerMentorId || Model.TrainerMentorId == Model.TrainerId))//
+                                                    {
+                                                        <a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "CND", Batch = Model.BatchId, CId = batch.CorporateId })" target="_blank" class="button button-3d button-mini button-rounded button-teal" style="float:right;">Add Candidate</a>
+                                                    }
+                                                    @if (Model.Status == "Inprogress" && (user.UserId == Model.TrainerId || user.UserId == user.SubscriberId || user.UserId == Model.TrainerMentorId) && Model.AttendenceNeeded == true)// || user.UserId == Model.TrainerMentorId
+                                                    {
+                                                        <button type="button" class="btn btn-primary right  btn-sm" onclick="location.href='@Url.Action("Record", "Attendance" , new { area = "CMS", Id = Model.TrainingId})'">Attendance</button>
+                                                    }
+                                                    @if (Model.Status == "Inprogress" && (user.DepartmentId == "ADI" || user.UserId == user.SubscriberId || user.UserId == Model.TrainerMentorId) && assessment.Count > 0)
+                                                    {
+                                                        <a href="@Url.Action("TrainingEvaluation", "TMS", new { area = "TMS", Id = Model.TrainingId})" target="_blank" class="btn btn-primary" style="float:right;">Evaluation</a>
+                                                    }
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="lead">@Model.Description</p>
+
+                                <ul class="list-unstyled arrow">
+                                    <li><a href="#"><i class="icon-road"></i>Address:  @Model.Address</a></li>
+                                    <li><a href="#"><i class="icon-location"></i>City:  @Model.City</a></li>
+                                    <li><a href="#"><i class="icon-location"></i>State:  @Model.State</a></li>
+                                    <li><a href="#"><i class="icon-location"></i>Country:  @Model.Country</a></li>
+                                    @if (Model.BatchName != null)
+                                    {
+                                        <li>
+                                            <i class="icon-book"> </i> Course Name:
+                                            <span class="badge">@Model.CourseName</span>
+                                        </li>
+                                    }
+                                    @if (Model.BatchName != null)
+                                    {
+                                        <li>
+                                            <i class="icon-stack"> </i> Batch Name:
+                                            <span class="badge">@Model.BatchName</span>
+
+                                        </li>
+                                    }
+                                    <li>
+                                        <i class="icon-calendar"> </i> Training Schedule:
+                                        <span class="badge">@batch.FromDate.ToString("dd-MMM-yyyy") &nbsp;&nbsp; - &nbsp;&nbsp;@batch.ToDate.ToString("dd-MMM-yyyy")</span>
+
+                                    </li>
+                                    @if (batch.FromTime != null || batch.ToTime != null)
+                                    {
+                                        <li>
+                                            <i class="icon-clock"> </i> Schedule Time:
+                                            <span class="badge">@batch.FromTime.TimeOfDay &nbsp;&nbsp; - &nbsp;&nbsp;@batch.ToTime.TimeOfDay</span>
+
+                                        </li>
+                                    }
+                                    @if (Model.OtherTrainerId != null)
+                                    {
+                                        <li>
+                                            <i class="icon-users"> </i> Other Trainer:
+                                            <span class="badge">@Model.TrainerName</span>
+
+                                        </li>
+                                    }
+                                    @if (Model.OtherTrainerId != null)
+                                    {
+                                        <li>
+                                            <i class="icon-users"> </i> Total Trainer:
+                                            <span class="badge">@(@Model.TrainersCount + 1)</span>
+
+                                        </li>
+                                    }
+                                    @if (batch.ContentLink != null)
+                                    {
+                                        <li>
+                                            <i class="icon-users"> </i> Course Content Link:
+                                            <span class="badge"><a href="@batch.ContentLink" target="_blank" title="Click Here to Open Content Link">Content Link</a></span>
+
+                                        </li>
+                                    }
+                                </ul>
+                                <div>
+                                    @if (assessment.Count() > 0)
+                                    {
+                                        <div class="list-group">
+                                            <a href="#" class="list-group-item active">
+                                                Training Evaluation
+                                            </a>
+                                            @foreach (var item in assessment)
+                                            {
+                                                <div class="list-group-item">
+                                                    @{ sno++; }
+                                                    @sno.  @item.Assessment (@item.Weightage %)
+                                                    @if (Model.Status == "Inprogress" && (user.UserId == Model.TrainerId || user.UserId == Model.TrainerMentorId) && assessment.Count > 0)
+                                                    {
+                                                        <a href="@Url.Action("TrainingEvaluation", "TMS", new { area = "TMS", Id = Model.TrainingId, Assessment = item.AssessmentId })" target="_blank" class="btn btn-primary btn-xs" style="float:right;">Evaluation</a>
+                                                    }
+                                                    @if (user.DepartmentId == "ADI" && Model.Status == "Assigned")
+                                                    {
+                                                        <a href="#" id="AssessmentNotifications" class="btn btn-default btn-xs fright" onclick="javascript: AssessmentNotifications('@item.AssessmentId', '@Model.TrainingId');" title="Send Notification">Send Notification</a>
+                                                    }
+                                                </div>
+
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+        @*<div class="container">
+                <div id="contact-form-overlay" class="clearfix">
+                    <div class="row">
+                        <div class="form-process"></div>
+                        @if (user.Role != "Client")
+                        {
+                            <div class="col_full">
+
+                                @if (Model.Status == "Assigned" && userId == Model.TrainerId)
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Inprogress" })'">Accept</button>
+                                }
+                                else if (Model.Status == "Inprogress" && userId == Model.TrainerId)
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="Final('@Model.TrainingId');">Complete</button>
+
+                                }
+                                else if (Model.Status == "Assigned" && userId == Model.TrainerId)
+                                {
+                                    <button type="button" class="btn btn-warning" style="float:right;" onclick="location.href='@Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Canceled" })'">Cancel Training</button>
+                                }
+                                @if (Model.Status == "Assigned" && userId == Model.TrainerId)
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyTraining", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Assigned" })'">Reject</button>
+                                }
+                                @if (user.DepartmentId == "FAC" && Model.Status == "Inprogress" && (user.UserId != Model.TrainerMentorId || Model.TrainerMentorId == Model.TrainerId))//
+                                {
+
+                                    <a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "CND", Batch = Model.BatchId, CId = batch.CorporateId })" target="_blank" class="button button-3d button-mini button-rounded button-teal" style="float:right;">Add Candidate</a>
+
+                                }
+                                @if (Model.Status == "Inprogress" && (user.UserId == Model.TrainerId || user.UserId == user.SubscriberId || user.UserId == Model.TrainerMentorId) && Model.AttendenceNeeded == true)// || user.UserId == Model.TrainerMentorId
+                                {
+                                    <button type="button" class="btn btn-primary right" onclick="location.href='@Url.Action("Record", "Attendance" , new { area = "CMS", Id = Model.TrainingId})'">Attendance</button>
+                                }
+                                @if (Model.Status == "Inprogress" && (user.DepartmentId == "ADI" || user.UserId == user.SubscriberId || user.UserId == Model.TrainerMentorId) && assessment.Count > 0)
+                                {
+                                    <a href="@Url.Action("TrainingEvaluation", "TMS", new { area = "TMS", Id = Model.TrainingId})" target="_blank" class="btn btn-primary" style="float:right;">Evaluation</a>
+                                }
+                            </div>
+                        }
+
+                        <div class="fancy-title title-bottom-border">
+                            <h4>Training Details for @Model.SubjectLine</h4>
+                            @if (user.DepartmentId == "ADI")
+                            {
+                                <a href="#" id="Notifications" class="btn btn-default btn-xs fright" onclick="javascript: Notifications('@Model.TrainingId','@Model.CourseCode');" title="Send Notification">Send Notification</a>
+                            }
+                        </div>
+
+                        <div class="col_full">
+                            <ul class="entry-meta clearfix">
+                                @if (Model.TrainingId != null)
+                                {
+                                    <li><a href="#"><i class="icon-line-circle-check"></i> @Model.TrainingId</a></li>
+                                }
+                                @if (Model.Status != null)
+                                {
+                                    <li><a href="#"><i class="icon-anchor"></i> @Model.Status</a></li>
+                                }
+                                @if (Model.DepartmentId == "FAC")
+                                {
+                                    <li><a href="@Url.Action("EmployeeProfile", "Employee", new { area = "EMS", UserId = Model.TrainerId })" target="_blank"><i class="icon-user"></i><span>Trainer: </span>@Model.Name </a></li>
+                                    if (Model.TrainerMentor != "NA")
+                                    {
+                                        <li><i class="icon-user-md"></i><span>Coordinator: </span>@Model.TrainerMentor </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li><a href="@Url.Action("AdminProfile", "Admin", new { area = "Admin", SubscriberId = Model.TrainerId })" target="_blank"><i class="icon-user"></i><span>Trainer: </span>@Model.Name </a></li>
+                                    if (Model.TrainerMentor != "NA")
+                                    {
+                                        <li><i class="icon-user-md"></i><span>Coordinator: </span>@Model.TrainerMentor </li>
+                                    }
+                                }
+                                @if (attachments != null)
+                                {
+                                    foreach (var attach in attachments)
+                                    {
+                                        if (attach.TrainingId == Model.TrainingId)
+                                        {
+                                            <li><a href="~/File/TrainingScheduleAttachment?id=@attach.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Admin</a></li>
+                                        }
+                                    }
+                                }
+                                @if (finalattachments != null)
+                                {
+                                    foreach (var final in finalattachments)
+                                    {
+                                        if (final.TrainingId == Model.TrainingId)
+                                        {
+                                            <li><a href="~/File/TrainingFinalAttachment?id=@final.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Admin</a></li>
+                                        }
+                                    }
+                                }
+                                @if (Model.Status == "Completed")
+                                {
+                                    <li><a href="#" id="Report" onclick="javascript: TrainingSummReport('@Model.BatchId','@Model.TrainingId');" title="Download Summary"><i class="icon-download"></i>Training Summary</a></li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col_full">
+                            <blockquote> <p align="justify">@Model.Description</p></blockquote>
+                        </div>
+                        @if (batch.FromDate != null || batch.ToDate != null)
+                        {
+                            <div class="col_full">
+                                <ul class="list-group">
+                                    @if (Model.BatchName != null)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="badge">@Model.CourseName</span>
+                                            <i class="icon-book"> </i> Course Name:
+                                        </li>
+                                    }
+                                    @if (Model.BatchName != null)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="badge">@Model.BatchName</span>
+                                            <i class="icon-stack"> </i> Batch Name:
+                                        </li>
+                                    }
+                                    <li class="list-group-item">
+                                        <span class="badge">@batch.FromDate.ToString("dd-MMM-yyyy") &nbsp;&nbsp; - &nbsp;&nbsp;@batch.ToDate.ToString("dd-MMM-yyyy")</span>
+                                        <i class="icon-calendar"> </i> Training Schedule:
+                                    </li>
+                                    @if (batch.FromTime != null || batch.ToTime != null)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="badge">@batch.FromTime.TimeOfDay &nbsp;&nbsp; - &nbsp;&nbsp;@batch.ToTime.TimeOfDay</span>
+                                            <i class="icon-clock"> </i> Schedule Time:
+                                        </li>
+                                    }
+                                    @if (Model.OtherTrainerId != null)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="badge">@Model.TrainerName</span>
+                                            <i class="icon-users"> </i> Other Trainer:
+                                        </li>
+                                    }
+                                    @if (Model.OtherTrainerId != null)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="badge">@(@Model.TrainersCount + 1)</span>
+                                            <i class="icon-users"> </i> Total Trainer:
+                                        </li>
+                                    }
+                                    @if (batch.ContentLink != null)
+                                    {
+                                        <li class="list-group-item">
+                                            <span class="badge"><a href="@batch.ContentLink" target="_blank" title="Click Here to Open Content Link">Content Link</a></span>
+                                            <i class="icon-users"> </i> Course Content Link:
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        <div>
+                            @if (assessment.Count() > 0)
+                            {
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item active">
+                                        Training Evaluation
+                                    </a>
+                                    @foreach (var item in assessment)
+                                    {
+                                        <div class="list-group-item">
+                                            @{ sno++; }
+                                            @sno.  @item.Assessment (@item.Weightage %)
+                                            if (Model.Status == "Inprogress" && (user.UserId == Model.TrainerId || user.UserId == Model.TrainerMentorId) && assessment.Count > 0)
+                                            {
+                                            <a href="@Url.Action("TrainingEvaluation", "TMS", new { area = "TMS", Id = Model.TrainingId, Assessment = item.AssessmentId })" target="_blank" class="btn btn-primary btn-xs" style="float:right;">Evaluation</a>
+                                            }
+                                            @if (user.DepartmentId == "ADI" && Model.Status == "Assigned")
+                                            {
+                                                <a href="#" id="AssessmentNotifications" class="btn btn-default btn-xs fright" onclick="javascript: AssessmentNotifications('@item.AssessmentId', '@Model.TrainingId');" title="Send Notification">Send Notification</a>
+                                            }
+                                        </div>
+
+                                    }
+                                </div>
+                            }
+                        </div>
+                        <div class="col_full">
+                            <ul class="entry-meta clearfix">
+                                <li><a href="#"><i class="icon-road"></i> @Model.Address</a></li>
+                                <li><a href="#"><i class="icon-location"></i> @Model.City</a></li>
+                                <li><a href="#"><i class="icon-location"></i> @Model.State</a></li>
+                                <li><a href="#"><i class="icon-location"></i> @Model.Country</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Would you like to add some attachment</h4>
+                            <br />
+                            <center>
+                                <button type="button" class="button button-3d button-small button-rounded button-teal" onclick="attach('@Model.TrainingId');">Yes</button> &nbsp;&nbsp; &nbsp;&nbsp;
+                                <button type="button" class="button button-3d button-small button-rounded button-red" onclick="location.href='@Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = Model.TrainingId, Status = "Completed" })'">No</button>
+                            </center>
+                        </div>
+                        <div class="modal-body" id="cndBody">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Attach File</h4>
+                        </div>
+                        <div class="modal-body" id="cndBody">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+        @Html.Hidden("RedirectToHome", Url.Action("TrainingDetails", "TMS"));
+        @Html.Hidden("RedirectToReport", Url.Action("DownloadTrainingAssessmentSummary", "TMS", new { area = "TMS" }));
+    }
+}
+
+@*<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page contain some actions reagrding training like evaluation details, taking attendance and adding a new candidate in that training program.
+                                </p>
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+                                        <a href="~/images/HelpImages/trainingactions.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/trainingactions.png" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+<div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel44" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel44"><b>Help & Support</b> </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="tabs clearfix" id="tab-1">
+                        <ul class="tab-nav clearfix">
+                            <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                            <li><a href="#tabs-2">Page Elements </a></li>
+                            <li><a href="#tabs-3">Video</a></li>
+                        </ul>
+                        <div class="tab-container">
+                            <div class="tab-content clearfix" id="tabs-1">
+                                <h4> the Navigation to Training Details page     </h4>
+
+                                <img src="~/images/gif/navigation to training details page.gif" alt="Save icon" />
+                            </div>
+                            <div class="tab-content clearfix" id="tabs-2">
+                                <h6> Here you can see the training full details .</h6>
+
+                                <p>•Click on training title then training detail page is open . </p>
+
+                                <img src="~/images/Images1/Training Detail view tab.png" width="600" height="200">
+
+                                <h6> Here you can see Training full details.   </h6>
+                                <img src="~/images/Images1/training detailssss page.png" width="600" height="400">
+                                <h6> Here you can see Training Title.   </h6>
+                                <img src="~/images/Images1/training title.png" width="600" height="400">
+                                <h6> Here you can see Training id.   </h6>
+                                <img src="~/images/Images1/training id.png" width="600" height="400">
+
+                                <h6> Here you can see Training Status.   </h6>
+                                <img src="~/images/Images1/training status.png" width="600" height="400">
+
+                                <h6> Here you can see Trainer Name.   </h6>
+                                <img src="~/images/Images1/trainer name.png" width="600" height="400">
+                                <h6> Here you can download training summary.   </h6>
+                                <img src="~/images/Images1/training summary download.png" width="600" height="400">
+                                <h6> Here you can see training Description.   </h6>
+                                <img src="~/images/Images1/training description.png" width="600" height="400">
+                                <h6> Here you can see course name,training schedule date & time .   </h6>
+                                <img src="~/images/Images1/training course deatils.png" width="600" height="400">
+                                <h6> Here you can see Training Evaluations .  </h6>
+                                <img src="~/images/Images1/Training Evaluation.png" width="600" height="400">
+                                <h6> Here you can see Training Location .  </h6>
+                                <img src="~/images/Images1/training loacation.png" width="600" height="400">
+                            </div>
+                            <div class="tab-content clearfix" id="tabs-3">
+
+                                <h4> Training Video for training detail page functionality.   </h4>
+
+                                <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/IMqzuThB0A0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+
+    function attach(TrainingId) {
+        var paramPub;
+        paramPub = "TrainingId=" + TrainingId;
+        paramPub = $('#weburl').val() + "/TMS/User/ConfirmEmployee?" + paramPub;
+        $('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    function Final() {
+        $('#cndBody').load();
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    $(document).ready(function () {
+        if ($("#SaveStatus").val() == "True" || $("#SaveStatus").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Training Updated <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+    function TrainingSummReport(BatchId, TrainingId) {
+        var url = $("#RedirectToReport").val() + "?BatchId=" + BatchId + "&TrainingId=" + TrainingId;
+        window.location.href = url;
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+
+    function Notifications(TrainingId, CourseCode) {
+        $('.form-process').fadeIn()
+        $.ajax({
+            type: "post",
+            url: "/TMS/TMS/SendNotification",
+            data: {
+                TrainingId: TrainingId,
+                CourseCode: CourseCode
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('.form-process').fadeOut()
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Notifications Sent Successfully',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val() + "?Id=" + TrainingId;
+                            location.href = url;
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function AssessmentNotifications(AssessmentId, TrainingId) {
+        $('.form-process').fadeIn()
+        $.ajax({
+            type: "post",
+            url: "/TMS/TMS/SendAssessmentNotification",
+            data: {
+                TrainingId: TrainingId,
+                AssessmentId: AssessmentId,
+                CourseCode: CourseCode
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('.form-process').fadeOut()
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Assessment Notifications Sent Successfully',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val() + "?Id=" + TrainingId;
+                            location.href = url;
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>

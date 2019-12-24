@@ -1,0 +1,184 @@
+﻿@using AJSolutions.Models;
+@model LetterType
+@{
+    ViewBag.Title = "LetterType";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<LetterType> lettertypelist = ViewData["LetterTypeList"] as List<LetterType>;
+
+}
+@using (Html.BeginForm("LetterType", "Payroll", FormMethod.Post, new { @class = "form-horizontal", id = "LetterType", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Status as string)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Letter Type</h4>
+                </div>
+                <div class="col_half">
+                    @Html.Label("Letter Type Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                        @Html.EditorFor(model => model.LetterTypeName, new { htmlAttributes = new { @class = "form-control required", id = "LetterTypeName", placeholder = "Enter the Letter Name" } })
+                    </div>
+                </div>
+                <br />
+                <input type="submit" id="AddLetterType" value="submit" class="button button-rounded button-teal" />
+
+            </div>
+
+            @if (lettertypelist.Count > 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>Letter Type Name</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in lettertypelist)
+                                {
+                                    <tr>
+                                        @if (item.LetterTypeName == "HR Policies" || item.LetterTypeName == "HR Handbook" ||
+                                            item.LetterTypeName == "Employee Manual" || item.LetterTypeName == "Leave Policies" ||
+                                            item.LetterTypeName == "Offer letter" || item.LetterTypeName == "Appointment Letter" ||
+                                            item.LetterTypeName == "Confirmation Letter" || item.LetterTypeName == "Transfer Letter" ||
+                                            item.LetterTypeName == "Promotion Letter" || item.LetterTypeName == "Relieving Letter" ||
+                                            item.LetterTypeName == "Experience Letter" || item.LetterTypeName == "Letter of Increment" ||
+                                            item.LetterTypeName == "Termination Letter" || item.LetterTypeName == "Appreciation Letter" ||
+                                            item.LetterTypeName == "Warning Letter")
+                                        {
+                                            <td>
+                                                @item.LetterTypeName
+                                            </td>
+                                            <td>
+                                                <span> Default</span>
+                                            </td>
+                                        }
+                                        else
+                                        {
+
+                                        <td>@item.LetterTypeName</td>
+                                        <td>
+                                            <a href="@Url.Action("LetterType", "Payroll", new { LetterTypeId = item.LetterTypeId })" title="Edit"><i class="icon-pen"></i></a>|
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.LetterTypeId');" title="Remove"><i class="icon-trash"></i></a>
+                                        </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.Hidden("LetterTypeId", Model.LetterTypeId)
+
+        @Html.Hidden("RedirectTo", Url.Action("RemoveLetterType", "Payroll"))
+        @Html.Hidden("RedirectToHome", Url.Action("LetterType", "Payroll"))
+    </div>
+}
+<script type="text/javascript">
+    $("#LetterType").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/LetterType",
+                data: {
+                    LetterTypeId: $('#LetterTypeId').val(),
+                    LetterTypeName: $('#LetterTypeName').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    if (data == "Succeeded") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    else if (data == "Unsucceeded") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went <b>wrong.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                            }
+                        });
+                    }
+                    else if (data == "Exists") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Letter Type Name already <b> EXISTS.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'icon-info-sign icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                }
+            });
+        }
+    });
+    $(document).ready(function () {
+        if ($("#SaveStatus").val() == "Exists") {
+            $.alert({
+                title: 'Sorry',
+                content: 'These Letter Type already is in <b> Use.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'icon-info-sign icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    function ConfirmationDialog(LetterTypeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'icon-warning-sign icon-2x ',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?LetterTypeId=" + LetterTypeId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

@@ -1,0 +1,170 @@
+﻿@using AJSolutions.Models
+@model AJSolutions.Models.BankDetails
+@{
+    ViewBag.Title = "Bank Details";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("BankDetails", "Dashboard", FormMethod.Post, new { @area = "CMS", @class = "needs-validation", id = "BankDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Bank Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Bank Account</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label for="validationCustom01">Bank Name</label>
+                            @Html.EditorFor(model => model.BankName, new { htmlAttributes = new { @class = "form-control ", id = "BankName", placeholder = "e.g. Punjab National  Bank", required = "required" } })
+                            <br>
+                            @Html.LabelFor(model => model.AccountNumber, "Account Number")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-note"> </i></span>
+                                @Html.EditorFor(model => model.AccountNumber, new { htmlAttributes = new { @type = "number", @class = "form-control number", id = "ContactNumber", placeholder = "e.g. 2179001400000890", required = "required" } })
+                            </div>
+                            <br>
+                            @Html.LabelFor(model => model.AccountOwner, "Account Owner")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user3"> </i></span>
+                                @Html.EditorFor(model => model.AccountOwner, new { htmlAttributes = new { @class = "form-control required", id = "AccountOwner", placeholder = "e.g. john smith", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.AccountOwner, "", new { @class = "text-danger" })
+                            <br>
+                            @Html.LabelFor(model => model.BranchAddress, "Branch Location")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.EditorFor(model => model.BranchAddress, new { htmlAttributes = new { @class = "form-control required", id = "BranchAddress", placeholder = "e.g. Raipur", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.BranchAddress, "", new { @class = "text-danger" })
+                            <br>
+
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.IfscCode, "IFSC Code")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-clip"> </i></span>
+                                @Html.EditorFor(model => model.IfscCode, new { htmlAttributes = new { @class = "form-control required", id = "IfscCode", placeholder = "e.g. PUNB0039900", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.IfscCode, "", new { @class = "text-danger" })
+                            <br>
+                            @Html.LabelFor(model => model.BranchCode, "Branch Code")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-box"> </i></span>
+                                @Html.EditorFor(model => model.BranchCode, new { htmlAttributes = new { @class = "form-control required", id = "BranchCode", placeholder = "e.g. 039900", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.BranchCode, "", new { @class = "text-danger" })
+                            <br>
+                            @Html.LabelFor(model => model.ContactNumber, "Contact Number")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                                @Html.EditorFor(model => model.ContactNumber, new { htmlAttributes = new { @class = "form-control required", id = "ContactNumber", placeholder = "e.g. +918765456789", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.ContactNumber, "", new { @class = "text-danger" })
+                            <br>
+                            @*@if (user.SubscriberId == user.UserId || user.DepartmentId == "BPT" || user.Role == "Employee")
+                                {*@
+                            @Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+                            <input type="submit" id="bankdetails" value="Submit" style="float: right;" class="btn btn-primary" />
+                            @*}*@
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("BankDetails", "Dashboard"));
+}
+<script type="text/javascript">
+    $(document).on("keydown", "#ContactNumber", function () {
+        if ($("#ContactNumber").val() != undefined || $('#ContactNumber').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#IfscCode", function () {
+        if ($("#IfscCode").val() != undefined || $('#IfscCode').val() != '') {
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                return;
+            }
+            else {
+                if (event.shiftKey || (event.keyCode < 65 || event.keyCode > 90) && (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $("#BankDetails").validate({
+        submitHandler: function (form) {
+            alert("hello");
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {                   
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+</script>

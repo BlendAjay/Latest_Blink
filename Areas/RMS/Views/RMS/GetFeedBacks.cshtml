@@ -1,0 +1,182 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.Areas.RMS.Models;
+@model  PagedList.IPagedList<Feedbackview>
+@{
+    ViewBag.Title = "GetFeedBacks";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    int Count = 0;
+    var CountStr = "countdown-ex";
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("GetFeedBacks", "RMS", FormMethod.Post, new { @class = "form-horizontal", id = "GetFeedBacks", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <label>Trainer FeedBacks</label>
+            <div class="form-process"></div>
+            <div class="col_full">
+                <div class="col_one_third">
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-money"> </i></span>
+                        @Html.DropDownList("FrequencyStatus", null, "--- Select Frequency ---", htmlAttributes: new { @class = "form-control", id = "FrequencyStatus" })
+                    </div>
+                </div>
+                <div class="col_one_third">
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-money"> </i></span>
+                        @Html.DropDownList("TrainerId", null, "--- Select Trainer ---", htmlAttributes: new { @class = "form-control", id = "Employee" })
+                    </div>
+                </div>
+                <div class="col_one_third col_last">
+                    <button type="button" id="btnSearch" class="btn btn-green btnalignleft" onclick="GetData();" title="Search">Filter</button>
+                    <button type="button" class="btn btn-green btnalignleft" onclick="location.href='@Url.Action("GetFeedBacks", "RMS", new { Area = "RMS"})'" title="Clear">Clear</button>
+                </div>
+            </div>
+            <br /><br />
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        @*<th>Question</th>
+                            <th>Gap Observed</th>
+                            <th>Suggestive Measures</th>*@
+                        <th>
+                            <nobr><a href="@Url.Action("GetFeedBacks", "RMS", new { sortOrder = ViewBag.NameSortParam, Frequency = ViewBag.Frequency, Name = ViewBag.Name, page = ViewBag.Page, PageSize = ViewBag.Paging })">Name&nbsp;<span class="icon-sort"></span></a></nobr>
+                        </th>
+                        <th>
+                            <nobr><a href="@Url.Action("GetFeedBacks", "RMS", new { sortOrder = ViewBag.FrequencySortParam, Frequency = ViewBag.Frequency, Name = ViewBag.Name, page = ViewBag.Page, PageSize = ViewBag.Paging })">Frequency&nbsp;<span class="icon-sort"></span></a></nobr>
+                        </th>
+                        <th>
+                            <nobr><a href="@Url.Action("GetFeedBacks", "RMS", new { sortOrder = ViewBag.FeedBackdateSortParam, Frequency = ViewBag.Frequency, Name = ViewBag.Name, page = ViewBag.Page, PageSize = ViewBag.Paging })">FeedBack Date&nbsp;<span class="icon-sort"></span></a></nobr>
+                        </th>
+                        <td>
+                            <nobr><a href="@Url.Action("GetFeedBacks", "RMS", new { sortOrder = ViewBag.SubmittedSortParam, Frequency = ViewBag.Frequency, Name = ViewBag.Name, page = ViewBag.Page, PageSize = ViewBag.Paging })">Submitted On&nbsp;<span class="icon-sort"></span></a></nobr>
+                        </td>
+                        <td>FeedBack</td>
+                    </tr>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            Count = Count + 1;
+                            CountStr = "countdown-ex" + Count;
+                            <tr>
+                                @*<td>
+                                        @Html.DisplayFor(modelItem => item.Question)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.GapObserved)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SuggestiveMeasures)
+                                    </td>*@
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Frequency)
+                                </td>
+                                <td>
+                                    @item.FeedBackdate.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    <span>@item.UpdatedOn.ToString("dd-MMM-yyyy")</span>
+                                </td>
+                                <td>@Html.ActionLink("View FeedBack", "GetFeedBackDetails", "RMS", new { area = "RMS", TrainerAssignId = item.TrainerAssignId, Frequency = item.Frequency }, htmlAttributes: new { target = "_blank" })</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+            @if (Count == 0)
+            {
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-thumbs-down2"></i>
+                    </div>
+                    <h3>No Feedback added by this Trainer<span class="subtitle"></span></h3>
+                </div>
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Clients", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("Redirect", Url.Action("GetFeedBacks", "RMS"))
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page contain details of feedbacks given by trainer. A client can see the trainer feedback if the client has given a job order of training type.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/trainerfeedback.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/trainerfeedback.png" />
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+
+
+    function GetData(frequency) {
+        var freq = $("#FrequencyStatus :selected").val();
+        var emp = $("#Employee :selected").val();
+        window.location.href = $('#Redirect').val() + "?Frequency=" + freq + "&TrainerId=" + emp;
+    }
+
+   
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#Redirect").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>
+
+

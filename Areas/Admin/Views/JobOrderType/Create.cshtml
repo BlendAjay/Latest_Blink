@@ -1,0 +1,125 @@
+﻿@model AJSolutions.Models.JobOrderTypeMaster
+
+@{
+    ViewBag.Title = "Create";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+@using (Html.BeginForm("Create", "JobOrderType", FormMethod.Post, new { @area = "Admin", @class = "form-horizontal needs-validation", id = "Create", role = "form" }))
+{
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <br />
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h3>Add Job Order Type</h3>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="col_half">
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @Html.EditorFor(model => model.JobOrderType, new { htmlAttributes = new { @class = "form-control required", placeholder = "JobOrderType" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.JobOrderType, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    <input type="submit" value="Add" class="button button-3d button-rounded button-teal" style="float: right;" />
+                </div>
+            </div>
+        }
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding job order type as per your requirement.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/joadd.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/joadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    @Html.Hidden("RedirectToHome", Url.Action("Index", "JobOrderType", new { area = "Admin"}))
+}
+<script type="text/javascript">
+
+    $("#Create").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'JobOrder Type Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+<script type="text/javascript">
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+    </script>

@@ -1,0 +1,72 @@
+﻿@using AJSolutions.Models;
+@{
+    ViewBag.Title = "BirthDay Details";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<EmployeeBasicDetails> Planner = ViewData["Birthday"] as IEnumerable<EmployeeBasicDetails>;
+}
+@using (Html.BeginForm("BirthDay", "Calendar", FormMethod.Post, new { @class = "form-horizontal", id = "Calendar", role = "form" }))
+{
+    <div class="container">
+        <div data-provide="calendar" id="calendar"></div>
+    </div>
+
+
+}
+
+<script>
+
+
+    $(function () {
+        var currentYear = new Date().getFullYear();
+
+        $('#calendar').calendar({
+            enableContextMenu: true,
+            mouseOnDay: function (e) {
+                if (e.events.length > 0) {
+                    var content = '';
+
+                    for (var i in e.events) {
+                        content += '<div class="event-tooltip-content">'
+                                + '<div class="event-name" style="color:' + e.events[i].color + '">' + e.events[i].name + '</div>'
+                                + '</div>';
+                    }
+
+                    $(e.element).popover({
+                        trigger: 'manual',
+                        container: 'body',
+                        html: true,
+                        content: content
+                    });
+
+                    $(e.element).popover('show');
+                }
+            },
+            mouseOutDay: function (e) {
+                if (e.events.length > 0) {
+                    $(e.element).popover('hide');
+                }
+            },
+            dayContextMenu: function (e) {
+                $(e.element).popover('hide');
+            },
+            dataSource: []
+        });
+
+        $(document).ready(function () {
+
+            var calList = [
+            @foreach (var item in Planner)
+            {
+                if(item.DOB != null  && !string.IsNullOrEmpty(item.Name))
+                {
+                @:{id: '@item.UserId', name:  '@item.Name', startDate: new Date(currentYear, @item.DOB.Value.Month - 1 , @item.DOB.Value.Day), endDate: new Date(currentYear, @item.DOB.Value.Month - 1 , @item.DOB.Value.Day) },
+            }
+            }]
+
+            $('#calendar').data('calendar').setDataSource(calList, false);
+
+        });
+
+
+    });
+</script>

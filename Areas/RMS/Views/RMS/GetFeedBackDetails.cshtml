@@ -1,0 +1,112 @@
+﻿@using AJSolutions.Areas.RMS.Models;
+@model IEnumerable<Feedbackview>
+@{
+    ViewBag.Title = "GetFeedBackDetails";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    Feedbackview branch = ViewData["BranchDetails"] as Feedbackview;
+}
+
+@using (Html.BeginForm("GetFeedBackDetails", "RMS", FormMethod.Post, new { @class = "form-horizontal", id = "GetFeedBackDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Frequency", ViewBag.Frequency as string)
+    @Html.Hidden("TrainerId", ViewBag.TrainerId as string)
+    @Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+    @Html.Hidden("TrainerAssignId", ViewBag.TrainerAssignId as string)
+    if (branch != null)
+    {
+        @Html.Hidden("BranchCode", branch.BranchCode as string)
+    }
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            @if (branch != null)
+            {
+                <div class="fancy-title title-dotted-border">
+                    <h3>Trainer Details</h3>
+                </div>
+                <div class="container">
+                    <div class="col_full">
+                        <div class="col_half">
+                            <b>Trainer Name: </b><span class="badge">@branch.EmployeeName</span>
+                        </div>
+                        <div class="col_half col_last">
+                            <b>Contact Number: </b><span class="badge">@branch.AlternateContact</span>
+                        </div>
+                        <div class="col_half">
+                            <b>Branch Code: </b><span class="badge">@branch.BranchCode</span>
+                        </div>
+                        <div class="col_half col_last">
+                            <b>Branch Name: </b>  <span class="badge">@branch.BranchName</span>
+                        </div>
+                        <div class="col_half">
+                            <b>Branch Zone: </b><span class="badge">@branch.BranchZone</span>
+                        </div>
+                        <div class="col_half col_last">
+                            <b>Corporate: </b>  <span class="badge">@branch.Name</span>
+                        </div>
+
+                    </div>
+                </div>
+                <br /><hr />
+            }
+            @if (Model != null)
+            {
+                if (branch != null)
+            {
+                <div class="fancy-title title-dotted-border">
+                    <h3>FeedBack by @branch.Name</h3>
+                </div>
+                }
+                <br />
+                foreach (var item in Model)
+                {
+                    <div class="col_full">
+                        <div class="col_full">
+                            <b>Question:</b> @item.Question
+                        </div>
+                        <div class="col_full">
+                            <b>Gap Observed: </b> @Html.DisplayFor(modelItem => item.GapObserved)
+                        </div>
+                        <div class="col_full">
+                            <b>Suggestive Measures:</b> @Html.DisplayFor(modelItem => item.SuggestiveMeasures)
+                            <br />
+                        </div>
+                        <hr />
+                    </div>
+                }
+                <input type="submit" id="btnGetReport" class="button button-3d button-rounded button-teal" name="btnGetReport" value="Download Report" style="float:right" />
+
+            }
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+
+    function GetData(frequency) {
+        var freq = $("#FrequencyStatus :selected").val();
+        window.location.href = $('#Redirect').val() + "?Id=" + freq;
+    }
+    $("#Index").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/RMS/RMS/GetFeedBackDetails",
+                data: {
+                    Frequency: $('#Frequency').val,
+                    TrainerId: $('#TrainerId').val,
+                    BranchCode: $('#BranchCode').val,
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+
+                }
+            });
+        }
+    });
+
+
+</script>

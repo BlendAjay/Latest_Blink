@@ -1,0 +1,95 @@
+﻿@model AJSolutions.Models.PlanFeatures
+@{
+    ViewBag.Title = "Plan Features";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    IEnumerable<AJSolutions.Models.PlanFeaturesView> planFeatures = ViewData["planFeatures"] as IEnumerable<AJSolutions.Models.PlanFeaturesView>;
+    IEnumerable<AJSolutions.Models.Features> features = ViewData["features"] as IEnumerable<AJSolutions.Models.Features>;
+}
+@using (Html.BeginForm("PlanFeatures", "Plan_Pricing", FormMethod.Post, new { @class = "form-horizontal", id = "PlanFeatures", role = "form" }))
+{
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Plan</h4>
+                </div>
+                <div class="row">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.PlanId, "Feature Sequence")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.DropDownList("PlanId", null, "---  Select Plan ---", htmlAttributes: new { @class = "form-control", id = "PlanId", placeholder = "Select Plan" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PlanId, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half col_last">
+                        <div class="row">
+                            <div class="container">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered nobottommargin">
+                                        <tr>
+                                            <th>Select</th>
+                                            <th>Plans</th>
+                                        </tr>
+                                        @if (features != null)
+                                        {
+                                            foreach (var item in features)
+                                            {
+                                                <tr>
+                                                    <td data-title="Parameter">
+                                                        <input type="checkbox" id="FeatureId" name="FeatureId[]" value="@item.FeatureId" class="required" />
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Feature)
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" id="PlanFeatures" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+                </div>
+            </div>
+
+        </div>
+        <br /> <br />
+        <div class="row">
+            <div class="container">
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>Plan</th>
+                            <th>Features</th>
+                        </tr>
+                        @if (planFeatures != null)
+                        {
+                            foreach (var item in planFeatures)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PlanName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Feature)
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("PlanFeatures", "Plan_Pricing", new { area = "Admin" }))
+}

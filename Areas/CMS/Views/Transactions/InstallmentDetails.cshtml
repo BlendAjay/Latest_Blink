@@ -1,0 +1,287 @@
+﻿@using AJSolutions.Models;
+@model CourseMasterView
+@{
+    ViewBag.Title = "InstallmentDetails";
+    Layout = "~/Areas/CMS/Views/Shared/_LayoutNoHeaderNoFooter.cshtml";
+}
+@using (Html.BeginForm("InstallmentDetails", "Transactions", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", id = "InstallmentDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("UserId", ViewBag.UserId as string);
+    @Html.Hidden("CourseCode", ViewBag.CourseCode as string);
+    @Html.Hidden("BatchId", ViewBag.BatchId as string);
+    <div class="container">
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h4>Fee Setting</h4>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Select</th>
+                        <th>Fee Details</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="CourseFee" name="CourseFee" disabled="disabled" checked="checked" value="@Model.CourseFee"></td>                        
+                        <td>
+                            <label>Course Fee</label>
+                        </td>
+                        <td>
+                            @Html.TextBox("CourseFee", Model.CourseFee, new { @class = "form-control", @id = "CourseFee", @readonly = "readonly", placeholder = "Eg: 10000" })
+                        </td>
+
+                    </tr>
+                    <tr>
+                        @if (@Model.TotalFeeAmount == 0.0)
+                        {
+                            <td><input type="checkbox" id="Accommodation" name="Accommodation" class="txt" checked="checked" value="@Model.Accommodation"></td>
+                        }
+                        else
+                        {
+                            <td><input type="checkbox" id="Accommodation" name="Accommodation" class="txt" checked="@Model.IsAccommodation" value="@Model.Accommodation"></td>
+                        }
+                        <td>
+                            <label>Accommodation</label>
+                        </td>
+                        <td>
+                            @Html.TextBox("Accommodation", Model.Accommodation, new { @class = "form-control", @id = "Accommodation", @readonly = "readonly", placeholder = "Eg: 1000" })
+                        </td>
+                    </tr>
+                    <tr>
+                        @if (@Model.TotalFeeAmount == 0.0)
+                        {
+                            <td><input type="checkbox" id="Transport" name="Transport" class="txt" checked="checked" value="@Model.Transport"></td>
+                        }
+                        else
+                        {
+                            <td><input type="checkbox" id="Transport" name="Transport" class="txt" checked="@Model.IsTransport" value="@Model.Transport"></td>
+                        }
+                        <td>
+                            <label>Transport</label>
+                        </td>
+                        <td>
+                            @Html.TextBox("Transport", Model.Transport, new { @class = "form-control", @id = "Transport", @readonly = "readonly", placeholder = "Eg: 1000" })
+                        </td>
+                    </tr>
+                    <tr>
+                        @if (@Model.TotalFeeAmount == 0.0)
+                        {
+                            <td><input type="checkbox" id="Others" name="Others" class="txt" checked="checked" value="@Model.Others"></td>
+                        }
+                        else
+                        {
+                            <td><input type="checkbox" id="Others" name="Others" class="txt" checked="@Model.IsOthers" value="@Model.Others"></td>
+                        }
+                        <td>
+                            <label>Others</label>
+                        </td>
+                        <td>
+                            @Html.TextBox("Others", Model.Others, new { @class = "form-control", @id = "Others", @readonly = "readonly", placeholder = "Eg: 1000" })
+                        </td>
+                    </tr>
+                    <tr>
+                        @if (@Model.TotalFeeAmount == 0.0)
+                        {
+                            <td><input type="checkbox" id="InstallmentInterest" name="InstallmentInterest" class="txt" checked="checked" value="@Model.InstallmentInterest"></td>
+                        }
+                        else
+                        {
+                            <td><input type="checkbox" id="InstallmentInterest" name="InstallmentInterest" class="txt" checked="@Model.IsInstallmentInterest" value="@Model.InstallmentInterest"></td>
+                        }
+                        <td>
+                            <label>Installment Interest</label>
+                        </td>
+                        <td>
+                            @Html.TextBox("InstallmentInterest", Model.InstallmentInterest, new { @class = "form-control", @id = "InstallmentInterest", @readonly = "readonly", placeholder = "Eg: 1000" })
+                        </td>
+                    </tr>
+                    <tr>
+                       @if (@Model.TotalFeeAmount == 0.0)
+                       {
+                        <td><input type="checkbox" id="Discount" name="Discount" class="txt" checked="checked" value="@Model.Discount"></td>
+                       }
+                       else
+                       {
+                        <td><input type="checkbox" id="Discount" name="Discount" class="txt" checked="@Model.IsDiscount" value="@Model.Discount"></td>
+                       }
+                        <td>
+                            <label>Discount</label>
+                        </td>
+                        <td>
+                            @Html.TextBox("Discount", Model.Discount, new { @class = "form-control", @id = "Discount", @readonly = "readonly", placeholder = "Eg: 1000" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> </td>
+                        <td>
+                            <label class="fright">Total Fees</label>
+                        </td>
+                        <td id="total">
+                            @if (@Model.TotalFeeAmount == 0.0)
+                            {
+                                double amt = (@Model.CourseFee + Model.Accommodation + Model.Transport + Model.Others + Model.InstallmentInterest - Model.Discount);
+                                <input type="text" id="TotalAmt" name="TotalAmt" value="@amt" readonly="readonly" class="form-control" />
+                            }
+                            else
+                            {
+                                <input type="text" id="TotalAmt" name="TotalAmt" value="@Model.TotalFeeAmount" readonly="readonly" class="form-control" />
+                            }
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br /><br />
+
+            <label>Select Installments</label>
+            <div class="input-group divcenter">
+                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                @Html.DropDownList("Installments", null, "--- Select Installment ---", htmlAttributes: new { @class = "form-control", id = "Installments" })
+            </div>
+            <input type="submit" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal fright" id="InstallmentDetails" name="InstallmentDetails" />
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        $('#Accommodation').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Accommodation = $('#Accommodation').is(":checked");
+            var Accommodationval = $('#Accommodation').val();
+
+            if (Accommodation == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(Accommodationval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(Accommodationval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+        });
+    });
+
+    $(function () {
+        $('#Transport').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Transport = $('#Transport').is(":checked");
+            var Transportval = $('#Transport').val();
+
+            if (Transport == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(Transportval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(Transportval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+        });
+    });
+
+    $(function () {
+        $('#Others').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Others = $('#Others').is(":checked");
+            var Othersval = $('#Others').val();
+
+            if (Others == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(Othersval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(Othersval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+        });
+    });
+    $(function () {
+        $('#InstallmentInterest').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var InstallmentInterest = $('#InstallmentInterest').is(":checked");
+            var InstallmentInterestval = $('#InstallmentInterest').val();
+
+            if (InstallmentInterest == false) {
+                sum = (parseFloat(TotalAmt) - parseFloat(InstallmentInterestval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) + parseFloat(InstallmentInterestval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+        });
+    });
+    $(function () {
+        $('#Discount').change(function () {
+            var sum = 0;
+            var total = "";
+            var TotalAmt = $('#TotalAmt').val();
+            var Discount = $('#Discount').is(":checked");
+            var Discountval = $('#Discount').val();
+
+            if (Discount == false) {
+                sum = (parseFloat(TotalAmt) + parseFloat(Discountval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+            else {
+                sum = (parseFloat(TotalAmt) - parseFloat(Discountval));
+                total = "<input type='text' id='TotalAmt' name='TotalAmt' value='" + sum + "' readonly='readonly' class='form-control' />"
+                $("#total").html(total);
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#InstallmentDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/Transactions/InstallmentDetails",
+                data: {
+                    CourseCode: $('#CourseCode').val(),
+                    UserId: $('#UserId').val(),
+                    Installments: $('#Installments').val(),
+                    BatchId: $('#BatchId').val(),
+                    Accommodation: $('#Accommodation').is(":checked"),
+                    Transport: $('#Transport').is(":checked"),
+                    Others: $('#Others').is(":checked"),
+                    InstallmentInterest: $('#InstallmentInterest').is(":checked"),
+                    Discount: $('#Discount').is(":checked"),
+                    TotalAmt: $('#TotalAmt').val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    if (data) {
+                        SuccessAlert();
+                    }
+                    else {
+                        FailedAlert();
+                    }
+                }
+            });
+        }
+    });
+</script>

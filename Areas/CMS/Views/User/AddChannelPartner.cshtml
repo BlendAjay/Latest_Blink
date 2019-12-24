@@ -1,0 +1,183 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Areas.Admin.Models.UserRegistrationViewModel
+@{
+    ViewBag.Title = "AddChannelPartner";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    //List<AJSolutions.Models.CorporateProfile> channels = ViewData["MyChannels"] as List<AJSolutions.Models.CorporateProfile>;
+    
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("AddChannelPartner", "User", FormMethod.Post, new { area = "CMS", id = "AddChannelPartner", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @*if (Model != null)
+    {
+        @Html.Hidden("UserId", Model.UserId)
+    }*@
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4> Add Channel Partner</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Name, "Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control required", placeholder = "e.g. john smith", id = "Name" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <br />
+
+                    @Html.LabelFor(m => m.PhoneNumber, "Phone Number")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-phone"> </i></span>
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control required", placeholder = "e.g. +917876543456", id = "PhoneNumber" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.Email, "Email")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email"> </i></span>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control required email", placeholder = "e.g. xyz@domain.com", id = "Email" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <br />
+
+                </div>
+                <input type="submit" id="submitData" name="submitData" class="button button-3d button-rounded button-teal" value="Add" style="float:right" />
+
+            </div>
+
+            @*<div class="row">
+                <div class="container">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email Id</th>
+                                <th>Phone Number</th>                               
+                            </tr>
+                            @if (channels != null)
+                            {
+                                foreach (var item in channels)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AlternateEmail)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AlternateContact)
+                                        </td>
+                                       
+                                        <td>
+                                            @Html.ActionLink("Edit", "AddChannelPartner", "User", new { area = "CMS", CorporateId = item.CorporateId }, new { title = "Edit" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+
+                    </div>
+                </div>
+            </div>*@
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("AddChannelPartner", "User", new { area = "CMS" }));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                   In this page has the facility of adding channel partner as per your need.                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/addchannelpartner.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/addchannelpartner.png" />
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script type="text/javascript">
+    $("#AddChannelPartner").validate({
+        submitHandler: function (form) {
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/User/AddChannelPartner",
+                data: {
+                    UserId: $('#UserId').val(),
+                    Name: $('#Name').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    Email: $('#Email').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Channel Partner has been added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

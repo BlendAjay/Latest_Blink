@@ -1,0 +1,106 @@
+﻿@using MIS.Models;
+@model MIS.Models.ClientTeamRights
+@{
+    ViewBag.Title = "TeamRights";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<ClientTeamRights> rights = ViewData["Rights"] as IEnumerable<ClientTeamRights>;
+}
+@using (Html.BeginForm("TeamRights", "TeamMember", FormMethod.Post, new { @class = "form-horizontal", id = "TeamRights", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Team Rights</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Rights, "Rights")<small>*</small>
+                        @Html.EditorFor(model => model.Rights, new { htmlAttributes = new { @class = "sm-form-control required", id = "Rights", placeholder = "Enter Right Name", name = "Rights" } })
+                    
+                    @Html.ValidationMessageFor(model => model.Rights, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.GroupType, "GroupType")<small>*</small>
+                    <div class="input-group divcenter travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        @Html.EditorFor(model => model.GroupType, new { htmlAttributes = new { @class = "sm-form-control", id = "EditorFor", name = "EditorFor" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.GroupType, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.Visibility, "Visibility")<small>*</small>
+                    <div class="input-group divcenter travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        @Html.CheckBoxFor(model => model.Visibility, new { htmlAttributes = new { @class = "sm-form-control", id = "Visibility", name = "Visibility" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Visibility, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <br>
+                <input type="submit" id="TeamRights" value="Save" style="float: right;" class="button button-3d button-rounded button-teal" />
+            </div>
+        </div>
+        <br /><br />
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Rights</th>
+                        <th>Visibility</th>
+                        <th>Details</th>
+                    </tr>
+                    @if (rights != null)
+                    {
+                        foreach (var item in rights)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Rights)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Visibility)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "TeamRights", "TeamMember", new { Id = item.EmpRightsId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "TeamRights", "TeamMember", new { Id = item.EmpRightsId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+        @Html.Hidden("RedirectToHome", Url.Action("TeamRights", "TeamMember"))
+    </div>
+}
+<script>
+    $("#TeamRights").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-amber',
+
+                        icon: 'icon-thumbs-up icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+

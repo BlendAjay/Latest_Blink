@@ -1,0 +1,237 @@
+﻿@{
+    ViewBag.Title = "Plan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Hidden("SaveStatus", ViewBag.Result as string)
+@Html.Hidden("CurrentPage", ViewBag.CurrentPage as string)
+<div class="container clearfix">
+    <div class="row">
+        <div class="form-process"></div>
+        <br />
+        <div class=" fancy-title title-dotted-border title-center">
+            <h3>Plans</h3>
+        </div>
+        @*<div class="tabs tabs-justify clearfix" id="tab-1">
+
+            <ul class="tab-nav clearfix">
+                <li><a href="#tabs-1">Institution</a></li>
+                <li><a href="#tabs-2"> Corporate</a></li>
+            </ul>
+
+            <div class="tab-container">
+
+                <div class="tab-content clearfix" id="tabs-1">
+                    <br />
+
+                    <div class="promo promo-border promo-center nobottommargin">
+                        <div class="row col-padding nobottompadding  notoppadding">
+                            <div class="col_full">
+                                <div class="col_one_third" align="left">
+                                    <h5>
+                                         Training Management System
+                                    </h5>
+                                    <div class="pricing-desc">
+                                        <div class="pricing-features">
+                                            <ul class="clearfix">
+                                                <li><i class="icon-check"></i> Online training Scheduling</li>
+                                                <li><i class="icon-check"></i> Training status monitoring</li>
+                                                <li><i class="icon-check"></i> Online candidates attendance</li>
+                                                <li><i class="icon-check"></i> Candidate Evaluation reports</li>
+                                                <li><i class="icon-check"></i> Accommodation records</li>
+                                                <li><i class="icon-check"></i> Reports and Analytics</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col_one_third" align="left">
+
+                                    <h5>
+                                        Learning Management System
+                                    </h5>
+                                    <div class=" pricing-desc">
+                                        <div class="pricing-features">
+                                            <ul class="clearfix">
+                                                <li><i class="icon-check"></i> e-learning</li>
+                                                <li><i class="icon-check"></i> Easy content mapping</li>
+                                                <li><i class="icon-check"></i> Easy content accessibility</li>
+                                                <li><i class="icon-check"></i> Simplified learning Process</li>
+                                                <li><i class="icon-check"></i> Course completion tracking</li>
+                                                <li><i class="icon-check"></i> Discussion forum</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col_one_third col_last" align="left">
+                                    <h5>
+                                        Online Assessment
+                                    </h5>
+                                    <div class=" pricing-desc">
+                                        <div class=" pricing-features">
+                                            <ul class="clearfix">
+                                                <li><i class="icon-check"></i> Online/paper based Tests</li>
+                                                <li><i class="icon-check"></i> Create question repository</li>
+                                                <li><i class="icon-check"></i> Restrict availability of tests</li>
+                                                <li><i class="icon-check"></i> Device Friendly tests</li>
+                                                <li><i class="icon-check"></i> Jumbling questions and Answers</li>
+                                                <li><i class="icon-check"></i> Score reports & analytics</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col_full nobottommargin">
+                                    <h4>Rs. 15000/- Year</h4>
+                                    <div class="pricing-action">
+                                        <a href="#" onclick="PurchasePlan();" title="Pay Now!" class="btn btn-primary btn-lg btn-block">Pay Now !</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.Hidden("Purchase", Url.Action("CheckOut", "Plan_Pricing", new { area = "Admin" }))
+                </div>
+                <div class="tab-content clearfix" id="tabs-2">
+                    <h3>Comming Soon</h3>
+                </div>
+
+            </div>
+
+        </div>*@
+        <br />
+        <div class="pricing-box pricing-extended bottommargin clearfix">
+        <div class="pricing-desc">
+            <div class="pricing-features">
+                <ul class="clearfix">
+                    <li><i class="icon-check"></i> Dashboard with real time statistical data</li>
+                    <li><i class="icon-check"></i> Multi user application accessibility</li>
+                    <li><i class="icon-check"></i> User directory</li>
+                    <li><i class="icon-check"></i> Task Management</li>
+                    <li><i class="icon-check"></i> Job Orders for Client requirements</li>
+                    <li><i class="icon-check"></i> Online invoice generation</li>
+                    <li><i class="icon-check"></i> Record meeting minutes</li>
+                    <li><i class="icon-check"></i> Branding</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="pricing-action-area">
+            <div class="pricing-action">
+                <h4>Rs. 12,000/ Year</h4>
+            </div>
+            <br />
+            <div class="pricing-action">
+                <a href="#" onclick="PurchasePlan();" title="Pay Now!" class="btn btn-primary btn-lg btn-block">Pay Now!</a>
+            </div>
+            @*@if (ViewBag.TrailExpired != "True")
+            {
+                <div class="pricing-action">
+                    <a href="#" onclick="TrailPlan();" title="Pay Now!" class="button button-3d button-rounded button-teal">Start Trail</a>
+                </div>
+            }*@
+        </div>
+    </div>
+
+    <div class=" fancy-title title-dotted-border title-center">
+        <h3>Add-Ons</h3>
+    </div>
+    <br /><br />
+    <div class="col_full">
+        <div class="col_three_fourth">
+            <div class="promo promo-border promo-center nobottommargin">
+                <div class="row col-padding nobottompadding  notoppadding">
+
+                    <div class="col_one_third">
+                        <h5>
+                            @*<input type="checkbox" id="TMS" name="TMS" value="TMS" style="height: 20px; width:20px;" />*@ Training Management System
+                        </h5>
+                        <div class="pricing-desc">
+                            <div class="pricing-features">
+                                <ul class="clearfix" align="left">
+                                    <li><i class="icon-check"></i> Online training Scheduling</li>
+                                    <li><i class="icon-check"></i> Training status monitoring</li>
+                                    <li><i class="icon-check"></i> Online candidates attendance</li>
+                                    <li><i class="icon-check"></i> Candidate Evaluation reports</li>
+                                    <li><i class="icon-check"></i> Accommodation records</li>
+                                    <li><i class="icon-check"></i> Reports and Analytics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col_one_third">
+                        <h5>
+                           Learning Management System
+                        </h5>
+                        <div class=" pricing-desc">
+                            <div class="pricing-features">
+                                <ul class="clearfix" align="left">
+                                    <li><i class="icon-check"></i> e-learning</li>
+                                    <li><i class="icon-check"></i> Easy content mapping</li>
+                                    <li><i class="icon-check"></i> Easy content accessibility</li>
+                                    <li><i class="icon-check"></i> Simplified learning Process</li>
+                                    <li><i class="icon-check"></i> Course completion tracking</li>
+                                    <li><i class="icon-check"></i> Discussion forum</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col_one_third col_last">
+                        <h5>
+                           Online Assessment
+                        </h5>
+                        <div class=" pricing-desc">
+                            <div class=" pricing-features">
+                                <ul class="clearfix" align="left">
+                                    <li><i class="icon-check"></i> Online/paper based Tests</li>
+                                    <li><i class="icon-check"></i> Create question repository</li>
+                                    <li><i class="icon-check"></i> Restrict availability of tests</li>
+                                    <li><i class="icon-check"></i> Device Friendly tests</li>
+                                    <li><i class="icon-check"></i> Jumbling questions and Answers</li>
+                                    <li><i class="icon-check"></i> Score reports & analytics</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col_one_fourth col_last">
+            <div class="promo promo-border  promo-center">
+                <h4>Payroll Management System</h4>
+                <div class="pricing-desc">
+                    <div class="pricing-features">
+                        <ul class="clearfix" align="left">
+                            <li><i class="icon-check"></i> Employee Leave & travel records</li>
+                            <li><i class="icon-check"></i> Holiday Calendar</li>
+                            <li><i class="icon-check"></i> Process payrolls</li>
+                            <li><i class="icon-check"></i> Manage Employee documents</li>
+                            <li><i class="icon-check"></i> Claim processing</li>
+                            <li><i class="icon-check"></i> Employee Appraisals</li>
+                        </ul>
+                    </div>
+                </div>
+                <h4>Comming Soon!</h4>
+            </div>
+        </div>
+    </div>
+        @Html.Hidden("Purchase", Url.Action("CheckOut", "Plan_Pricing", new { area = "Admin" }))
+        <br /><br />
+    </div>
+</div>
+
+<script type="text/javascript">
+    function PurchasePlan() {
+        $('.form-process').fadeIn()
+
+        var url = $('#Purchase').val();
+        location.href = url;
+
+    }
+
+</script>

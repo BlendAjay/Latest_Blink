@@ -1,0 +1,246 @@
+﻿@using AJSolutions.Models;
+@model ClaimCategory
+@{
+    ViewBag.Title = "Claim Category";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<ClaimCategory> claimCategory = ViewData["CLCategory"] as List<ClaimCategory>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("ClaimCategory", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "ClaimCategory", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="container">
+            <div id="contact-form-overlay" class="clearfix">
+                <div class="row">
+                    <div class="form-process"></div>
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Add Claim Category</h4>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.CategoryName, "Claim Category")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                            @Html.EditorFor(model => model.CategoryName, new { htmlAttributes = new { @class = "form-control required", id = "CategoryName", placeholder = "Enter Claim Category" } })
+                        </div>
+                    </div>
+
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.CategoryType, "Category Type")<small>*</small>
+                        <div class="input-group ">
+                            <span class="input-group-addon"><i class="icon-list-ul"> </i></span>
+                            @Html.DropDownList("CategoryType",null, "--- Select Category ---", htmlAttributes: new { @class = "form-control required", id = "CategoryType", placeholder = "Enter Category Type" } )
+                        </div>
+                    </div>
+
+                    <br />
+                  
+                    <input type="button" id="AddClaimCategory" value="Save" class="button button-rounded button-teal fright " />
+
+                  
+                    @Html.Hidden("CategoryId", ViewBag.CategoryId as string)
+                    @*@Html.Hidden("CorporateId", ViewBag.CorporateId as string)*@
+                </div>
+             
+               
+                <br /> 
+                @if (claimCategory.Count != 0)
+                {
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <thead>
+                                    <tr>
+                                        <th>CLAIM CATEGORY</th>
+                                        <th>CATEGORY TYPE</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in claimCategory)
+                                    {
+                                        <tr>
+                                            <td>@item.CategoryName</td>
+                                            <td>@if(@item.CategoryType == 1)
+                                                  {<span>Earning</span>}
+                                                else
+                                                {<span>Deduction</span>}
+                                            
+                                            
+                                            </td>
+                                            <td>
+                                                <a href="@Url.Action("ClaimCategory", "Payroll", new { CategoryId = item.CategoryId })" title="Edit"><i class="icon-pen"></i></a>|
+                                                <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.CategoryId');" title="Remove"><i class="icon-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @Html.Hidden("RedirectTo", Url.Action("RemoveClaimCategory", "Payroll"))
+            @Html.Hidden("RedirectToHome", Url.Action("ClaimCategory", "Payroll"))
+        </div>
+    }
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding claim category as per your requirement.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/claimcategoryadd.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/claimcategoryadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/claimcategorylist.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/claimcategorylist.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last">
+                            <p>
+                                Here you are able to edit and delete your added claim category.
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script type="text/javascript">
+
+        $("#ClaimCategory").validate({
+            submitHandler: function (form) {
+                  }
+        });
+
+        $("#AddClaimCategory").click(function (e) {
+
+            if ($("#ClaimCategory").valid()) {
+                $('.form-process').fadeIn();
+                $.ajax({
+                    type: "post",
+                    url: "/PMS/Payroll/ClaimCategory",
+                    data: {
+                        CategoryId: $('#CategoryId').val(),
+                        CategoryName: $('#CategoryName').val(),
+                        CategoryType: $('#CategoryType').val()
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $('.form-process').fadeOut();
+                        if (data == "Succeeded") {
+                            $.alert({
+                                title: 'Cheers',
+                                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-up fa-2x',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var url = $("#RedirectToHome").val();
+                                    location.href = url;
+                                }
+                            });
+                        }
+                        if (data == "Unsucceeded") {
+                            $.alert({
+                                title: 'Sorry',
+                                content: 'Something went <b>wrong.</b>',
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var url = $("#RedirectToHome").val();
+                                    location.href = url;
+                                }
+                            });
+                        }
+                        if (data == "Exists") {
+                            $.alert({
+                                title: 'Sorry',
+                                content: 'Your Data is already <b> EXISTS.</b>',
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'icon-info-sign icon-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var url = $("#RedirectToHome").val();
+                                    location.href = url;
+                                }
+                            });
+                        }
+
+                    }
+                });
+            }
+
+        });
+
+        function pagehelp() {
+            $('#Popup').modal('show');
+            $("#Popup").modal({
+                backdrop: 'static',
+                keyboard: false,
+            })
+        };
+    </script>
+    <script type="text/javascript">
+        function ConfirmationDialog(CategoryId) {
+            $.confirm({
+                title: 'Confirmation',
+                content: 'Are you sure you want to delete?',
+                confirmButton: 'Yes',
+                confirmButtonClass: 'btn-info',
+                cancelButton: 'No',
+                cancelButtonClass: 'btn-warning',
+                icon: 'icon-warning-sign icon-2x',
+                animation: 'scale',
+                animationClose: 'top',
+                confirm: function () {
+                    var url = $("#RedirectTo").val() + "?CategoryId=" + CategoryId;
+                    location.href = url;
+                }
+            });
+            return false;
+        }
+    </script>

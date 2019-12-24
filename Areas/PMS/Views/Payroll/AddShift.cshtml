@@ -1,0 +1,152 @@
+﻿@using AJSolutions.Models;
+@model ShiftMaster
+@{
+    ViewBag.Title = "Add Shifts";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    List<AJSolutions.Models.ShiftMaster> shifts = ViewData["Shifts"] as List<AJSolutions.Models.ShiftMaster>;
+}
+@using (Html.BeginForm("AddShift", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "AddShift", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CorporateId", user.UserId as string)
+    @Html.Hidden("SaveStatus", ViewBag.Data as string)
+    @Html.Hidden("Result", ViewBag.Result as string)
+    if (Model != null)
+    {
+        @Html.Hidden("ShiftId", Model.ShiftId)
+    }
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class=" row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Shifts</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Shift, "Shift Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                        @Html.EditorFor(model => model.Shift, new { htmlAttributes = new { @class = "form-control required", id = "Shift", placeholder = "e.g. General" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Shift, "", new { @class = "text-danger" })
+                    <br /><br />
+
+
+                    @Html.LabelFor(model => model.EndTime, "Shift End Time")<small>*</small>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="icon-clock"></i></span>
+                        <input type="text" class="form-control timepicker1 required" placeholder="00:00 AM/PM" value="@ViewBag.EndTime" id="EndTime" name="EndTime" />
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-danger" })
+
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.StartTime, "Shift Start Time")<small>*</small>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="icon-clock"></i></span>
+                        <input type="text" class="form-control timepicker1 required" placeholder="00:00 AM/PM" value="@ViewBag.StartTime" id="StartTime" name="StartTime" />
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
+                    <br /><br /><br /><br />
+                    <input type="submit" id="AddShift" value="Submit" class="button button-3d button-rounded button-teal" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Shift</th>
+                        <th>Shift StartTime <small>(24 Hours Format)</small></th>
+                        <th>Shift EndTime <small>(24 Hours Format)</small></th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (shifts != null)
+                    {
+                        foreach (var item in shifts)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Shift)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.StartTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EndTime)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "AddShift", "Payroll", new { area = "PMS", ShiftId = item.ShiftId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "AddShift", "Payroll", new { area = "PMS", ShiftId = item.ShiftId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("AddShift", "Payroll", new { area = "PMS" }));
+}
+<script>
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Shift has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    $("#AddShift").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/AddShift",
+                data: {
+                    Shift: $('#Shift').val(),
+                    StartTime: $('#StartTime').val(),
+                    EndTime: $('#EndTime').val(),
+                    CorporateId: $('#CorporateId').val(),
+                    ShiftId: $('#ShiftId').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: ' Your Shift Added<b> Successfully.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>

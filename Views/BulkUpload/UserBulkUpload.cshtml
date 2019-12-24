@@ -1,0 +1,442 @@
+﻿@using AJSolutions.Models;
+@model  PagedList.IPagedList<AJSolutions.Models.ClientViewModel>
+@{
+    ViewBag.Title = "User Bulk Upload";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    string existing = ViewBag.ExistedSaved as string;
+}
+
+@using (Html.BeginForm("UserBulkUpload", "BulkUpload", FormMethod.Post, new { @class = "form-horizontal", id = "UserBulkUpload", role = "form" }))
+{
+
+    
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>User Bulk Upload</h4>
+                </div>
+                <br /><br />
+                <div class="col_full">
+                    <center>
+                        <ul class="process-steps process-3 bottommargin clearfix">
+                            <li class="active">
+                                <a href="#" class="i-bordered i-circled divcenter icon-download-alt" id="btnDownloadFormat" type="button"></a>
+                                <h5>Download Template</h5>
+                            </li>
+                            <li>
+                                <span class="i-bordered i-circled divcenter icon-table"></span>
+                                <h5>Fill Excel sheet</h5>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <input type="file" id="FileUpload1" name="Bulk User Upload" value="" class="icon-upload-alt i-bordered i-circled divcenter " style="padding-left:12px;" />
+                                </a>
+                                <label id="lblgetfilename"></label>
+                                <h5>Select File to Upload</h5>
+                            </li>
+                        </ul>
+                        <button type="button" class="button button-3d button-rounded button-teal" id="btnUploadFormat">Add Users</button>
+                        <div id="divLoading" style="margin: 0px; padding: 0px; position: fixed; right: 0px; top: 0px; width: 100%; height: 100%; background-color: #666666; z-index: 30001;
+                        opacity: .8; filter: alpha(opacity=70);display:none">
+                            <p style="position: absolute; top: 30%; left: 45%; color: White;">
+                                Uploading Data, please wait...<img src="../../images/ajax-loading.gif">
+                            </p>
+                        </div>
+                        <div id="statusBorder">
+                            <div id="statusFill">
+                            </div>
+                        </div>
+                        <div>
+                            @*@Html.Hidden("hfExistedPhoneNumber1", ViewBag.ExistedPhoneNumberSaved as string)
+                            <input type="hidden" name="hfExistedPhoneNumber" id="hfExistedPhoneNumber" value="@ViewBag.ExistedPhoneNumberSaved" />*@
+                            <input type="text" name="txtExistedPhoneNumber" id="txtExistedPhoneNumber" value="@ViewBag.ExistedSaved" />
+                            @Html.TextBox("ExistedPhoneNumberSaved", (string)ViewBag.ExistedSaved)
+                        </div>
+                        @*<label>@ViewBag.ExistedPhoneNumberSaved</label>*@
+                        @Html.Label("Existing", ViewBag.ExistedSaved as string)
+                        @*<div id="myProgress">
+                                <div id="myBar">0%</div>
+                            </div>*@
+                        @*<div id="progressbar" style="width: 300px; height: 15px"></div>*@
+                        @*<div class="progress">
+                                <div class="progress-percent"><div class="counter counter-inherit counter-instant"><span data-from="0" data-to="20" data-refresh-interval="30" data-speed="1100"></span>%</div></div>
+                            </div>*@
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("hfExistedPh", existing)
+}
+<style>
+    #myProgress {
+        width: 100%;
+        background-color: #ddd;
+    }
+
+    #myBar {
+        width: 10%;
+        height: 30px;
+        background-color: #4CAF50;
+        text-align: center;
+        line-height: 30px;
+        color: white;
+    }
+</style>
+<script type="text/javascript">
+        $(document).ready(function () {
+            alert($("#hfExistedPh").val());
+            $("#btnDownloadFormat").click(function () {
+                var url1 = "/BulkUpload/DownloadUserFormat";
+                location.href = url1;
+            });
+        });
+    </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#FileUpload1').change(function () {
+            var path = $(this).val();
+            if (path != '' && path != null) {
+                var q = path.substring(path.lastIndexOf('\\') + 1);
+                $('#lblgetfilename').html(q);
+            }
+        })
+    });
+</script>
+
+<script type="text/javascript">
+    //var uniqueId = '<%= Guid.NewGuid().ToString() %>';
+    
+        $(document).ready(function () {
+            $('#btnUploadFormat').click(function () {
+                //uploadFile();
+                $("#divLoading").show();
+                //var uniqueId = $.guid.toString();
+                var formdata = new FormData(); //FormData object
+                var fileInput = document.getElementById('FileUpload1');
+                //Iterating through each files selected in fileInput
+                for (i = 0; i < fileInput.files.length; i++) {
+                    //Appending each file to FormData object
+                    formdata.append(fileInput.files[i].name, fileInput.files[i]);
+                }
+                var uniqueId1 = fileInput.files.length;
+                var uniqueId = document.getElementById('FileUpload1').size;
+               // alert(uniqueId);
+               // alert(fileInput.files.length);
+                if (fileInput.files.length > 0) {
+                    //alert(uniqueId);
+                    //Creating an XMLHttpRequest and sending
+                    //xhr.open('POST', '/BulkUpload/UploadUserFile', { id: uniqueId }, function () {
+                    //    $('#statusBorder').show();
+                    //    getStatus();
+                    //});
+                    //$.post("StartLongRunningProcess", { id: uniqueId }, function () {
+                    //    //alert('hiii');
+                    //    $('#statusBorder').show();
+                    //    getStatus();                            
+                    //    });
+                    //$.post("BulkUpload/StartLongRunningProcess", { id: uniqueId }, function () {
+                    //    $('#statusBorder').show();
+                    //    getStatus();
+                    //});
+                    //xhr.open('POST', '/BulkUpload/GetCurrentProgress');
+                    //xhr.send(uniqueId);
+                    //xhr.onreadystatechange = function () {
+                    //    if (xhr.readyState == 4 && xhr.status == 200) {
+                    //        $('#statusBorder').show();
+                    //        getStatus();
+                    //    }
+                    //}
+
+                    event.preventDefault;
+                    var xhr = new XMLHttpRequest();
+                    var str = "";
+                xhr.open('POST', '/BulkUpload/UserBulkUpload');
+                    xhr.send(formdata);
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            //alert(xhr.status);
+                            $("#divLoading").hide();
+                            var q = "";
+                            $('#lblgetfilename').html(q);
+                            $("#FileUpload1").replaceWith("<input type='file' id='FileUpload1' name='Bulk User Upload' value='' class='icon-upload-alt i-bordered i-circled divcenter ' style='padding-left:12px;' />");
+                        alert(@existing);
+                            $.alert({
+                                title: 'Alert',
+                                content: 'Users uploaded Successfully ',
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-up fa-2x',
+                                animation: 'zoom',
+                                confirm: function () {
+                                }
+                            });
+                        }
+                        //else
+                        //{
+                        //    $.alert({
+                        //        title: 'Alert',
+                        //        content: 'Please select File ',
+                        //        confirmButton: 'OK',
+                        //        confirmButtonClass: 'btn btn-primary',
+                        //        icon: 'fa fa-thumbs-up fa-2x',
+                        //        animation: 'zoom',
+                        //        confirm: function () {
+                        //        }
+                        //    });
+                        //}
+                    }
+                }
+                else
+                {
+                    $("#divLoading").hide();
+                    $.alert({
+                        title: 'Alert',
+                        content: 'Please Select a File For Upload',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                }
+            @*if(@ViewBag.ExistedPhoneNumberSaved!=null)
+            {
+                $('#txtExistedPhoneNumber').html= @ViewBag.ExistedPhoneNumberSaved;
+            }*@
+                return false;
+            });
+        });
+        function getStatus() {
+            var url = '/BulkUpload/GetCurrentProgress/' + uniqueId;            
+            $.get(url, function (data) {                
+                if (data != "100") {
+                    $('#status').html(data);
+                    $('#statusFill').width(data);
+                    window.setTimeout("getStatus()", 100);
+                }
+                else {
+                    $('#status').html("Done");
+                    $('#statusBorder').hide();
+                    alert("The Long process has finished");
+                };
+            });
+        }
+    </script>
+<style>
+    #statusBorder {
+        position: relative;
+        height: 10px;
+        width: 500px;
+        border: solid 1px gray;
+        display: none;
+}
+
+    #statusFill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0px;
+        background-color: Blue;
+        height: 5px;
+}
+</style>
+
+<script type="text/javascript">    
+
+    var uniqueId = $.guid.toString();
+    $(document).ready(function (event) {
+        $('#startProcess').click(function () {
+            $.post("/BulkUpload/StartLongRunningProcess", { id: uniqueId }, function () {
+                $('#statusBorder').show();
+                getStatus();
+            });
+            event.preventDefault;
+        });
+    });
+
+    function getStatus() {
+        var url = '/BulkUpload/GetCurrentProgress/' + uniqueId;        
+        $.get(url, function (data) {
+            alert(data);
+            if (data != "100") {
+                $('#status').html(data);
+                $('#statusFill').width(data);
+                window.setTimeout("getStatus()", 100);
+            }
+            else {
+                $('#status').html("Done");
+                $('#statusBorder').hide();
+                alert("The Long process has finished");
+            };
+        });
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $('#btnUploadFormat').click(function () {
+            $("#divLoading").show();
+            var formdata = new FormData(); //FormData object
+            var fileInput = document.getElementById('FileUpload1');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+                //Appending each file to FormData object
+                formdata.append(fileInput.files[i].name, fileInput.files[i]);
+            }
+            //Creating an XMLHttpRequest and sending
+            $.ajax({
+                type: "post",
+                url: "/BulkUpload/UploadUserFile",
+                data: { formdata: formdata },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if (data.name != "") {
+                        $.alert({
+                            title: 'Alert',
+                            content: 'Users uploaded Successfully ',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                            }
+                        });
+                    }
+                }
+
+            });
+        });
+    });
+</script>*@
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            if ('@TempData["BulkUserUpdated"]' != null) {
+                if ('@TempData["BulkUserUpdated"]' != false) {
+                    $.alert({
+                        title: 'Alert',
+                        content: 'Users uploaded Successfully with PhoneNumbers ' + '@TempData["ExistedPhoneNumberSaved"]' + ' or Email Address ' + '@TempData["ExistedEmailSaved"]',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if ('@TempData["AlreadyExist"]' != null) {
+                if ('@TempData["AlreadyExist"]' != false) {
+                    $.alert({
+                        title: 'Alert',
+                        content: 'Phone Numbers ' + '@TempData["ExistedPhoneNumber"]' + " Or Email Address " + '@TempData["ExistedEmail"]' + " Already Exists.",
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                }
+            }
+            });
+    </script>
+    <script>
+        function move() {
+            var fileInput = document.getElementById('FileUpload1');
+            //Iterating through each files selected in fileInput
+            var byt=fileInput.files.length;
+            var elem = document.getElementById("myBar");
+            var width = 10;
+            var id = setInterval(byt, 10);
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                } else {
+                    width++;
+                    elem.style.width = width + '%';
+                    elem.innerHTML = width * 1 + '%';
+                }
+            }
+        }
+    </script>
+    <script language="javascript" type="text/javascript">
+        var myApp;
+        myApp = myApp || (function () {
+            var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+            return {
+                showPleaseWait: function () {
+                    pleaseWaitDiv.modal();
+                },
+                hidePleaseWait: function () {
+                    pleaseWaitDiv.modal('hide');
+                },
+
+            };
+        })();
+        function uploadFile() {
+            myApp.showPleaseWait(); //show dialog
+            var file = document.getElementById('FileUpload1').files[0];
+            var formData = new FormData();
+            formData.append("FileUpload1", file);
+            ajax = new XMLHttpRequest();
+            ajax.upload.addEventListener("progress", progressHandler, false);
+            ajax.addEventListener("load", completeHandler, false);
+            ajax.open("POST", "BulkUpload/UploadUserFile");
+            ajax.send(formData);
+        }
+
+        function progressHandler(event) {
+            var percent = (event.loaded / event.total) * 100;
+            $('.bar').width(percent); //from bootstrap bar class
+        }
+
+        function completeHandler() {
+            myApp.hidePleaseWait(); //hide dialog
+            $('.bar').width(100);
+        }
+
+    </script>*@
+@*<link href="/css/uploadify.css" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="Scripts/jquery.uploadify.min.js"></script>*@
+@*<link rel="stylesheet" type="text/css" href="http://www.uploadify.com/wp-content/themes/uploadify/style.css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="http://www.uploadify.com/wp-content/themes/uploadify/js/jquery.uploadify.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {        
+        
+        $('#FileUpload1').uploadify({            
+            'swf': '/images/uploadify.swf',
+            'uploader': 'Scripts/uplodify.php'
+        });
+    });
+</script>*@
+
+
+
+
+
+
+
+
+
+
+

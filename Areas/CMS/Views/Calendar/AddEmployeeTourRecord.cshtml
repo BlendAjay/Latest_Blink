@@ -1,0 +1,191 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model EmployeeTour
+@{
+    ViewBag.Title = "AddEmployeeTourRecord";
+    if (ViewBag.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    List<EmployeeTourView> employeetour = ViewData["EmployeeTourList"] as List<EmployeeTourView>;
+}
+@using (Html.BeginForm("AddEmployeeTourRecord", "Calendar", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", enctype = "multipart/form-data", id = "AddEmployeeTourRecord", role = "form" }))
+{
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Tour Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Tour Details</h5>
+                <div class="card-body">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Purpose, "Purpose")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.EditorFor(model => model.Purpose, new { htmlAttributes = new { @class = "form-control required", id = "Purpose", placeholder = "Enter the Purpose of Tour", required = "required" } })
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <label>Tour Schedule</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" class="form-control daterange2" value="@ViewBag.Schedule" id="Schedule" name="Schedule" />
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.ContactNumber, "Contact Number")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                            @Html.EditorFor(model => model.ContactNumber, new { htmlAttributes = new { @class = "form-control required", id = "ContactNumber", placeholder = "Enter contact Detail", required = "required" } })
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Location, "Location")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-location"> </i></span>
+                            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control required", id = "Location", placeholder = "Enter Location", required = "required" } })
+                        </div>
+                        <br>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Observations, "Observations")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.TextAreaFor(model => model.Observations, 5, 124, htmlAttributes: new { @class = "form-control required", id = "Observations", placeholder = "Enter Tour Observations", required = "required" })
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Conclusion, "Conclusion")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                            @Html.TextAreaFor(model => model.Conclusion, 5, 124, htmlAttributes: new { @class = "form-control required", id = "Conclusion", placeholder = "Enter Tour Conclusion", required = "required" })
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <img id="imgdisplay" style="height:100px;width:60px;display:none" />
+                        @Html.Label("Browse")
+                        @*<input type="file" id="files" name="files" class="form-control" multiple="multiple" />*@
+                        <input type="file" id="uploadImage" name="uploadPhoto" class="form-control" onchange="ValidatePreviewFavicon(@Global.MaxSize("Photo"), this, 'Photo')" />
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <input type="submit" value="Submit" style="float: right;" class="btn btn-primary" id="AddEmployeeTourRecord" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("UserId", ViewBag.UserId as string)
+    @Html.Hidden("Status", ViewBag.savestatus as string)
+    @Html.Hidden("PlannerId", Model.PlannerId)
+    @Html.Hidden("RedirectToHome", Url.Action("TrainerPlanner", "TMS", new { area = "TMS" }))
+    if (Model != null)
+    {
+        @Html.Hidden("TourId", Model.TourId)
+    }
+}
+
+<script src="~/Scripts/CustomValidation.js"></script>
+<script>
+    $(function () {
+        $("#uploadImage").change(function () {
+            readURL(this);
+        });
+    });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imgdisplay').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    $(document).ready(function () {
+        if ($('#Status').val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+        if ($('#Status').val() == "Unsucceeded") {
+            $.alert({
+                title: 'Sorry',
+                content: 'Something went <b>wrong.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+
+                }
+            });
+        }
+    });
+</script>
+<script type="text/javascript">
+    $("#AddEmployeeTourRecord").validate({
+        submitHandler: function (form) {
+
+            var formData = new FormData();
+            var totalFiles = document.getElementById("uploadImage").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("uploadImage").files[i];
+                formData.append("uploadImage" + i, file);
+            }
+
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/CMS/Calendar/AddEmployeeTourRecord",
+                data: {
+                    TourId: $('#TourId').val(),
+                    UserId: $('#UserId').val(),
+                    Purpose: $('#Purpose').val(),
+                    PlannerId: $('#PlannerId').val(),
+                    ContactNumber: $('#ContactNumber').val(),
+                    Location: $('#Location').val(),
+                    Observations: $('#Observations').val(),
+                    Conclusion: $('#Conclusion').val(),
+                    Schedule: $('#Schedule').val(),
+                    uploadPhoto: formdata,
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                }
+            })
+        }
+    });
+</script>

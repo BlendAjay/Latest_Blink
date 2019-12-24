@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="SemiColonWeb" />
+    <!-- Stylesheets
+    ============================================= -->
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lt IE 9]>
+        <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+    @Styles.Render("~/css/css")
+    @Scripts.Render("~/bundles/js")
+    <title>Blink</title>
+</head>
+<body class="stretched side-header side-header-right">
+    <div id="wrapper" class="clearfix">
+        @using Microsoft.AspNet.Identity
+        @{
+            AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+            AJSolutions.Areas.CMS.Models.AdminLogoFile content = ViewData["CompanyLogo"] as AJSolutions.Areas.CMS.Models.AdminLogoFile;
+        }
+        @if (Request.IsAuthenticated)
+        {
+            @Html.Hidden("UserId", user.UserId)
+            @Html.Hidden("LoginName", user.Name)
+
+            using (Html.BeginForm("LogOff", "Dashboard", new { area = "CMS" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+            {
+                <header id="header" class="no-sticky">
+                    <div id="header-wrap">
+                        <div class="container clearfix">
+                            <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+                            <!-- Logo
+                            ============================================= -->
+                            <div id="logo">
+                                @if (content != null)
+                                {
+                                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="standard-logo" data-dark-logo="/File/CompanyLogo?id=@content.FileId"><img src="/File/CompanyLogo?id=@content.FileId" /></a>
+                                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="retina-logo" data-dark-logo="/File/CompanyLogo?id=@content.FileId"><img src="/File/CompanyLogo?id=@content.FileId" alt="Canvas Logo"></a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="standard-logo" data-dark-logo="images/logo.png"><img src="~/images/logo.png" /></a>
+                                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="retina-logo" data-dark-logo="images/logo.png"><img src="~/images/logo.png" alt="Canvas Logo"></a>
+                                }
+                            </div>
+                            <!-- Primary Navigation
+                            ============================================= -->
+                            <nav id="primary-menu">
+                                <ul>
+                                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="standard-logo" data-dark-logo="images/logo.png">CheckIn</a>
+                                    <a href="@Url.Action("Index", "Home", new { Area = "" })" class="retina-logo" data-dark-logo="images/logo.png">CheckOut</a>
+                                </ul>
+
+                            </nav><!-- #primary-menu end -->
+
+                            <div class="clearfix visible-md visible-lg">
+                                <a href="https://www.facebook.com/NIBF-1708871086101506/" target="_blank" class="social-icon si-colored si-facebook">
+                                    <i class="icon-facebook"></i>
+                                    <i class="icon-facebook"></i>
+                                </a>
+                                <a href="https://plus.google.com/103691220697245630918" target="_blank" class="social-icon si-colored si-gplus">
+                                    <i class="icon-gplus"></i>
+                                    <i class="icon-gplus"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/company/nibf---national-institute-of-banking-&-finance/" target="_blank" class="social-icon si-colored si-linkedin">
+                                    <i class="icon-linkedin"></i>
+                                    <i class="icon-linkedin"></i>
+                                </a>
+                                <a href="https://twitter.com/MeenuSocial" target="_blank" class="social-icon si-colored si-twitter">
+                                    <i class="icon-twitter"></i>
+                                    <i class="icon-twitter"></i>
+                                </a>
+
+                                <br /><br /><br /><br /><br /><br />
+                                <div class="col_full">
+                                    <small>  Copyrights &copy; 2016 All Rights Reserved by NIBF<br></small>
+                                    <div class="copyright-links"><small><a href="#">Terms of Use</a> / <a href="#">Privacy Policy</a></small></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </header>
+            }
+        }
+
+        <section id="content">
+            <div class="content-wrap">
+                <div class="section header-stick nobottommargin clearfix">
+                    <div class="container clearfix">
+                        <div class="fslider bnews-slider nobottommargin" data-speed="800" data-pause="6000" data-arrows="false" data-pagi="false">
+                            <div class="flexslider">
+                                <div class="slider-wrap">
+                                    <div class="slide"><a href="#">Welcome <strong>warden </strong></a></div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <br /><br />
+                @RenderBody()
+            </div>
+        </section>
+        <div id="gotoTop" class="icon-angle-up"></div>     
+    </div>
+    <script src="~/js/functions.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+@Scripts.Render("~/bundles/jqueryval")
+<script>
+    function ResendToken() {
+        $.ajax({
+            type: "post",
+            url: "/CMS/User/ResendToken",
+            data: {
+                UserId: $('#UserId').val(),
+                UserName: $('#LoginName').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Verification email sent successfuly.</br>Please check your email and verify now.',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+            }
+        });
+    }
+
+</script>
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-92087944-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+<script type="text/javascript">
+    $(function () {
+        $('.travel-date-group .default').datepicker({
+            autoclose: true,
+            startDate: "today",
+        });
+
+        $('.travel-date-group .today').datepicker({
+            autoclose: true,
+            startDate: "today",
+            todayHighlight: true
+        });
+
+        $('.travel-date-group .past-enabled').datepicker({
+            autoclose: true,
+        });
+        $('.travel-date-group .format').datepicker({
+            autoclose: true,
+            format: "dd-mm-yyyy",
+        });
+
+        $('.travel-date-group .autoclose').datepicker();
+
+        $('.travel-date-group .disabled-week').datepicker({
+            autoclose: true,
+            daysOfWeekDisabled: "0"
+        });
+
+        $('.travel-date-group .highlighted-week').datepicker({
+            autoclose: true,
+            daysOfWeekHighlighted: "0"
+        });
+
+        $('.travel-date-group .mnth').datepicker({
+            autoclose: true,
+            minViewMode: 1,
+            format: "mm/yy"
+        });
+
+        $('.travel-date-group .multidate').datepicker({
+            multidate: true,
+            multidateSeparator: " , "
+        });
+
+        $('.travel-date-group .input-daterange').datepicker({
+            autoclose: true
+        });
+
+        $('.travel-date-group .inline-calendar').datepicker();
+
+        $('.datetimepicker').datetimepicker({
+            showClose: true
+        });
+
+        $('.datetimepicker1').datetimepicker({
+            format: 'LT',
+            showClose: true
+        });
+
+        $('.datetimepicker2').datetimepicker({
+            inline: true,
+            sideBySide: true
+        });
+
+    });
+
+    $(function () {
+        // .daterange1
+        $(".daterange1").daterangepicker({
+            "buttonClasses": "button button-rounded button-mini nomargin",
+            "applyClass": "button-color",
+            "cancelClass": "button-light"
+        });
+
+        // .daterange2
+        $(".daterange2").daterangepicker({
+            "opens": "center",
+            timePicker: true,
+            timePickerIncrement: 30,
+            locale: {
+                format: 'MM/DD/YYYY h:mm A'
+            },
+            "buttonClasses": "button button-rounded button-mini nomargin",
+            "applyClass": "button-color",
+            "cancelClass": "button-light"
+        });
+
+        // .daterange3
+        $(".daterange3").daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        },
+        function (start, end, label) {
+            var years = moment().diff(start, 'years');
+            alert("You are " + years + " years old.");
+        });
+
+        // reportrange
+        function cb(start, end) {
+            $(".reportrange span").html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+        cb(moment().subtract(29, 'days'), moment());
+
+        $(".reportrange").daterangepicker({
+            "buttonClasses": "button button-rounded button-mini nomargin",
+            "applyClass": "button-color",
+            "cancelClass": "button-light",
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        // .daterange4
+        $(".daterange4").daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            },
+            "buttonClasses": "button button-rounded button-mini nomargin",
+            "applyClass": "button-color",
+            "cancelClass": "button-light"
+        });
+
+        $(".daterange4").on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+        });
+
+        $(".daterange4").on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
+
+    });
+
+</script>

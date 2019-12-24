@@ -1,0 +1,164 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@using AJSolutions.DAL;
+
+@model LectureMaster
+@{
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    LectureMaster lecture = ViewData["LectureMaster"] as LectureMaster;
+    List<LectureContentUpload> lectureContent = ViewData["Contents"] as List<LectureContentUpload>;
+    ViewBag.Title = "Lecture Details";
+    if (@user.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    }
+}
+@using (Html.BeginForm("LectureMaster", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "LectureMaster", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.LectureId)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                @if (@user.Role == "Admin")
+                {
+                    @Html.ActionLink("Edit", "LectureMaster", "Course", new { LectureId = lecture.LectureId, UserAction = "Edit" }, htmlAttributes: new { target = "_blank", @class = "button button-3d button-rounded button-teal", @style = "float:right" })
+                    <br />
+                }
+                <div class="row">
+                    <div class="col_full fancy-title title-bottom-border">
+                        <h4>@Html.DisplayFor(modelItem => lecture.LectureName)</h4>
+                    </div>
+                    <div class="col_half">
+                        <b>Description: </b>
+                    </div>
+                    <div class="col_half col_last text-right">
+                        <b>Weightage: </b>  <span class="badge">@Html.DisplayFor(modelItem => lecture.Weightage)</span>
+                    </div>
+
+                    <div class="col_full">
+                        @Html.DisplayFor(modelItem => lecture.LectureDescription)
+                    </div>
+
+                    @if (lectureContent.Count() > 0)
+        {
+            BlobManager blobManager = new BlobManager();
+            LMSManager lmsMgr = new LMSManager();
+            foreach (var upload in lectureContent)
+            {
+                var url = blobManager.DownloadPublicBlob(upload.LectureId.ToLower(), lmsMgr.GetFileName(upload.FileId).ToLower());
+
+                <div class="col_full">
+                    @if (upload.ContentType != "Video")
+                    {
+
+                        @*<embed width="100%" height="100%" src="~/File/Url?id=@upload.FileId" type="application/pdf" >*@
+                        <object width="100%" height="100%" data="@url" type="application/pdf">
+                            <iframe width="100%" height="100%" src="@url" style="border: solid;border-color:black">
+                                This browser does not support PDFs. Please download the PDF to view it: <a href="@url">Download PDF</a>
+                            </iframe>
+
+                        </object>
+
+
+
+                    }
+                    else
+                    {
+                        <iframe src="https://player.vimeo.com/video/139208268?badge=0" width="500" height="210" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                    }
+                </div>
+            }
+        }
+        @*<div class="col_half col_last">
+                        <b>Permission: </b>  <span class="badge" style="font-size:14px">@Html.DisplayFor(modelItem => lecture.Permission)</span>
+                        <br />
+            </div>*@
+
+        @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+        @Html.Hidden("CorporateProfile", ViewBag.CorporateProfile as string)
+
+    </div>
+</div>
+<br /><center>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- JEResponsive -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6029014565691295"
+         data-ad-slot="6109277368"
+         data-ad-format="auto"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</center>
+</div>
+        </div>
+<br /><br />
+
+<br /><center><img src="~/images/sample-ad.png" /></center>
+
+
+}
+
+<script>
+    $(function () {
+        $('.nocopy').bind('copy', function (e) {
+            e.preventDefault();
+        });
+        $('.nopaste').bind('paste', function (e) {
+            e.preventDefault();
+        });
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var ga = document.createElement("script"); //ga is to remember Google Analytics ;-)
+        ga.type = 'text/javascript';
+        ga.src = 'invisible.js';
+        ga.id = 'invisible';
+        document.body.appendChild(ga);
+        $('#invisible').remove();
+    });
+
+    if (document.layers) {
+        //Capture the MouseDown event.
+        document.captureEvents(Event.MOUSEDOWN);
+
+        //Disable the OnMouseDown event handler.
+        document.onmousedown = function () {
+            return false;
+        };
+    }
+    else {
+        //Disable the OnMouseUp event handler.
+        document.onmouseup = function (e) {
+            if (e != null && e.type == "mouseup") {
+                //Check the Mouse Button which is clicked.
+                if (e.which == 2 || e.which == 3) {
+                    //If the Button is middle or right then disable.
+                    return false;
+                }
+            }
+        };
+    }
+
+    //Disable the Context Menu event.
+    document.oncontextmenu = function () {
+        return false;
+    };
+</script>
+<script>
+
+    document.onkeydown = function (e) {
+        if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 117)) {//Alt+c, Alt+v will also be disabled sadly.
+        }
+        return false;
+    };
+</script>
+

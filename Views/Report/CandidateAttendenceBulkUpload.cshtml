@@ -1,0 +1,124 @@
+﻿@using BlinkPortal.Models;
+@model CandidateAttendanceView
+
+@{
+    ViewBag.Title = "Candidate Attendence Bulk Upload";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    UserViewModel pro = ViewData["UserProfile"] as UserViewModel;
+    BlinkPortal.Areas.EMS.Models.EmployeeViewModel faculty = ViewData["TrainerDetail"] as BlinkPortal.Areas.EMS.Models.EmployeeViewModel;
+    List<BlinkPortal.Areas.Candidate.Models.CandidateViewModel> stu = ViewData["Candidate"] as List<BlinkPortal.Areas.Candidate.Models.CandidateViewModel>;
+    List<CourseMasterView> bcvm = ViewData["CourseBatches"] as List<CourseMasterView>;
+    List<CourseBatchViewModel> lbd = ViewData["BatchDetails"] as List<CourseBatchViewModel>;
+}
+
+@using (Html.BeginForm("Record", "Attendance", FormMethod.Post, new { @class = "form-horizontal", id = "Record", role = "form" }))
+{
+    <div class="container">
+        @*<div class="table-responsive">*@
+            <div>
+                <div class="row">                   
+                    <div class="col_one_third">
+                        @Html.LabelFor(model => model.AttendenceDate, "Attendence Date", htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar" ></i></span>
+                            @Html.EditorFor(model => model.AttendenceDate, new { htmlAttributes = new { @class = "sm-form-control", placeholder = "Attendence Date" } })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col_one_third">
+                        <label>Select Course</label>
+                        @Html.DropDownList("CourseCode",null, "---  Select Course ---", htmlAttributes: new { @class = "sm-form-control", id = "CourseCode", placeholder = "Select Course"})
+                    </div>
+                    <div class="col_one_third">
+                        <label>Select Batch</label>
+                        @Html.DropDownList("BatchId", null, "---  Select Batch ---", htmlAttributes: new { @class = "sm-form-control", id = "BatchId", placeholder = "Select Batch" })
+                    </div>
+                </div>
+                <div class="row">                    
+                    <div class="col_one_third col_last filter-group">
+                        <button type="button" class="btn btn-green btnalignleft" id="btnDownloadFormat" >Download Format</button>
+                    </div>                    
+                </div>
+                <div class="row">
+                    <div class="col_one_third col_last filter-group">
+                        <input type="file" id="FileUpload1" />
+                        <input type="button" id="btnUpload" value="Upload Files" />
+                    </div>
+                </div>
+                <div id="divTimeTable">
+                    @*@Html.Partial("CandidateAttendenceView")*@
+                </div>
+            </div>
+        @*</div>*@
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CourseCode').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/BulkUpload/GetBatch",
+                data: { CourseCode: $('#CourseCode').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var batch = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='BatchId'>";
+                    batch = batch + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        batch = batch + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    batch = batch + '</select>';
+                    $('#BatchId').html(batch);
+                }
+            });
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnDownloadFormat").click(function () {
+            data: { batchid: batchid }
+            location.href = '@Url.Action("DownloadFormat", "BulkUpload")';
+            @*var batchid = $("#BatchId").val();
+            $.ajax({
+                url: '@Url.Action("DownloadFormat", "Report")',
+                type: "Post",
+                data: { batchid: batchid },
+                success: function (result) {
+                    //$("#divTimeTable").html(result);
+                    //alert('Hello');
+                   // document.write(result);
+                }
+            });*@
+        });
+    });
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        $('#btnUpload').click(function () {            
+            
+            var formdata = new FormData(); //FormData object
+            var fileInput = document.getElementById('FileUpload1');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+                //Appending each file to FormData object
+                formdata.append(fileInput.files[i].name, fileInput.files[i]);
+            }
+            //Creating an XMLHttpRequest and sending
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/BulkUpload/UploadFile');
+            xhr.send(formdata);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    //alert(xhr.responseText);
+                    alert("File Uploaded Successfully");
+                }
+            }
+            return false;
+        });
+    });
+</script>  

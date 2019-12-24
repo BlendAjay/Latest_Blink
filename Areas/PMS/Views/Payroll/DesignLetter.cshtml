@@ -1,0 +1,450 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model LetterDesignView
+@{
+    ViewBag.Title = "Page | Design Letter";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<LetterFieldNameViewModel> PlaceHolderDetail = ViewData["LetterPlaceHolder"] as List<LetterFieldNameViewModel>;
+
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckeditor/samples/js/sample.js"></script>
+<link href="~/Scripts/ckeditor/skins/bootstrapck/editor.css" rel="stylesheet" />
+@*<link href="~/Scripts/ckeditor/contents.css" rel="stylesheet" />*@
+
+@using (Html.BeginForm("DesignLetter", "Payroll", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", id = "LContent", role = "form" }))
+{
+    <div class="container">
+        <div class="form-process"></div>
+        @Html.AntiForgeryToken()
+        @Html.Hidden("SaveStatus", ViewBag.Status as string)
+        <div class="row">
+            <a href="@Url.Action("MyLetter", "Payroll", new { area = "PMS"})" title="List" class="btn btn-default btn-xs fright">My Letter</a>
+        </div>
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h5>Design Letter</h5>
+            </div>
+            <div class="col_one_third">
+                @Html.Label("Letter Name")
+            </div>
+            <div class="col_two_third col_last">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control required", @id = "Name" } })
+            </div>
+
+            <div class="col_one_third">
+                @Html.Label("Letter Type Name")<small>*</small>
+            </div>
+            <div class="col_two_third col_last">
+                @Html.DropDownList("LetterTypeId", null, "--- Select Letter Name Type---", htmlAttributes: new { @class = "form-control required", id = "LetterTypeId" })
+            </div>
+        </div>
+        <br />
+        <br />
+
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h5>Design Header</h5>
+            </div>
+            <div class="table">
+                <table class="table-responsive">
+                    @if (Model.TemplateId == 0)
+                    {
+                        <tr>
+                            <td>Use Company Logo in the Header Logo</td>
+                            @*<td><input type="checkbox" id="SameAsCompanyLogo" checked="checked" value="true" /></td>*@
+                            <td>@Html.CheckBox("SameAsCompanyLogo", true)</td>
+                        </tr>
+                        <tr id="dvPassport" style="display:none">
+                            <td>Change Header Logo</td>
+                            <td id="CompanyLogoImage">
+                                <img id="imgdisplay" style="height:100px;width:60px;display:none" />
+                                <script type="text/javascript">
+                                    jQuery(document).ready(function () {
+                                        GetContent('@Model.CorporateId', '@Model.FileId', '@Model.ContentType');
+                                    });
+                                </script>
+                                @Html.Label("Browse")
+                                <input id="files" name="files" type="file" class="file-loading" accept="image/*">
+                                @*<input type="file" id="files" name="files" class="form-control" onchange="ValidatePreviewFavicon(@Global.MaxSize("Photo"), this, 'Photo')" />*@
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        if (Model.SameAsCompanyLogo == true)
+                        {
+                            <tr>
+                                <td>Use Company Logo in the Header Logo</td>
+                                <td>@Html.CheckBox("SameAsCompanyLogo", true)</td>
+                            </tr>
+                            <tr id="dvPassport" style="display:none">
+                                <td>Change Header Logo</td>
+                                <td id="CompanyLogoImage">
+                                    <img id="imgdisplay" style="height:100px;width:60px;display:none" />
+                                    <script type="text/javascript">
+                                        jQuery(document).ready(function () {
+                                            GetContent('@Model.CorporateId', '@Model.FileId', '@Model.ContentType');
+                                        });
+                                    </script>
+                                    @Html.Label("Browse")
+                                    <input id="files" name="files" type="file" class="file-loading" accept="image/*">
+                                    @*<input type="file" id="files" name="files" class="form-control" onchange="ValidatePreviewFavicon(@Global.MaxSize("Photo"), this, 'Photo')" />*@
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>Use Company Logo in the Header Logo</td>
+                                @if (Model.FileId != null)
+                                {
+                                    <td>@Html.CheckBox("SameAsCompanyLogo", false)</td>}
+                                else
+                                {
+                                    <td>@Html.CheckBox("SameAsCompanyLogo", false)</td>
+                                }
+                            </tr>
+                            <tr id="dvPassport">
+                                <td>Change Header Logo</td>
+                                <td id="CompanyLogoImage">
+                                    <img id="imgdisplay" style="height:100px;width:60px;display:none" />
+                                    <script type="text/javascript">
+                                        jQuery(document).ready(function () {
+                                            GetContent('@Model.CorporateId', '@Model.FileId', '@Model.ContentType');
+                                        });
+                                    </script>
+                                    @if (Model.SameAsCompanyLogo == false)
+                                    {
+                                        @Html.Label("Browse")
+                                        <input id="files" name="files" type="file" class="file-loading" accept="image/*">
+                                        @*<input type="file" id="files" name="files" class="form-control" onchange="ValidatePreviewFavicon(@Global.MaxSize("Photo"), this, 'Photo')" />*@
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+            <div class="col_full">
+                @Html.TextAreaFor(model => model.Header, new { @class = "form-control ckeditor", id = "Header" })
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h5>Design Letter Body</h5>
+            </div>
+            <div class="col_full">
+                @Html.TextAreaFor(model => model.Content, new { @class = "form-control ckeditor", id = "Content" })
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h5>Design Footer</h5>
+            </div>
+            <div class="col_full">
+                @Html.TextAreaFor(model => model.Footer, new { @class = "form-control ckeditor", id = "Footer" })
+            </div>
+        </div>
+        <input type="submit" value="Submit" class="button button-3d button-rounded button-teal fright" id="LContent" />
+    </div>
+
+    <br /><br />
+    <br />
+    @Html.Hidden("SaveStatus", ViewBag.status as string)
+    @Html.Hidden("TemplateId", Model.TemplateId)
+    @Html.Hidden("FileId", Model.FileId)
+    @Html.Hidden("RedirectToHome", Url.Action("DesignLetter", "Payroll"))
+}
+
+@*<script src="~/Scripts/CustomValidation.js"></script>*@
+<script type="text/javascript">
+    $(document).on('ready', function () {
+        $("#files").fileinput({
+            maxFileCount: 1,
+            allowedFileTypes: ["image"]
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    function ShowHideDiv(SameAsCompanyLogo) {
+        var dvPassport = document.getElementById("dvPassport");
+        dvPassport.style.display = SameAsCompanyLogo.checked ? "block" : "none";
+    };
+
+    function GetContent(CorporateId, FileId, ContentType) {
+        $.ajax({
+            type: "post",
+            url: "/PMS/Payroll/GetImageURL",
+            data: {
+                Id: CorporateId,
+                ContentFileId: FileId
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('#CompanyLogoImage').empty();
+                $('#CompanyLogoImage').append('<img class="img-responsive" id="imgdisplay" src="' + data + '" alt="" style="height:100px;width:110px;">');
+                $('#CompanyLogoImage').append('<input type="file" id="files" name="files" class="form-control" />');
+            }
+        });
+    }
+
+    //$(function () {
+    //    $("#files").change(function () {
+    //        readURL(this);
+    //    });
+    //});
+    //function readURL(input) {
+    //    if (input.files && input.files[0]) {
+    //        var reader = new FileReader();
+    //        reader.onload = function (e) {
+    //            $('#imgdisplay').attr('src', e.target.result);
+    //            $("#imgdisplay").show();
+    //        }
+    //        reader.readAsDataURL(input.files[0]);
+    //    }
+    //}
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#SameAsCompanyLogo").click(function () {
+            if ($(this).is(":checked")) {
+                $("#dvPassport").hide();
+            } else {
+                $("#dvPassport").show();
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#LContent").validate({
+        submitHandler: function (form) {
+
+            var sameAsCompanyLogo = "False";
+            if ($('#SameAsCompanyLogo').prop('checked')) {
+                sameAsCompanyLogo = "True";
+            }
+
+            var formData = new FormData();
+            var totalFiles = document.getElementById("files").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("files").files[i];
+                formData.append("files" + i, file);
+            }
+
+            var descHeader = CKEDITOR.instances.Header.document.getBody().getHtml();
+            var descContent = CKEDITOR.instances.Content.document.getBody().getHtml();
+            var descFooter = CKEDITOR.instances.Footer.document.getBody().getHtml();
+
+            if (descHeader == "<p><br></p>" && descFooter == "<p><br></p>" && descContent == "<p><br></p>") {
+                $.alert({
+                    title: 'Warning',
+                    content: 'Input Data has been required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+
+            if (descContent == "<p><br></p>") {
+                $.alert({
+                    title: 'Warning',
+                    content: 'Content Should be <b> required </b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/DesignLetter",
+                data: {
+                    SameAsCompanyLogo: sameAsCompanyLogo,
+                    Header: descHeader,
+                    uploadImage: formdata,
+                    Content: descContent,
+                    Footer: descFooter,
+                    file: formData
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+
+                }
+            })
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#SaveStatus").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "Exists") {
+            $.alert({
+                title: 'Sorry',
+                content: 'Letter Name already <b> EXISTS.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'icon-info-sign icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "Unsucceeded") {
+            $.alert({
+                title: 'Sorry',
+                content: 'Something went <b>wrong.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'icon-info-sign icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+
+    });
+</script>
+
+<script type="text/javascript">
+    CKEDITOR.replace('HeaderTitle', {
+
+        filebrowserImageUploadUrl: '/UploadImage'
+    });
+    CKEDITOR.replace('Content', {
+        filebrowserImageUploadUrl: '/UploadImage'
+    });
+    CKEDITOR.replace('FooterContent', {
+    });
+
+    //CKEDITOR.replace('HeaderTitle', {
+    //    toolbarGroups: [
+    //        { name: 'mode' },
+    //        { name: 'basicstyles' },
+    //        { name: 'styles' }
+    //    ],
+    //    on: {
+    //        configLoaded: function () {
+    //            this.config.font_names += ';Kruti';
+    //        }
+    //    }
+    //});
+</script>
+
+<script type="text/javascript">
+    CKEDITOR.on('dialogDefinition', function (event) {
+        if ('placeholder' == event.data.name) {
+            var input = event.data.definition.getContents('info').get('name');
+            input.type = 'select';
+            input.items = [
+           @{
+               foreach (var colum in PlaceHolderDetail)
+                    {
+                @:['@colum.Coloum'],
+                    }
+        @:[['CurrentDate']],
+            @:[['CompanyAddressLine1']],
+            @:[['CompanyAddressLine2']],
+            @:[['CompanyPostalCode']]
+        }
+            ];
+            input.setup = function () {
+                this.setValue('@PlaceHolderDetail.FirstOrDefault().Coloum');
+            };
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CountryId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='StateId'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#State').html(state);
+                }
+            });
+        });
+
+
+        $('#State').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='CityId'>";
+                    city = city + '<option value="">--- Select City ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#City').html(city);
+                    $('#StateIdd').val($('#StateId').val());
+                }
+            });
+        });
+
+        $('#City').change(function () {
+            $('#CityIdd').val($('#CityId').val());
+        });
+
+    });
+
+</script>

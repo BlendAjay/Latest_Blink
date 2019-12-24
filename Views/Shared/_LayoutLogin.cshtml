@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="SemiColonWeb" />
+    <meta name="google-site-verification" content="1WlTAkxGA8klbJYmP_zKEuojApT-h__R6fgfefcgYuQ" />
+    <!-- Stylesheets
+    ============================================= -->
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lt IE 9]>
+        <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="~/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/libs/css/style.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet">
+    <link href="~/css/style.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <!-- Document Title
+    ============================================= -->
+    <title>Blink</title>
+
+</head>
+<body style="background-image: url('../../img/HomeBanner.jpg');">
+    <header id="header">
+        <div class="container">
+
+            <div id="logo" class="pull-left">
+                <!-- Uncomment below if you prefer to use a text logo -->
+                <!-- <h1><a href="#main">C<span>o</span>nf</a></h1>-->
+                <a href="#intro" class="scrollto"><img src="~/img/NewLogoBlink.png" alt="" title=""></a>
+            </div>
+
+            <nav id="nav-menu-container">
+
+                @*@Html.Partial("_LoginPartialHome")*@
+            </nav><!-- #nav-menu-container -->
+        </div>
+    </header><!-- #header -->
+    @RenderBody()
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script src="~/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>

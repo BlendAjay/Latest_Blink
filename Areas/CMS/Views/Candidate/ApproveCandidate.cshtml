@@ -1,0 +1,328 @@
+﻿@using AJSolutions.Models;
+@*@model AJSolutions.Areas.Admin.Models.UserRegistrationViewModel*@
+@model AJSolutions.Models.CandidateLeadsView
+@{
+    ViewBag.Title = "ApproveCandidate";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    //CandidateLeadsView leads = ViewData["Leads"] as CandidateLeadsView;
+
+}
+
+@using (Html.BeginForm("ApproveCandidate", "Candidate", FormMethod.Post, new { area = "CMS", id = "ApproveCandidate", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.status as string)
+    @Html.Hidden("ModuleId", ViewBag.Id as string)
+    if (Model != null)
+    {
+        @Html.Hidden("LeadId", Model.LeadId)
+    }
+
+    var module = ViewBag.Id as string;
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <div align="right">
+                        <a href="@Url.Action("CandidateLeads", "Candidate", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">Candidates Leads</a>
+
+                    </div>
+                    <h4>Approve User</h4>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="col_half">
+                    @Html.LabelFor(m => m.Name, "Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control required", placeholder = "e.g. john smith", id = "FullName" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(m => m.EmailId, "Email")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                        @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control required email", placeholder = "e.g. xyz@domain.com", id = "Email" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.EmailId, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m => m.PhoneNumber, "Phone Number")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-phone"> </i></span>
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control required", placeholder = "e.g. +917876543456", id = "PhoneNumber" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @if (module == "CND")
+                    {
+                        @Html.LabelFor(model => model.Gender, "Gender")<small></small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                            @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+
+                        @*</div>*@
+                    }
+                </div>
+                <div class="col_half ">
+                    @if (module == "CND")
+                    {
+                        @Html.LabelFor(m => m.RegistrationId, "Registration/Candidate/Employee ID")<small></small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"></i></span>
+                            @Html.TextBoxFor(m => m.RegistrationId, new { @class = "form-control", placeholder = "ID", id = "RegistrationId" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.RegistrationId, "", new { @class = "text-danger" })
+                    }
+                </div>
+                <div class="col_half col_last">
+                    @if (module == "CND")
+                    {
+                        @Html.LabelFor(m => m.Designation, "Designation/Role")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"></i></span>
+                            @Html.TextBox("Designation", "Student", new { @class = "form-control required", placeholder = "", id = "Designation", @readonly = "ReadOnly" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Designation, "", new { @class = "text-danger" })
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <label>Branch Details</label><small style="float:right">(for corporate trainings)</small>
+                    <h4></h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m => m.CorporateId, "Corporate")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                        @Html.DropDownList("CorporateId", null, "--- Select Corporate ---", htmlAttributes: new { @class = "form-control required", id = "CorporateId" })
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(m => m.Region, "Region")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.TextBoxFor(m => m.Region, new { @class = "form-control", placeholder = "East/West/North/South", id = "Region" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Region, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m => m.Branch, "Branch Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-road"> </i></span>
+                        @Html.TextBoxFor(m => m.Branch, new { @class = "form-control", placeholder = "Branch Name", id = "Branch" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Branch, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col_half col_last">
+                    @Html.LabelFor(m => m.BranchCategory, "Branch Category")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.TextBoxFor(m => m.BranchCategory, new { @class = "form-control", placeholder = "Rural/Urban/Semi-Urban", id = "BranchCategory" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.BranchCategory, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col_half">
+                    @Html.LabelFor(m => m.BranchState, "Branch State")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.TextBoxFor(m => m.BranchState, new { @class = "form-control", placeholder = "State", id = "BranchState" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BranchState, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(m => m.BranchCode, "Branch Code")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-line-anchor"> </i></span>
+                        @Html.TextBoxFor(m => m.BranchCode, new { @class = "form-control", placeholder = "Branch Code", id = "BranchCode" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BranchCode, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+
+                <input type="submit" id="submitData" name="submitData" class="button button-3d button-rounded button-teal" value="Approve Candidate" style="float:right" />
+
+            </div>
+        </div>
+        <br /><center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JEResponsive -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("ApproveCandidate", "Candidate"));
+}
+<script>
+    $(document).on("keydown", "#PhoneNumber", function () {
+        if ($("#PhoneNumber").val() != undefined || $('#PhoneNumber').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    function EmailExists() {
+        $.ajax({
+            type: "post",
+            url: "/User/EmailPhoneExist",
+            data: {
+                Email: $('#Email').val(),
+                PhoneNumber: "",
+                Uid: $('#Uid').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: data,
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            $('#Email').val("");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function PhoneNumberExists() {
+        $.ajax({
+            type: "post",
+            url: "/User/EmailPhoneExist",
+            data: {
+                Email: "",
+                PhoneNumber: $('#PhoneNumber').val(),
+                Uid: $('#Uid').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: data,
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            $('#PhoneNumber').val("");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        if ($("#SaveStatus").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Candidate Approved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "EditSucceeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'User Updated <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    $("#Email").change(function () {
+        EmailExists();
+    });
+
+    $("#PhoneNumber").change(function () {
+        PhoneNumberExists();
+    });
+
+    $("#ApproveCandidate").validate({
+        submitHandler: function () {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/Candidate/ApproveCandidate",
+                data: {
+                    Name: $('#FullName').val(),
+                    Emailid: $('#Email').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    DepartmentId: $('#DepartmentId').val(),
+                    AlternateContact: $('#AlternateContact').val(),
+                    AlternateEmail: $('#AlternateEmail').val(),
+                    Nationality: $('#Nationality').val(),
+                    Mod: $('#ModuleId').val(),
+                    RegistrationId: $('#RegistrationId').val(),
+                    Designation: $('#Designation').val(),
+                    Branch: $('#Branch').val(),
+                    BranchCategory: $('#BranchCategory').val(),
+                    Region: $('#Region').val(),
+                    BranchCode: $('#BranchCode').val(),
+                    BranchState: $('#BranchState').val(),
+                    CorporateId: $('#CorporateId :selected').val(),
+                    Gender: $('#Gender :selected').val(),
+                    LeadId: $(' #LeadId').val
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+
+                }
+            });
+        }
+    });
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

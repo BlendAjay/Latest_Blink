@@ -1,0 +1,73 @@
+﻿@using AJSolutions.Models
+@model GenerateInvoiceView
+@{
+
+    Layout = "~/Areas/Candidate/Views/Shared/_PrintLayout.cshtml";
+    ClientViewModel primaryDetail = ViewData["userPrimaryDetail"] as ClientViewModel;
+}
+<div class="container">
+    <br /><br />
+    <div class="row">
+        <div id="contact-form-overlay" class="clearfix">
+            @if (Model != null)
+            {
+                <img src="~/images/logobg.png" alt="logobg" />
+                <input type="submit" class="button button-3d nomargin" id="printpagebutton" value="Print" onclick="printpage();" style="float:right" />
+                <br />
+                <br />
+                <div class="fancy-title title-bottom-border title-center">
+                    <h3>Payment Confirmation</h3>
+                </div>
+                <div class="col_one_fifth"></div>
+                <div class="col_three_fifth">
+                    <label>Payee Name : </label> @primaryDetail.Name<br />
+                    <label>Mobile : </label> @primaryDetail.PhoneNumber  <br />
+                    <label>Email  : </label> @primaryDetail.Email  <br />                   
+                    <label>Transaction Id. :    </label> @Model.InvoiceNumber <br />
+                    <label>Transaction Date. :  </label> 
+                    @if(Model.PaymentDate != null){ @Model.PaymentDate.Value.ToString("dd-MMM-yyyy") }<br />
+                    @if (@Model.ReferenceNumber != null)
+                    { 
+                    <label>Ref No. :    </label> @Model.ReferenceNumber <br />
+                    }
+                    else
+                    {
+                        <label>Ref No. :    </label> <span>--</span> <br />
+                    }
+                    <label>Amount Paid :    </label> @Model.NetAmount    <label> @Model.Currency</label><br />
+                    <label>Comments :  </label> @Model.PayerRemarks <br />
+                </div>
+                <div class="col_one_fifth col_last"></div>
+
+            }
+            else
+            {
+                @ViewBag.Result
+            }
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+</script>
+

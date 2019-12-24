@@ -1,0 +1,7 @@
+Course Code,Batch Id,Candidate Id,Name,CheckIn Date,CheckOut Date,Success,Message
+CC201711060002,1528,REC17R3833,candidate 0099,03/01/2018 13:10:00,03/01/2018 18:10:00,Succeed,Data saved successfully
+CC201711060002,1528,REC17R3834,candidate 010,03/01/2018 13:10:00,03/01/2018 17:10:00,Succeed,Data saved successfully
+CC201711060002,1528,REC17R3832,candidate 0088,03/01/2018 13:10:00,03/01/2018 19:10:00,Succeed,Data saved successfully
+CC201711060002,1528,REC17R3533,candidate0391,03/01/2018 13:10:00,03/01/2018 19:10:00,Succeed,Data saved successfully
+CC201711060002,1528,REC17R3532,candidate0392,01/01/2018 13:10:00,03/01/2018 15:15:00,Succeed,Data saved successfully
+CC201711060002,1528,REC17R3835,candidate011,02/01/2018 13:10:00,02/01/2018 16:10:00,Succeed,Data saved successfully

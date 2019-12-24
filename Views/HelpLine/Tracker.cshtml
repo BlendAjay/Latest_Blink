@@ -1,0 +1,219 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.Helpers;
+@model  PagedList.IPagedList<AJSolutions.Models.HelpLineTrackerViewModel>
+@{
+    ViewBag.Title = "Help Line Query Tracker";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    var currPage = ViewBag.page ?? 1;
+    var currPageSize = ViewBag.Paging;   
+}
+@using (Html.BeginForm("Tracker", "HelpLine", FormMethod.Post, new { @class = "form-horizontal", id = "Tracker", role = "form" }))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col_two_fifth">
+                @Html.Label("Category")
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-file"> </i></span>
+                    @Html.DropDownList("Category", null, "--- Select ---", htmlAttributes: new { @class = "form-control required", id = "Category" })
+                </div>
+            </div>
+            <div class="col_two_fifth">
+                @Html.Label("Sub Category")
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-copy"> </i></span>
+                    @Html.DropDownList("SubCategory", null, "--- Select ---", htmlAttributes: new { @class = "form-control required", id = "SubCategory" })
+                </div>
+
+            </div>
+            <div class="col_one_fifth col_last">
+                <div class="input-group divcenter">
+                  <br/>
+                    <input type="button" onclick="submitform();" value="search" class="button button-3d" />
+                </div>
+                </div>
+        </div>
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Category</th>
+                        <th>Sub Category</th>
+                        <th>Query</th>
+                        <th>Resolution</th>
+                        <th>Queried On</th>
+                        <th>Replied</th>
+                        <th>Replied By</th>
+                        <th>Replied On</th>
+                        <th></th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.HiddenFor(modelitem => item.TrackerId)
+                                @item.Name <br />
+                                @if (!string.IsNullOrEmpty(item.UserName))
+                                {
+                                    <small>(@item.UserName)</small>
+                                }
+                            </td>
+                            <td>
+                                @item.EmailId
+                            </td>
+                            <td>
+                                @item.PhoneNumber
+                            </td>
+                            <td>
+                                @item.CategoryName
+                            </td>
+                            <td>
+                                @item.SubCategoryName
+                            </td>
+                            <td>
+                                @if (item.Query == 0)
+                                {
+                                    @item.DynamicQuery
+                                }
+                                else
+                                {
+                                    @item.Question
+                                }
+                            </td>
+                            <td>
+                               
+                                @if (item.Query == 0)
+                                {
+                                    @item.OtherQueryResolution
+                                }
+                                else
+                                {
+                                    @item.Answer
+                                }
+                            </td>
+                            <td>
+                                @item.QueriedOn.ToString("dd-MMM-yy")
+                            </td>
+                            <td>
+                                @Html.CheckBoxFor(model => item.Replied, new { Id = "Replied", disabled = "disabled" })
+                            </td>
+                            <td>
+                                @if (item.Query == 0)
+                                {
+                                    @item.ReplyBy
+                                }
+                                else
+                                {
+                                    <span>auto</span>
+                                }
+                            </td>
+                            <td>
+                                @item.RepliedOn.ToString("dd-MMM-yy")
+                            </td>
+
+                            @if (item.Replied == false)
+                            {
+                                <td>   <a href="#" onclick="pagehelp(@item.TrackerId,'@item.DynamicQuery');" class="btn btn-default btn-xs">Reply</a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Tracker", new { page, PageSize = ViewBag.Paging,Category = ViewBag.CategoryId, SubCategory = ViewBag.SubCategoryId }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+        @Html.Hidden("RedirectTo", Url.Action("Tracker", "HelpLine"))
+    </div>
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="actionPopup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Enquiry Submission</h4>
+                    </div>
+                    <div class="modal-body" id="modBody">
+                        <div class="col_full" id="TrackerResponse">
+                            <div class="col_full" id="query"></div>
+                            <div class="col_full">
+                                Response<br />
+                                <textarea row="4" cols="100" class="sm-form-control" id="QueryResponse" name="QueryResponse"></textarea>
+                            </div>
+                            <div class="col_full">
+                                Reply By<br />
+                                <input type="text" class="sm-form-control" id="Replied" name="Replied" />
+                                <input type="hidden" id="TrackerReplyId" name="TrackerReplyId" />
+                            </div>
+                            <div class="col_full">
+                                <input type="submit" value="Submit" id="SubmitResponse" class="button button-3d" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+  
+    function submitform() {
+        var category = 0;
+        var subcategory = 0;
+        var PageSize = 10;
+        if ($("#Category :selected").val() != 0) {          
+            category = $("#Category :selected").val();              
+        }
+
+        if ($("#SubCategory :selected").val() != 0) {          
+           subcategory = $("#SubCategory :selected").val();          
+        }
+
+        if ($("#PageSize :selected").val() != 0) {          
+             PageSize = $("#PageSize :selected").val();          
+        }
+
+        var url = $("#RedirectTo").val() + "?PageSize=" + PageSize + "&Category=" + category + "&SubCategory=" + subcategory;
+        location.href = url;
+    }
+
+    function pagehelp(trackerId,Question) {
+        $('#actionPopup').modal('show');
+        $("#actionPopup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+        $('#query').html(Question);
+        $('#TrackerReplyId').val(trackerId);
+    };
+
+    $("#Category").change(function () {
+        $.ajax({
+            url: "/HelpLine/GetNextLayerDetails",
+            data: {
+                LayerDetailsId: $("#Category :selected").val()
+            },
+            datatype: "JSON",
+            type: "Post",
+            success: function (data) {
+                var subcat = "<span class='input-group-addon'><i class='icon-newspaper'> </i></span><select class='sm-form-control' id='SubCategory'>";
+                subcat = subcat + '<option value="">--- Select ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    subcat = subcat + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                subcat = subcat + '</select>';
+                $('#SubCategory').html(subcat);
+            }
+        });
+    });
+</script>

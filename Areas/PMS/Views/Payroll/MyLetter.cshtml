@@ -1,0 +1,109 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model AJSolutions.Models.CorporateTemplate
+@{
+    ViewBag.Title = "My Letter";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<CorporateTemplate> templatelist = ViewData["TemplateList"] as List<CorporateTemplate>;
+    string editorContent = "";
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckeditor/samples/js/sample.js"></script>
+<link href="~/Scripts/ckeditor/skins/bootstrapck/editor.css" rel="stylesheet" />
+@using (Html.BeginForm("MyLetter", "Payroll", FormMethod.Post, new { @class = "form-horizontal", id = "LetterContentTemplate", role = "form" }))
+{
+    <div class="container">
+        @Html.AntiForgeryToken()
+
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="TemplateRecord">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <br />
+                        </div>
+                        <div class="modal-body" id="TemplateView">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @Html.Hidden("TemplateId", Model.TemplateId)
+        <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+
+        @if (templatelist.Count != 0)
+        {
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped nobottommargin">
+                        <thead>
+                            <tr>
+                                <th>Letter Template Name</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in templatelist)
+                            {
+                                editorContent = "\"" + item.Content.Replace("&nbsp;", " ") + "\"";
+                                @Html.Hidden("editorC", editorContent)
+
+                                <tr>
+                                    <td><a href="#" onclick="ShowTemplate(@item.TemplateId)" title="Click here to view details">@item.Name</a></td>
+                                    @*<td>
+                                        <a href="#" onclick="Show('@item.TemplateId','@editorContent');" title="Click here to view details">@item.Name</a>
+                                </td>*@
+                                    <td>
+                                        <a href="@Url.Action("DesignLetter", "Payroll", new {TemplateId = @item.TemplateId })" title="Edit"><i class="icon-pen"></i></a>
+
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        <div id="demo" hidden="hidden">
+
+            @Html.TextArea("ContentDemo", new { @class = "ckeditor", id = "Content", style = "margin:5px;" })
+
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function ShowTemplate(TemplateId) {
+        paramPub = $('#weburl').val() + "PMS/Payroll/Preview?TemplateId=" + TemplateId;
+        $('#TemplateView').load(paramPub);
+       
+        $("#TemplateRecord").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+
+        //var printContents = document.getElementById('demo').innerHTML;
+        //var originalContents = document.body.innerHTML;
+        //document.body.innerHTML = printContents;
+        ////window.print();
+        //document.execCommand("Print");
+        //document.body.innerHTML = originalContents;
+    }
+
+    CKEDITOR.replace('Content', {
+        filebrowserImageUploadUrl: '/UploadImage'
+    });
+
+    function Show(TemplateId, Content) {
+        //var descContent = CKEDITOR.instances.Content.document.getBody().getHtml();
+        //alert(descContent);
+        $("#ContentDemo").val(Content);
+        var ck = CKEDITOR.instances.Content;
+        ck.execCommand('print');
+    }
+
+</script>
+

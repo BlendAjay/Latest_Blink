@@ -1,0 +1,618 @@
+﻿@using AJSolutions.DAL
+@using AJSolutions.Models
+@model TaskMasterView
+@{
+    ViewBag.Title = "Task Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    IEnumerable<TaskItemsView> TaskItems = ViewData["TaskItems"] as IEnumerable<TaskItemsView>;
+    List<TaskCommentsForumView> taskComments = ViewData["TaskComments"] as List<TaskCommentsForumView>;
+    List<TaskReplyForumView> taskReplies = ViewData["TaskReplies"] as List<TaskReplyForumView>;
+    TaskAttachment attachment = ViewData["Attachment"] as TaskAttachment;
+    AJSolutions.Models.TaskFinalAttachment finalattachments = ViewData["FinalAttach"] as AJSolutions.Models.TaskFinalAttachment;
+    AJSolutions.Models.EmployeeBasicDetails details = ViewData["EmpDetails"] as AJSolutions.Models.EmployeeBasicDetails;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    var userId = ViewBag.UserId as string;
+    string CountStr = "";
+    int Count = 0;
+    int ReplyCount = 0;
+}
+@using (Html.BeginForm())
+{
+    if (Model != null)
+    {
+        float itemTotal = 0;
+        float GrandTotal = 0;
+        <div class="container">
+            <div class="form-process"></div>
+            <div id="contact-form-overlay" class="clearfix">
+                <div class="row">
+                    <div class="col_full">
+
+                        <div class="col_one_third">
+                            @if (((Model.TaskStatus == 2 || Model.TaskStatus == 4 || Model.TaskStatus == 6) && Model.TaskAmount > 0) && (user.Role == "Employee" || user.Role == "Client") || user.UserId != Model.CreatedBy)
+                            {
+                                <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Invoice", new { area = "CMS", Id = Model.TaskId, InvoiceTo = Model.SubscriberId })'">Create Invoice</button>
+                            }
+                        </div>
+                        <div class="col_one_third"></div>
+                        <div class="col_one_third col_last nobottommargin">
+                            <center>
+
+                                @if ((Model.TaskStatus == 1) && ((user.Role == "Employee" && details.ManagerLevel == false) || (user.Role == "Employee" && details.ManagerLevel == true && Model.AssignedTo == user.UserId) || (user.Role == "Client" && user.DepartmentId != "CLI") || user.UserId != Model.CreatedBy))
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyTasks", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 4 })'">Accept Task</button>
+                                }
+                                else if ((Model.TaskStatus == 2 || Model.TaskStatus == 4) && (user.Role == "Employee") || user.UserId != Model.CreatedBy)
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyTasks", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 7 })'">Discard</button>
+                                }
+                                else if ((Model.TaskStatus == 0) && (user.Role == "Admin") || user.UserId != Model.CreatedBy)
+                                {
+                                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyTasks", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 1 })'">Approve</button>
+                                }
+
+                                @if ((Model.TaskStatus == 1) && ((user.Role == "Employee" && details.ManagerLevel == false) || (user.Role == "Employee" && details.ManagerLevel == true && Model.AssignedTo == user.UserId) || (user.Role == "Client" && user.DepartmentId != "CLI") || user.UserId != Model.CreatedBy))
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyTasks", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 5 })'">Reject Task</button>
+                                }
+                                else if ((Model.TaskStatus == 2 || Model.TaskStatus == 4) && (user.Role == "Employee") || user.UserId != Model.CreatedBy)
+                                {
+                                    @*<button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyTasks", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 6 })'">Complete</button>*@
+                                    <button type="button" class="btn btn-primary" onclick="Final('@Model.TaskId', '@Model.AssignedTo');">Complete</button>
+
+                                }
+
+                                @*else if ((Model.TaskStatus != 1 && Model.TaskAmount > 0) && (user.Role == "Employee"))
+                                    {
+                                        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Invoice", new { area = "CMS", Id = Model.TaskId, InvoiceTo = Model.CreatedBy })'">Create Invoice</button>
+                                    }*@
+
+                                @*else if ((Model.TaskStatus == 6 && Model.TInv != "0" && Model.InvoiceNumber != null) && (user.Role == "Employee"))
+                                    {
+                                        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("InvoiceDetails", "Invoice", new { area = "CMS", Id = Model.InvoiceNumber})'">View Invoice</button>
+                                    }*@
+                                else if ((Model.TaskStatus == 7) && (user.Role == "Client" || user.Role == "Employee") || user.UserId != Model.CreatedBy)
+                                {
+                                    <button type="button" class="btn btn-primary" style="float:right">Abandoned</button>
+                                }
+                                else if ((Model.TaskStatus == 0) && (user.Role == "Admin"))
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyTasks", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 8 })'">Disapprove</button>
+                                }
+                                else if (((Model.TaskStatus == 1) && (user.Role == "Employee" && details.ManagerLevel == true)) || ((Model.TaskStatus == 1) && (user.Role == "Client" && user.DepartmentId != "CLI")) || ((Model.TaskStatus == 1) && (user.DepartmentId == "ADI")))
+                                {
+                                    <label style="color:green">Unaccepted</label>
+                                }
+                                else if (((Model.TaskStatus == 2) && (user.Role == "Employee" && details.ManagerLevel == true)) || ((Model.TaskStatus == 2) && (user.Role == "Client" && user.DepartmentId != "CLI")) || ((Model.TaskStatus == 2) && (user.DepartmentId == "ADI")))
+                                {
+                                    <label style="color:green">Assigned</label>
+                                }
+                                else if (((Model.TaskStatus == 4) && (user.Role == "Employee" && details.ManagerLevel == true)) || ((Model.TaskStatus == 4) && (user.Role == "Client" && user.DepartmentId != "CLI")) || ((Model.TaskStatus == 4) && (user.DepartmentId == "ADI")))
+                                {
+                                    <label style="color:green">Inprogress</label>
+                                }
+                                else if ((Model.TaskStatus == 6))
+                                {
+                                    <label style="color:green">Completed</label>
+                                }
+                                else if (Model.TaskStatus == 5)
+                                {
+                                    <label style="color:red">Rejected</label>
+                                }
+                                else if (Model.TaskStatus == 7)
+                                {
+                                    <label style="color:red">Discarded</label>
+                                }
+                                else if (Model.TaskStatus == 0)
+                                {
+                                    <label style="color:orange">Waiting for approval</label>
+                                }
+                                else if (Model.TaskStatus == 8)
+                                {
+                                    <label style="color:orangered">Disapproved</label>
+                                }
+                                <br /><br />
+                                @if (Model.Duration > 0 && (Model.TaskStatus != 5 && Model.TaskStatus != 6 && Model.TaskStatus != 7))
+                                {
+                                    Count = Count + 1;
+                                    CountStr = "countdown-ex" + Count;
+                                    DateTime EndDate = Convert.ToDateTime(Model.StartDate).AddDays(Convert.ToInt32(Model.Duration));
+                                    if (EndDate >= DateTime.Now)
+                                    {
+                                        <center>Time Remaining</center>
+                                        <div id='@CountStr' class="countdown"></div>
+                                        <script>
+                                            jQuery(document).ready(function () {
+                                                var dd = @Model.StartDate.Value.Day;
+                                                var mm = @Model.StartDate.Value.Month -1;
+                                                var yyyy = @Model.StartDate.Value.Year;
+                                                var  newDate = new Date(yyyy, mm , dd);
+
+                                                var duration = parseInt(@Model.Duration);
+                                                newDate.setDate(newDate.getDate() + duration);
+                                                $('#@CountStr').countdown({ until: newDate });
+                                            });
+                                        </script>
+
+                                    }
+                                    else
+                                    {
+                                        <center>
+                                            <label style="color:red">Time Up</label>
+                                        </center>
+                                    }
+                                }
+                            </center>
+                        </div>
+                    </div>
+                    <div class="col_full  fancy-title title-bottom-border" style="text-align:left;">
+                        <p style="align-self:flex-end"></p>
+                        <h4>@Model.Subject</h4>
+                    </div>
+                    <div class="fancy-title title-bottom-border col_full">
+                        <ul class="entry-meta clearfix">
+                            @if (Model.TaskId != null)
+                            {
+                                <li><a href="#"><i class="icon-line-circle-check"></i> @Model.TaskId</a></li>
+                            }
+
+                            @if (Model.JobOrderNumber != null)
+                            {
+                                <li><a href="#"><i class="icon-check"></i> @Model.JobOrderNumber</a></li>
+                            }
+                            @if (Model.TaskType != null)
+                            {
+                                <li><a href="#"><i class="icon-angle-down"></i> @Model.TaskType</a></li>
+                            }
+                            @if (Model.InvoiceFrequency != null)
+                            {
+                                <li><a href="#"><i class="icon-acrobat"></i> @Model.InvoiceFrequency</a></li>
+                            }
+                            @if (Model.TaskStatus != 1)
+                            {
+                                <li> <a href="@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Invoice = Model.TaskId})" target="_blank"><i class="icon-bill"></i><span>@Model.TInv</span> Invoice(s)</a></li>
+                            }
+                            @if (Model.TaskType == "Training" && user.DepartmentId == "ADI")
+                            {
+                                <li><a href="@Url.Action("MyTraining", "TMS", new { area = "TMS" })" target="_blank">Total Trainings :- @ViewBag.TrainingCount </a></li>
+                            }
+                            @if (user.Role == "Admin" || user.Role == "Employee")
+                            {
+                                if (attachment != null)
+                                {
+                                    <li><a href="~/File/TaskAttachment?id=@attachment.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Admin</a></li>
+                                }
+                                if (finalattachments != null)
+                                {
+                                    <li><a href="~/File/TaskFinalAttachment?id=@finalattachments.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Employee</a></li>
+                                }
+                                if (user.Role == "Admin" && Model.TaskStatus == 1)
+                                {
+                                    <li> <a href="@Url.Action("Task", "Task", new { TaskId = Model.TaskId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a></li>
+                                    <li><a href="@Url.Action("MyTasks", "Task", new { area = "CMS", TaskId = Model.TaskId, UserAction = "Delete", IsClientView = "True" })" title="Remove"><i class="icon-trash"></i></a></li>
+                                }
+                            }
+
+                        </ul>
+
+                    </div>
+
+                    <div class="col_full nobottommargin">
+                        <blockquote> <p align="justify">@Model.Description</p></blockquote>
+                    </div>
+                    <div class="col_full">
+                        <ul class="list-group col_half">
+                            @if (@Model.AssignedToName != null)
+                            {
+                                <li class="list-group-item">
+                                    <span class="badge">@Model.AssignedToName</span>
+                                    <i class="icon-money"> </i> Assign To:
+                                </li>
+                            }
+
+                            @if (Model.TaskType != null)
+                            {
+                                <li class="list-group-item">
+                                    <span class="badge">@Model.TaskType</span>
+                                    <i class="icon-building"> </i> Industry:
+                                </li>
+                            }
+                            @if (Model.StartDate != null)
+                            {
+                                <li class="list-group-item">
+                                    <span class="badge">@Model.StartDate.Value.ToString("dd-MMM-yyyy")</span>
+                                    <i class="icon-bill"> </i> StartDate:
+                                </li>
+                            }
+                            @if (Model.Duration != null)
+                            {
+                                <li class="list-group-item">
+                                    <span class="badge">@Model.Duration InDays</span>
+                                    <i class="icon-time"> </i> Duration:
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+                    <div class="col_full">
+                        <ul class="entry-meta clearfix">
+                            <li><a href="#"><i class="icon-road"></i> @Model.Venue</a></li>
+                            <li><a href="#"><i class="icon-location"></i> @Model.CityName</a></li>
+                            <li><a href="#"><i class="icon-location"></i> @Model.StateName</a></li>
+                            <li><a href="#"><i class="icon-location"></i> @Model.CountryName</a></li>
+                        </ul>
+                    </div>
+                    <div class="col_full">
+                        @if (TaskItems != null)
+                        {
+                            if (TaskItems.Count() > 0)
+                            {
+                                <div class="table-responsive bottommargin">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th class="cart-product-name">Entry Type</th>
+                                                <th class="cart-product-name">Entry Detail</th>
+                                                <th class="cart-product-price">Unit </th>
+                                                <th class="cart-product-quantity">Units Price <small>(in @Model.Currency)</small></th>
+                                                <th class="cart-product-duration">Duration <small>(in Days)</small></th>
+                                                <th class="cart-product-subtotal">Total Price <small>(in @Model.Currency)</small></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach (var item in TaskItems)
+                                            {
+                                                if (item.Duration != 0)
+                                                {
+                                                    itemTotal = item.Unit * item.UnitPrice * item.Duration;
+                                                }
+                                                else
+                                                {
+                                                    itemTotal = item.Unit * item.UnitPrice;
+                                                }
+
+                                                GrandTotal = GrandTotal + itemTotal;
+
+                                                <tr class="cart_item">
+                                                    <td class="cart-product-name">
+                                                        <a href="#">@item.ItemTypeName</a>
+                                                    </td>
+                                                    <td class="cart-product-name">
+                                                        <a href="#">@item.ItemDescription</a>
+                                                    </td>
+                                                    <td class="cart-product-price">
+                                                        <span class="amount">@item.Unit</span>
+                                                    </td>
+                                                    <td class="cart-product-quantity">
+                                                        <div class="quantity clearfix">
+                                                            <span class="amount">@item.UnitPrice</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="cart-product-duration">
+                                                        <div class="quantity clearfix">
+                                                            @if (item.Duration == 0)
+                                                            { <span class="amount">NA</span>}
+                                                            else
+                                                            {<span class="amount">@item.Duration</span> }
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="cart-product-subtotal">
+                                                        <span class="amount">@itemTotal</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+
+                                <div class="row clearfix">
+                                    <div class="col-md-6 clearfix">
+                                    </div>
+                                    <div class="col-md-6 clearfix">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <tbody>
+                                                    <tr class="cart_item">
+                                                        <td class="cart-product-name">
+                                                            <strong> Subtotal <small>&nbsp;( In @Model.Currency)</small></strong>
+                                                        </td>
+                                                        <td class="cart-product-name">
+                                                            <span class="amount">@GrandTotal</span>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col_full">
+                @*-------------------------- Comment area -------------------------------------------*@
+                <div class="container">
+                    <div id="comments" class="clearfix">
+                        <div class="row">
+                            <lable>New Comment </lable>
+                            @Html.TextArea("Comment", "", 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Comment", @placeholder = "Comment here...." })
+                            <div id="textarea_feedback" class="text-danger"></div>
+                        </div>
+                        <div class="row">
+                            <br />  <input type="submit" id="create" value="Post" class="button button-3d button-rounded button-teal" style="float: right;" />
+                        </div>
+                        <br />
+                        <h4 id="comments-title"><span>@ViewBag.CommentsCount</span> Comments</h4>
+
+                        @if (taskComments != null)
+                        {
+                            <ol class="commentlist clearfix">
+                                <li class="comment even thread-even depth-1" id="li-comment-1">
+
+                                    @foreach (var item in taskComments)
+                                    {
+                                        <div id="comment-1" class="col_full comment-wrap clearfix">
+                                            <div class="comment-meta">
+                                                <div class="comment-author vcard">
+                                                    <span class="comment-avatar clearfix">
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="comment-content clearfix">
+
+                                                <div class="comment-author"><span><b>@item.UserName</b>(@item.CommentedOn)</span></div>
+                                                <p>@item.TaskComment</p>
+                                                <a class="comment-reply-link" id="yourreply" onclick="javascript: ShowHideDivOnButtonClick(@item.TaskCommentId)" style="padding-right:5em" title="Reply"><i class="icon-reply"></i></a>
+                                                @if (user.Role == "Admin")
+                                                {
+                                                    <a id="CommentRemove" onclick="javascript: ConfirmationDialogComment('@item.TaskCommentId');" class="comment-reply-link" title="Remove"><i class="icon-line-cross"></i></a>
+                                                }
+                                            </div>
+
+                                            <div class="row comment-content clearfix" id="@item.TaskCommentId" style="display:none">
+                                                <div class="col_full">
+                                                    <lable>New Reply</lable>
+                                                    @Html.TextArea("Reply", "", 5, 124, htmlAttributes: new { @class = "form-control", @id = "userReply" + item.TaskCommentId, @Maxlength = 2048, @placeholder = "Reply here...." })
+                                                    <br />  <input type="button" value="Reply" class="button button-3d button-rounded button-teal" style="float: left;" onclick="SubmitData(@item.TaskCommentId)" />
+                                                </div>
+                                            </div>
+                                            <br />
+                                            @foreach (var ritem in taskReplies.Where(r => r.TaskCommentId == item.TaskCommentId))
+                                            {
+                                                ReplyCount++;
+                                                <ul class='children'>
+                                                    <li>
+                                                        <div id="comment-3" class="comment-wrap clearfix">
+                                                            <div class="comment-meta">
+                                                                <div class="comment-author">
+                                                                    <span><b>@ritem.UserName</b>(@ritem.RepliedOn)</span>
+                                                                </div>
+                                                                @if (ritem.TaskReply != null)
+                                                                {
+                                                                    <p>@ritem.TaskReply </p>
+                                                                }
+                                                                @if (user.Role == "Admin")
+                                                                {
+                                                                    <a id="ReplyRemove" onclick="javascript: ConfirmationDialogReply('@ritem.TaskReplyId');" class="comment-reply-link" style="padding-top:8px;padding-right:2em" title="Remove"><i class="icon-line-cross"></i></a>
+                                                                }
+                                                            </div>
+
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            }
+
+                                            @if (ReplyCount > 1)
+                                            {
+                                                <span><b>@ReplyCount Replies</b></span>
+                                                ReplyCount = 0;
+                                            }
+                                            else
+                                            {
+                                                <span><b>@ReplyCount Reply</b></span>
+                                                ReplyCount = 0;
+                                            }
+                                        </div>
+                                    }
+                            </ol>
+                        }
+                    </div>
+                    @Html.Hidden("TaskId", Model.TaskId)
+                    @Html.Hidden("RedirectTo", Url.Action("TaskDetails", "Task", new { Area = "CMS", Id = Model.TaskId }))
+
+                </div>
+            </div>
+        </div>
+
+        @*For Question to upload or not *@
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Would you like to add some attachment</h4>
+                            <br />
+                            <center>
+                                <button type="button" class="button button-3d button-small button-rounded button-teal" onclick="attach('@Model.TaskId', '@Model.AssignedTo');">Yes</button> &nbsp;&nbsp; &nbsp;&nbsp;
+                                <button type="button" class="button button-3d button-small button-rounded button-red" onclick="location.href='@Url.Action("TaskDetails", "Task", new { area = "CMS", Id = Model.TaskId, AssignedTo = Model.AssignedTo, TaskStatus = 6 })'">No</button>
+                            </center>
+                        </div>
+                        <div class="modal-body" id="cndBody">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*For Upload Attachment*@
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Attach File</h4>
+                        </div>
+                        <div class="modal-body" id="cndBody">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+    }
+}
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+</script>
+
+<script language="javascript">
+
+    $(document).ready(function () {
+        $('.form-process').fadeOut();
+    });
+
+    function ShowHideDivOnButtonClick(taskCommentId) {
+        $('#' + taskCommentId).toggle("fast");
+        return true;
+    }
+    //For Reply
+    function SubmitData(taskCommentId) {
+        $('.form-process').fadeIn();
+        $.ajax({
+            type: "post",
+            url: "/CMS/Task/TaskDetails",
+            data: {
+                Id: $('#TaskId').val(),
+                Comment: null,
+                Reply: $('#userReply'+taskCommentId).val(),
+                TaskCommentId: taskCommentId
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                window.location = $('#RedirectTo').val();
+            }
+        });
+    }
+
+    function ConfirmationDialogReply(taskReplyId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete review?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                $('.form-process').fadeIn();
+                $.ajax({
+                    type: "post",
+                    url: "/CMS/Task/RemoveTaskReply",
+                    data: {
+                        Id: $('#TaskId').val(),
+                        TaskReplyId: taskReplyId
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        window.location = $('#RedirectTo').val();
+                    }
+                });
+            }
+        });
+        return false;
+    }
+
+    function ConfirmationDialogComment(taskCommentId) {
+
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete comment?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                $('.form-process').fadeIn();
+                $.ajax({
+                    type: "post",
+                    url: "/CMS/Task/RemoveTaskComment",
+                    data: {
+                        Id: $('#TaskId').val(),
+                        TaskCommentId: taskCommentId
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        window.location = $('#RedirectTo').val();
+                    }
+                });
+            }
+        });
+        return false;
+    }
+
+    function attach(TaskId, AssignTo) {
+        var paramPub;
+        paramPub = "TaskId=" + TaskId + "&AssignTo=" + AssignTo;
+        paramPub = $('#weburl').val() + "/CMS/Task/UploadAttachment?" + paramPub;
+        $('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    function Final() {
+        $('#cndBody').load();
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

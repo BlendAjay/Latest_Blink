@@ -1,0 +1,348 @@
+﻿@model AJSolutions.Models.MTTrainingOrderTraineeDetailsView
+@{
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Master Trainer Training Order";
+    var IppbBranchValues = ViewData["IppbBranch"] as IEnumerable<AJSolutions.Models.BranchMaster>;
+}
+@using (Html.BeginForm("MasterTrainerTO", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "MasterTrainerTO", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.Hidden("Result", ViewBag.Result as string)
+    <div class="container">
+
+        <div class="form-process"></div>
+        <div class="fancy-title title-bottom-border">
+            <h4>Master Trainer Training Order</h4>
+        </div>
+        <div class="row">
+            <div class="clear"></div>
+            <div class="fancy-title title-dotted-border title-center">
+                <h4><span>Training Details</span></h4>
+            </div>
+            <div class="col_half">
+                <label>Training Week</label>
+                <select name="TrainingWeek" id="TrainingWeek" tabindex="9" class="form-control required">
+                    <option value="">-- Select --</option>
+                    @*<option value="Week 1">Week 1 (13-AUG-2018)</option>*@
+                    @*<option value="Week 2">Week 2 (20-AUG-2018)</option>*@
+                    @*<option value="Week 3">Week 3 (27-AUG-2018)</option>
+                        <option value="Week 4">Week 4 (04-SEP-2018)</option>
+                        <option value="Week 5">Week 5 (10-SEP-2018)</option>*@
+                        <option value="Week 6">Week 6 (17-SEP-2018)</option>
+
+                </select>
+            </div>
+
+            <div class="col_half col_last">
+                <label>Name of Circle</label>
+                @*<div id="IPPBCircle">*@
+                @Html.DropDownList("Circle", null, "---  Select Circle ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Circle", id = "Circle" })
+                @*</div>*@
+            </div>
+
+            @*<div class="col_half ">
+                    <label>Name of IPPB Branch</label>
+                    <div id="IPPBBranch">
+                        @Html.DropDownList("Branch", null, "---  Select Branch ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Branch", id = "Branch" })
+                    </div>
+                </div>*@
+            <div class="col_half ">
+                <label>Contact Number of Officer Filling this Form</label>
+                <input type="text" id="ContactNumber" name="ContactNumber" minlength=10 maxlength=10 value="" class="form-control number required" placeholder="Enter Contact Number" />
+            </div>
+            <div class="clear"></div>
+            <div class="table-responsive">
+                <table id="customFields" class="table table-bordered nobottommargin">
+                    <tr>
+                        <th><nobr>Tracker Id</nobr></th>
+                        <th><nobr>Name</nobr></th>
+                        <th><nobr>Designation</nobr></th>
+                        <th><nobr>IPPB Branch</nobr></th>
+                        <th><nobr>CSI Employee Id</nobr></th>
+                        <th><nobr>Gender &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</nobr></th>
+                        <th><nobr>Mobile Number</nobr></th>
+                        <th><nobr>Training Type</nobr></th>
+                        <th><nobr>Training Location</nobr></th>
+                        <th>Action</th>
+                    <tr />
+                    <tr>
+                        <td>
+                            <input type="text" class="ItemDescription form-control number required" id="TrackerId" minlength=10, maxlength=10 name="TrackerId[]" value="" placeholder="Tracker Id" />
+                        </td>
+                        <td>
+                            <input type="text" class="ItemDescription form-control required" id="CName" name="Name[]" value="" placeholder="e.g.john smith" />
+                        </td>
+                        <td>
+                            <input type="text" class="ItemDescription form-control required" id="Designation" name="Designation[]" value="" placeholder="Enter Designation" />
+                        </td>
+                        <td>
+                            <select class="form-control required" id="Branch" name="Branch[]">
+                                <option selected="selected" value=""> - - - Select IPPB Branch - - - </option>
+                                @foreach (var row in IppbBranchValues)
+                                {
+                                    <option value="@row.Branch"> @row.Branch </option>
+                                }
+                            </select>
+                        </td>
+
+                        <td><input type="text" class="ItemDescription form-control number" id="NewEmployeeId" name="NewEmployeeId[]" value="" placeholder="Employee Id" /></td>
+
+                        <td>
+                            <select class="form-control required" id="Gender" name="Gender[]">
+                                <option value="">-- Select --</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <input type="text" class="ItemDescription form-control required" id="Phone" minlength=10, maxlength=10 name="PhoneNumber[]" value="" placeholder="1234567890" />
+                        </td>
+                        <td>
+                            <select class="form-control required" id="TrainingType" name="TrainingType[]">
+                                <option value="">-- Select --</option>
+                                <option value="Finacle">Finacle</option>
+                                <option value="Micro ATM">Micro ATM</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control required" id="TrainingLocation" name="TrainingLocation[]">
+                                <option value="">-- Select --</option>
+                                <option value="Darbhanga">Darbhanga</option>
+                                <option value="Mysore">Mysore</option>
+                                <option value="Guwahati">Guwahati</option>
+                                <option value="Madurai ATM">Madurai</option>
+                                <option value="Vadodara">Vadodara</option>
+                                <option value="Saharanpur ATM">Saharanpur</option>
+                                <option value="Nagpur - WCTC">Nagpur - WCTC</option>
+                                <option value="Dadar(Mumbai) - WCTC">Dadar(Mumbai) - WCTC</option>
+                            </select>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" id="addCF">Add a New Row</a>
+                        </td>
+                        <td style = "display:none">
+                            <input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="I" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br />
+        <div class="col_full">
+            <input type="submit" value="Submit Report" style="float: right;" class="button button-3d button-large btn-block nomargin" id="SubmitForm" />
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Index", "DashBoard", new { area = "Client" }))
+}
+
+<script type="text/javascript">
+    $('#ContactNumber').change(function () {
+        {
+            var phoneno = /^\d{10}$/;
+            var contact = $('#ContactNumber').val()
+            if (contact.match(phoneno)) {
+                return true;
+            }
+            else {
+                $.alert({
+                    title: 'Oops',
+                    content: 'Invalid Contact Number',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+        }
+    })
+
+
+    $("#MasterTrainerTO").validate({
+        submitHandler: function (form) {
+
+            //array for candidate details
+            var trackerId = new Array();
+            $.each($("input[name='TrackerId[]']"), function () {
+                trackerId.push($(this).val());
+            });
+            var name = new Array();
+            $.each($("input[name = 'Name[]']"), function () {
+                name.push($(this).val());
+            });
+            var designation = new Array();
+            $.each($("input[name='Designation[]']"), function () {
+                designation.push($(this).val());
+            });
+            var branch = new Array();
+            $.each($("select[name='Branch[]']"), function () {
+                branch.push($(this).val());
+            });
+            var newEmployeeId = new Array();
+            $.each($("input[name='NewEmployeeId[]']"), function () {
+                newEmployeeId.push($(this).val());
+            });
+            var gender = new Array();
+            $.each($("select[name='Gender[]']"), function () {
+                gender.push($(this).val());
+            });
+            var Phone = new Array();
+            $.each($("input[name='PhoneNumber[]']"), function () {
+                Phone.push($(this).val());
+            });
+            var trainingtype = new Array();
+            $.each($("select[name='TrainingType[]']"), function () {
+                trainingtype.push($(this).val());
+            });
+            var trainingLocation = new Array();
+            $.each($("select[name='TrainingLocation[]']"), function () {
+                trainingLocation.push($(this).val());
+            });
+
+            $('.form-process').fadeIn()
+            //if (confirm("Please ReCheck before Final Sumbit") == true) {
+            if ($.confirm({
+                title: 'Confirmation',
+                content: 'Please check once before Final submission. The list cannot be edited after submission.' + "<br />" + 'Are you sure you want to Submit ?',
+                confirmButton: 'Yes',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                cancelButton: 'No',
+                cancelButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-warning-sign icon-2x',
+                animation: 'scale',
+                animationClose: 'top',
+                confirm: function () {
+           $.ajax({
+                type: "post",
+                url: "/TMS/Course/MasterTrainerTO",
+                data: {
+                TrainingWeek: $('#TrainingWeek').val(),
+                Circle: $('#Circle').val(),
+                ContactNumber: $('#ContactNumber').val(),
+                TrackerId: trackerId,
+                Name: name,
+                Designation: designation,
+                Branch: branch,
+                NewEmployeeId: newEmployeeId,
+                Gender: gender,
+                PhoneNumber: Phone,
+                Trainingtype: trainingtype,
+                TrainingLocation: trainingLocation
+            },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    if (data) {
+                        $.alert({
+                title: 'Cheers',
+                content: 'Your Training Order has been submitted <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                                var url = $("#RedirectTo").val();
+                                location.href = url;
+            }
+            });
+            }
+            }
+            });
+            }
+            }) == true) {
+
+            }
+            else {
+                $('.form-process').fadeOut();
+            }
+        }
+    });
+    var IppbBranchValues = [];
+
+    $.ajax({
+        url: "/TMS/Course/GetIppbBranches",
+        datatype: "JSON",
+        type: "Get",
+        success: function (data) {
+            debugger;
+            for (var i = 0; i < data.length; i++) {
+                var opt = new Option(data[i].Branch, data[i].Branch);
+                $("#Branch").append(opt);
+                IppbBranchValues.push([data[i].Branch, data[i].Branch]);
+            }
+        }
+
+    });
+    //for ADD new rows in candidate dynamic table
+
+    $("#addCF").click(function () {
+
+        var gender = '<select class="form-control required" id="Gender" name="Gender[]">';
+        gender = gender + ' <option selected="selected" value="">---Select---</option>';
+        gender = gender
+                                    + '<option value="Male">Male</option>' +
+                                    '<option value="FeMale">Female</option>' +
+                                  + '</select>';
+
+        var TType = '<select class="form-control required" id="TrainingType" name="TrainingType[]">';
+        TType = TType + ' <option selected="selected" value="">---Select---</option>';
+        TType = TType
+                                    + '<option value="Finacle">Finacle</option>' +
+                                    '<option value="Micro ATM">Micro ATM</option>' +
+                                  + '</select>';
+
+        var location = '<select class="form-control required" id="TrainingLocation" name="TrainingLocation[]">';
+        location = location + ' <option selected="selected" value="">---Select---</option>';
+        location = location
+                                    + '<option value="Darbhanga">Darbhanga</option>' +
+                                    '<option value="Mysore">Mysore</option>' +
+                                    '<option value="Guwahati">Guwahati</option>' +
+                                    '<option value="Madurai ATM">Madurai</option>' +
+                                    '<option value="Vadodara">Vadodara</option>' +
+                                    '<option value="Saharanpur ATM">Saharanpur</option>' +
+                                    '<option value="Nagpur - WCTC">Nagpur - WCTC</option>' +
+                                    '<option value="Dadar(Mumbai) - WCTC">Dadar(Mumbai) - WCTC</option>' +
+                                  + '</select>';
+
+        var branch = '<select class="form-control required" id="Branch" name="Branch[]">';
+        branch = branch + ' <option selected="selected" value="">--- Select IPPB Branch</option>';
+
+        for (var i = 0; i < IppbBranchValues.length; i++) {
+            branch = branch + '<option value=' + IppbBranchValues[i][0] + '>' + IppbBranchValues[i][1] + '</option>';
+        }
+        branch = branch + '</select>';
+
+
+        $("#customFields").append('<tr>' +
+                                        '<td style = "display:none"><input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="0" /></td>' +
+                                        '<td><input type="text" class="ItemDescription form-control number required" id="TrackerId" name="TrackerId[]" value="" placeholder="Enter Tracker Id" /></td>' +
+                                        '<td><input type="text" class="ItemDescription form-control required" id="CName" name="Name[]" value="" placeholder="e.g.john smith" /></td>' +
+                                        '<td><input type="text" class="ItemDescription form-control required" id="Designation" name="Designation[]" value="" placeholder="Enter Designation" /></td>' +
+                                        '<td>' + branch + '</td>' +
+                                        '<td><input type="text" class="ItemDescription form-control number " id="NewEmployeeId" name="NewEmployeeId[]" value="" placeholder="Employee Id" /></td>' +
+                                        '<td>' + gender + '</td>' +
+                                        '<td><input type="text" class="ItemDescription form-control number required" minlength=10, maxlength=10,  id="Phone" name="PhoneNumber[]" value="" placeholder="1234567890" /></td>' +
+                                        '<td>' + TType + '</td>' +
+                                        '<td>' + location + '</td>' +
+                                        '<td><a href="javascript:void(0);" id="remCF">Remove</a></td></tr>' +
+                                        '<td style = "display:none"><input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="I" /></td>'
+                                  );
+
+
+        $("#customFields").on('click', '#remCF', function () {
+
+            $(this).closest('tr').remove();
+
+        });
+
+    });
+
+</script>

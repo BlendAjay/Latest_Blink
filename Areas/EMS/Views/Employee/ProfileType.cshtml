@@ -1,0 +1,168 @@
+﻿@model IEnumerable<AJSolutions.Models.UserProfileTypeDetails>
+@{
+    ViewBag.Title = "Profile Type";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("ProfileType", "Employee", FormMethod.Post, new { @class = "form-horizontal", id = "ProfileType", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">New Profile</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">New Profile</h5>
+                <div class="card-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="col_half">
+                        <label>New Profile Name</label><small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pencil"> </i></span>
+                            @Html.Hidden("PreviousPage", ViewBag.Page as string)
+                            @Html.Hidden("ProfileId", ViewBag.ProfileId as string)
+                            @if (ViewBag.Action == "Add")
+                            {
+                                @Html.TextBox("ProfileName", ViewBag.ProfileName as string, new { @class = "form-control", @id = "ProfileName", placeholder = "ProfileName " })
+                            }
+                            else
+                            {
+                                @Html.TextBox("ProfileName", ViewBag.ProfileName as string, new { @class = "form-control", @id = "ProfileName", placeholder = "ProfileName " })
+                            }
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        <br>  <input type="submit" id="profiletype" value="Create" style="float: right;" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.ProfileName)
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ProfileName)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "ProfileType", "Employee", new { ProfileId = item.ProfileId, ProfileName = item.ProfileName, useraction = "Edit" }, new { title = "Edit" })
+                                    | <a id="Remove" onclick="javascript: ConfirmationDialog('@item.ProfileId');" title="Remove"> Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+
+                <div class="col_one_fifth"></div>
+            </div>
+        }
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveProfileType", "Employee"));
+    @Html.Hidden("RedirectToHome", Url.Action("ProfileType", "Employee"));
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ($('#SaveStatus').val() == "Succeeded") {
+
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+    });
+
+    $('#profiletype').click(function (e) {
+        e.preventDefault();
+
+        if ($("#ProfileName").val() == undefined || $('#ProfileName').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Profile Name</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#ProfileName").focus();
+            return false;
+        }
+        $('#ProfileType').submit();
+    });
+
+    function ConfirmationDialog(ProfileId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete this <b> Profile Type <b/>,<br/> It would removed all related details belonging to this profile.?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + ProfileId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>

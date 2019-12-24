@@ -1,0 +1,73 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@model TopicMaster
+@{
+    ViewBag.Title = "Topics";
+    List<TopicMaster> topic = ViewData["TopicMaster"] as List<TopicMaster>;
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    int Count = 0;
+    var CountStr = "countdown-ex";
+}
+@using (Html.BeginForm("Topics", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "Topics", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+    @Html.HiddenFor(model => model.TopicId)
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <a href="@Url.Action("TopicMaster", "Course", new { Area = "LMS" })" class="btn btn-default btn-xs" style="float:right" target="_blank">Add Topic</a><br /><br />
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>
+                                Topic Id
+                            </th>
+                            <th>
+                                Topic Name
+                            </th>
+
+                            <th>Edit</th>
+                            <th>Add</th>
+                        </tr>
+                        @foreach (var item in topic)
+                        {
+                            Count = Count + 1;
+                            CountStr = "countdown-ex" + Count;
+                            <tr>
+                                <td>
+                                    @*@Html.ActionLink(item.TopicId, "AddTopicLecture", "Course", new {Id = item.TopicId }, htmlAttributes: new { target = "_blank" })*@
+                                    @Html.DisplayFor(modelItem => item.TopicId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TopicName)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("TopicMaster", "Course", new { TopicId = item.TopicId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                </td>
+                                <td>
+
+                                    @*<a href="#" class="button button-mini"><i class="icon-gift"></i>Button</a>*@
+                                    <a href="@Url.Action("AddTopicLecture", "Course", new { Area = "LMS", Id = item.TopicId })" class="btn btn-default btn-xs" align="right" target="_blank">Lectures</a>
+                                    @*@Html.ActionLink(item.TopicId, "AddTopicLecture", "Course", new { Id = item.TopicId , @class="button button-mini"}, htmlAttributes: new { target = "_blank" })*@
+                                </td>
+                            </tr>
+                        }
+                        @if (Count == 0)
+                        {
+                            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                                <div class="fbox-icon">
+                                    <i class="icon-thumbs-down2"></i>
+                                </div>
+                                <h3>No Topic Added<span class="subtitle"></span></h3>
+                            </div>
+                        }
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

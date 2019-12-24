@@ -1,0 +1,428 @@
+﻿@using AJSolutions.Models
+@using AJSolutions.Models
+@model IEnumerable<GenerateInvoiceView>
+@{
+    ViewBag.Title = "My Invoices";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    List<InVoiceAttachment> content = ViewData["Content"] as List<InVoiceAttachment>;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    int Count = 0;
+}
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@if (@ViewBag.Message != null)
+{
+    <div class="container">
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-thumbs-down2"></i>
+                </div>
+                <h3>@ViewBag.Message<span class="subtitle"></span></h3>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="promo nobottommargin">
+        <div class="container clearfix">
+            <div class="row combination-filter nobottommargin nopadding">
+                @Html.Hidden("Tag", ViewBag.Tag as string)
+                @if (user.DepartmentId == "ADI")
+                {
+                    <div class="col-md-4 nobottommargin ">
+                        <label>Select Source</label>
+                        @Html.DropDownList("Name", null, "---  Select Invoice Source ---", htmlAttributes: new { @class = "form-control", id = "Empcli", placeholder = "Select Invoice status" })
+                    </div>
+                }
+                <div class="col-md-4 nobottommargin ">
+                    <label>Select Invoice Status</label>
+                    @Html.DropDownList("Status", null, "---  Select Invoice Status ---", htmlAttributes: new { @class = "form-control", id = "InvoiceStatus", placeholder = "Select Invoice status" })
+                </div>
+                <div class="col-md-4 nobottommargin ">
+                    <label>Search</label><br />
+                    <button type="button" id="btnSearch" class="btn btn-primary" onclick="SendValue();">Filter</button>
+                    <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { Area = "CMS" , Tag ="Outgoing"})'">Clear</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border title-right">
+                    <br /> <h3></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="Main">
+
+        <div class="postcontent nobottommargin">
+            <div class="post-timeline events">
+                <div class="timeline-border"></div>
+                @foreach (var item in Model)
+                {
+                    Count = Count + 1;
+                    <div class="entry clearfix" style="background-color: #ffe7d3">
+                        <div class="entry-timeline">
+                            @item.InvoiceDate.Day<span>@item.InvoiceDate.ToString("MMM") @item.InvoiceDate.Year.ToString().Substring(2)</span>
+                            <div class="timeline-divider"></div>
+                        </div>
+                        <div class="entry-title">
+                            <div class="col_two_third nobottommargin">
+                                @*<h4 class="nobottommargin"><a href="@Url.Action("JobOrderDetails", "JobOrder")">@item.Subject</a></h4>*@
+                                <h4 class="nobottommargin">@Html.ActionLink(item.InvoiceSubject, "InvoiceDetails", "Invoice", new { Id = item.InvoiceNumber }, new AllowHtmlAttribute { })</h4>
+                                @*<h4 class="nobottommargin">@Html.ActionLink(item.InvoiceSubject, "InvoiceReportTemplate", "Report", new {Area="", Id = item.InvoiceNumber }, new AllowHtmlAttribute { })</h4>*@
+                                @if (item.EntryDescription != null)
+                                {
+                                    if (item.EntryDescription.Length < 150)
+                                    {
+                                        <p align="justify" class="nobottommargin">@item.EntryDescription</p>
+                                    }
+                                    else
+                                    {
+                                        <p align="justify" class="nobottommargin">@item.EntryDescription.Substring(0, 150) ...</p>
+                                    }
+                                }
+                                <div class="col_full entry-content nobottommargin">
+                                    <ul class="entry-meta clearfix">
+                                        <li><a href="#"><i class="icon-user"></i> @item.InvoiceByName </a></li>
+                                        <li><a href="#"><i class="icon-folder-open"></i>Amount &nbsp;: &nbsp; @item.NetAmount &nbsp; @item.Currency </a></li>
+                                        <li><a href="#"><i class="icon-check"></i>@item.ReferenceId</a></li>
+                                        @if (content != null)
+                                        {
+                                            foreach (var attachment in content)
+                                            {
+                                                if (item.ReferenceId == attachment.ReferenceId)
+                                                {
+                                                    <li> <a href="~/File/InvoiceAttachment?id=@attachment.FileId" alt="CV" target="_blank" title="Click here to download your attachment"><i class="icon-clip"></i></a></li>
+                                                }
+                                            }
+                                        }
+                                        @if (user.UserId == item.CorporateId)
+                                        {
+                                            if (@item.Status == "Submitted")
+                                            {
+                                                if (user.DepartmentId != "ADI")
+                                                {
+                                                    <li><a href="@Url.Action("Index", "Invoice", new { InvoiceNumber = item.InvoiceNumber, CV = false, UserAction = "Edit" })" title="Edi title=" edit"><i class="icon-pen"></i></a></li>
+                                                }
+                                                else
+                                                {
+                                                    <li><a href="@Url.Action("Index", "Invoice", new { InvoiceNumber = item.InvoiceNumber, CV=false, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a></li>
+                                                }
+                                                <li><a href="#" onclick="javascript: ConfirmationDialog('@item.ReferenceId','@item.InvoiceNumber');" title="Remove"><i class="icon-trash"></i></a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col_one_third col_last nobottommargin">
+                                <center>
+
+                                    @if (item.ReferenceId.Substring(0, 2) == "TA" && user.UserId == item.InvoiceTo)
+                                    {
+                                        <label style="color:red">@item.Status</label><br />
+                                        if (item.Status == "Submitted")
+                                        {
+                                            <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Id = item.InvoiceNumber, ReferenceId = item.ReferenceId, Status = "Accepted" })'">Accept</button>
+                                            <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Id = item.InvoiceNumber, ReferenceId = item.ReferenceId, Status = "Rejected" })'">Reject</button>
+                                        }
+                                        else if (item.Status == "Accepted")
+                                        {
+                                            <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Id = item.InvoiceNumber, ReferenceId = item.ReferenceId, Status = "Onhold" })'">Onhold</button>
+                                            @*@Html.ActionLink("Pay Now", "Payment", "Invoice", new { Id = item.InvoiceNumber }, htmlAttributes: new { @class = "btn btn-primary", @id = "paynowbutton" })*@
+                                        }
+                                        @*else if (item.Status == "Onhold" && user.SubscriberId == item.InvoiceTo)
+                                            {
+                                                @Html.ActionLink("Pay Now", "Payment", "Invoice", new { Id = item.InvoiceNumber }, htmlAttributes: new { @class = "btn btn-primary", @id = "paynowbutton" })
+                                            }*@
+                                    }
+                                    else if (item.ReferenceId.Substring(0, 2) == "JO" && user.UserId == item.InvoiceTo && user.DepartmentId == "CLI")
+                                    {
+                                        <label style="color:red">@item.Status</label><br />
+                                        if (item.Status == "Submitted")
+                                        {
+                                            <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Id = item.InvoiceNumber, ReferenceId = item.ReferenceId, Status = "Accepted" })'">Accept</button>
+                                            <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Id = item.InvoiceNumber, ReferenceId = item.ReferenceId, Status = "Rejected" })'">Reject</button>
+
+                                        }
+                                        else if (item.Status == "Accepted" && user.UserId == item.InvoiceTo)
+                                        {
+                                            <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyInvoices", "Invoice", new { area = "CMS", Id = item.InvoiceNumber, ReferenceId = item.ReferenceId, Status = "Onhold" })'">Onhold</button>
+                                            @*@Html.ActionLink("Pay Now", "Payment", "Invoice", new { Id = item.InvoiceNumber }, htmlAttributes: new { @class = "btn btn-primary", @id = "paynowbutton" })*@
+                                        }
+                                        @*else if (item.Status == "Onhold" && user.UserId == item.InvoiceTo)
+                                            {
+                                                @Html.ActionLink("Pay Now", "Payment", "Invoice", new { Id = item.InvoiceNumber }, htmlAttributes: new { @class = "btn btn-primary", @id = "paynowbutton" })
+                                            }*@
+
+                                    }
+                                    else
+                                    {
+                                        if (item.Acknowledge == false && user.UserId != item.InvoiceTo)
+                                        {
+                                            //<label style="color:red">Unpaid</label>         <br />
+                                            <label>@item.Status</label>
+                                        }
+                                        else if (item.Acknowledge == true)
+                                        {
+                                            <label style="color:green"> Paid</label>
+                                        }
+                                    }
+
+
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (Count == 0)
+                {
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h3 class="text-center">No Invoices</h3>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @Html.Hidden("RedirectTo", Url.Action("MyInvoices", "Invoice", new { area = "CMS" }))
+    </div>
+
+    @*<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page contain details of invoices.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">*@
+    @*@if (user.Role != "Employee" && user.DepartmentId != "BPT" && user.DepartmentId != "CPT" && user.DepartmentId != "FRN" && user.DepartmentId != "FRL" && user.DepartmentId != "OTP" && user.DepartmentId != "VND")
+        {
+            <a href="~/images/HelpImages/invoiceclient.png" target="_blank" data-lightbox="gallery-item">
+                <img src="~/images/HelpImages/invoiceclient.png" />
+            </a>
+
+        }
+        else if (user.Role == "Employee" &&( user.DepartmentId == "BPT" || user.DepartmentId == "CPT" || user.DepartmentId == "FRN" || user.DepartmentId == "FRL" || user.DepartmentId == "OTP" || user.DepartmentId == "VND"))
+        {
+            <a href="~/images/HelpImages/invoicetrainer.png" target="_blank" data-lightbox="gallery-item">
+                <img src="~/images/HelpImages/invoicetrainer.png" />
+            </a>
+
+        }
+
+        else
+        {
+            <a href="~/images/HelpImages/invoicetrainer.png" target="_blank" data-lightbox="gallery-item">
+                <img src="~/images/HelpImages/invoicetrainer.png" />
+            </a>
+
+        }*@
+
+    @*@if (user.Role == "Client" )
+                                                {
+                                                <a href="~/images/HelpImages/invoiceclient.png" target="_blank" data-lightbox="gallery-item">
+                                                    <img src="~/images/HelpImages/invoiceclient.png" />
+                                                </a>
+
+                                                }
+                                           else
+                                            {
+                                                <a href="~/images/HelpImages/invoicetrainer.png" target="_blank" data-lightbox="gallery-item">
+                                                    <img src="~/images/HelpImages/invoicetrainer.png" />
+                                                </a>
+
+                                            }
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel15" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel15"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                <li><a href="#tabs-3">Video</a></li>
+                            </ul>
+                            <div class="tab-container">
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4> Navigation to Invoices   </h4>
+
+                                    <img src="~/images/gif/navigation to invoices.gif" alt="Save icon" />
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6>My Stuff is containing details of Job orders, Invoices, Courses, My Training </h6>
+                                    <h6>Navigation to Invoices </h6>
+                                    <p>•Click on Navigation bar My Stuff Then their Menu Item is open  click on invoices  .</p>
+                                    <img src="~/images/Images1/181.PNG" width="259" height="341" />
+                                    <h4>This Page contain Details Of Invoices  </h4>
+
+
+                                    <img src="~/images/Images1/182.png" width="800" height="400">
+                                    <h4> Invoice page functionality </h4>
+
+                                    <h6>
+                                        If you want to filter a specific Invoice you can use the filter option here.
+                                        you can filter Invoice According Invoice status
+                                    </h6>
+                                    <img src="~/images/Images1/183.png">
+                                    <h6> 	You can Accept/Reject invoice  </h6>
+
+                                    <img src="~/images/Images1/189.png" width="400" height="150">
+
+                                    <h6> 	Click on invoice title to see the full details of invoice . </h6>
+
+                                    <img src="~/images/Images1/184.png" width="400" height="150">
+
+                                    <h6> 	You can seee the Invoice creation date  </h6>
+
+                                    <img src="~/images/Images1/185.png" width="400" height="150">
+                                    <h6> 	You Can see the invoice sender name . </h6>
+
+                                    <img src="~/images/Images1/186.png" width="400" height="150">
+                                    <h6> 	You Can see the invoice Amount . </h6>
+
+                                    <img src="~/images/Images1/187.png" width="400" height="150">
+
+                                    <h6> 	You Can see the Job order Id . </h6>
+
+                                    <img src="~/images/Images1/188.png" width="400" height="150">
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-3">
+
+                                    <h4>Here You Can See the Training Video for  Invoice Page Description  </h4>
+
+                                    <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/O2ENEQmelCM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}
+<script>
+    function SendValue() {
+        // var tag = $("#InvoiceType").find(":selected").text();
+
+        var tag = $("#Tag").val();
+        if (tag == "Outgoing") {
+            var status = $("#InvoiceStatus :selected").val();
+            var cid = $("#Empcli :selected").val();
+            // var url = "MyInvoices?Status=" + status;
+            var url = "MyInvoices?Tag=" + tag + "&Status=" + status + "&CorporateId=" + cid;
+            window.location.href = url;
+        }
+        else if (tag == "Incoming") {
+            var status = $("#InvoiceStatus :selected").val();
+            var cid = $("#Empcli :selected").val();
+            // var url = "MyInvoices?Status=" + status;
+            var url = "MyInvoices?Tag=" + tag + "&Status=" + status + "&CorporateId=" + cid;
+            window.location.href = url;
+        }
+        else {
+            var status = $("#InvoiceStatus :selected").val();
+            var cid = $("#Empcli :selected").val();
+            // var url = "MyInvoices?Status=" + status;
+            var url = "MyInvoices?Tag=" + tag + "&Status=" + status + "&CorporateId=" + cid;
+            window.location.href = url;
+        }
+
+    }
+</script>
+<script>
+    function Clear() {
+        // var tag = $("#InvoiceType").find(":selected").text();
+        var tag = $("#Tag").val();
+        var status = $("#InvoiceStatus").find(":selected").text();
+        // var url = "MyInvoices?Status=" + status;
+        var url = "MyInvoices"
+        window.location.href = url;
+    }
+
+    function ConfirmationDialog(ReferenceId, InvoiceNumber) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?ReferenceId=" + ReferenceId + "&InvoiceNumber=" + InvoiceNumber + "&UserAction=Delete";
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+

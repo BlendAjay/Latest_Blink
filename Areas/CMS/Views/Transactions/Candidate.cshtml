@@ -1,0 +1,129 @@
+﻿@model IEnumerable<AJSolutions.Areas.Candidate.Models.CandidateTransactionViewModel>
+@{
+
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    ViewBag.Title = "Transaction Detail";
+    if (user.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    int count = 0;
+}
+
+@using (Html.BeginForm("Candidate", "Transactions", FormMethod.Post, new { @area = "CMS", @class = "form-horizontal needs-validation", id = "TransactionDetail", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="fancy-title title-bottom-border title-right">
+                    <h4>Transactions</h4>
+                </div>
+                @foreach (var mitem in Model.Select(m => new { m.CourseFee, m.CourseCode, m.BatchId, m.BatchName, m.CourseName }).Distinct())
+                {
+                    var totalPaidAmount = 0.0;
+                    if (count > 0)
+                    {
+                        <div class="fancy-title title-bottom-border title-right">
+                            <h4></h4>
+                        </div>
+                    }
+                    <div class="container">
+                        <div class="row">
+                            <div class="col_one_third"><b>Name : @mitem.CourseName (@mitem.CourseCode)</b></div>
+                            <div class="col_one_third"><b>Batch : @mitem.BatchName (@mitem.BatchId)</b></div>
+                            <div class="col_one_third col_last"><b>Course Fee : @mitem.CourseFee</b></div>
+                        </div>
+                    </div>
+                    
+                    count++;
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                <th>
+                                    Transaction Id
+                                </th>
+                                <th>Candidate Name</th>
+                                <th>Phone Number</th>
+                                <th>Email Id</th>
+                                <th>
+                                    Amount Paid
+                                </th>
+                                <th>
+                                    Payment Mode
+                                </th>
+                                <th> Reference No</th>
+                                <th>
+                                    Bank Name
+                                </th>
+                                <th>Payment Date</th>
+                                <th>Status</th>
+                            </tr>
+
+                            @foreach (var item in Model.Where(m => m.BatchId == mitem.BatchId))
+                            {
+                                totalPaidAmount = totalPaidAmount + item.FeePaid;
+
+                                <tr>
+                                    <td>
+                                        @*@Html.HiddenFor(modelItem => item.TransactionId, new { id = "TransactionId")*@
+                                        @Html.DisplayFor(modelItem => item.TransactionId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Email)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FeePaid)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PaymentMode)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ReferenceNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BankName)
+                                    </td>
+                                    <td>
+                                        @if (item.PaymentDate != null)
+                                        {
+                                            <nobr> @item.PaymentDate.Value.ToString("dd-MMM-yyyy")</nobr>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Status != "Approved")
+                                        {
+                                            <a href="@Url.Action("Candidate", "Transactions", new { area = "CMS", TransactionId = @item.TransactionId, Status = "Approve" })" class="btn btn-default btn-xs">Approve</a>
+                                            <span>/</span> <a href="@Url.Action("Candidate", "Transactions", new { area = "CMS", TransactionId = @item.TransactionId, Status = "DisApprove" })" class="btn btn-default btn-xs">DisApprove</a>
+                                        }
+                                        else
+                                        {
+                                            @item.Status
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                    <span style="float:right"><b>Total Batch Revenue : @totalPaidAmount </b></span>
+                    <br /><br />
+                }
+            </div>
+        }
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("Candidate", "Transactions", new { area = "CMS" }))
+}
+
+

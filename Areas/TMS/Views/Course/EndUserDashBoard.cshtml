@@ -1,0 +1,1946 @@
+﻿@using AJSolutions.Models;
+@model IEnumerable<EndUserAttendedCount>
+@{
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "DashBoard";
+    var nominated = ViewData["Nominated"] as IEnumerable<AJSolutions.Models.EndUserNominatedCount>;
+    var attended = ViewData["Attended"] as IEnumerable<AJSolutions.Models.EndUserAttendedCount>;
+    var certified = ViewData["Certified"] as IEnumerable<AJSolutions.Models.EndUserCertifiedCount>;
+}
+
+<h2></h2>
+@using (Html.BeginForm("EndUserDashBoard", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    <div class="container">
+        <div class="row">
+            <div class="fancy-title title-dotted-border title-center">
+                <h5><span>Training Type </span>Stats</h5>
+            </div>
+            <div class="col_full">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-responsive nobottommargin small">
+                        <thead>
+                            <tr>
+                                <th class="center">
+                                    Training Type
+                                </th>
+                                <th class="center">
+                                    Nominated
+                                </th>
+                                <th class="center">
+                                    Attended
+                                </th>
+                                <th class="center">
+                                    Certified
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td class="info center">Finacle</td>
+                                <td class="info center">@nominated.Select(a => a.TotalPATraineeNominated).Sum()</td>
+                                <td class="info center">@attended.Select(a => a.TotalPATraineeAttended).Sum()</td>
+                                <td class="info center">@certified.Select(a => a.TotalPACertified).Sum()</td>
+                            </tr>
+                            <tr>
+                                <td class="warning center">Micro ATM</td>
+                                <td class="warning center">@nominated.Select(m => m.TotalGDSTraineeNominated).Sum()</td>
+                                <td class="warning center">@attended.Select(m => m.TotalGDSTraineeAttended).Sum()</td>
+                                <td class="warning center">@certified.Select(m => m.TotalGDSCertified).Sum()</td>
+                            </tr>
+                            <tr>
+                                <td class="success center">Total</td>
+                                <td class="success center">@nominated.Select(a => a.TotalTraineeNominated).Sum()</td>
+                                <td class="success center">@attended.Select(a => a.TotalTraineeAttended).Sum()</td>
+                                <td class="success center">@certified.Select(a => a.TotalTraineeCertified).Sum()</td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col_full">
+                <div class="col_one_third button-white" id="polarAreaChartPA">
+                    <strong class="center">Finacle</strong>
+                    <canvas id="TotalFinaclePolar" height="300"></canvas>
+
+                </div>
+                <div class="col_one_third button-white" id="polarAreaChartGDS">
+                    <strong class="center">Micro ATM</strong>
+                    <canvas id="TotalGdsPolar" height="300"></canvas>
+
+                </div>
+                <div class="col_one_third button-white col_last" id="polarAreaChartTOT">
+                    <strong class="center">Total</strong>
+                    <canvas id="TotalPolar" height="300"></canvas>
+
+                </div>
+            </div>
+
+           
+            <div class="col_full">
+                <div class="fancy-title title-dotted-border title-center">
+                    <h5><span>Circle wise </span>Stats</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-responsive nobottommargin small">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="center">Circle</th>
+
+                                <th colspan="3" class="info center">Finacle</th>
+
+
+                                <th colspan="3" class="warning center">Micro ATM</th>
+                                <th class="success center" colspan="3">Total</th>
+
+                            </tr>
+                            <tr>
+
+                                <th class="info center">Nominated</th>
+                                <th class="info center">Attended</th>
+                                <th class="info center">Certified</th>
+                                <th class="warning center">Nominated</th>
+                                <th class="warning center">Attended</th>
+                                <th class="warning center">Certified</th>
+
+
+                                <th class="success center">Nominated</th>
+                                <th class="success center">Attended</th>
+                                <th class="success center">Certified</th>
+
+
+                            </tr>
+                        
+                        </thead>
+                        <tbody>
+                            @foreach (var item in nominated.OrderBy(m => m.Circle))
+                                {
+                                    var mitem = attended.Where(m => m.Circle == item.Circle).ToList();
+                                    var citem = certified.Where(m => m.Circle == item.Circle).ToList();
+                                    var totalnominatod = nominated.Where(m => m.Circle == item.Circle).ToList();
+
+                                <tr>
+                                    <td>@item.Circle</td>
+                                    <td class="info center">@item.TotalPATraineeNominated</td>
+                                    @foreach (var nitem in mitem)
+                                        {
+                                    <td class="info center">@nitem.TotalPATraineeAttended</td>
+                                        }
+                                    @foreach (var ditem in citem)
+                                        {
+                                    <td class="info center">@ditem.TotalPACertified</td>
+                                        }
+                                    <td class="warning center">@item.TotalGDSTraineeNominated</td>
+                                    @foreach (var nitem in mitem)
+                                        {
+                                    <td class="warning center">@nitem.TotalGDSTraineeAttended</td>
+                                        }
+                                    @foreach (var ditem in citem)
+                                        {
+                                    <td class="warning center">@ditem.TotalGDSCertified</td>
+                                        }
+                                    @foreach (var tnominated in totalnominatod)
+                                        {
+                                        <td class="success center">@tnominated.TotalTraineeNominated</td>
+                                        }
+                                    @foreach (var tattended in mitem)
+                                        {
+                                        <td class="success center">@tattended.TotalTraineeAttended</td>
+                                        }
+                                    @foreach (var tcertified in citem)
+                                        {
+                                        <td class="success center">@tcertified.TotalTraineeCertified</td>
+                                        }
+
+                                </tr>
+
+                                }
+                            <tr>
+                                <td>Total</td>
+                                <td class="center">@nominated.Select(a => a.TotalPATraineeNominated).Sum()</td>
+                                <td class="center">@attended.Select(a => a.TotalPATraineeAttended).Sum()</td>
+                                <td class="center">@certified.Select(a => a.TotalPACertified).Sum()</td>
+                                <td class="center">@nominated.Select(m => m.TotalGDSTraineeNominated).Sum()</td>
+                                <td class="center">@attended.Select(m => m.TotalGDSTraineeAttended).Sum()</td>
+                                <td class="center">@certified.Select(m => m.TotalGDSCertified).Sum()</td>
+                                <td class="center">@nominated.Select(a => a.TotalTraineeNominated).Sum()</td>
+                                <td class="center">@attended.Select(a => a.TotalTraineeAttended).Sum()</td>
+                                <td class="center">@certified.Select(a => a.TotalTraineeCertified).Sum()</td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            @*<div class="col_full">
+                    <div id="MultiseriseLinechart" style="height: 300px; width: 100%;"></div>
+                </div>*@
+            <div class="col_full button-white" id="lineChart" style="opacity: 0;">
+                <strong class="center">Nominated Vs Attended Vs Certified</strong>
+                <canvas id="lineChartCanvas" width="1000" height="300"></canvas>
+            </div>
+            <div class="col_full">
+                <div class="fancy-title title-dotted-border title-center">
+                    <h5>Total<span> Nominated </span></h5>
+                </div>
+                <div class="col_one_third">
+                    <div id="chartContainer1" style="height:300px;"></div>
+                </div>
+
+                <div class="col_one_third">
+                    <div id="chartContainer2" style="height:300px;"></div>
+                </div>
+                <div class="col_one_third col_last">
+                    <div id="chartContainer3" style="height:300px;"></div>
+                </div>
+
+                @*FOR TOTAL ATTENDED*@
+               
+                    <div class="col_full">
+                        <div class="fancy-title title-dotted-border title-center">
+                            <h5>Total<span> Attended </span></h5>
+                        </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer10" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer11" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+
+                        <div id="chartContainer12" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END*@
+                @*FOR TOTAL CERTIFIED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>Total<span> Certified </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+                        <div id="chartContainer19" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third">
+                        <div id="chartContainer20" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+                        <div id="chartContainer21" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END*@
+               
+                @*FOR PA NOMINATED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>Finacle<span> Nominated </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer4" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer5" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third col_last">
+
+                        <div id="chartContainer6" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END OF PA NOMINATED*@
+                @*FOR PA ATTENDED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>Finacle<span> Attended </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+                        <div id="chartContainer13" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third">
+                        <div id="chartContainer14" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+                        <div id="chartContainer15" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END*@
+                @*FOR PA CERTIFIED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>Finacle<span> Certified </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+                        <div id="chartContainer22" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third">
+                        <div id="chartContainer23" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+                        <div id="chartContainer24" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END*@
+                
+                @*FOR GDS NOMINATED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>MicroATM<span> Nominated </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer7" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third ">
+
+                        <div id="chartContainer8" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+                        <div id="chartContainer9" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END OF GDS NOMINATED*@
+                @*FOR GDS ATTENDED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>MicroATM<span> Attended </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer16" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third ">
+
+                        <div id="chartContainer17" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+
+                        <div id="chartContainer18" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END*@
+                @*FOR GDS CERTIFIED*@
+                    <div class="col_full">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>MicroATM<span> Certified </span></h5>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer25" style="height:300px;"></div>
+                    </div>
+
+                    <div class="col_one_third">
+
+                        <div id="chartContainer26" style="height:300px;"></div>
+                    </div>
+                    <div class="col_one_third col_last">
+
+                        <div id="chartContainer27" style="height:300px;"></div>
+                    </div>
+                </div>
+                @*END*@
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        var dataPoints = [];
+                        var legand = [];
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominated/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalTraineeNominated });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer1", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 10000,
+                                        maximum: 50000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                @*for GDS Nominated*@
+
+
+                <script type="text/javascript">
+
+                    jQuery(window).load(function () {
+                        var labels = [], datapoint1 = [], datapoint2 = [], datapoint3 = [];
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetMultiTrendTotal/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i < data.length ; i++) {
+                                    labels.push(data[i].Circle);
+                                    datapoint1.push(data[i].TotalTraineeNominated);
+                                    datapoint2.push(data[i].TotalTraineeAttended);
+                                    datapoint3.push(data[i].TotalTraineeCertified);
+                                }
+                                 
+                                var lineChartData = {
+                                    labels: labels,
+                                    datasets: [
+                                        {
+                                            label: "Nominated",
+                                            showInLegend: true,
+                                            name: "Nominated",
+                                            fillColor: "rgba(217,112,65,0.5)",
+                                            strokeColor: "rgb(217,112,65)",
+                                            pointColor: "rgb(217,112,65)",
+                                            pointStrokeColor: "#fff",
+                                            data: datapoint1,
+                                            indexlabel: "Nominated"
+                                        },
+                                        {
+                                            label: "Attended",
+                                            showInLegend: true,
+                                            text: "Attended",
+                                            fillColor: "rgba(127,255,212,0.5)",
+                                            strokeColor: "rgb(127,255,212)",
+                                            pointColor: "rgb(127,255,212)",
+                                            pointStrokeColor: "#fff",
+                                            data: datapoint2
+                                        },
+                                        {
+                                            label: "Certified",
+                                            showInLegend: true,
+                                            name: "Certified",
+                                            fillColor: "rgba(33,50,61,0.5)",
+                                            strokeColor: "rgb(33,50,61)",
+                                            pointColor: "rgb(33,50,61)",
+                                            pointStrokeColor: "#fff",
+                                            data: datapoint3
+                                        }
+                                    ]
+                                }
+
+
+                                var globalGraphSettings = { animation: Modernizr.canvas };
+
+                                function showLineChart() {
+                                    var ctx = document.getElementById("lineChartCanvas").getContext("2d");
+                                    new Chart(ctx).Line(lineChartData, globalGraphSettings);
+                                }
+
+                                $('#lineChart').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showLineChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+                            }
+                        })
+
+
+
+                    });
+
+                </script>
+
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+                        var legand = [];
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominatedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week ' + data[i].UpdatedON, y: data[i].TotalTraineeNominated });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer2", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+
+                                    },
+                                    axisY: {
+                                        interval: 10000,
+                                        maximum: 50000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominatedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week ' + data[i].UpdatedON, y: data[i].TotalNominatedTrand });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer3", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominated/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalPATraineeNominated });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer4", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominatedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalPATraineeNominated });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer5", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetPANominatedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalPATraineeNominatedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer6", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominated/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalGDSTraineeNominated });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer7", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+
+
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetNominatedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalGDSTraineeNominated });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer8", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetGDSNominatedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalGDSTraineeNominatedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer9", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetAttended/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalTraineeAttended });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer10", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetAttendedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalTraineeAttended });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer11", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetattendedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalTraineeAttendedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer12", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetAttended/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalPATraineeAttended });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer13", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetAttendedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalPATraineeAttended });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer14", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetPAattendedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalPATraineeAttendedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer15", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetAttended/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalGDSTraineeAttended });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer16", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetAttendedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalGDSTraineeAttended });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer17", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetGDSattendedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalGDSTraineeAttendedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer18", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertified/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalTraineeCertified });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer19", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertifiedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalTraineeCertified });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer20", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertifiedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalTraineeCertifiedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer21", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertified/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalPACertified });
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer22", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: "",
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000,
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertifiedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalPACertified });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer23", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetPACertifiedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalPACertifiedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer24", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertified/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: data[i].Circle, y: data[i].TotalGDSCertified });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer25", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                        labelAngle: 100,
+                                        labelFontSize: 8,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    dataPointMaxWidth: 5,
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "column",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetCertifiedTrand/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalGDSCertified });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer26", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 5000,
+                                        maximum: 30000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+
+
+                        var dataPoints = [];
+
+                        $.ajax({
+                            type: "post",
+                            url: "/TMS/Course/GetGDSCertifiedTrandChart/",
+                            data: {
+
+                            },
+                            datatype: "json",
+                            traditional: true,
+                            success: function (data) {
+                                for (var i = 0; i <= data.length - 1; i++) {
+                                    dataPoints.push({ label: 'Week' + '' + data[i].UpdatedON, y: data[i].TotalGDSCertifiedTrend });
+
+                                }
+                                var chart = new CanvasJS.Chart("chartContainer27", {
+                                    theme: "theme3",//theme1
+                                    title: {
+                                        text: ""
+                                    },
+                                    axisX: {
+                                        interval: 1,
+                                    },
+                                    axisY: {
+                                        interval: 20000,
+                                        maximum: 200000
+                                    },
+                                    creditText: "",
+                                    data: [
+                                    {
+                                        // Change type to "bar", "splineArea", "area", "spline", "pie",etc.
+                                        type: "line",
+                                        toolTipContent: "{y}",
+                                        dataPoints: dataPoints
+                                    }
+                                    ]
+                                });
+
+                                chart.render();
+                            }
+                        });
+                    });
+
+                </script>
+                <script type="text/javascript">
+
+                    jQuery(window).load(function () {
+                        var polarAreaChartData = [
+                            {
+                                value: @ViewBag.TotalPaNominated,
+                                color: "#D97041",
+                                label:"Total Nominated"
+                            },
+                            {
+                                value: @ViewBag.TotalPaAttended,
+                                color: "#7FFFD4",
+                                label:"Total Attended"
+                            },
+                            {
+                                value: @ViewBag.TotalPaCertified,
+                                color: "#21323D",
+                                label:"Total Certified"
+                            }
+
+                        ];
+
+
+                        var globalGraphSettings = { animation: Modernizr.canvas };
+
+                        function showPolarAreaChart() {
+                            var ctx = document.getElementById("TotalFinaclePolar").getContext("2d");
+                            new Chart(ctx).PolarArea(polarAreaChartData, globalGraphSettings);
+                        }
+
+                        $('#polarAreaChartPA').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showPolarAreaChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+
+
+
+                    });
+
+                </script>
+
+                <script type="text/javascript">
+
+                    jQuery(window).load(function () {
+                        var polarAreaChartData = [
+                            {
+                                value: @ViewBag.TotalGDSNominated,
+                                color: "#D97041",
+                                label:"Total Nominated"
+                            },
+                            {
+                                value: @ViewBag.TotalGDSattended,
+                                color: "#7FFFD4",
+                                label:"Total Attended"
+                            },
+                            {
+                                value: @ViewBag.TotalGDSCertified,
+                                color: "#21323D",
+                                label:"Total Certified"
+                            }
+
+                        ];
+
+
+                        var globalGraphSettings = { animation: Modernizr.canvas };
+
+                        function showPolarAreaChart() {
+                            var ctx = document.getElementById("TotalGdsPolar").getContext("2d");
+                            new Chart(ctx).PolarArea(polarAreaChartData, globalGraphSettings);
+                        }
+
+                        $('#polarAreaChartGDS').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showPolarAreaChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+
+
+
+                    });
+
+                </script>
+                <script type="text/javascript">
+
+                    jQuery(window).load(function () {
+                        var polarAreaChartData = [
+                            {
+                                value: @ViewBag.Totalnominated,
+                                color: "#D97041",
+                                label:"Total Nominated"
+                            },
+                            {
+                                value: @ViewBag.TotalAttended,
+                                color: "#7FFFD4",
+                                label:"Total Attended"
+                            },
+                            {
+                                value: @ViewBag.TotalCertified,
+                                color: "#21323D",
+                                label:"Total Certified"
+                                
+                            }
+
+                        ];
+
+
+                        var globalGraphSettings = { animation: Modernizr.canvas };
+
+                        function showPolarAreaChart() {
+                            var ctx = document.getElementById("TotalPolar").getContext("2d");
+                            new Chart(ctx).PolarArea(polarAreaChartData, globalGraphSettings);
+                        }
+
+                        $('#polarAreaChartTOT').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showPolarAreaChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+
+
+
+                    });
+
+                </script>
+
+
+
+            </div>
+            @*<script type="text/javascript">
+
+                    jQuery(window).load(function () {
+
+                        var nominated =  @Html.Raw(Json.Encode(ViewData["Nominated"]));
+                        alert("hello");
+                        alert(nominated).val();
+                        if (nominated.Circle.length > 0) {
+                            for (var i = 0; i < nominated.Circle.length; i++) {
+                                var barChartData10 = {
+                                    labels: [nominated.Circle],
+                                    datasets: [
+                                        {
+                                            fillColor: "rgba(220,220,220,0.5)",
+                                            strokeColor: "rgba(220,220,220,1)",
+                                            data: [nominated.TotalPATraineeNominated]
+                                        }
+                                    ]
+                                };
+                            }
+                        }
+                        //var barChartData10 = {
+                        //    labels: [nominated.toString().Circle.val()],
+                        //    datasets: [
+                        //        {
+                        //            fillColor: "rgba(220,220,220,0.5)",
+                        //            strokeColor: "rgba(220,220,220,1)",
+                        //            data: [nominated.toString().TotalPATraineeNominated.val()]
+                        //        }
+                        //    ]
+                        //};
+                        var globalGraphSettings = { animation: Modernizr.canvas };
+
+                        function showBarChart10() {
+                            var ctx = document.getElementById("barChartCanvas10").getContext("2d");
+                            new Chart(ctx).Bar(barChartData10, globalGraphSettings);
+                        }
+                        $('#barChart10').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showBarChart10, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+                    });
+
+                </script>*@
+        </div>
+    </div>
+
+}
+
+
+<script>
+    function SendValue() {
+        var Waves = $("#Wave").find(":selected").val();
+        var TrainingType = $("#TrainingType").find(":selected").val();
+        var url = "EndUserDashBoard?Waves=" + Waves + "&TrainingType=" + TrainingType;
+        window.location.href = url;
+    }
+
+
+    $('#IPPBCircle').change(function () {
+        $.ajax({
+            type: "post",
+            url: "/TMS/Course/GetBranch",
+            data: { Circle: $('#Circle').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var branch = "  <select class='form-control required' id='Branch'>";
+                branch = branch + '<option value="">--- Select Branch ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    branch = branch + '<option value=' + data[i].Value + '>' + data[i].Value + '</option>';
+                }
+                branch = branch + '</select>';
+                $('#IPPBBranch').html(branch);
+            }
+        });
+    });
+</script>

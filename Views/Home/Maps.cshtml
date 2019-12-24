@@ -1,0 +1,160 @@
+﻿@{
+    ViewBag.Title = "Maps";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div>
+    <section id="content">
+        <div class="content-wrap">
+            <div class="container clearfix">
+                <h3>List of HQs</h3>
+                <div id="google-map4" style="height: 950px; margin-bottom: 20px;" class="gmap"></div>
+
+                <script type="text/javascript">
+
+                    $('#google-map4').gMap({
+
+                        address: 'India',
+                        maptype: 'ROADMAP',
+                        zoom: 5,
+                        markers: [
+                           {
+
+                               html: "Jammu, Udhampur, Mandi, Hamirpur, Kangra, Dharamshala, Pathankot, Gurdaspur, Hoshiarpur, Amritsar, Jalandhar, Kapurthala",
+                               latitude: "31.6340N",
+                               longitude: "74.8723E"
+                           },
+                           {
+
+                               html: "Punjab w/o above mentioned districts, Shimla, Ambala, Karnal, Yamunanagar, Kurukshetra, Chandigarh, Mohali, Pachkula, Thanesar, Mani Majra, Shahbad, Pehowa, Ladwa, Burail, Manimajra Rural, Attawa",
+                               latitude: "30.7333N",
+                               longitude: "76.7794E"
+                           },
+                           {
+
+                               html: "Gurgaon, Sohna, Rohtak, Hisar, Bhiwani, Bahadurgarh, Jhajjar, Faridabad, Palwal, Ballabhgarh",
+                               latitude: "31.6340N",
+                               longitude: "74.8723E"
+                           },
+                           {
+
+                               html: "Delhi- North+West, Sonepat, Panipat",
+                               latitude: "28.4595N",
+                               longitude: "77.0266E"
+                           },
+                           {
+
+                               html: "Rajasthan",
+                               latitude: "26.9124N",
+                               longitude: "75.7873E"
+                           },
+                           {
+
+                               html: "Saharanpur, Roorkee, Dehradun, Haridwar, Muzaffarnagar, Bijnor, Baghpat, Meerut",
+                               latitude: "29.8543N",
+                               longitude: "77.8880E"
+                           },
+                           {
+
+                               html: "Ghaziabad, Noida, Gr Noida, Bulandshahar, Moradabad, Rampur, Rudrapur, Haldwani, Nainital, Pantnagar",
+                               latitude: "28.6692N",
+                               longitude: "77.4538E"
+                           },
+                           {
+
+                               html: "Agra, Mathura, Ferozabad, Jhansi, Gwalior, Shivpuri, Aligarh, Hathras, Badaun, Etah, Etawah, Bareilly, Shahjahanpur, Pilibhit",
+                               latitude: "27.1767N",
+                               longitude: "78.0081E"
+                           },
+                           {
+
+                               html: "Lucknow, Hardoi, Sitapur, Kanpur, Unnao, Hardoi, Barabanki, Rae Bareilly, Sultanpur, Gonda, Basti, bahraich",
+                               latitude: "26.8467N",
+                               longitude: "80.9462E"
+                           },
+                           {
+
+                               html: "Rest of UP, Chatarpur, Satna belt of MP",
+                               latitude: "25.4358",
+                               longitude: "81.8463E"
+                           },
+                           {
+
+                               html: "MP",
+                               latitude: "22.7196N",
+                               longitude: "75.8577E"
+                           },
+                           {
+
+                               html: "Bihar",
+                               latitude: "31.6340N",
+                               longitude: "74.8723E"
+                           },
+                           {
+
+                               html: "Jharkhand, North Orissa",
+                               latitude: "23.3441N",
+                               longitude: "85.3096E"
+                           },
+                           {
+
+                               html: "Chattisgarh, Southern half of Orissa",
+                               latitude: "21.2514N",
+                               longitude: "81.6296E"
+                           },
+                           {
+
+                               html: "Calcutta, Howrah, Hooghly, entire South Bengal",
+                               latitude: "22.5726N",
+                               longitude: "88.3639E"
+                           },
+                           {
+
+                               html: "Entire North Bengal",
+                               latitude: "26.7271N",
+                               longitude: "88.3953E"
+                           },
+                           {
+
+                               html: "Maharshtra w/o Mumbai",
+                               latitude: "18.5204N",
+                               longitude: "73.8567E"
+                           },
+                           {
+
+                               html: "AP, Telangana",
+                               latitude: "17.3850N",
+                               longitude: "78.4867E"
+                           },
+                           {
+
+                               html: "Kerala, Karnataka",
+                               latitude: "12.9716N",
+                               longitude: "77.5946"
+                           },
+                           {
+
+                               html: "Tamil Nadu",
+                               latitude: "13.0827N",
+                               longitude: "80.2707E"
+                           }
+                        ],
+                        doubleclickzoom: false,
+                        controls: {
+                            panControl: true,
+                            zoomControl: true,
+                            mapTypeControl: false,
+                            scaleControl: false,
+                            streetViewControl: false,
+                            overviewMapControl: false
+                        }
+
+
+                    });
+
+                </script>
+                <div class="line"></div>
+            </div>
+        </div>
+    </section><!-- #content end -->
+</div>

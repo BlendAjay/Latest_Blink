@@ -1,0 +1,181 @@
+﻿
+@using AJSolutions.Models;
+@model AJSolutions.Models.StatusMaster
+@{
+    ViewBag.Title = "StatusMaster";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<StatusMaster> statusMaster = ViewData["StatusMaster"] as List<StatusMaster>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+<br /><br />
+@using (Html.BeginForm("StatusMaster", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "StatusMaster", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.Hidden("SaveStatus", ViewBag.Result as string)*@
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Status</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.StatusName, "Status Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.StatusName, new { htmlAttributes = new { @class = "form-control required", id = "StatusName", placeholder = "Enter Status Name" } })
+                    </div>
+                    @*@Html.ValidationMessageFor(model => model.DesignationName, "", new { @class = "text-danger" })*@
+                    <br>
+
+                </div>
+                <br />
+                <input type="submit" id="companydetails" value="Add" class="button button-rounded button-teal" />
+
+                @Html.Hidden("StatusId", ViewBag.StatusId as string)
+            </div>
+            @if (statusMaster != null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Status NAME</th>
+                                <th>ACTIONS</th>
+                            </tr>
+
+                            @foreach (var item in statusMaster)
+                            {
+                                <tr>
+                                    <td>@item.StatusName</td>
+                                    <td>
+                                        <a href="@Url.Action("StatusMaster", "Payroll", new { StatusId = item.StatusId, UserAction = "Edit" })" title="Edit" style="float:left"><i class="icon-pen"></i>|</a>
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.StatusId');" title="Remove" style="float:Left"><i class="icon-remove"></i></a>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.Hidden("RedirectTo", Url.Action("RemoveStatusMaster", "Payroll"))
+        @Html.Hidden("RedirectToHome", Url.Action("StatusMaster", "Payroll"))
+    </div>
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding employee status as per your requirement.                          </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/statusadd.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/statusadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/employeestatuslist.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/employeestatuslist.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last">
+                            <p>
+                                Here you are able to edit and delete your added employee status.
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#StatusMaster").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Status Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+<script type="text/javascript">
+    function ConfirmationDialog(StatusId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?StatusId=" + StatusId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+

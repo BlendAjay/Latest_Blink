@@ -1,0 +1,32 @@
+﻿@model AJSolutions.Models.JobOrderTypeMaster
+
+@{
+    ViewBag.Title = "Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h3>@Html.DisplayNameFor(model => model.JobOrderType)</h3>
+            </div>
+            <div class="col_full center">
+                <b> @Html.DisplayFor(model => model.JobOrderType)</b>
+            </div>
+        </div>
+        <p>
+            @if (Model.JobOrderType != "Generic" && Model.JobOrderType != "Training")
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.JobOrderTypeId })<span>|</span>
+            }            
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+</div>

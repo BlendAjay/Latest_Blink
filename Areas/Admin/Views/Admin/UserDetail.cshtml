@@ -1,0 +1,90 @@
+﻿@model IEnumerable<AJSolutions.Areas.Admin.Models.UserPrimaryDetailViewModel>
+
+@using (Html.BeginForm())
+{
+
+
+    @Html.AntiForgeryToken()
+
+    <!-- Page Title
+    ============================================= -->
+    <section id="page-title">
+
+        <div class="container clearfix">
+            <h1></h1>
+            <span>Add User Role</span>
+            <ol class="breadcrumb">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">User Details</a></li>
+            </ol>
+        </div>
+
+    </section><!-- #page-title end -->
+    <!-- Content
+    ============================================= -->
+    <section id="content">
+    @Html.ActionLink("Add User", "Registration","Admin")
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="container">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>
+                                  Name
+                                </th>
+                                <th>
+                                  Email
+                                </th>
+                                <th>
+                                    Phone
+                                </th>
+                                <th>
+                                    Department
+                                </th>
+                                <th>
+                                    Access Level
+                                </th>
+                                <th></th><th></th>
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Email)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Role)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.AccessLevel)
+                                    </td>                                   
+                                    <td>                                   
+
+                                        @Html.ActionLink("Edit", "Role", "Admin", new { RoleId = item.RoleId, Role = item.Role, useraction = "Edit" }, new { title = "Edit" }) /
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.RoleId');" title="Remove">Delete</a>
+
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Invite", "GeneratePassword", "Admin", new { username = item.Email}, new { @class = "button_apply", id = "Invite", title = "Click Here to Send Request" })
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+    </section><!-- #content end -->  
+}
+

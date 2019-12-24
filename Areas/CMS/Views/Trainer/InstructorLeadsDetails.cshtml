@@ -1,0 +1,192 @@
+﻿@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.Models;
+@model InstructorLeadProfileView
+@{
+    ViewBag.Title = "InstructorLeadsDetails";
+    if (User.IsInRole("Employee"))
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    if (Model != null)
+    {
+        <div class="container">
+            <div id="contact-form-overlay" class="clearfix">
+                <div class="row">
+                    <div class="form-process"></div>
+
+                    <div class="fancy-title title-bottom-border">
+                        <h4>@Model.Name</h4>
+                    </div>
+                    @*<div class="col_full">
+                        
+                    </div>*@
+                    <div class="col_full">
+                        <ul class="list-group">
+                            @if (Model.Email != null)
+                            {
+                                <li class="list-group-item">
+                                    <i class="icon-email"> </i> Email :
+                                    <span>@Model.Email</span>
+                                </li>
+                            }
+                            @if (Model.PhoneNumber != null)
+                            {
+                                <li class="list-group-item">
+                                    <i class="icon-phone"> </i> PhoneNumber :
+                                    <span>@Model.PhoneNumber</span>
+                                </li>
+                            }
+                            @if (Model.Gender != null)
+                            {
+                                <li class="list-group-item">
+                                    <i class="icon-male"> </i>  Gender :
+                                    @if (Model.Gender == "FE")
+                                    {
+                                        <span>Female</span>
+                                    }
+                                    else if (Model.Gender == "MA")
+                                    {
+                                        <span>Male</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Transgender</span>
+                                    }
+                                    
+                                   
+                                </li>
+                            }
+                            @if (Model.DOB != null)
+                            {
+                                <li class="list-group-item">
+                                    <i class="icon-calendar"> </i> Date Of Birth :
+                                    <span>@Model.DOB.Value.ToString("dd-MMM-yyyy")</span>
+                                    
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
+
+                    <div class="col_full">
+                        <ul class="entry-meta clearfix">
+                            <li><a href="#"><i class="icon-location"></i> @Model.City</a></li>
+                            <li><a href="#"><i class="icon-location"></i> @Model.State</a></li>
+                            <li><a href="#"><i class="icon-road"></i> @Model.Country</a></li>
+                            <li><a href="#"><i class="icon-location"></i> @Model.Zone</a></li>
+                        </ul>
+                    </div>
+                  
+                    <div class="col_full">
+                        <div class="fancy-title title-bottom-border">
+                            <h6>Qualification And Specialization</h6>
+                        </div>
+                        <ul class="list-group">
+                            @if (Model.Qualification != null)
+                            {
+                                <li class="list-group-item">
+                                    <i class="icon-line2-graduation"> </i> Qualification:
+                                    <span>@Model.Qualification</span>
+                                </li>
+                            }
+                            @if (Model.Specialization != null)
+                            {
+                                <li class="list-group-item"> 
+                                    <i class="icon-book"> </i> Training Specialization:
+                                    <span>@Model.Specialization</span>
+                                </li>
+                            }
+                            @if (Model.DomainExpertize != null)
+                            {
+                                <li class="list-group-item"> 
+                                    <i class="icon-book"> </i> Domain Knowledge:
+                                    <span>@Model.DomainExpertize</span>
+                                </li>
+                            }
+                            @if (Model.LanguageKnown != null)
+                            {
+                                <li class="list-group-item">
+                                    <i class="icon-line2-speech"> </i> LanguageKnown:
+                                    <span>@Model.LanguageKnown</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    @if (Model.ReadyToReallocate != null)
+                    {
+                        <div class="col_half">
+                            <span>
+                                Willing To Relocate :@if (Model.ReadyToReallocate == true)
+                                {
+                                    <small>Yes</small>
+                                }
+                                else
+                                {
+                                    <small>No</small>
+                                }
+                            </span>
+                        </div>
+                        <div class="col_half col_last">
+                            <span>Preferred Location : @Model.TrainingLocation</span>
+                        </div>
+                    }
+                    <dic class="col_full">
+                        @if (Model.Empanelled == true)
+                        {
+                           
+                            <span>Empanelled : YES</span>
+                        }
+                        else
+                        {
+                            <span>Empanelled : NO</span>
+                        }
+                    </dic>
+                    <div class="col_full">
+                        <div class="fancy-title title-bottom-border">
+                            <h6>Organization & Experience</h6>
+                        </div>
+                        <div class="col_half"><span>Name Of Organization :</span><label>@Model.Organization</label></div>
+                        <div class="col_half col_last"><span>Professional Experience : </span>@Model.Experience (Years)</div> 
+                    </div>
+                    <div class="col_full">
+                        @if(Model.NibfProject!=null)
+                        { 
+                        <div class="fancy-title title-bottom-border">
+                            <h6>Training Project Under Taken With NIBF</h6>
+                        </div>
+                        <div class="col_half"><span>@Model.NibfProject</span></div>  
+                        } 
+                       
+                    </div>
+                  
+
+
+                </div>
+                @if (Model.Remarks != null)
+                {
+                   
+                    <div class="row">
+                        <div class="fancy-title title-bottom-border">
+                            <h6>Remarks</h6>
+                        </div>
+                        <p>@Model.Remarks</p>
+                    </div>
+
+                }
+            </div>
+        </div>
+
+
+
+    }
+}
+

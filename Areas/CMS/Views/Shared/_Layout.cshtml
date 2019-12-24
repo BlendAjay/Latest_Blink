@@ -1,0 +1,366 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="SemiColonWeb" />
+    <!-- Stylesheets
+    ============================================= -->
+    @*<link href="http://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />*@
+    <link rel="shortcut icon" type="image/png" href="~/img/FaviconBlink.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="~/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/libs/css/style.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/chartist-bundle/chartist.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/morris-bundle/morris.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/c3charts/c3.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
+    <link rel="stylesheet" href="~/assets/vendor/datepicker/tempusdominus-bootstrap-4.css" />
+    @*<link href='~/assets/vendor/full-calendar/css/fullcalendar.css' rel='stylesheet' />
+        <link href='~/assets/vendor/full-calendar/css/fullcalendar.print.css' rel='stylesheet' media='print' />*@
+    <link href="~/Miscss/magnific-popup.css" rel="stylesheet" />
+    <link href="~/css/datepicker.css" rel="stylesheet" />
+    <link href="~/css/daterangepicker.css" rel="stylesheet" />
+    <link href="~/css/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/css/timepicker.css" rel="stylesheet" />
+    @*<script src="~/MisScript/jquery-1.10.2.min.js"></script>*@
+    <script src="~/JS/jquery.js"></script>
+    <script src="~/MisScript/jquery.validate-vsdoc.js"></script>
+    <script src="~/MisScript/jquery.validate.js"></script>
+    <script src="~/MisScript/jquery.validate.min.js"></script>
+    <script src="~/MisScript/jquery.validate.unobtrusive.js"></script>
+    <script src="~/MisScript/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/MisScript/CustomValidation.js"></script>
+    <link href="~/Miscss/vmap.css" rel="stylesheet" />
+    @*<link href="~/MisScript/ckeditor/plugins/imageuploader/dist/sweetalert.css" rel="stylesheet" />
+        <script src="~/MisScript/ckeditor/plugins/imageuploader/dist/sweetalert.min.js"></script>*@
+
+    <title>@ViewBag.Title</title>
+</head>
+@using Microsoft.AspNet.Identity
+@{
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    AJSolutions.Areas.CMS.Models.AdminLogoFile content = ViewData["CompanyLogo"] as AJSolutions.Areas.CMS.Models.AdminLogoFile;
+}
+<body>
+    @using (Html.BeginForm("LogOff", "Dashboard", new { area = "CMS" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right  needs-validation" }))
+    {
+        <!-- navbar -->
+        <!-- ============================================================== -->
+        <div class="dashboard-header">
+            <nav class="navbar navbar-expand-lg bg-white fixed-top">
+                <a class="navbar-brand" href="index.html">BLINK</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto navbar-right-top">
+                        <li class="nav-item dropdown nav-user"></li>
+                        <li class="nav-item dropdown nav-user">
+                            <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user fa-2x"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
+                                <div class="nav-user-info">
+                                    <h5 class="mb-0 text-white nav-user-name">@user.Name</h5>
+                                    <span class="status"></span><span class="ml-2">Available</span>
+                                </div>
+                                <a href="@Url.Action("ChangePassword", "Manage", new { Area = "" })" class="dropdown-item"><i class="fa fa-lock"></i> Change Password</a>
+                                <a href="javascript:document.getElementById('logoutForm').submit()" class="dropdown-item"><i class="fa fa-sign-out-alt"></i> Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end navbar -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- left sidebar -->
+        <!-- ============================================================== -->
+        <div class="nav-left-sidebar sidebar-dark">
+            <div class="menu-list">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav flex-column">
+                            @if (user.Role == "Client" && user.DepartmentId.ToUpper() == "CLI")
+                            {
+                                @Html.Partial("~/Areas/CMS/Views/Shared/_LoginPartialClient.cshtml")
+                            }
+                            @if (user.Role == "Client" && user.DepartmentId.ToUpper() == "BPT")
+                            {
+                                @Html.Partial("~/Areas/CMS/Views/Shared/_LoginPartialBussinessPartner.cshtml")
+                            }
+                            @if (user.Role == "Client" && user.DepartmentId.ToUpper() == "CPT")
+                            {
+                                @Html.Partial("~/Areas/CMS/Views/Shared/_LoginPartialChannelPartner.cshtml")
+                            }
+                            @if (user.Role == "Admin" && user.DepartmentId.ToUpper() == "ADI")
+                            {
+                                @Html.Partial("~/Areas/CMS/Views/Shared/_LoginPartialAdmin.cshtml")
+                            }
+                            @if (user.Role == "Client" && user.DepartmentId.ToUpper() != "CLI" && user.DepartmentId.ToUpper() != "BPT" && user.DepartmentId.ToUpper() != "CPT")
+                            {
+                                @Html.Partial("~/Areas/CMS/Views/Shared/_LoginPartialPartner.cshtml")
+                            }
+                            @if (user.Role == "Employee" && user.DepartmentId == "HRM")
+                            {
+                                @Html.Partial("~/Areas/CMS/Views/Shared/_LoginPartialEmployee.cshtml")
+                            }
+
+
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+    }
+
+    <div class="dashboard-wrapper">
+        <div class="dashboard-ecommerce">
+            <div class="container-fluid dashboard-content ">
+                <br /><br /><br />
+                @RenderBody()
+            </div>
+        </div>
+        <!-- footer -->
+        <!-- ============================================================== -->
+        <div class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        Copyright © 2019 BLINK. All rights reserved. Dashboard by <a href="http://blendglobal.in/">Blend Global</a>.
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="text-md-right footer-links d-none d-sm-block">
+                            <a href="#">About</a>
+                            <a href="#">Support</a>
+                            <a href="#">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end footer -->
+    </div>
+    @RenderSection("scripts", required: false)
+    <!-- Optional JavaScript -->
+    <!-- jquery 3.3.1 -->
+
+    <script src="~/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <!-- bootstap bundle js -->
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <!-- slimscroll js -->
+    <script src="~/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+    <!-- main js -->
+    <script src="~/assets/libs/js/main-js.js"></script>
+    <!-- chart chartist js -->
+    @*<script src="~/assets/vendor/charts/chartist-bundle/chartist.min.js"></script>*@
+    <!-- sparkline js -->
+    <script src="~/assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+    <!-- morris js -->
+    @*<script src="~/assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+        <script src="~/assets/vendor/charts/morris-bundle/morris.js"></script>*@
+    <!-- chart c3 js -->
+    <script src="~/assets/vendor/charts/c3charts/c3.min.js"></script>
+    <script src="~/assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+    <script src="~/assets/vendor/charts/c3charts/C3chartjs.js"></script>
+    @*<script src="~/assets/libs/js/dashboard-ecommerce.js"></script>*@
+    <script src="~/assets/vendor/parsley/parsley.js"></script>
+    <script src="~/assets/vendor/gauge/gauge.min.js"></script>
+    <script src="~/assets/vendor/gauge/gauge.js"></script>
+    <script src="~/assets/vendor/datepicker/moment.js"></script>
+    <script src="~/assets/vendor/datepicker/tempusdominus-bootstrap-4.js"></script>
+    <script src="~/assets/vendor/datepicker/datepicker.js"></script>
+    <script src='~/assets/vendor/full-calendar/js/moment.min.js'></script>
+    <script src='~/assets/vendor/full-calendar/js/fullcalendar.js'></script>
+    <script src='~/assets/vendor/full-calendar/js/jquery-ui.min.js'></script>
+    <script src='~/assets/vendor/full-calendar/js/calendar.js'></script>
+    @*<script src="~/JS/bootstrap-year-calendar.js"></script>
+        <script src="~/JS/bootstrap-year-calendar.min.js"></script>*@
+    <script src="~/JS/datepicker.js"></script>
+    <script src="~/JS/daterangepicker.js"></script>
+    <script src="~/JS/jquery-confirm.js"></script>
+    <script src="~/Misjs/jquery.vmap.js"></script>
+    <script src="~/JS/timepicker.js"></script>
+    <script>
+        $('#form').parsley();
+    </script>
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('.travel-date-group .default').datepicker({
+                autoclose: true,
+                startDate: "today",
+            });
+
+            $('.travel-date-group .today').datepicker({
+                autoclose: true,
+                startDate: "today",
+                todayHighlight: true
+            });
+
+            $('.travel-date-group .past-enabled').datepicker({
+                format: "dd-mm-yyyy",
+                autoclose: true,
+            });
+            $('.travel-date-group .format').datepicker({
+                autoclose: true,
+                format: "dd-mm-yyyy",
+            });
+
+            $('.travel-date-group .autoclose').datepicker();
+
+            $('.travel-date-group .disabled-week').datepicker({
+                autoclose: true,
+                daysOfWeekDisabled: "0"
+            });
+
+            $('.travel-date-group .highlighted-week').datepicker({
+                autoclose: true,
+                daysOfWeekHighlighted: "0"
+            });
+
+            $('.travel-date-group .mnth').datepicker({
+                autoclose: true,
+                minViewMode: 1,
+                format: "mm/yy"
+            });
+
+            $('.travel-date-group .multidate').datepicker({
+                multidate: true,
+                multidateSeparator: " , "
+            });
+
+            $('.travel-date-group .input-daterange').datepicker({
+                autoclose: true
+            });
+
+            $('.travel-date-group .inline-calendar').datepicker();
+
+            $('.datetimepicker').datetimepicker({
+                format: 'DD/MM/YYYY h:mm A',
+                showClose: true
+            });
+
+            $('.datetimepicker1').datetimepicker({
+                //format: 'LT',
+                format: 'DD/MM/YYYY h:mm A',
+                showClose: true
+            });
+
+            $('.datetimepicker2').datetimepicker({
+                format: 'DD/MM/YYYY h:mm A',
+                inline: true,
+                sideBySide: true
+            });
+
+        });
+
+        $(function () {
+            // .daterange1
+            $(".daterange1").daterangepicker({
+                locale: {
+                    format: 'DD/MM/YYYY h:mm A'
+                },
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light"
+            });
+
+            // .daterange2
+            $(".daterange2").daterangepicker({
+                "opens": "center",
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD/MM/YYYY h:mm A'
+                },
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light"
+            });
+
+            // .daterange3
+            $(".daterange3").daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true
+            },
+                function (start, end, label) {
+                    var years = moment().diff(start, 'years');
+                    alert("You are " + years + " years old.");
+                });
+
+            // reportrange
+            function cb(start, end) {
+                $(".reportrange span").html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+            cb(moment().subtract(29, 'days'), moment());
+
+            $(".reportrange").daterangepicker({
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light",
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            // .daterange4
+            $(".daterange4").daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                },
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light"
+            });
+
+            $(".daterange4").on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            });
+
+            $(".daterange4").on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
+
+        });
+
+    </script>
+</body>
+</html>

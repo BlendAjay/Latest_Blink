@@ -1,0 +1,363 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model AJSolutions.Areas.LMS.Models.TopicLecturesView
+@{
+    ViewBag.Title = "Content";
+    Layout = Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    List<AJSolutions.Areas.LMS.Models.COURSETOPICSVIEW> courseTopics = ViewData["CourseTopics"] as List<AJSolutions.Areas.LMS.Models.COURSETOPICSVIEW>;
+    List<AJSolutions.Areas.LMS.Models.TopicLecturesView> topicLectures = ViewData["TopicLetures"] as List<AJSolutions.Areas.LMS.Models.TopicLecturesView>;
+    List<CourseMasterViewModel> courses = ViewData["CourseView"] as List<CourseMasterViewModel>;
+    UserViewModel userDetails = ViewData["UserProfile"] as UserViewModel;
+    int Count = 0, i = 0;
+    var mylectures = topicLectures;
+    int FirstSno = ViewBag.FirstSno;
+    var CurrentSno = ViewBag.CurrentSno;
+    Int64 LastSno = ViewBag.LastSno;
+}
+@using (Html.BeginForm("CourseContent", "Dashboard", FormMethod.Post, new { area = "Candidate", @class = "form-horizontal", id = "CourseContent", role = "form" }))
+{		<section id="content">
+        <div class="content-wrap nopadding">
+            <div class="container clearfix nopadding">
+                <div class="si-sticky toast-top-left topmargin-sm">
+                    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                        <i class="icon-question"></i>
+                        <i class="icon-question"></i>
+                    </a>
+                </div>
+                @Html.Hidden("CourseCode", ViewBag.CourseCode as string)
+                @Html.Hidden("LMSCourseCode", ViewBag.LMSCourseCode as string)
+                @Html.Hidden("FirstSno", ViewBag.FirstSno as string)
+                @Html.Hidden("CurrentSno", ViewBag.CurrentSno as string)
+                @Html.Hidden("LastSno", ViewBag.LastSno as string)
+                @Html.Hidden("RandomNavigation", ViewBag.RandomNavigation as string)
+                @Html.Hidden("ShowNavigation", ViewBag.ShowNavigation as string)
+                <div class="row" id="MyData">
+                    @if (courseTopics != null)
+                    {
+                        if (courseTopics.Count() != 0)
+                        {
+                            <div class="col_one_third" style="background-color:#eee;">
+                                <br />
+                                <ul style="list-style:none;">
+                                    @foreach (var item in courseTopics)
+                                    {
+                                        Count = Count + 1;
+                                        if (topicLectures.Where(t => t.TopicId == item.TopicId).ToList().Count != 0)
+                                        {
+                                            <li style="margin:0px 0px 0px 10px;">
+                                                <b> @item.TopicName.ToUpper()</b>
+                                                <ul style="list-style:none;">
+
+                                                    @foreach (var lecture in topicLectures.Where(t => t.TopicId == item.TopicId))
+                                                    {
+                                                        if (ViewBag.RandomNavigation)
+                                                        {
+                                                            <li style="line-height:2;">
+                                                                <a href="javascript:openlecture('@lecture.SNo');" id="SN_@lecture.SNo">
+                                                                    @if (lecture.Status == "Completed")
+                                                                    {
+                                                                        if (lecture.ContentType == "image/png" || lecture.ContentType == "image/jpg" || lecture.ContentType == "image/jpeg")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-picture" style="color:green; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        else if (lecture.ContentType == "video/mp4" || lecture.ContentType == "video/flv" || lecture.ContentType == "video/3gpp" || lecture.ContentType == "video/webm")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-video" style="color:green; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        else if (lecture.ContentType == "application/pdf")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-acrobat" style="color:green; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        if (lecture.ContentType == "image/png" || lecture.ContentType == "image/jpg" || lecture.ContentType == "image/jpeg")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-picture" style="color:black; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        else if (lecture.ContentType == "video/mp4" || lecture.ContentType == "video/flv" || lecture.ContentType == "video/3gpp" || lecture.ContentType == "video/webm")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-video" style="color:black; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        else if (lecture.ContentType == "application/pdf")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-acrobat" style="color:black; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                    }
+                                                                    &nbsp;&nbsp;@lecture.LectureName
+                                                                    @if (lecture.SNo == ViewBag.CurrentSno)
+                                                                    {
+                                                                        <i class="icon-play" style="color:chocolate;"> </i>
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li style="line-height:2;">
+
+                                                                @if (lecture.Status == "Completed")
+                                                                {
+                                                                    <a href="javascript:openlecture('@lecture.SNo');" id="SN_@lecture.SNo">
+                                                                        @if (lecture.ContentType == "image/png" || lecture.ContentType == "image/jpg" || lecture.ContentType == "image/jpeg")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-picture" style="color:green; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        else if (lecture.ContentType == "video/mp4" || lecture.ContentType == "video/flv" || lecture.ContentType == "video/3gpp" || lecture.ContentType == "video/webm")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-video" style="color:green; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        else if (lecture.ContentType == "application/pdf")
+                                                                        {
+                                                                            <i class="i-medium i-plain icon-acrobat" style="color:green; margin:0px 10px 0px 10px;"> </i>
+                                                                        }
+                                                                        &nbsp; &nbsp;@lecture.LectureName
+                                                                        @if (lecture.SNo == ViewBag.CurrentSno)
+                                                                        {
+                                                                            <i class="icon-play" style="color:chocolate;"> </i>
+                                                                        }
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (lecture.ContentType == "image/png" || lecture.ContentType == "image/jpg" || lecture.ContentType == "image/jpeg")
+                                                                    {
+                                                                        <i class="i-medium i-plain icon-picture" style="color:black; margin:0px 10px 0px 10px;"> </i>
+                                                                    }
+                                                                    else if (lecture.ContentType == "video/mp4" || lecture.ContentType == "video/flv" || lecture.ContentType == "video/3gpp" || lecture.ContentType == "video/webm")
+                                                                    {
+                                                                        <i class="i-medium i-plain icon-video" style="color:black; margin:0px 10px 0px 10px;"> </i>
+                                                                    }
+                                                                    else if (lecture.ContentType == "application/pdf")
+                                                                    {
+                                                                        <i class="i-medium i-plain icon-acrobat" style="color:black; margin:0px 10px 0px 10px;"> </i>
+                                                                    }
+                                                                    @lecture.LectureName
+                                                                    if (lecture.SNo == ViewBag.CurrentSno)
+                                                                    {
+                                                                        <i class="icon-play" style="color:chocolate;"> </i>
+                                                                    }
+                                                                }
+                                                            </li>
+                                                        }
+                                                    }
+
+                                                </ul>
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        if (topicLectures.Count != 0)
+                        {
+                            @Html.Hidden("TopicLectureId", Model.TopicLectureId)
+                            @Html.Hidden("LectureId", Model.LectureId)
+                            @Html.Hidden("Result", ViewBag.Result as string)
+                            @Html.Hidden("UserId", Model.UserId)
+                            @Html.Hidden("UserCourseSubscriptionId", Model.UserCourseSubscriptionId)
+                            <div class="col_two_third col_last" id="CContent">
+                                <div class="row" id="myContent">
+                                    @if (ViewBag.ShowNavigation)
+                                    {
+                                        <a href="javascript:NextLecture();" id="btnNext1" title="Next" class="fright" style="padding-left:5px;padding-right:5px;">Next <i class="icon-angle-right"></i></a>
+                                        <a href="javascript:PreviousLecture();" id="btnPrevious1" title="Previous" class="fright" style="padding-left:5px;padding-right:5px;"><i class="icon-angle-left"> </i> Previous</a>
+                                    }
+                                    <div class="col_full fancy-title title-bottom-border">
+                                        <h4>
+                                            @Html.DisplayFor(modelItem => modelItem.LectureName)
+                                        </h4>
+                                    </div>
+                                    <div class="col_full">
+                                        @*@Html.DisplayFor(modelItem => modelItem.Description)*@
+                                        @Html.Raw(Model.Description.Replace("&nbsp;", " "))
+                                    </div>
+                                </div>
+
+                                @if (Model.FileId != 0)
+                                {
+                                    <div class="row" id="LContent">
+                                        @if (Model.ContentType != "video/mp4")
+                                        {
+                                            @*<object id="myObject" width="100%" height="450px" data="@Model.ContentUrl" type="@Model.ContentType">*@
+                                            <iframe id="myVideo" style="width:100%; height:500px;" src="@Model.ContentUrl#toolbar=0" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen>
+                                                @*This browser does not support PDFs. Please download the PDF to view it: <a href="@Model.ContentUrl">Download PDF</a>*@
+                                            </iframe>
+                                            @*</object>*@
+                                        }
+                                        else
+                                        {
+                                            <video id="myVideo" class="video-js vjs-default-skin vjs-has-started vjs-paused vjs-ended vjs-user-inactive" allowfullscreen="true" webkitfullscreen="true" mozallowfullscreen="true" controls controlslist="nodownload" preload="auto" data-setup="{}">
+                                                <source src="@Model.ContentUrl" type="@Model.ContentType">
+                                            </video>
+                                        }
+                                    </div>
+                                }
+                                <br /><br />
+
+                                <div class="col_full">
+                                    @if (Model.Status == "Completed")
+                                    {
+                                        <label style="color:green;">Completed</label>
+                                    }
+                                </div>
+                                <br /><br />
+                                <div class="row">
+                                    @if (ViewBag.ShowNavigation)
+                                    {
+                                        <div class="col_full">
+                                            <a href="javascript:NextLecture();" id="btnNext2" class="fright" style="padding-left:5px;padding-right:5px;">Next  <i class="icon-angle-right"> </i></a>
+                                            <a href="javascript:PreviousLecture();" id="btnPrevious2" class="fright" style="padding-left:5px;padding-right:5px;"><i class="icon-angle-left"> </i> Previous</a>
+                                        </div>
+                                    }
+                                    <div class="col_full">
+                                        @if (Model.Status != "Completed")
+                                        {
+                                            <input type="submit" id="submit" value="Mark as Completed" class="btn btn-info fright" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    @if (Count == 0)
+                    {
+                        <br />
+                        <div class="col_full">
+                            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                                <div class="fbox-icon">
+                                    <i class="icon-thumbs-down2"></i>
+                                </div>
+                                <h3>Nothing has been assigned.<span class="subtitle"></span></h3>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+    <input type="hidden" id="Wikipian" value="@Global.WikipianUrl()" />
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    Candidates are can be able to access the course content from here.
+                                </p>
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+                                        <a href="~/images/HelpImages/coursecontentcandidate.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/coursecontentcandidate.png" />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script>
+    $(document).ready(function () {
+        $('#CContent').bind('contextmenu', function () { return false; });
+        $('#MyData').bind('contextmenu', function () { return false; });
+        $('#myVideo').bind('contextmenu', function () { return false; });
+        if($("#ShowNavigation").val() == "True")
+        {
+            document.getElementById("btnPrevious1").style.visibility = 'hidden';
+            document.getElementById("btnPrevious2").style.visibility = 'hidden';
+        }
+        if ($("#FirstSno").val() == $("#LastSno").val()) {
+            if($("#ShowNavigation").val() == "True")
+            {
+                document.getElementById("btnPrevious1").style.visibility = 'hidden';
+                document.getElementById("btnNext1").style.visibility = 'hidden';
+                document.getElementById("btnPrevious2").style.visibility = 'hidden';
+                document.getElementById("btnNext2").style.visibility = 'hidden';
+            }
+        }
+        if ($("#CurrentSno").val() > $("#FirstSno").val()) {
+            if($("#ShowNavigation").val() == "True")
+            {
+                document.getElementById("btnPrevious1").style.visibility = 'visible';
+                document.getElementById("btnPrevious2").style.visibility = 'visible';
+                if ($("#CurrentSno").val() == $("#LastSno").val()) {
+                    document.getElementById("btnNext1").style.visibility = 'hidden';
+                    document.getElementById("btnNext2").style.visibility = 'hidden';
+                }
+            }
+        }
+        //document.getElementById('myVideo').contentWindow.document.body.innerHTML;
+    });
+
+
+    function openlecture(Sno) {
+        window.location = $("#weburl").val() + "Candidate/Dashboard/CourseContent/" + $("#CourseCode").val() + "?CurrentSno=" + Sno;
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        });
+    }
+
+    function PreviousLecture() {
+        if ($("#CurrentSno").val() > $("#FirstSno").val()) {
+            var items = @Html.Raw(Json.Encode(topicLectures));
+
+            //navigate to Previous Lecture and change the current sno value
+            var CSno = parseInt($("#CurrentSno").val()) - 1;
+            window.location = $("#weburl").val() + "Candidate/Dashboard/CourseContent/" + $("#CourseCode").val() + "?CurrentSno=" + CSno;
+        }
+    }
+
+    function NextLecture() {
+        if ($("#CurrentSno").val() < $("#LastSno").val()) {
+            var items = @Html.Raw(Json.Encode(topicLectures));
+            //navigate to Next Lecture and change the current sno value
+            var CSno = parseInt($("#CurrentSno").val()) + 1;
+            if($("#RandomNavigation").val()=="True")
+            {
+                window.location =$("#weburl").val() + "Candidate/Dashboard/CourseContent/" + $("#CourseCode").val() + "?CurrentSno=" + CSno;
+            }
+            else
+            {
+                if(items[parseInt($("#CurrentSno").val())-1].Status == "Completed")
+                {
+                    window.location = $("#weburl").val() + "Candidate/Dashboard/CourseContent/" + $("#CourseCode").val() + "?CurrentSno=" + CSno;
+                }
+                else
+                {
+                    $.alert({
+                        title: 'Sorry',
+                        content: 'Please complete current lecture to move further.',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                }
+            }
+        }
+    }
+</script>

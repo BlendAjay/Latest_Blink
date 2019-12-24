@@ -1,0 +1,539 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.UserViewModel
+@{
+    ViewBag.Title = "Employee Profile";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (ViewBag.UserRole == "Admin")
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    }
+    if (user.Role == "Employee")
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+}
+@{
+    EmployeeBasicDetails empprofile = ViewData["Profile"] as EmployeeBasicDetails;
+    IEnumerable<EmpAddressViewModel> empaddress = ViewData["AddressList"] as IEnumerable<EmpAddressViewModel>;
+    IEnumerable<EmpEducationalDetails> empeducation = ViewData["Education"] as IEnumerable<EmpEducationalDetails>;
+    IEnumerable<EmpExperienceDetails> empexperience = ViewData["Experience"] as IEnumerable<EmpExperienceDetails>;
+    IEnumerable<EmpSkillDetails> empskill = ViewData["Skill"] as IEnumerable<EmpSkillDetails>;
+    EmpSocialDetails empsocial = ViewData["Social"] as EmpSocialDetails;
+    IEnumerable<LanguagesView> language = ViewData["Language"] as IEnumerable<LanguagesView>;
+    AJSolutions.Areas.EMS.Models.EmployeeViewModel reporting = ViewData["Reporting"] as AJSolutions.Areas.EMS.Models.EmployeeViewModel;
+    List<AJSolutions.Models.Certification> certificate = ViewData["Cretifications"] as List<AJSolutions.Models.Certification>;
+    
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>General Details</h4>
+                </div>
+                <br />
+                @if (empprofile != null)
+                {
+                    <div class="col_half">
+                        @if (empprofile.Name != null)
+                        {
+                            <label><i class="icon-list"></i> Name : @empprofile.Name</label>
+                            <br />
+                        }
+
+                        @if (empprofile.DOB != null)
+                        {
+                            <label><i class="icon-calendar"></i> Date Of Birth :</label> @empprofile.DOB.Value.ToString("dd-MMM-yyyy")
+                            <br />
+                        }
+                        @if (empprofile.Gender != null)
+                        {
+                            if (empprofile.Gender == "MA")
+                            {
+                                <label><i class="icon-male icon-female"></i> Gender :</label> <span>Male</span>
+                                <br />
+                            }
+                            if (empprofile.Gender == "FE")
+                            {
+                                <label><i class="icon-male icon-female"></i> Gender :</label> <span>Female</span>
+                                <br />
+                            }
+                        }
+
+                        @if (empprofile.MaritalStatus != null)
+                        {
+                            <label><i class="icon-user"></i> Marital Status :</label> @empprofile.MaritalStatus
+                            <br />
+                        }
+                        @if (empprofile.Nationality != null)
+                        {
+                            <label><i class="icon-location-arrow"></i> Nationality :</label> @empprofile.Nationality
+                            <br />
+                        }
+
+                    </div>
+                    <div class="col_half col_last">
+                        @if (empprofile.AlternateContact != null)
+                        {
+                            <label><i class="icon-phone"></i> Alternate Contact :</label> @empprofile.AlternateContact
+                            <br />
+                        }
+                        @if (Model.PhoneNumber != null)
+                        {
+                            <label><i class="icon-phone"></i> Contact :</label> @Model.PhoneNumber
+                            <br />
+                        }
+                        @*@if (empprofile.AlternateEmail != null)
+                        {
+                            <label><i class="icon-email"></i> Alternate Email :</label> @empprofile.AlternateEmail
+                            <br />
+                        }*@
+                        @if (Model.Email != null)
+                        {
+                            <label><i class="icon-email"></i> Email :</label> @Model.Email
+                            <br />
+                        }
+                        @if (reporting.UName != null)
+                        {
+                            <label><i class="icon-email"></i> Reporting Authority :</label> @reporting.UName
+                            <br />
+                        }
+                    </div>
+                }
+            </div>
+            <br />
+            @if (empaddress != null && empaddress.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Address</h4>
+                    </div>
+                    <br />
+                    <div class="col_full">
+                        @foreach (var item in empaddress)
+                        {
+                            if (item.AddressType == "CO")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">Correspondence Address </div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "PR")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">Present Address </div>
+                                        <ul class="iconlist nobottommargin">
+                                            <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                            @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                            {
+                                                <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                            }
+                                            <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                            <li>
+                                                <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                { <i> - </i> @item.PostalCode}
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "PE")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">Permanent Address</div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            if (item.AddressType == "CM")
+                            {
+                                <div class="row container">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading">Company Address </div>
+                                        <div class="panel-body">
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    { <i> - </i> @item.PostalCode}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            <br />
+            @if (empeducation != null && empeducation.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Education</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th class="strong-left">
+                                    EducationLevel
+                                </th>
+                                <th class="strong-left">
+                                    Degree
+                                </th>
+                                <th class="strong-left">
+                                    Institution
+                                </th>
+                                <th class="strong-left">
+                                    Percentage
+                                </th>
+                                <th class="strong-left">
+                                    Specialization
+                                </th>
+                                <th>
+                                    University
+                                </th>
+                                <th>
+                                    YearOfPassing
+                                </th>
+                            </tr>
+                            @foreach (var item in empeducation)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (item.EducationLevel == 2)
+                                        {
+                                            <span>10th</span>
+                                        }
+                                        @if (item.EducationLevel == 3)
+                                        {
+                                            <span>12th</span>
+                                        }
+                                        @if (item.EducationLevel == 4)
+                                        {
+                                            <span>Graduation</span>
+                                        }
+                                        @if (item.EducationLevel == 5)
+                                        {
+                                            <span>Post Graduation</span>
+                                        }
+                                        @if (item.EducationLevel == 6)
+                                        {
+                                            <span>Other</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Degree)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Institution)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Percentage)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Specialization)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.University)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                    </td>
+
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            }
+            <br />
+
+            @if (certificate != null && certificate.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Certificates</h4>
+                    </div>
+                    <br />
+                        <div class="table-responsive">
+                            <table class="table table-bordered nobottommargin">
+                                <tr>
+                                    <th>Certificate</th>
+                                    <th>Institution</th>
+                                    <th>Specialization</th>
+                                    <th>Percentage</th>
+                                    <th>Year Of Passing</th>
+                                </tr>
+                                @if (certificate != null)
+                                {
+                                    foreach (var item in certificate)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Certificate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Institution)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Specialization)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Percentage)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </table>
+
+                        </div>
+                </div>
+            }
+            <br />
+            @if (empexperience != null && empexperience.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Experience</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th class="strong-left">
+                                    Company Name
+                                </th>
+                                <th class="strong-left">
+                                    Latest Designation
+                                </th>
+                                <th class="strong-left">
+                                    Work Location
+                                </th>
+                                <th class="strong-left">
+                                    Joining Date
+                                </th>
+                                <th class="strong-left">
+                                    Leaving Date
+                                </th>
+                                @*<th>
+                                        Working Status
+                                    </th>*@
+                            </tr>
+                            @foreach (var item in empexperience)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (@item.WorkingStatus == true)
+                                        {
+                                            @Html.DisplayFor(modelItem => item.ComapanyName) <small class="badge">Currently Working</small>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(modelItem => item.ComapanyName)
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LatestDesignation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.WorkLocation)
+                                    </td>
+                                    <td>
+                                        @item.JoiningDate.ToString("dd-MMM-yyyy")
+                                    </td>
+                                    <td>
+                                        @if (item.LeavingDate != null)
+                                        {
+                                            @item.LeavingDate.Value.ToString("dd-MMM-yyyy")
+                                        }
+                                        else
+                                        {
+                                            @item.LeavingDate
+                                        }
+                                    </td>
+                                    @*<td>
+                                            @Html.DisplayFor(modelItem => item.WorkingStatus)
+                                        </td>*@
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <br />
+                </div>
+            }
+            <br />
+            @if (empskill != null && empskill.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Skills</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+
+                                <th>
+                                    Skill Name
+                                </th>
+                                <th>
+                                    Year of Experience
+                                </th>
+                            </tr>
+
+                            @foreach (var item in empskill)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SkillName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.YearofExperience)
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+
+
+                    </div>
+
+                    <br />
+                </div>
+            }
+            <br />
+
+            @if (language != null && empexperience.Count() > 0)
+            {
+                <div class="col_full">
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Languages Known</h4>
+                    </div>
+                    <br />
+                    <div class="table-responsive">
+                        <table id="dataTable" class="table table-bordered table-striped">
+                            <thead>
+                                <!-------------------Title Section---------------------->
+                                <tr>
+                                    <th class="strong">Language</th>
+                                    <th class="strong">Read</th>
+                                    <th class="strong">Write</th>
+                                    <th class="strong">Speak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-------------------First Language Section---------------------->
+                                @foreach (var item in language)
+                                {
+                                    <tr>
+
+                                        <td data-title="Language">
+                                            @Html.DisplayFor(modelItem => item.Language)
+                                        </td>
+                                        <td data-title="Read">
+                                            @Html.DisplayFor(modelItem => item.ReadLanguage)
+                                        </td>
+                                        <td data-title="Write">
+                                            @Html.DisplayFor(modelItem => item.Write)
+                                        </td>
+                                        <td data-title="Speak">
+                                            @Html.DisplayFor(modelItem => item.Speak)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            <br />
+            @if (empsocial != null)
+            {
+                if (!string.IsNullOrEmpty(empsocial.Facebook) || !string.IsNullOrEmpty(empsocial.GooglePlus) || !string.IsNullOrEmpty(empsocial.LinkedIn) || !string.IsNullOrEmpty(empsocial.Skypeid))
+                {
+                    <div class="row">
+                        <div class="fancy-title title-bottom-border">
+                            <h4>Social</h4>
+                        </div>
+                        <br />
+
+                        <div class="col_full">
+                            @if (empsocial.Facebook != null)
+                            {
+                                <label><i class="icon-facebook"></i>&nbsp; </label> <a href="@empsocial.Facebook" target="_blank">@empsocial.Facebook</a>
+                                <br />
+                            }
+                            @if (empsocial.GooglePlus != null)
+                            {
+                                <label><i class="icon-google-plus"> &nbsp;</i> </label> <a href="@empsocial.GooglePlus" target="_blank">@empsocial.GooglePlus</a>
+                                <br />
+                            }
+                            @if (empsocial.LinkedIn != null)
+                            {
+                                <label><i class="icon-linkedin"></i>&nbsp; </label> <a href="@empsocial.LinkedIn" target="_blank">@empsocial.LinkedIn</a>
+                                <br />
+                            }
+                            @if (empsocial.Skypeid != null)
+                            {
+                                <label><i class="icon-skype"></i>&nbsp; </label> <a href="@empsocial.Skypeid" target="_blank">@empsocial.Skypeid</a>
+                                <br />
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            <br />
+        </div>
+    </div>
+}

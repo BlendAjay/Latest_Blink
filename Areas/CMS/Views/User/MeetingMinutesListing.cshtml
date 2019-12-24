@@ -1,0 +1,195 @@
+﻿@using AJSolutions.Areas.Admin.Models
+@{
+    ViewBag.Title = "MeetingMinutesDetails";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<MeetingMinutesView> MOM = ViewData["Meeting"] as IEnumerable<MeetingMinutesView>;
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Employee")
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    var userId = ViewBag.UserId as string;
+    int counter = 0;
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+<div class="container">
+    @if (MOM != null)
+    {
+        if (MOM.Count() > 0)
+        {
+            foreach (var item in MOM)
+            {
+                if (counter != 0 && counter % 2 == 0)
+                {
+                    <div class="panel panel-default">
+                        @if (item.MeetingSubject.Length < 55)
+                        {
+                            <div class="panel-heading">@Html.ActionLink(item.MeetingSubject, "MeetingMinutesDetails", "User", new { Id = item.MeetingId }, htmlAttributes: new { target = "_blank" }) </div>
+                        }
+                        else
+                        {
+                            <div class="panel-heading">@Html.ActionLink(item.MeetingSubject.Substring(0, 55) + "...", "MeetingMinutesDetails", "User", new { Id = item.MeetingId }, htmlAttributes: new { target = "_blank" }) <span style="float:right">@item.MeetingDate.Value.ToString("dd-MMM-yyyy")</span></div>
+                        }
+                        <div class="panel-body">
+                            <label>Participants </label><span class="badge">@item.ParticipantsCount</span>
+
+                            <span style="float:right">@item.MeetingDate.Value.ToString("dd-MMM-yyyy")</span><br />
+                            @if (!string.IsNullOrEmpty(@item.Location))
+                            { 
+                            <span style="float:right">Location: @item.Location</span>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="panel panel-default">
+                        @if (item.MeetingSubject.Length < 55)
+                        {
+                            <div class="panel-heading">@Html.ActionLink(item.MeetingSubject, "MeetingMinutesDetails", "User", new { Id = item.MeetingId }, htmlAttributes: new { target = "_blank" }) </div>
+                        }
+                        else
+                        {
+                            <div class="panel-heading">@Html.ActionLink(item.MeetingSubject.Substring(0, 55) + "...", "MeetingMinutesDetails", "User", new { Id = item.MeetingId }, htmlAttributes: new { target = "_blank" }) <span style="float:right">@item.MeetingDate.Value.ToString("dd-MMM-yyyy")</span></div>
+                        }
+                        <div class="panel-body">
+                            <label>Participants </label><span class="badge">@item.ParticipantsCount</span>
+
+                            <span style="float:right">@item.MeetingDate.Value.ToString("dd-MMM-yyyy")</span><br />
+                            @if (!string.IsNullOrEmpty(@item.Location))
+                            {
+                                <span style="float:right">Location: @item.Location</span>
+                            }
+                        </div>
+                    </div>
+                }
+                counter++;
+            }
+        }
+        else
+        {
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-thumbs-down2"></i>
+                </div>
+                <h3>No Meetings<span class="subtitle"></span></h3>
+            </div>
+        }
+    }
+</div>
+@*<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page contain details of meetings.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/momview.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/momview.png" />
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel8"><b>Help & Support</b> </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="tabs clearfix" id="tab-1">
+
+                        <ul class="tab-nav clearfix">
+                            <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                            <li><a href="#tabs-2">Page Elements </a></li>
+                            <li><a href="#tabs-3">Video</a></li>
+                        </ul>
+                        <div class="tab-container">
+                            <div class="tab-content clearfix" id="tabs-1">
+                                <h4> Navigation to Details of "Meeting Minutes"</h4>
+                                <img src="~/images/gif/navigation to meeting minutes full details.gif" alt="Save icon" />
+                            </div>
+                            <div class="tab-content clearfix" id="tabs-2">
+                                <h6> Client can View meeting details scheduled for him/her.    </h6>
+
+                                <h6>This page contains details of meeting scheduled for him/her. </h6>
+                                <img src="~/images/Images1/meeting minutes details.png" width="600" height="250">
+                                <h6>• If you want to see full details of meeting click on meeting title.</h6>
+                                <img src="~/images/Images1/meeting minutes details view.png" width="600" height="250">
+                                <h6>• Here you can see meeting full details.</h6>
+                                <img src="~/images/Images1/meeting minutes full details page.png" width="600" height="400">
+                                <h6>• Here you can see meeting scheduled by.</h6>
+                                <img src="~/images/Images1/meeting by.png" width="600" height="400">
+                                <h6>• Here you can see Participants name in the meeting.</h6>
+                                <img src="~/images/Images1/participants in meeting.png" width="600" height="400">
+                                <h6>• Here you can see Details of meetings.</h6>
+                                <img src="~/images/Images1/meeting detail.png" width="600" height="400">
+                            </div>
+                            <div class="tab-content clearfix" id="tabs-3">
+                                <h4> Training Video For Meeting Minutes </h4>
+                                <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/368ob_x4Ohs" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

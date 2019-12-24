@@ -1,0 +1,308 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.DAL;
+@*@model IEnumerable<AJSolutions.Models.ClientViewModel>*@
+@model  PagedList.IPagedList<AJSolutions.Models.ClientViewModel>
+@{
+    ViewBag.Title = "My Clients";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    var currPage = ViewBag.page ?? 1;
+    var currPageSize = ViewBag.Paging;
+}
+@using (Html.BeginForm())
+{
+    <div class="container">
+        <div class="row">
+            <a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "TPU" })" class="btn btn-default btn-xs">Add New Client</a>
+        </div>
+        <div class="row">
+            @*<div class="fancy-title title-bottom-border title-right">
+                    <h4>My Clients (@ViewBag.ClCount)</h4>
+                </div>
+                <div class="col_one_fourth">
+                    Search By  User Name
+                    @Html.TextBox("UserName", ViewBag.UserName as string, new { @class = "form-control", @id = "UserName", placeholder = "User Name" })
+                </div>
+                <div class="col_one_fourth">
+                    Search By Name
+                    @Html.TextBox("Name", ViewBag.Name as string, new { @class = "form-control", @id = "Name", placeholder = "Name" })
+                </div>
+                <div class="col_one_fourth">
+                    Search By Email Id
+                    @Html.TextBox("EmailId", ViewBag.EmailId as string, new { @class = "form-control", @id = "EmailId", placeholder = "EmailId" })
+                </div>
+                <div class="col_one_fourth col_last">
+                    <br /><button type="submit" id="search" class="button_apply" title="click here to Search">Search</button>&nbsp;
+                    <button class="button_apply" id="buttonclear" title="click here to Clear Search">Clear</button>
+                </div>*@
+            <br />
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="card">
+                            <h5 class="card-header">My Clients (@ViewBag.ClCount)</h5>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="bg-light">
+                                            <tr class="border-0">
+                                                <th class="border-0">
+                                                    S.No.
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Clients", "User", new { sortOrder = ViewBag.NameSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, CompanyName = ViewBag.CompanyName , page = ViewBag.Page, PageSize = ViewBag.Paging })">Name&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Clients", "User", new { sortOrder = ViewBag.EmailSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, CompanyName = ViewBag.CompanyName, page = ViewBag.Page, PageSize = ViewBag.Paging })">Email&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Clients", "User", new { sortOrder = ViewBag.RegisteredOnSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, CompanyName = ViewBag.CompanyName, page = ViewBag.Page, PageSize = ViewBag.Paging })">Registered On&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Clients", "User", new { sortOrder = ViewBag.LastLoggedInSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, CompanyName = ViewBag.CompanyName, page = ViewBag.Page, PageSize = ViewBag.Paging })">Last Logged In&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    <nobr><a href="@Url.Action("Clients", "User", new { sortOrder = ViewBag.CompanyNameSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, CompanyName = ViewBag.CompanyName, page = ViewBag.Page, PageSize = ViewBag.Paging })">Company Name&nbsp;<span class="icon-sort"></span></a></nobr>
+                                                </th>
+                                                <th class="border-0">
+                                                    Website
+                                                </th>
+                                                <th>
+                                                    Deactivated
+                                                </th>
+                                                <th class="border-0">Edit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{
+                                                int count = (currPageSize * (currPage - 1)) + 1;
+                                                foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            @count
+                                                        </td>
+                                                        <td>
+                                                            @Html.ActionLink(item.Name, "ClientDetails", "DashBoard", new { area = "CMS", CorporateId = item.CorporateId }, htmlAttributes: new { target = "_blank" })
+                                                            <br />
+                                                            <small>  (@item.UserName)</small>
+                                                        </td>
+                                                        <td class="text-center">
+
+                                                            <a href="mailto:@item.Email" title="mail:@item.Email"><i class="icon-mail"></i></a>&nbsp;
+                                                            <a href="tel:@item.PhoneNumber" title="tel:@item.PhoneNumber"><i class="icon-call"></i></a>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.RegisteredOn != null)
+                                                            {
+                                                                @item.RegisteredOn.Value.ToString("dd-MMM-yyyy")
+                                                            }
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if (item.LastLogin != null)
+                                                            {
+                                                                @item.LastLogin.Value.ToString("dd-MMM-yyyy")
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @Html.DisplayFor(modelItem => item.CompanyName)
+                                                        </td>
+                                                        <td>
+                                                            @if (item.Website != null && item.Website != string.Empty)
+                                                            {
+                                                                <a href=@Url.ExternalLink(item.Website) target="_blank"> @Html.DisplayFor(model => item.Website, new { @class = "form-control", @readonly = "readonly" })</a>
+                                                            }
+                                                        </td>
+                                                        @if (item.Deactivated == true)
+                                                        {
+                                                            <td class="text-center">
+                                                                @Html.CheckBoxFor(model => item.Deactivated, new { Id = "Deactivated", onclick = "ActivateUser('" + item.CorporateId + "','" + item.Name + "');" })
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-center">
+                                                                @Html.CheckBoxFor(model => item.Deactivated, new { Id = "Deactivated", onclick = "DeactivateUser('" + item.CorporateId + "','" + item.Name + "');" })
+                                                            </td>
+                                                        }
+                                                        <td class="text-center">
+                                                            <a href="@Url.Action("Add", "User", new { area = "CMS", Id = "TPU", Uid = item.CorporateId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                    count++;
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <br /><br />
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Clients<span class="subtitle"></span></h3>
+                    </div>
+                }
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Clients", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Clients", "User"));
+}
+<script>
+
+    function ActivateUser(UId, Name) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to activate user ' + Name + '?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                //Ajax call to deactivate user
+                $.ajax({
+                    type: "post",
+                    url: "/User/ActivateDeactivateUser",
+                    data: {
+                        UId: UId,
+                        Role: "Corporate",
+                        action: "activate"
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data != null && data == true) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Activated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-up fa-2x',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            cancel: function () {
+                var PageSize = $("#PageSize :selected").val();
+                var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                location.href = url;
+            }
+        });
+    }
+
+    function DeactivateUser(UId, Name) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to deactivate user ' + Name + '?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                //Ajax call to deactivate user
+                $.ajax({
+                    type: "post",
+                    url: "/User/ActivateDeactivateUser",
+                    data: {
+                        UId: UId,
+                        Role: "Corporate",
+                        action: "deactivate"
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data != null && data == true) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Deactivated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+
+
+
+                        if (data == false) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Deactivated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            cancel: function () {
+                var PageSize = $("#PageSize :selected").val();
+                var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                location.href = url;
+            }
+        });
+    }
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var url = $("#RedirectTo").val();
+        location.href = url;
+
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

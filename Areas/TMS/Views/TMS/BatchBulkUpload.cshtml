@@ -1,0 +1,59 @@
+﻿@using AJSolutions.Models
+@using AJSolutions.DAL
+@{ 
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml"; 
+    
+} 
+
+@using (Html.BeginForm("BatchBulkUpload", "TMS", FormMethod.Post, new {area="TMS", @class = "form-horizontal needs-validation", id = "CandidateBulkUpload", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.Hidden("Success", ViewBag.result as string)
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Batch Bulk Upload</h4>
+                </div>
+                <br />  
+                <br />
+                <div class="col_full">
+                    <center>
+                        <ul class="process-steps process-3 bottommargin clearfix">
+                            <li class="active">
+
+                                <a href="@Url.Action("DownoladSample", "TMS")" class=" i-bordered i-circled divcenter icon-download-alt"></a>
+                                <h5>Download Template</h5>
+                            </li>
+                            <li>
+                                <span class="i-bordered i-circled divcenter icon-table"></span>
+                                <h5>Fill Excel sheet</h5>
+                            </li>
+                            <li>
+
+                                <input type="file" name="FileUpload" id="csvFile" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewImage(@Global.MaxSize("CSV"), this, 'CSV')" />
+                                <h5>Select File to Upload</h5>
+                                <label id="lblgetfilename"></label>
+                            </li>
+                        </ul>
+                        <input type="submit" name="Submit" id="Submit" value="Upload" class="button button-3d button-rounded button-teal" />
+
+                        <p>@Html.Encode(ViewData["Feedback"])</p>
+
+                        @if (ViewBag.result == "Success")
+                        {
+                            @ViewBag.SuccessCount <span>uploaded Successfully</span><br />
+                            @ViewBag.FailureCount <span>Failed</span><br />
+                            if (@ViewBag.Download == "Yes")
+                            {
+                                <a href="~/CMS/Candidate/Download">Download Result</a>
+                            }
+                        }
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

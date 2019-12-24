@@ -1,0 +1,170 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model AJSolutions.Models.TrainerPlannerView
+@{
+    ViewBag.Title = "Add Engagements";
+    string role = ViewBag.UserRole;
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    IEnumerable<TrainerPlannerView> planner = ViewData["TrainerPlanner"] as IEnumerable<TrainerPlannerView>;
+    TrainerPlannerAttachment content = ViewData["Content"] as TrainerPlannerAttachment;
+    if (role == "Admin") { Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml"; }
+    else { Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml"; }
+}
+<script src="~/Scripts/CustomValidation.js" type="text/javascript"></script>
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("TrainerPlanner", "TMS", FormMethod.Post, new { @class = "form-horizontal needs-validation", id = "TrainerPlanner", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Deleted", ViewBag.Deleted as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">My Engagements</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Add Engagements</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 travel-date-group">
+                            <label>Engagement Schedule</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                <input type="text" class="form-control daterange2" value="@ViewBag.Schedule" id="Schedule" name="Schedule" />
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Engagement Type</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                                @Html.DropDownList("EngagementTypeId", null, "--- Select Engagement Type ---", htmlAttributes: new { @class = "form-control required", id = "EngagementTypeId", @required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+
+                            @Html.CheckBoxFor(model => model.HalfDay, htmlAttributes: new { id = "HalfDay" })  @Html.LabelFor(model => model.HalfDay, "Half Day Engagement")
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <label>Reason<small>*</small></label>
+                            @Html.TextAreaFor(model => model.Remarks, 5, 124, htmlAttributes: new { @class = "form-control required", @Maxlength = 2048, id = "Remarks", @placeholder = "Reason here..", @required = "required" })
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="fancy-title title-bottom-border">
+                                <br />
+                                <label>ATTACHMENT</label><small style="float:right">If Any</small>
+                                <h4></h4>
+                            </div>
+                            <input type="file" name="uploadPhoto" />
+                            @if (content != null)
+                            {
+                                <a href="~/File/EngagementAttachment?id=@content.FileId" alt="CV" target="_blank">( Click here to download your attachment)</a>
+                            }
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <input type="submit" value="Submit" style="float: right;" class="btn btn-primary" id="SubmitForm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#EngagementTypeId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/GetEngagementTypeCount",
+                data: { EngagementTypeId: $('#EngagementTypeId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var total = "    <div class='tright> <span class='badge'> (Outstanding " + data.OutstandingLeaves + " / Total " + data.TotalLeaves + " )</span></div>";
+                    $('#total').html(total);
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+        if ($("#Deleted").val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Engagement has been Cancelled Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+    $("#TrainerPlanner").validate({
+        submitHandler: function (form) {
+
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/TrainerPlanner",
+                data: {
+                    PlannerId: $('#PlannerId').val(),
+                    Remarks: $('#Remarks').val(),
+                    EngagementTypeId: $('#EngagementTypeId').val(),
+                    uploadPhoto: $('#uploadPhoto')[0].files[0],
+                    Schedule: $('#Schedule').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    //$('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Engagement added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+
+

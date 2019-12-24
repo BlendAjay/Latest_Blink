@@ -1,0 +1,195 @@
+﻿@model AJSolutions.Models.Certification
+@{
+    ViewBag.Title = "Certifications";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    List<AJSolutions.Models.Certification> certificate = ViewData["Cretifications"] as List<AJSolutions.Models.Certification>;
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("Certifications", "Employee", FormMethod.Post, new { area = "EMS", @class = "form-horizontal needs-validation", id = "Certifications", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Data as string)
+    @Html.Hidden("Result", ViewBag.Result as string)
+    if (Model != null)
+    {
+        @Html.Hidden("CertificationId", @Model.CertificationId)
+    }
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Add Certificate</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Add Certificate</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.Certificate, "Certificate")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-book2"> </i></span>
+                                @Html.EditorFor(model => model.Certificate, new { htmlAttributes = new { @class = "form-control required", id = "Certificate", @Placeholder = "Enter Certificate Name", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Certificate, "", new { @class = "text-danger" })
+                            <br />
+
+                            @Html.LabelFor(model => model.Specialization, "Specialization")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                                @Html.EditorFor(model => model.Specialization, new { htmlAttributes = new { @class = "form-control", id = "Specialization", @Placeholder = "Enter Specialization" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Specialization, "", new { @class = "text-danger" })
+                            <br />
+
+                            @Html.LabelFor(model => model.Percentage, "Percentage / Grade")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                                @Html.EditorFor(model => model.Percentage, new { htmlAttributes = new { @class = "form-control", id = "Percentage", @Placeholder = "Enter Percentage / Grade" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Percentage, "", new { @class = "text-danger" })
+                            <br />
+
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.Institution, "Institution")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-building"> </i></span>
+                                @Html.EditorFor(model => model.Institution, new { htmlAttributes = new { @class = "form-control", id = "Institution", @Placeholder = "Enter Institution Name" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Institution, "", new { @class = "text-danger" })
+                            <br />
+
+                            @Html.LabelFor(model => model.YearOfPassing, "Year Of Passing")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                @Html.DropDownList("YearOfPassing", null, "Select Passing Year", htmlAttributes: new { @class = "form-control", @id = "YearOfPassing" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.YearOfPassing, "", new { @class = "text-danger" })
+                            <br />
+                        </div>
+
+                    </div>
+                    <input type="submit" id="Certifications" value="Submit" style="float: right;" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br /><br />
+
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Certificate</th>
+                        <th>Institution</th>
+                        <th>Specialization</th>
+                        <th>Percentage</th>
+                        <th>Year Of Passing</th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (certificate != null)
+                    {
+                        foreach (var item in certificate)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Certificate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Institution)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Specialization)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Percentage)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Certifications", "Employee", new { area = "EMS", CertificationId = item.CertificationId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "Certifications", "Employee", new { area = "EMS", CertificationId = item.CertificationId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Certifications", "Employee", new { area = "EMS" }))
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    $("#Certifications").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

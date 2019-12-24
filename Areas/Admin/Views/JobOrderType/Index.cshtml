@@ -1,0 +1,119 @@
+﻿@model IEnumerable<AJSolutions.Models.JobOrderTypeMaster>
+
+@{
+    ViewBag.Title = "Job Order Types";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="fancy-title title-bottom-border">
+            <h4>All Job Order Types</h4>
+            <button class="button button-3d button-rounded button-teal" style="float:right;"><i class="icon-repeat"></i>@Html.ActionLink("Create New", "Create")</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered nobottommargin">
+            <tr>
+                <th>
+                    Job Order Type
+                </th>
+                <th>Edit</th>
+                <th>Details</th>
+                <th>Delete</th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.JobOrderType)
+                    </td>
+                    <td>
+                        @if (item.JobOrderType != "Generic" && item.JobOrderType != "Training")
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.JobOrderTypeId })
+                        }
+                        else
+                        {
+                            <span>Default</span>
+                        }
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "Details", new { id = item.JobOrderTypeId })
+                    </td>
+                    <td>
+                        @if (item.JobOrderType != "Generic" && item.JobOrderType != "Training")
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.JobOrderTypeId })
+                        }
+                        else
+                        {
+                            <span>Default</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                Here you can edit, delete and see details of your added job order type.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/jolist.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/jolist.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                       
+                       
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+    </script>

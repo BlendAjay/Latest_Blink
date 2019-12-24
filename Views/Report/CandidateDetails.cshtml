@@ -1,0 +1,212 @@
+﻿@using BlinkPortal.Models;
+@model BlinkPortal.Models.ReportInfo
+
+@{
+    ViewBag.Title = "Candidate Details";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    var accomodation = ViewBag.Accomodation;
+    var attendence = ViewBag.Attendence;
+    var course = ViewBag.Course;
+    var batch = ViewBag.Batch;
+    var emailID = ViewBag.EmailID;
+    var mobile = ViewBag.Mobile;
+    var alternateEmail = ViewBag.alternateEmail;
+    var alternateMobile = ViewBag.alternateMobile;
+    var gender = ViewBag.Gender;
+    var registrationID = ViewBag.RegistrationID;
+    var designation = ViewBag.Designation;
+    var region = ViewBag.Region;
+    var branchName = ViewBag.BranchName;
+    var branchCategory = ViewBag.BranchCategory;
+    var branchState = ViewBag.BranchState;
+    var branchCode = ViewBag.BranchCode;
+    var trainingTitle = ViewBag.TrainingTitle;
+    var trainingId = ViewBag.TrainingId;
+    var candidateCheckInCheckOut = ViewBag.candidateCheckInCheckOut;
+    List<CandidateCheckInCheckOut> ClientJobOrderAdmin = candidateCheckInCheckOut as List<CandidateCheckInCheckOut>;
+}
+
+@using (Html.BeginForm("CandidateDetails", "report", FormMethod.Post, new { @class = "form-horizontal", id = "CandidateDetails", role = "form" }))
+{
+    @Html.ValidationSummary()
+    <div class="container">
+        <div class="row">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Report for Training - @trainingTitle (@trainingId) </h4>
+                </div>
+            </div>
+            <div>@Html.Hidden("course", course as string)</div>
+            <div>@Html.Hidden("batch", batch as string)</div>
+            <div>@Html.Hidden("TrainingTitle", trainingTitle as string)</div>
+            <div>@Html.Hidden("TrainingId", trainingId as string)</div>
+            <div class="table-responsive" id="divtableResponsive">
+                <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                    @if (candidateCheckInCheckOut != null)
+                    {
+                        <tr>
+                            <th>User Name</th>
+                            <th>Name</th>
+                            @if (accomodation != "false")
+                            {
+                                <th>Cin</th>
+                            }
+                            @if (accomodation != "false")
+                            {
+                                <th>Cout</th>
+                            }
+                            @if (accomodation != "false")
+                            {
+                                <th>Total Days</th>
+                            }
+                            @if (attendence != "false")
+                            {
+                                <th>Attendance</th>
+                            }
+                            @if (emailID != "false")
+                            {
+                                <th>Email Address</th>
+                            }
+                            @if (mobile != "false")
+                            {
+                                <th>Mobile</th>
+                            }
+                            @if (alternateEmail != "false")
+                            {
+                                <th>Alternate Email</th>
+                            }
+                            @if (alternateMobile != "false")
+                            {
+                                <th>Alternate Mobile</th>
+                            }
+                            @if (gender != "false")
+                            {
+                                <th>Gender</th>
+                            }
+                            @if (registrationID != "false")
+                            {
+                                <th>Registration ID</th>
+                            }
+                            @if (designation != "false")
+                            {
+                                <th>Designation</th>
+                            }
+                            @if (region != "false")
+                            {
+                                <th>Region</th>
+                            }
+                            @if (branchName != "false")
+                            {
+                                <th>Branch Name</th>
+                            }
+                            @if (branchCategory != "false")
+                            {
+                                <th>Branch Category</th>
+                            }
+                            @if (branchState != "false")
+                            {
+                                <th>Branch State</th>
+                            }
+                            @if (branchCode != "false")
+                            {
+                                <th>Branch Code</th>
+                            }
+                        </tr>
+                        foreach (var items in ClientJobOrderAdmin)
+                        {
+                            <tr>
+                                <td>@items.UserName</td>
+                                <td>@items.Name</td>
+                                @if (accomodation != "false")
+                                {
+                                    <td>@items.CIn</td>
+                                }
+                                @if (accomodation != "false")
+                                {
+                                    <td>@items.COut</td>
+                                }
+                                @if (accomodation != "false")
+                                {
+                                    <td>@items.TotalDays</td>
+                                }
+                                @if (attendence != "false")
+                                {
+                                    var attendence1 = Convert.ToString(@items.Attendance) + '/' + Convert.ToString(@items.TotalAttendence);
+                                    <td>@Html.ActionLink(attendence1, "CandidateDetailsDateWise", "Report", new { UserID = @items.UserName, UserName = @items.Name, Course = @course, Batch = @batch }, new { target = "_blank" })</td>
+                                }
+                                @if (emailID != "false")
+                                {
+                                    <th>@items.Email</th>
+                                }
+                                @if (mobile != "false")
+                                {
+                                    <th>@items.PhoneNumber</th>
+                                }
+                                @if (alternateEmail != "false")
+                                {
+                                    <th>@items.AlternateEmail</th>
+                                }
+                                @if (alternateMobile != "false")
+                                {
+                                    <th>@items.AlternateContact</th>
+                                }
+                                @if (gender != "false")
+                                {
+                                    <th>@items.Gender</th>
+                                }
+                                @if (registrationID != "false")
+                                {
+                                    <th>@items.RegistrationId</th>
+                                }
+                                @if (designation != "false")
+                                {
+                                    <th>@items.Designation</th>
+                                }
+                                @if (region != "false")
+                                {
+                                    <th>@items.Region</th>
+                                }
+                                @if (branchName != "false")
+                                {
+                                    <th>@items.Branch</th>
+                                }
+                                @if (branchCategory != "false")
+                                {
+                                    <th>@items.BranchCategory</th>
+                                }
+                                @if (branchState != "false")
+                                {
+                                    <th>@items.BranchState</th>
+                                }
+                                @if (branchCode != "false")
+                                {
+                                    <th>@items.BranchCode</th>
+                                }
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col_full">
+                                        <input type="submit" id="btnDownloadCanAttendenceAnalyticalReport" class="button button-3d button-rounded button-teal" name="btnDownloadCanAttendenceAnalyticalReport" value="Attendence Analytics" style="float:right" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col_full">
+                                        <input type="submit" id="btnDownloadCanCinCoutAnalyticalReport" class="button button-3d button-rounded button-teal" name="btnDownloadCanCinCoutAnalyticalReport" value="Accommodation Analytics" style="float:right" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+}

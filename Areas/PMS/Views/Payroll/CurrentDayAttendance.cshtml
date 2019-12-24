@@ -1,0 +1,72 @@
+﻿@using AJSolutions.Models;
+@model IEnumerable<BiometricCheckInCheckOut>
+@{
+    ViewBag.Title = "Current Day Attendance";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+@using (Html.BeginForm("CurrentDayAttendance", "Payroll", FormMethod.Post, new { area = "PMS", @class = "form-horizontal needs-validation", id = "CurrentDayAttendance", role = "form" }))
+{
+    @Html.Hidden("SId", user.UserId as string);
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="form-process"></div>
+
+        <div class="col_one_fourth">
+            <label>Select Department</label>
+            <div class="input-group divcenter">
+                <span class="input-group-addon"><i class="icon-link"> </i></span>
+                @Html.DropDownList("DepartmentId", null, "--- Select Role ---", htmlAttributes: new { @class = "form-control", @id = "DepartmentId", placeholder = "Select Role" })
+            </div>
+        </div>
+        <div class="col_one_fourth">
+            <label>Select Employee</label>
+            @Html.DropDownList("UserId", null, "Select Employee", htmlAttributes: new { @class = "form-control required", id = "UserId" })
+        </div>
+        <div class="col_one_fourth">
+            <label>Status</label>
+            @Html.DropDownList("attendanceFilter", null, "Select Status", htmlAttributes: new { @class = "form-control required", id = "attendanceFilter" })
+        </div>
+        <div class="col_one_fourth col_last">
+            <br /><br />
+            <button type="button" id="btnSearch" class="btn btn-green btnalignleft" onclick='GetData()'>Filter</button>&nbsp;
+            <button type="button" class="btn btn-green btnalignleft" onclick="location.href='@Url.Action("CurrentDayAttendance", "Payroll", new { Area = "PMS" })'">Clear</button>
+        </div>
+        <br /><br />
+
+        <div class="col_full" id="BiometricData">
+
+        </div>
+    </div>
+}
+
+
+<script>
+
+    function GetData() {
+
+        $.ajax({
+            type: "post",
+            url: "/PMS/Payroll/CurrentDayAttendance",
+            data: {
+                Eid: $("#UserId").val(),
+                DepartmentId: $("#DepartmentId").val(),
+                attendanceFilter: $("#attendanceFilter").val(),
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null && data.length > 0) {
+                    $('#BiometricData').html(data);
+                }
+            }
+        })
+    }
+</script>

@@ -1,0 +1,76 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.GetUserTaskInvoiceView
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    UserViewModel userDetails = ViewData["UserProfile"] as UserViewModel;
+    //GetInvoiceStatusCountView empInvStatus = ViewData["EmpInvoiceStatus"] as GetInvoiceStatusCountView;
+    //GetTaskCountView TaskStatus = ViewData["TaskStatus"] as GetTaskCountView;
+    GetTrainingStatusCountView TrainingStatus = ViewData["TrainingStatus"] as GetTrainingStatusCountView;
+    //int Count = TaskStatus.TotalAbonded + TaskStatus.TotalAssigned + TaskStatus.TotalCompleted + TaskStatus.TotalNew + TaskStatus.TotalRejected;
+}
+@using (Html.BeginForm("Index", "Dashboard", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Result", ViewBag.Result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">DashBoard</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- gauge one  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header"><a href="@Url.Action("MyTraining", "TMS", new { Area = "TMS", TId = userDetails.UserId })">My Training</a></h5>
+                <div class="card-body">
+                    <canvas id="gauge1"></canvas>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header"><a href=@Url.Action("MyTasks", "Task", new { Area = "CMS"})>My Tasks</a></h5>
+                <div class="card-body">
+                    <canvas id="gauge2"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header"> <a href="@Url.Action("MyInvoices", "Invoice", new { Area = "CMS"})">My Invoices</a></h5>
+                <div class="card-body">
+                    <canvas id="gauge3"></canvas>
+                </div>
+            </div>
+        </div>*@
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Candidate is added Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+
+                }
+            });
+        }
+    });
+</script>

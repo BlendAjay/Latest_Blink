@@ -1,0 +1,2197 @@
+﻿@using BlinkPortal.Models;
+@*@using MultipleModelInOneView;*@
+@*@using ReportInfo*@
+@*@model dynamic*@
+@model BlinkPortal.Models.ReportInfo
+
+@{
+    ViewBag.Title = "Admin Report";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    // SelectList[] ClientList = ViewBag.Client;
+    System.Web.Mvc.MultiSelectList ClientList = ViewBag.Client;
+    System.Web.Mvc.MultiSelectList JobStatusList = ViewBag.Status;
+    SelectList JobOrederTypeList = ViewBag.JobOrderTypeId;
+    var clientProfileRequiredFied = ViewBag.ClientProfileRequiredFied;
+    var clientJobOrderAdminRequiredField = ViewBag.ClientJobOrderAdminRequiredField;
+    var clientProfileAdmin = ViewBag.ClientProfileAdmin;
+    var clientJobOrderAdmin = ViewBag.ClientJobOrderAdmin;
+    var joborderstartdate = ViewBag.joborderDtartDate;
+    var joborderEndDate = ViewBag.joborderEndDate;
+    var empProfileRequiredFied = ViewBag.EmpProfileRequiredField;
+    var empProfileAdmin = ViewBag.EmpProfileAdmin;
+    var SubscriberId = ViewBag.SubscriberID;
+    var EmpTsk = ViewBag.EmpTsk;
+    var EmpTraStartdate = ViewBag.EmpTraStartDate;
+    var EmpTraEndDate = ViewBag.EmpTraEndDate;
+    var employeeTrainingRequiredFied = ViewBag.EmployeeTrainingRequiredFied;
+    var empTraAdmin = ViewBag.EmpTraAdmin;
+    var candidateProfileRequiredField = ViewBag.CandidateProfileRequiredField;
+    var candidateProfile = ViewBag.CandidateProfile;
+    var candidateCourseFeeRequiredField = ViewBag.CandidateCourseFeeRequiredField;
+    var courseFee = ViewBag.CourseFee;
+    //System.Data.DataRow clientProfileRequiredFied = ViewBag.ClientProfileRequiredFied as System.Data.DataRow;
+    //var clientProfileRequiredFied = "";
+    //if(clientProfileRequiredFied1!=null)
+    //{
+    // clientProfileRequiredFied = clientProfileRequiredFied1;
+    //}
+    //List<ClientProfileAdminRequiredField> ClientProfileRequiredFields = clientProfileRequiredFied as List<ClientProfileAdminRequiredField>;
+    //List<ClientJobOrderAdmin> UserProfileAdmin = ViewData["UserJobOrderAdmin"] as List<ClientJobOrderAdmin>;
+    //IEnumerable<System.Data.DataRow> ClientProfileAdmin = ViewData["ClientProfileAdmin"] as IEnumerable<System.Data.DataRow>;
+    ClientProfileAdminRequiredField ClientProfileRequiredFields = clientProfileRequiredFied as ClientProfileAdminRequiredField;
+    List<ClientProfileAdmin> ClientProfileAdmin = clientProfileAdmin as List<ClientProfileAdmin>;
+    List<ClientJobOrderAdminRequiredField> ClientJobOrderAdminRequiredField = clientJobOrderAdminRequiredField as List<ClientJobOrderAdminRequiredField>;
+    List<ClientJobOrderAdmin> ClientJobOrderAdmin = clientJobOrderAdmin as List<ClientJobOrderAdmin>;
+}
+@using (Html.BeginForm("AdminReport", "Report", FormMethod.Post, new { @class = "form-horizontal", id = "Record", role = "form" }))
+{
+    @Html.ValidationSummary()
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Generate Report</h4>
+                </div>
+            </div>
+            <div class="row bg-success">
+                <div class="col_half ">
+                    @Html.Label("Select Role", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    @*@Html.DropDownList("ddlRolelist", ViewData["Rolelist"] as SelectList)*@
+
+                    @*@Html.DropDownList("list", (IEnumerable<SelectListItem>)ViewData["Role"] as SelectList)*@
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ul"> </i></span>
+                        @Html.DropDownList("ddlRolelist", ViewData["Rolelist"] as SelectList, "---Select Role ---", htmlAttributes: new { @class = "sm-form-control required ", placeholder = "Select Role" })
+                    </div>
+                </div>
+                @*<div class="col_half col_last" id="EmplyeeTrainingBatchName">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("ddlTypelist", ViewData["Typelist"] as SelectList, "---Select Report Type ---", htmlAttributes: new { @class = "sm-form-control required", placeholder = "Select Type" })
+                    </div>*@
+                <div class="col_half col_last" id="DivTypeList">
+                    @Html.Label("Select Report Type", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.DropDownList("ddlTypelist", ViewData["Typelist"] as SelectList, "---Select Report Type ---", htmlAttributes: new { @class = "sm-form-control required", placeholder = "Select Type" })
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row" id="ClientProfiles">
+                <div class="fancy-title title-double-border">
+                    <h5>Select Report <span>Parameters</span></h5>
+                </div>
+                <div class="col_full">
+                    <table class="table table-striped table-responsive" id="tblProfile">
+                        <tbody>
+                            <tr id="trcheckall">
+                                <td></td>
+                                <td>
+                                    @Html.CheckBox("select_all", new { @id = "select_all", @class = "checkbox", @type = "checkbox" })
+                                    Check All
+                                </td>
+                            </tr>
+                            <tr id="trProfileName">
+                                <td>@Html.Label("Name", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkChkName", new { @id = "ChkChkName", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trClientProfileEmail">
+                                <td>@Html.Label("Email", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkClientProfileEmail", new { @id = "ChkClientProfileEmail", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trClientProfilePhone">
+                                <td>@Html.Label("Phone", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkClientProfilePhone", new { @id = "ChkClientProfilePhone", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trClientProfileAlternateEmail">
+                                <td>@Html.Label("Alternate Email", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkClientProfileAlternateEmail", new { @id = "ChkClientProfileAlternateEmail", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trClientProfileAlternatePhone">
+                                <td>@Html.Label("Alternate Contact", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkClientProfileAlternateContact", new { @id = "ChkClientProfileAlternateContact", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trClientProfileNationality">
+                                <td>@Html.Label("Nationality", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkClientProfileNationality", new { @id = "ChkClientProfileNationality", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileRegisteredOn">
+                                <td>@Html.Label("Registered On", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkRegisOn", new { @id = "ChkRegisOn", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+
+                            <tr id="trProfileLastLoggedOn">
+                                <td>@Html.Label("Last Logged On", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkLastLoggedOn", new { @id = "ChkLastLoggedOn", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+
+                            @*<tr>
+                                    <td>@Html.Label("Gender", htmlAttributes: new { @class = "control-label" })</td>
+                                    <td>
+                                    @Html.CheckBox("ChkGender")
+                                    </td>
+                                </tr>*@
+
+                            <tr id="trProfileCompanyName">
+                                <td>@Html.Label("Company Name", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkCompName", new { @id = "ChkCompName", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileCompanyType">
+                                <td>@Html.Label("Company Type", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkCompType", new { @id = "ChkCompType", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileCompanySize">
+                                <td>@Html.Label("Company Size", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkCompSize", new { @id = "ChkCompSize", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileCompanyWeb">
+                                <td>@Html.Label("Company Website", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkCompWeb", new { @id = "ChkCompWeb", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfilePermanentAddress">
+                                <td>@Html.Label("Permanent Address", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkPerAddress", new { @id = "ChkPerAddress", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfilePresentAddress">
+                                <td>@Html.Label("Present Address", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkPreAddress", new { @id = "ChkPreAddress", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileCompanyAddress">
+                                <td>@Html.Label("Company Address", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkCompAddress", new { @id = "ChkCompAddress", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileCorrespondenceAddress">
+                                <td>@Html.Label("Correspondence Address", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkCoressAddress", new { @id = "ChkCoressAddress", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileBankDetails">
+                                <td>@Html.Label("Bank Details", htmlAttributes: new { @class = "control-label" })</td>
+                                <td>
+                                    @Html.CheckBox("ChkBank", new { @id = "ChkBank", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileRole">
+                                <td>
+                                    @Html.Label("Role", htmlAttributes: new { @class = "control-label" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("ChkRole", new { @id = "ChkRole", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                            <tr id="trProfileReportingAuthority">
+                                <td>
+                                    @Html.Label("Reporting Authority", htmlAttributes: new { @class = "control-label" })
+                                </td>
+                                <td>
+                                    @Html.CheckBox("ChkReportingAuthority", new { @id = "ChkReportingAuthority", @class = "checkbox", @type = "checkbox" })
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="fancy-title title-double-border">
+                        <h5>Select Report <span>Timelines</span></h5>
+                    </div>
+                    <div class="col_half">
+                        <label> Start Date</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                            @*("StartDate",  new { @type = "date", @class = "sm-form-control", id = "StartDate", @placeholder = "yyyy-MM-dd" })*@
+                            <input type="date" name="StartDate" class="sm-form-control" id="StartDate" placeholder="yyyy-MM-dd" value="@ViewBag.StartDate" />
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        <label> End Date</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                            <input type="date" name="EndDate" class="sm-form-control" id="EndDate" placeholder="yyyy-MM-dd" value="@ViewBag.EndDate" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col_full">
+                        @*<input type="submit" id="btnGenerateReport" class="button button-3d button-rounded button-teal" value="Generate Report" style="float:right" />*@
+                        <input type="submit" id="btnGenerateReport" class="button button-3d button-rounded button-teal" value="Generate Report" style="float:right" />
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="JobOrders">
+                <div class="col_half">
+                    @Html.Label("Select Client(s)", htmlAttributes: new { @class = "control-label", id = "lblClient" })
+                    @*@Html.DropDownList("JOClient", null, "---Select Clients ---", htmlAttributes: new { id = "JOClient", @multiple = "multiple", @class = "control-group required" })*@
+                    <div class="input-group divcenter" id="Emplyee1">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("JOClient", null, "All", htmlAttributes: new { id = "JOClient", @multiple = "multiple" })
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    @Html.Label("Select Job Order Status", htmlAttributes: new { @class = "control-label", id = "lblStatus" })
+                    @*@Html.DropDownList("JOStatus", null, "---Select Status ---", htmlAttributes: new { id = "JOStatus", @multiple = "multiple", @class = "required" })*@
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.DropDownList("JOStatus", null, "All", htmlAttributes: new { id = "JOStatus", @multiple = "multiple"})
+                    </div>
+                </div>
+                <div class="col_half">
+                    @Html.Label("Select Job Order Type", htmlAttributes: new { @class = "control-label", id = "lblType" })
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.DropDownList("JOType", JobOrederTypeList, "All", htmlAttributes: new { placeholder = "Select JO Type", @class = "sm-form-control required" })
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    @Html.Label("Action", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.DropDownList("JOAction", ViewData["JOAction"] as SelectList, htmlAttributes: new { @class = "sm-form-control required", placeholder = "Select Action" })
+                    </div>
+                </div>
+                <div class="col_half">
+                    <label> Start Date</label>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                        <input type="date" name="JOStartDate" class="sm-form-control" id="JOStartDate" value="@ViewBag.joborderDtartDate" placeholder="yyyy-MM-dd" />
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    <label> End Date</label>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                        <input type="date" name="JOEndDate" class="sm-form-control" id="JOEndDate" value="@ViewBag.joborderEndDate" placeholder="yyyy-MM-dd" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="table table-striped table-responsive">
+                        <div class="col_full">
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            @Html.CheckBox("select_allJOCli", new { @id = "select_allJOCli", @class = "checkboxJOCli", @type = "checkbox" })
+                                            Select All
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label("Job Order ID", htmlAttributes: new { @class = "control-label", id = "lblJobOrderID" })</td>
+                                        <td>
+                                            @Html.CheckBox("ChkJOId", new { @id = "ChkJOId", @class = "checkboxJOCli", @type = "checkbox" })
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label("Job Order Title", htmlAttributes: new { @class = "control-label", id = "lblJobOrderTitle" })</td>
+                                        <td>
+                                            @Html.CheckBox("ChkJOTitle", new { @id = "ChkJOId", @class = "checkboxJOCli", @type = "checkbox" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label("Invoice Amount", htmlAttributes: new { @class = "control-label", id = "lblInvoiceAmount" })</td>
+                                        <td>
+                                            @Html.CheckBox("ChkJOCostAmount", new { @id = "ChkJOCostAmount", @class = "checkboxJOCli", @type = "checkbox" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label("Invoice Number", htmlAttributes: new { @class = "control-label", id = "lblInvoiceNumber" })</td>
+                                        <td>
+                                            @Html.CheckBox("ChkJOInvoice", new { @id = "ChkJOInvoice", @class = "checkboxJOCli", @type = "checkbox" })
+                                        </td>
+                                    </tr>
+                                    <tr id="trJobDescription">
+                                        <td>@Html.Label("Job Description", htmlAttributes: new { @class = "control-label", id = "lblJobDescription" })</td>
+                                        <td>
+                                            @Html.CheckBox("ChkJODescription", new { @id = "ChkJODescription", @class = "checkboxJOCli", @type = "checkbox" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.Label("Invoice Status", htmlAttributes: new { @class = "control-label", id = "lblInvoiceStatus" })</td>
+                                        <td>
+                                            @Html.CheckBox("ChkInvoiceStatus", new { @id = "ChkInvoiceStatus", @class = "checkboxJOCli", @type = "checkbox" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col_full">
+                        <input type="submit" id="btnClientJobOrderReport" class="button button-3d button-rounded button-teal" value="Generate Report" style="float:right" />
+                        @*<input type="button" id="btnClientJobOrderReport" class="button button-3d button-rounded button-teal" value="Generate Report" style="float:right" />*@
+                        @*<button type="button" class="btn btn-green btnalignleft" onclick="location.href='@Url.Action("MyJobOrders", "JobOrder", new { Area = "CMS", IsClientView = IsClientView })'" title="Clear">Generate Report</button>*@
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="EmployeeTraining">
+                <div class="col_half" id="divEmpTraCourseCode">
+                    @Html.Label("Select Course", htmlAttributes: new { @class = "control-label", id = "lblEmpTraCourse" })
+                    @*@Html.DropDownList("JOClient", null, "---Select Clients ---", htmlAttributes: new { id = "JOClient", @multiple = "multiple", @class = "control-group required" })*@
+                    <div class="input-group divcenter" id="EmplyeeTrainingCourseCode">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("LstEmpCourseCode", null, "All", htmlAttributes: new { @class = "sm-form-control", placeholder = "Select Course" })
+                    </div>
+                </div>
+                <div class="col_half col_last" id="divEmpTraBatch">
+                    @Html.Label("Select Batch", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBatch" })
+                    @*@Html.DropDownList("JOClient", null, "---Select Clients ---", htmlAttributes: new { id = "JOClient", @multiple = "multiple", @class = "control-group required" })*@
+                    <div class="input-group divcenter" id="EmplyeeTrainingBatchName">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("LstBatchIdEmpTra", null, "All", htmlAttributes: new { @class = "sm-form-control", placeholder = "Select Batch" })
+                    </div>
+                </div>
+                <div class="col_half" id="divEmpTraEmployeeName">
+                    @Html.Label("Select Employee", htmlAttributes: new { @class = "control-label", id = "lblEmployeeTraining" })
+                    @*@Html.DropDownList("JOClient", null, "---Select Clients ---", htmlAttributes: new { id = "JOClient", @multiple = "multiple", @class = "control-group required" })*@
+                    <div class="input-group divcenter" id="EmplyeeTrainingEmpNAme">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("LstEmpTraining", null, "All", htmlAttributes: new { @class = "sm-form-control", placeholder = "Select Employee" })
+                    </div>
+                </div>
+                <div class="col_half col_last" id="divEmpTraStatus">
+                    @Html.Label("Select Training Status", htmlAttributes: new { @class = "control-label", id = "lblTrainingStatus" })
+                    @*@Html.DropDownList("JOStatus", null, "---Select Status ---", htmlAttributes: new { id = "JOStatus", @multiple = "multiple", @class = "required" })*@
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.DropDownList("EmpTrainingStatus", ViewData["EmpTraStatus"] as SelectList, htmlAttributes: new { @class = "sm-form-control", placeholder = "All" })
+                    </div>
+                </div>
+                <div class="col_half">
+                    @Html.Label("Action", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    <div class="input-group divcenter" id="ddlEmpTraAction">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.DropDownList("EmpTraAction", ViewData["EmpTraAction"] as SelectList, htmlAttributes: new { @class = "sm-form-control required", id = "EmpTraAction", placeholder = "Select Action" })
+                    </div>
+                </div>
+                <div class="col_half">
+                    <label> Start Date</label>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                        <input type="date" name="EmpTraStartDate" class="sm-form-control" id="EmpTraStartDate" value=@EmpTraStartdate placeholder="yyyy-MM-dd" />
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    <label> End Date</label>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                        <input type="date" name="EmpTraEndDate" class="sm-form-control" id="EmpTraEndDate" value=@EmpTraEndDate placeholder="yyyy-MM-dd" />
+                    </div>
+                </div>
+                <div>
+                    <div class="row" id="EmployeeParameters">
+                        <div class="table table-striped table-responsive">
+                            <div class="col_full">
+                                <div class="fancy-title title-double-border">
+                                    <h5>Parameters</h5>
+                                </div>
+                                <table class="table table-striped table-responsive">
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td>
+                                                @Html.CheckBox("select_allEmpTra", new { @id = "select_allEmpTra", @class = "checkboxEmpTra", @type = "checkbox" })
+                                                Select All
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Training ID", htmlAttributes: new { @class = "control-label", id = "lblScheduleID" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheDuleID", new { @id = "EmpTraScheDuleID", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Training Tiltle", htmlAttributes: new { @class = "control-label", id = "lblScheduleName" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheDuleName", new { @id = "EmpTraScheDuleName", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Venue", htmlAttributes: new { @class = "control-label", id = "lblEmpTraVenue" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheVenue", new { @id = "EmpTraScheVenue", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("City", htmlAttributes: new { @class = "control-label", id = "lblEmpTraCity" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheCity", new { @id = "EmpTraScheCity", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("State", htmlAttributes: new { @class = "control-label", id = "lblEmpTraState" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheState", new { @id = "EmpTraScheState", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Country", htmlAttributes: new { @class = "control-label", id = "lblEmpTraCountry" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheCountry", new { @id = "EmpTraScheCountry", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Total No of Candidates", htmlAttributes: new { @class = "control-label", id = "lblEmpTraNoOfCandidates" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraScheNoOfCandidate", new { @id = "EmpTraScheNoOfCandidate", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Accomodation", htmlAttributes: new { @class = "control-label", id = "lblEmpTraAccomodation" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraAccomodation", new { @id = "EmpTraAccomodation", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Attendance", htmlAttributes: new { @class = "control-label", id = "lblEmpTraAttendence" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraAttendance", new { @id = "EmpTraAttendance", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Batch Duration", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBatchDuration" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraBatchDuration", new { @id = "EmpTraBatchDuration", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Batch Timimg", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBatchTiming" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraBatchTiming", new { @id = "EmpTraBatchTiming", @class = "checkboxEmpTra", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="EmployeeCandidateParameters">
+                        <div class="table table-striped table-responsive">
+                            <div class="col_full">
+                                <div class="fancy-title title-double-border">
+                                    <h5>Candidate Parameters</h5>
+                                </div>
+                                <table class="table table-striped table-responsive">
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td>
+                                                @Html.CheckBox("select_allCanPro", new { @id = "select_allCanPro", @class = "checkboxCanPro", @type = "checkbox" })
+                                                Select All
+                                            </td>
+                                        </tr>
+                                        <tr id="trCanProName">
+                                            <td>@Html.Label("Name", htmlAttributes: new { @class = "control-label", id = "lblCanProName" })</td>
+                                            <td>
+                                                @Html.CheckBox("CanProName", new { @id = "CanProName", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr id="trCanProUserId">
+                                            <td>@Html.Label("User Name", htmlAttributes: new { @class = "control-label", id = "lblCanProUserId" })</td>
+                                            <td>
+                                                @Html.CheckBox("CanProUserId", new { @id = "CanProUserId", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr id="trCanProPassword">
+                                            <td>@Html.Label("Password", htmlAttributes: new { @class = "control-label", id = "lblCanProPassword" })</td>
+                                            <td>
+                                                @Html.CheckBox("CanProPassword", new { @id = "CanProPassword", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Email", htmlAttributes: new { @class = "control-label", id = "lblCanProEmail" })</td>
+                                            <td>
+                                                @Html.CheckBox("chkCanProEmail", new { @id = "chkCanProEmail", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Mobile", htmlAttributes: new { @class = "control-label", id = "lblEmpTraMobile" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraMobile", new { @id = "EmpTraMobile", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Alternate Email", htmlAttributes: new { @class = "control-label", id = "lblEmpTraAlternameEmail" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraAlternateEmail", new { @id = "EmpTraAlternateEmail", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Alternate Mobile", htmlAttributes: new { @class = "control-label", id = "lblEmpTraAlternateMobile" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraAlternateMobile", new { @id = "EmpTraAlternateMobile", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Gender", htmlAttributes: new { @class = "control-label", id = "lblEmpTraGender" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraGender", new { @id = "EmpTraGender", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Registration ID", htmlAttributes: new { @class = "control-label", id = "lblEmpTraRegistrationId" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraRegistrationId", new { @id = "EmpTraRegistrationId", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Designation", htmlAttributes: new { @class = "control-label", id = "lblEmpTraDesignation" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraDesignation", new { @id = "EmpTraDesignation", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Region", htmlAttributes: new { @class = "control-label", id = "lblEmpTraRegion" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraRegion", new { @id = "EmpTraRegion", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Corporate", htmlAttributes: new { @class = "control-label", id = "lblCanProCorporate" })</td>
+                                            <td>
+                                                @Html.CheckBox("chkCanProCorporate", new { @id = "chkCanProCorporate", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Branch Name", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBranchName" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraBranchName", new { @id = "EmpTraBranchName", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Branch Category", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBranchCategory" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraBranchCategory", new { @id = "EmpTraBranchCategory", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Branch State", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBranchState" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraBranchState", new { @id = "EmpTraBranchState", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Html.Label("Branch Code", htmlAttributes: new { @class = "control-label", id = "lblEmpTraBranchCode" })</td>
+                                            <td>
+                                                @Html.CheckBox("EmpTraBranchCode", new { @id = "EmpTraBranchCode", @class = "checkboxCanPro", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="CandidateCourseFee">
+                        <div class="table table-striped table-responsive">
+                            <div class="col_full">
+                                <div class="fancy-title title-double-border">
+                                    <h5>Parameters</h5>
+                                </div>
+                                <table class="table table-striped table-responsive">
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td>
+                                                @Html.CheckBox("select_allCanCourseFee", new { @id = "select_allCanCourseFee", @class = "checkboxCanCourseFee", @type = "checkbox" })
+                                                Select All
+                                            </td>
+                                        <tr id="trCanProName">
+                                            <td>@Html.Label("Course Fee", htmlAttributes: new { @class = "control-label", id = "lblCanCourseFee" })</td>
+                                            <td>
+                                                @Html.CheckBox("CanCourseFee", new { @id = "CanCourseFee", @class = "checkboxCanCourseFee", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr id="trCanProUserId">
+                                            <td>@Html.Label("Amount Paid(Paid On)", htmlAttributes: new { @class = "control-label", id = "lblCanCourseAmountPaid" })</td>
+                                            <td>
+                                                @Html.CheckBox("CanCourseAmountPaid", new { @id = "CanCourseAmountPaid", @class = "checkboxCanCourseFee", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                        <tr id="trCanProPassword">
+                                            <td>@Html.Label("Balance Due", htmlAttributes: new { @class = "control-label", id = "lblCanCourseBalanceDue" })</td>
+                                            <td>
+                                                @Html.CheckBox("CanCourseBalanceDue", new { @id = "CanCourseBalanceDue", @class = "checkboxCanCourseFee", @type = "checkbox" })
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col_full">
+                        <input type="submit" id="btnEmpTraReport" class="button button-3d button-rounded button-teal" value="Generate Report" style="float:right" />
+                        @*<input type="button" id="btnClientJobOrderReport" class="button button-3d button-rounded button-teal" value="Generate Report" style="float:right" />*@
+                        @*<button type="button" class="btn btn-green btnalignleft" onclick="location.href='@Url.Action("MyJobOrders", "JobOrder", new { Area = "CMS", IsClientView = IsClientView })'" title="Clear">Generate Report</button>*@
+                    </div>
+                </div>
+            </div>
+            @*var employeeTrainingRequiredFied = ViewBag.EmployeeTrainingRequiredFied;
+                var empTraAdmin = ViewBag.EmpTraAdmin;*@
+
+        </div>
+        <div class="row">
+            @if (clientProfileAdmin != null)
+            {
+                @*<div id="myModal" class="modal fade">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Client Profile</h4>
+                            </div>*@
+                <div class="table-responsive" id="divtableResponsive">
+
+                    <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                        @if (clientProfileAdmin != null)
+                        {
+                            <tr>
+
+                                @if (@clientProfileRequiredFied.Items[0] == "true")
+                                {
+                                    <th>Name</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[6] == "true")
+                                {
+                                    <th>Registered On </th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[7] == "true")
+                                {
+                                    <th>Last Login</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[8] == "true")
+                                {
+                                    <th>Company Name</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[10] == "true")
+                                {
+                                    <th>Company Type</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[9] == "true")
+                                {
+                                    <th>Company Size</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[11] == "true")
+                                {
+                                    <th>Website</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[4] == "true")
+                                {
+                                    <th>Permanenet Address</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[5] == "true")
+                                {
+                                    <th>Present Address</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[3] == "true")
+                                {
+                                    <th>Correspondence Address</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[2] == "true")
+                                {
+                                    <th>Company Address</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[1] == "true")
+                                {
+                                    <th>Bank</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[12] == "true")
+                                {
+                                    <th>Email</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[13] == "true")
+                                {
+                                    <th>Phone</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[14] == "true")
+                                {
+                                    <th>Alternate Email</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[15] == "true")
+                                {
+                                    <th>Alternate Contact</th>
+                                }
+                                @if (@clientProfileRequiredFied.Items[16] == "true")
+                                {
+                                    <th>Nationality</th>
+                                }
+                            </tr>
+                            foreach (var items in clientProfileAdmin)
+                            {
+                                <tr>
+
+                                    @if (@clientProfileRequiredFied.Items[0] == "true")
+                                    {
+                                        <td>@items[2]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[6] == "true")
+                                    {
+                                        <td>@items[22]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[7] == "true")
+                                    {
+                                        <td>@items[21]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[8] == "true")
+                                    {
+                                        <td>@items[23]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[10] == "true")
+                                    {
+                                        <td>@items[25]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[9] == "true")
+                                    {
+                                        <td>@items[24]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[11] == "true")
+                                    {
+                                        <td>@items[26]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[4] == "true")
+                                    {
+                                        <td>@items[20]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[5] == "true")
+                                    {
+                                        <td>@items[19]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[3] == "true")
+                                    {
+                                        <td>@items[18]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[2] == "true")
+                                    {
+                                        <td>@items[17]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[1] == "true")
+                                    {
+                                        <td>@items[3] <br> @items[4] <br> @items[5] <br> @items[7] </td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[12] == "true")
+                                    {
+                                        <td>@items[27]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[13] == "true")
+                                    {
+                                        <td>@items[28]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[14] == "true")
+                                    {
+                                        <td>@items[29]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[15] == "true")
+                                    {
+                                        <td>@items[30]</td>
+                                    }
+                                    @if (@clientProfileRequiredFied.Items[16] == "true")
+                                    {
+                                        <td>@items[31]</td>
+                                    }
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col_full">
+                                            <input type="submit" id="btnDownloadReport" class="button button-3d button-rounded button-teal" name="btnDownloadReport" value="Download Report" style="float:right" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+                @*<div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+            }
+            else if (empProfileAdmin != null)
+            {
+                <div class="table-responsive" id="divtableResponsive">
+
+                    <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                        @if (empProfileAdmin != null)
+                        {
+                            <tr>
+
+                                @if (@empProfileRequiredFied.Items[0] == "true")
+                                {
+                                    <th>Name</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[1] == "true")
+                                {
+                                    <th>Registered On </th>
+                                }
+                                @if (@empProfileRequiredFied.Items[2] == "true")
+                                {
+                                    <th>Last Login</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[3] == "true")
+                                {
+                                    <th>Permanenet Address</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[4] == "true")
+                                {
+                                    <th>Present Address</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[6] == "true")
+                                {
+                                    <th>Correspondence Address</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[5] == "true")
+                                {
+                                    <th>Company Address</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[7] == "true")
+                                {
+                                    <th>Email</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[8] == "true")
+                                {
+                                    <th>Phone</th>
+                                }
+                                @if (@empProfileRequiredFied.Items[9] == "true")
+                                {
+                                    <th>Role</th>
+                                }@if (@empProfileRequiredFied.Items[10] == "true")
+                                {
+                                    <th>Authority</th>
+                                }
+                            </tr>
+
+                            foreach (var items in empProfileAdmin)
+                            {
+                                <tr>
+
+                                    @if (@empProfileRequiredFied.Items[0] == "true")
+                                    {
+                                        <td>@items[2]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[1] == "true")
+                                    {
+                                        <td>@items[3]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[2] == "true")
+                                    {
+                                        <td>@items[4]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[3] == "true")
+                                    {
+                                        <td>@items[9]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[4] == "true")
+                                    {
+                                        <td>@items[8]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[6] == "true")
+                                    {
+                                        <td>@items[7]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[5] == "true")
+                                    {
+                                        <td>@items[6]</td>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[7] == "true")
+                                    {
+                                        <th>@items[10]</th>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[8] == "true")
+                                    {
+                                        <th>@items[11]</th>
+                                    }
+                                    @if (@empProfileRequiredFied.Items[9] == "true")
+                                    {
+                                        <th>@items[12]</th>
+                                    }@if (@empProfileRequiredFied.Items[10] == "true")
+                                    {
+                                        <th>@items[13]</th>
+                                    }
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col_full">
+                                            <input type="submit" id="btnDownloadReport" class="button button-3d button-rounded button-teal" name="btnDownloadReport" value="Download Report" style="float:right" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            }
+            else if (empTraAdmin != null)
+            {
+                <div class="table-responsive" id="divtableResponsive">
+
+                    <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                        @if (empTraAdmin != null)
+                        {
+                            <tr>
+                                @if (@employeeTrainingRequiredFied.Items[7] == null)
+                                {
+                                    <th>Course</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[8] == null)
+                                {
+                                    <th>Batch</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[0] == "true")
+                                {
+                                    <th>Training ID</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[1] == "true")
+                                {
+                                    <th>Training Title </th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[2] == "true")
+                                {
+                                    <th>Venue</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[3] == "true")
+                                {
+                                    <th>City</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[4] == "true")
+                                {
+                                    <th>State</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[5] == "true")
+                                {
+                                    <th>Country</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[10] == null)
+                                {
+                                    <th>Training Status</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[9] == null)
+                                {
+                                    <th>Employee Name</th>
+                                }
+
+                                @if (@employeeTrainingRequiredFied.Items[25] == "true")
+                                {
+                                    <th>Batch Duration</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[26] == "true")
+                                {
+                                    <th>Batch Timing</th>
+                                }
+                                @if (@employeeTrainingRequiredFied.Items[6] == "true")
+                                {
+                                    <th>Total No of Candidates</th>
+                                }
+                            </tr>
+
+                            foreach (var items in empTraAdmin)
+                            {
+                                <tr>
+                                    @if (@employeeTrainingRequiredFied.Items[7] == null)
+                                    {
+                                        <td>@items[14]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[8] == null)
+                                    {
+                                        <td>@items[15]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[0] == "true")
+                                    {
+                                        <td>@items[0]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[1] == "true")
+                                    {
+                                        <td>@items[1]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[2] == "true")
+                                    {
+                                        <td>@items[2]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[3] == "true")
+                                    {
+                                        <td>@items[3]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[4] == "true")
+                                    {
+                                        <td>@items[4]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[5] == "true")
+                                    {
+                                        <td>@items[5]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[10] == null)
+                                    {
+                                        <td>@items[10]</td>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[9] == null)
+                                    {
+                                        <td>@items[13]</td>
+                                    }
+
+                                    @if (@employeeTrainingRequiredFied.Items[25] == "true")
+                                    {
+                                        <th>@items[11]-@items[12]</th>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[26] == "true")
+                                    {
+                                        <th>@items[16]-@items[17]</th>
+                                    }
+                                    @if (@employeeTrainingRequiredFied.Items[6] == "true")
+                                    {
+                                        @*<td>@items[6]</td>*@
+                                        if (@items[6] != null)
+                                        {
+                                            //var Count = @items[6];
+                                            <td>@Html.ActionLink(@items[6] as string, "CandidateDetails", "Report", new { Accomodation = @employeeTrainingRequiredFied.Items[11], Attendence = @employeeTrainingRequiredFied.Items[12], Course = @items[7], Batch = @items[8], EmailID = @employeeTrainingRequiredFied.Items[13], Mobile = @employeeTrainingRequiredFied.Items[14], alternateEmail = @employeeTrainingRequiredFied.Items[15], alternateMobile = @employeeTrainingRequiredFied.Items[16], Gender = @employeeTrainingRequiredFied.Items[17], RegistrationID = @employeeTrainingRequiredFied.Items[18], Designation = @employeeTrainingRequiredFied.Items[19], Region = @employeeTrainingRequiredFied.Items[20], BranchName = @employeeTrainingRequiredFied.Items[21], BranchCategory = @employeeTrainingRequiredFied.Items[22], BranchState = @employeeTrainingRequiredFied.Items[23], BranchCode = @employeeTrainingRequiredFied.Items[24], TrainingTitle = @items[0], TrainingId = @items[1] }, new { target = "_blank" })</td>
+                                        }
+                                        else
+                                        {
+                                            <td>"0"</td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        @*<div class="col_full">*@
+                                        <div class="col_full">
+                                            <input type="submit" id="btnDownloadEmpTraReport" class="button button-3d button-rounded button-teal" name="btnDownloadEmpTraReport" value="Download Report" style="float:right" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col_full">
+                                            <input type="submit" id="btnDownloadEmpTraGraphicalReport" class="button button-3d button-rounded button-teal" name="btnDownloadEmpTraGraphicalReport" value="Download Analytics" style="float:right" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            }
+            else if (courseFee != null)
+            {
+                <div class="table-responsive" id="divtableResponsive">
+
+                    <table class="table table-striped table-responsive" id="tblCandidateCourseFee">
+                        @if (courseFee != null)
+                        {
+                            <tr>
+                                <th>Name</th>
+                                @if (@candidateCourseFeeRequiredField.Items[0] == "true")
+                                {
+                                    <th>Course Fee</th>
+                                }
+                                @if (@candidateCourseFeeRequiredField.Items[1] == "true")
+                                {
+                                    <th>Amount Paid (Paid On)</th>
+                                }
+                                @if (@candidateCourseFeeRequiredField.Items[2] == "true")
+                                {
+                                    <th>Balance Due</th>
+                                }
+                            </tr>
+                            foreach (var items in courseFee)
+                            {
+                                <tr>
+                                    <th>@items[2]</th>
+                                    @if (@candidateCourseFeeRequiredField.Items[0] == "true")
+                                    {
+                                        <th>@items[3]</th>
+                                    }
+                                    @if (@candidateCourseFeeRequiredField.Items[1] == "true")
+                                    {                                                                               
+                                        <th>@items[4] (@items[11])</th>                                        
+                                    }
+                                    @if (@candidateCourseFeeRequiredField.Items[2] == "true")
+                                    {
+                                        var amounttot = @items[3];
+                                        var amountpaid = @items[4];
+                                        var bal = Convert.ToDecimal(amounttot) - Convert.ToDecimal(amountpaid);
+                                        <th>@bal</th>
+                                    }
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col_full">
+                                            <input type="submit" id="btnDownloadEmpTraReport" class="button button-3d button-rounded button-teal" name="btnDownloadEmpTraReport" value="Download Report" style="float:right" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            }
+
+            else if (candidateProfile != null)
+            {
+                <div class="table-responsive" id="divtableResponsive">
+
+                    <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                        @if (candidateProfile != null)
+                        {
+                            <tr>
+                                @if (@candidateProfileRequiredField.Items[0] == "true")
+                                {
+                                    <th>Name</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[1] == "true")
+                                {
+                                    <th>User Name</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[2] == "true")
+                                {
+                                    <th>Password</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[15] == "true")
+                                {
+                                    <th>Email</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[4] == "true")
+                                {
+                                    <th>Contact</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[5] == "true")
+                                {
+                                    <th>Alternate Emails</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[6] == "true")
+                                {
+                                    <th>Alternate Contact</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[7] == "true")
+                                {
+                                    <th>Gender</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[8] == "true")
+                                {
+                                    <th>Registration Id</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[9] == "true")
+                                {
+                                    <th>Designation</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[10] == "true")
+                                {
+                                    <th>Region</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[11] == "true")
+                                {
+                                    <th>Branch Name</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[12] == "true")
+                                {
+                                    <th>Branch Category</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[13] == "true")
+                                {
+                                    <th>Branch State</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[14] == "true")
+                                {
+                                    <th>Branch Code</th>
+                                }
+                                @if (@candidateProfileRequiredField.Items[16] == "true")
+                                {
+                                    <th>Corporate</th>
+                                }
+                            </tr>
+
+                            foreach (var items in candidateProfile)
+                            {
+                                <tr>
+
+                                    @if (@candidateProfileRequiredField.Items[0] == "true")
+                                    {
+                                        <th>@items[1]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[1] == "true")
+                                    {
+                                        <th>@items[0]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[2] == "true")
+                                    {
+                                        <th>@items[15]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[15] == "true")
+                                    {
+                                        <th>@items[2]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[4] == "true")
+                                    {
+                                        <th>@items[3]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[5] == "true")
+                                    {
+                                        <th>@items[4]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[6] == "true")
+                                    {
+                                        <th>@items[5]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[7] == "true")
+                                    {
+                                        <th>@items[6]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[8] == "true")
+                                    {
+                                        <th>@items[7]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[9] == "true")
+                                    {
+                                        <th>@items[8]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[10] == "true")
+                                    {
+                                        <th>@items[9]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[11] == "true")
+                                    {
+                                        <th>@items[10]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[12] == "true")
+                                    {
+                                        <th>@items[11]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[13] == "true")
+                                    {
+                                        <th>@items[12]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[14] == "true")
+                                    {
+                                        <th>@items[13]</th>
+                                    }
+                                    @if (@candidateProfileRequiredField.Items[16] == "true")
+                                    {
+                                        <th>@items[18]</th>
+                                    }
+                                </tr>
+                            }
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col_full">
+                                            <input type="submit" id="btnDownloadEmpTraReport" class="button button-3d button-rounded button-teal" name="btnDownloadEmpTraReport" value="Download Report" style="float:right" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="row" id="divJoborderReport">
+            @if (clientJobOrderAdmin != null)
+            {
+                <div class="table-responsive" id="divtableResponsive">
+
+                    <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                        @if (clientJobOrderAdmin != null)
+                        {
+                            if (ViewBag.EmpTsk == null)
+                            {
+                                <tr>
+                                    @if (@clientJobOrderAdminRequiredField.Items[0] == "true")
+                                    {
+                                        <th>Job Order ID</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[1] == "true")
+                                    {
+                                        <th>Job Order Title </th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[2] == "true")
+                                    {
+                                        <th>Invoice Amount</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[3] == "true")
+                                    {
+                                        <th>Invoice Number</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[5] == "true")
+                                    {
+                                        <th>Invoice Status</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[4] == "true")
+                                    {
+                                        <th>Invoice Discription</th>
+                                    }
+                                </tr>
+                                foreach (var item in clientJobOrderAdmin)
+                                {
+                                    <tr>
+                                        @if (@clientJobOrderAdminRequiredField.Items[0] == "true")
+                                        {
+                                            <td>@item[0]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[1] == "true")
+                                        {
+                                            <td>@item[2]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[2] == "true")
+                                        {
+                                            <td>@item[11]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[3] == "true")
+                                        {
+                                            <td>@item[15]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[5] == "true")
+                                        {
+                                            <td>@item[16]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[4] == "true")
+                                        {
+                                            <td>@item[3]</td>
+                                        }
+                                    </tr>
+                                }
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col_full">
+                                                <input type="submit" id="btnDownloadJobOrderReport" class="button button-3d button-rounded button-teal" name="btnDownloadJobOrderReport" value="Download Report" style="float:right" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    @if (@clientJobOrderAdminRequiredField.Items[0] == "true")
+                                    {
+                                        <th>Task ID</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[1] == "true")
+                                    {
+                                        <th>Task Title </th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[2] == "true")
+                                    {
+                                        <th>Invoice Amount</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[3] == "true")
+                                    {
+                                        <th>Invoice Number</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[5] == "true")
+                                    {
+                                        <th>Invoice Status</th>
+                                    }
+                                    @if (@clientJobOrderAdminRequiredField.Items[4] == "true")
+                                    {
+                                        <th>Task Discription</th>
+                                    }
+                                </tr>
+                                foreach (var item in clientJobOrderAdmin)
+                                {
+                                    <tr>
+                                        @if (@clientJobOrderAdminRequiredField.Items[0] == "true")
+                                        {
+                                            <td>@item[17]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[1] == "true")
+                                        {
+                                            <td>@item[18]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[2] == "true")
+                                        {
+                                            <td>@item[20]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[3] == "true")
+                                        {
+                                            <td>@item[15]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[5] == "true")
+                                        {
+                                            <td>@item[16]</td>
+                                        }
+                                        @if (@clientJobOrderAdminRequiredField.Items[4] == "true")
+                                        {
+                                            <td>@item[19]</td>
+                                        }
+                                    </tr>
+                                }
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col_full">
+                                                <input type="submit" id="btnDownloadJobOrderReport" class="button button-3d button-rounded button-teal" name="btnDownloadJobOrderReport" value="Download Report" style="float:right" />
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+
+                </div>
+            }
+        </div>
+    </div>
+    @Html.Hidden("RedirectToURL", Url.Action("GetEmpDetails", "Report", new { area = "" }));
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#select_all").change(function () {  //"select all" change
+            $(".checkbox").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+        });
+
+        //".checkbox" change
+        $('.checkbox').change(function () {
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("#select_all").prop('checked', false); //change "select all" checked status to false
+            }
+            //check "select all" if all checkbox items are checked
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $("#select_all").prop('checked', true);
+            }
+        });
+
+        $("#select_allJOCli").change(function () {  //"select all" change
+            $(".checkboxJOCli").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+        });
+
+        //".checkbox" change
+        $('.checkboxJOCli').change(function () {
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("#select_allJOCli").prop('checked', false); //change "select all" checked status to false
+            }
+            //check "select all" if all checkbox items are checked
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $("#select_allJOCli").prop('checked', true);
+            }
+        });
+
+        $("#select_allEmpTra").change(function () {  //"select all" change
+            $(".checkboxEmpTra").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+        });
+
+        //".checkbox" change
+        $('.checkboxEmpTra').change(function () {
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("#select_allEmpTra").prop('checked', false); //change "select all" checked status to false
+            }
+            //check "select all" if all checkbox items are checked
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $("#select_allEmpTra").prop('checked', true);
+            }
+        });
+
+
+        $("#select_allCanPro").change(function () {  //"select all" change
+            $(".checkboxCanPro").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+        });
+
+        //".checkbox" change
+        $('.checkboxCanPro').change(function () {
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("#select_allCanPro").prop('checked', false); //change "select all" checked status to false
+            }
+            //check "select all" if all checkbox items are checked
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $("#select_allCanPro").prop('checked', true);
+            }
+        });
+
+        $("#select_allCanCourseFee").change(function () {  //"select all" change
+            $(".checkboxCanCourseFee").prop('checked', $(this).prop("checked")); //change all ".checkbox" checked status
+        });
+
+        //".checkbox" change
+        $('.checkboxCanCourseFee').change(function () {
+            //uncheck "select all", if one of the listed checkbox item is unchecked
+            if (false == $(this).prop("checked")) { //if this item is unchecked
+                $("#select_allCanCourseFee").prop('checked', false); //change "select all" checked status to false
+            }
+            //check "select all" if all checkbox items are checked
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $("#select_allCanCourseFee").prop('checked', true);
+            }
+        });
+
+
+
+        $("#ClientProfiles").hide();
+        $("#JobOrders").hide();
+        $("#EmployeeTraining").hide();
+        $("#trCanProName").hide();
+        $("#trCanProUserId").hide();
+        $("#trCanProPassword").hide();
+        $("#CandidateCourseFee").hide();
+        var role = $('#ddlRolelist').val();
+        var typ = $('#ddlTypelist').val();
+        if ($('#ddlTypelist').val() == "Jor" && role == "Cli") {
+            $("#ClientProfiles").hide();
+            $("#JobOrders").show();
+            $("#EmployeeTraining").hide();
+        }
+        else if ($('#ddlTypelist').val() == "Tsk" && role == "Emp") {
+            $("#ClientProfiles").hide();
+            $("#JobOrders").show();
+            $("#EmployeeTraining").hide();
+            $("#lblClient").text('Select Employee');
+            $("#lblStatus").text('Select Task Status');
+            $('#lblType').text('Select Task Type');
+            $('#lblJobOrderID').text('Task ID');
+            $('#lblJobOrderTitle').text('Task Tiltle');
+            $('#lblJobDescription').text('Task Description');
+        }
+        else if ($('#ddlTypelist').val() == "Pro" && role == "Cli") {
+            $("#ClientProfiles").show();
+            $("#JobOrders").hide();
+            $("#EmployeeTraining").hide();
+            $("#trProfileName").show();
+            $("#trProfileRegisteredOn").show();
+            $("#trProfileLastLoggedOn").show();
+            $("#trProfileCompanyName").show();
+            $("#trProfileCompanyType").show();
+            $("#trProfileCompanySize").show();
+            $("#trProfileCompanyWeb").show();
+            $("#trProfilePermanentAddress").show();
+            $("#trProfilePresentAddress").show();
+            $("#trProfileCompanyAddress").show();
+            $("#trProfileCorrespondenceAddress").show();
+            $("#trProfileBankDetails").show();
+
+            $("#trClientProfileEmail").show();
+            $("#trClientProfilePhone").show();
+            $("#trClientProfileAlternateEmail").show();
+            $("#trClientProfileAlternatePhone").show();
+            $("#trClientProfileNationality").show();
+
+            $("#trProfileRole").hide();
+            $("#trProfileReportingAuthority").hide();
+
+        }
+        else if ($('#ddlTypelist').val() == "" && role == "Cli") {
+            $("#ClientProfiles").hide();
+            $("#JobOrders").hide();
+            $("#EmployeeTraining").hide();
+        }
+        else if ($('#ddlTypelist').val() == "Pro" && role == "Emp") {
+            $("#ClientProfiles").show();
+            $("#JobOrders").hide();
+            $("#EmployeeTraining").hide();
+            $("#trProfileName").show();
+            $("#trProfileRegisteredOn").show();
+            $("#trProfileLastLoggedOn").show();
+            $("#trProfileCompanyName").hide();
+            $("#trProfileCompanyType").hide();
+            $("#trProfileCompanySize").hide();
+            $("#trProfileCompanyWeb").hide();
+            $("#trProfilePermanentAddress").show();
+            $("#trProfilePresentAddress").show();
+            $("#trProfileCompanyAddress").show();
+            $("#trProfileCorrespondenceAddress").show();
+            $("#trProfileBankDetails").hide();
+
+            $("#trClientProfileEmail").show();
+            $("#trClientProfilePhone").show();
+            $("#trClientProfileAlternateEmail").hide();
+            $("#trClientProfileAlternatePhone").hide();
+            $("#trClientProfileNationality").hide();
+            $("#trProfileRole").show();
+            $("#trProfileReportingAuthority").show();
+        }
+        else if ($('#ddlTypelist').val() == "Tra" && role == "Emp") {
+            $("#ClientProfiles").hide();
+            $("#JobOrders").hide();
+            $("#EmployeeTraining").show();
+            $("#EmployeeParameters").show();
+            $("#EmployeeCandidateParameters").show();
+            $("#trCanProName").hide();
+            $("#trCanProUserId").hide();
+            $("#trCanProPassword").hide();
+            $("#divEmpTraCourseCode").show();
+            $("#divEmpTraBatch").show();
+            $("#divEmpTraEmployeeName").show();
+            $("#divEmpTraStatus").show();
+        }
+        else if ($('#ddlTypelist').val() == "Cof" && $('#ddlRolelist').val() == "Can") {
+            $("#ClientProfiles").hide();
+            $("#JobOrders").hide();
+            $("#EmployeeTraining").show();
+            $("#EmployeeParameters").hide();
+            $("#EmployeeCandidateParameters").hide();
+            $("#trCanProName").hide();
+            $("#trCanProUserId").hide();
+            $("#trCanProPassword").hide();
+            $("#divEmpTraCourseCode").show();
+            $("#divEmpTraBatch").show();
+            $("#divEmpTraEmployeeName").hide();
+            $("#divEmpTraStatus").hide();
+            $("#CandidateCourseFee").show();
+
+        }
+        else if ($('#ddlTypelist').val() == "Pro" && role == "Can") {
+            $("#ClientProfiles").hide();
+            $("#JobOrders").hide();
+            $("#EmployeeTraining").show();
+            $("#trCanProName").show();
+            $("#trCanProUserId").show();
+            $("#trCanProPassword").show();
+            $("#EmployeeParameters").hide();
+            $("#EmployeeCandidateParameters").show();
+            $("#divEmpTraCourseCode").hide();
+            $("#divEmpTraBatch").hide();
+            $("#divEmpTraEmployeeName").hide();
+            $("#divEmpTraStatus").hide();
+        }
+        $('#DivTypeList').change(function () {
+
+            if ($('#ddlTypelist').val() == "" && $('#ddlRolelist').val() == "") {
+                $("#ClientProfiles").hide();
+                $("#JobOrders").hide();
+                $("#tbljoborderReport").hide();
+                $("#tblclientProfileReport").hide();
+                $("#EmployeeTraining").hide();
+                $("#CandidateCourseFee").hide();
+                // $("#divtableResponsive").hide();
+            }
+            else if ($('#ddlTypelist').val() == "Jor" && $('#ddlRolelist').val() == "Cli") {
+                $("#ClientProfiles").hide();
+                $("#JobOrders").show();
+                $("#tbljoborderReport").hide();
+                $("#tblclientProfileReport").hide();
+                $("#EmployeeTraining").hide();
+                $("#lblClient").text('Select Client(s)');
+                $("#lblStatus").text('Select Job Order Status');
+                $('#lblType').text('Select Job Order Type');
+                $('#lblJobOrderID').text('Job Order ID');
+                $('#lblJobOrderTitle').text('Job Order Title');
+                $('#lblJobDescription').text('Job Description');
+                $('input:checkbox').removeAttr('checked');
+                $("#JOClient").prop('selectedIndex', 0);
+                $("#JOStatus").prop('selectedIndex', 0);
+                $("#JOType").prop('selectedIndex', 0);
+                $("#JOAction").prop('selectedIndex', 0);
+                $("#CandidateCourseFee").hide();
+                $.ajax({
+                    type: "post",
+                    url: "/Report/GetClientJobOrders",
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var Emplyee1 = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='JOClient'>";
+                        Emplyee1 = Emplyee1 + '<option value="">--- Select Client(s) ---</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            Emplyee1 = Emplyee1 + '<option value=' + data[i].UserId + '>' + data[i].Name + '</option>';
+                        }
+                        Emplyee1 = Emplyee1 + '</select>';
+                        $('#Emplyee1').html(Emplyee1);
+                    }
+                });
+                $(':input[type=date]').val('');
+            }
+            else if ($('#ddlTypelist').val() == "Pro" && $('#ddlRolelist').val() == "Cli") {
+                $("#EmployeeTraining").hide();
+                $("#ClientProfiles").show();
+                $("#JobOrders").hide();
+                $("#tbljoborderReport").hide();
+                $("#tblclientProfileReport").hide();
+                $("#trProfileName").show();
+                $("#trProfileRegisteredOn").show();
+                $("#trProfileLastLoggedOn").show();
+                $("#trProfileCompanyName").show();
+                $("#trProfileCompanyType").show();
+                $("#trProfileCompanySize").show();
+                $("#trProfileCompanyWeb").show();
+                $("#trProfilePermanentAddress").show();
+                $("#trProfilePresentAddress").show();
+                $("#trProfileCompanyAddress").show();
+                $("#trProfileCorrespondenceAddress").show();
+                $("#trProfileBankDetails").show();
+                $("#trCanProName").hide();
+                $("#trCanProUserId").hide();
+                $("#trCanProPassword").hide();
+                $("#CandidateCourseFee").hide();
+
+                $("#trClientProfileEmail").show();
+                $("#trClientProfilePhone").show();
+                $("#trClientProfileAlternateEmail").show();
+                $("#trClientProfileAlternatePhone").show();
+                $("#trClientProfileNationality").show();
+
+                $("#trProfileRole").show();
+                $("#trProfileReportingAuthority").show();
+            }
+            else if ($('#ddlTypelist').val() == "Pro" && $('#ddlRolelist').val() == "Emp") {
+                $("#EmployeeTraining").hide();
+                $("#ClientProfiles").show();
+                $("#JobOrders").hide();
+                $("#tbljoborderReport").hide();
+                $("#tblclientProfileReport").hide();
+                $("#trProfileName").show();
+                $("#trProfileRegisteredOn").show();
+                $("#trProfileLastLoggedOn").show();
+                $("#trProfileCompanyName").hide();
+                $("#trProfileCompanyType").hide();
+                $("#trProfileCompanySize").hide();
+                $("#trProfileCompanyWeb").hide();
+                $("#trProfilePermanentAddress").show();
+                $("#trProfilePresentAddress").show();
+                $("#trProfileCompanyAddress").show();
+                $("#trProfileCorrespondenceAddress").show();
+                $("#trProfileBankDetails").hide();
+                $("#CandidateCourseFee").hide();
+
+                $("#trClientProfileEmail").show();
+                $("#trClientProfilePhone").show();
+                $("#trClientProfileAlternateEmail").hide();
+                $("#trClientProfileAlternatePhone").hide();
+                $("#trClientProfileNationality").hide();
+                $("#trProfileRole").show();
+                $("#trProfileReportingAuthority").show();
+            }
+            else if ($('#ddlTypelist').val() == "Tsk" && $('#ddlRolelist').val() == "Emp") {
+                $("#ClientProfiles").hide();
+                $("#JobOrders").show();
+                $("#tbljoborderReport").hide();
+                $("#EmployeeTraining").hide();
+                $("#tblclientProfileReport").hide();
+                $("#lblClient").text('Select Employee');
+                $("#lblStatus").text('Select Task Status');
+                $('#lblType').text('Select Task Type');
+                $('#lblJobOrderID').text('Task ID');
+                $('#lblJobOrderTitle').text('Task Tiltle');
+                $('#lblJobDescription').text('Task Description');
+                $('input:checkbox').removeAttr('checked');
+                $("#JOClient").prop('selectedIndex', 0);
+                $("#JOStatus").prop('selectedIndex', 0);
+                $("#JOType").prop('selectedIndex', 0);
+                $("#JOAction").prop('selectedIndex', 0);
+                $("#CandidateCourseFee").hide();
+                $.ajax({
+                    type: "post",
+                    url: "/Report/GetEmpDetails",
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var Emplyee1 = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='JOClient'>";
+                        Emplyee1 = Emplyee1 + '<option value="">--- Select Employee ---</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            Emplyee1 = Emplyee1 + '<option value=' + data[i].UserId + '>' + data[i].Name + '</option>';
+                        }
+                        Emplyee1 = Emplyee1 + '</select>';
+                        $('#Emplyee1').html(Emplyee1);
+                    }
+                });
+                $(':input[type=date]').val('');
+            }
+            else if ($('#ddlTypelist').val() == "Pro" && $('#ddlRolelist').val() == "Can") {
+                $("#ClientProfiles").hide();
+                $("#JobOrders").hide();
+                $("#EmployeeTraining").show();
+                $("#EmployeeParameters").hide();
+                $("#EmployeeCandidateParameters").show();
+                $("#trCanProName").show();
+                $("#trCanProUserId").show();
+                $("#trCanProPassword").show();
+                $("#divEmpTraCourseCode").hide();
+                $("#divEmpTraBatch").hide();
+                $("#divEmpTraEmployeeName").hide();
+                $("#divEmpTraStatus").hide();
+                $("#CandidateCourseFee").hide();
+                $("#tblclientProfileReport").hide();
+                $.ajax({
+                    type: "post",
+                    url: "/Report/CanProAction",
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var ddlEmpTraAction = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='EmpTraAction' name='EmpTraAction'>";
+                        for (var i = 0; i < data.length; i++) {
+                            ddlEmpTraAction = ddlEmpTraAction + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                        }
+                        ddlEmpTraAction = ddlEmpTraAction + '</select>';
+                        $('#ddlEmpTraAction').html(ddlEmpTraAction);
+                    }
+                });
+            }
+            else if ($('#ddlTypelist').val() == "Cof" && $('#ddlRolelist').val() == "Can") {
+                $("#ClientProfiles").hide();
+                $("#JobOrders").hide();
+                $("#EmployeeTraining").show();
+                $("#EmployeeParameters").hide();
+                $("#EmployeeCandidateParameters").hide();
+                $("#trCanProName").hide();
+                $("#trCanProUserId").hide();
+                $("#trCanProPassword").hide();
+                $("#divEmpTraCourseCode").show();
+                $("#divEmpTraBatch").show();
+                $("#divEmpTraEmployeeName").hide();
+                $("#divEmpTraStatus").hide();
+                $("#CandidateCourseFee").show();
+                $("#tblclientProfileReport").hide();
+                $.ajax({
+                    type: "post",
+                    url: "/Report/CanProAction",
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var ddlEmpTraAction = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='EmpTraAction' name='EmpTraAction'>";
+                        for (var i = 0; i < data.length; i++) {
+                            ddlEmpTraAction = ddlEmpTraAction + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                        }
+                        ddlEmpTraAction = ddlEmpTraAction + '</select>';
+                        $('#ddlEmpTraAction').html(ddlEmpTraAction);
+                    }
+                });
+
+            }
+            else if ($('#ddlTypelist').val() == "Tra" && $('#ddlRolelist').val() == "Emp") {
+                //alert('hii');
+                $("#ClientProfiles").hide();
+                $("#JobOrders").hide();
+                $("#EmployeeTraining").show();
+                $("#EmployeeParameters").show();
+                $("#EmployeeCandidateParameters").hide();
+                $("#trCanProName").hide();
+                $("#trCanProUserId").hide();
+                $("#trCanProPassword").hide();
+                $("#divEmpTraCourseCode").show();
+                $("#divEmpTraBatch").show();
+                $("#divEmpTraEmployeeName").show();
+                $("#divEmpTraStatus").show();
+                $("#CandidateCourseFee").hide();
+                $("#tblclientProfileReport").hide();
+                $.ajax({
+                    type: "post",
+                    url: "/Report/EmpTrainAction",
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var ddlEmpTraAction = "<span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='EmpTraAction' name='EmpTraAction'>";
+                        for (var i = 0; i < data.length; i++) {
+                            ddlEmpTraAction = ddlEmpTraAction + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                        }
+                        ddlEmpTraAction = ddlEmpTraAction + '</select>';
+                        $('#ddlEmpTraAction').html(ddlEmpTraAction);
+                    }
+                });
+            }
+            else {
+                $("#ClientProfiles").hide();
+                $("#JobOrders").hide();
+                $("#tbljoborderReport").hide();
+                $("#tblclientProfileReport").hide();
+                $("#EmployeeTraining").hide();
+                $("#CandidateCourseFee").hide();
+            }
+        });
+        $('#btnGenerateReport').click(function () {
+            $.ajax({
+                type: "post",
+                url: "/Report/AdminReport",
+                data: {
+                    ddlRolelist: $('#ddlRolelist').val(), ddlTypelist: $('#ddlTypelist').val(), ChkchkName: $('#ChkchkName').val(),
+                    ChkRegisOn: $('#ChkRegisOn').val(), ChkLastLoggedOn: $('#ChkLastLoggedOn').val(), ChkGender: $('#ChkGender').val(),
+                    ChkCompName: $('#ChkCompName').val(), ChkCompType: $('#ChkCompType').val(), ChkCompSize: $('#ChkCompSize').val(),
+                    ChkCompWeb: $('#ChkCompWeb').val(), ChkPerAddress: $('#ChkPerAddress').val(), ChkPreAddress: $('#ChkPreAddress').val(),
+                    ChkCompAddress: $('#ChkCompAddress').val(), ChkCoressAddress: $('#ChkCoressAddress').val(), ChkBank: $('#ChkBank').val(),
+                    StartDate: $('#StartDate').val(), EndDate: $('#StartDate').val(), EndDate: $('#EndDate').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    //alert('return from json');
+                    //alert(data);
+                    //var div = '<div class="table-responsive" id="divtableResponsive">'
+                    //div = div + '<table class="table table-striped table-responsive" id="tblclientProfileReport">'
+                    //div = div + '<tr>'
+                    //if (ChkchkName = 'true') {
+                    //    div = div + '<th>Name<th>'
+                    //}
+                    //if (ChkRegisOn = 'true') {
+                    //    div = div + '<th>Registered On</th>'
+                    //}
+                    //if (ChkRegisOn = 'true') {
+                    //    div = div + '<th>Registered On</th>'
+                    //}
+                    //if (ChkRegisOn = 'true') {
+                    //    div = div + '<th>Registered On</th>'
+                    //}
+                    //if (ChkLastLoggedOn = 'true') {
+                    //    div = div + '<th>Last Login</th>'
+                    //}
+                    //if (ChkCompName = 'true') {
+                    //    div = div + '<th>Company Name</th>'
+                    //}
+                    //if (ChkCompType = 'true') {
+                    //    div = div + '<th>Company Type</th>'
+                    //}
+                    //if (ChkCompSize = 'true') {
+                    //    div = div + '<th>Company Size</th>'
+                    //}
+                    //if (ChkCompWeb = 'true') {
+                    //    div = div + '<th>Company WebSite</th>'
+                    //}
+                    //if (ChkPerAddress = 'true') {
+                    //    div = div + '<th>Permanent Addresse</th>'
+                    //}
+                    //if (ChkPreAddress = 'true') {
+                    //    div = div + '<th>Present Addresse</th>'
+                    //}
+                    //if (ChkCompAddress = 'true') {
+                    //    div = div + '<th>Company Addresse</th>'
+                    //}
+                    //if (ChkCoressAddress = 'true') {
+                    //    div = div + '<th>Correspondence Addresse</th>'
+                    //}
+                    //if (ChkBank = 'true') {
+                    //    div = div + '<th>Bank Details</th>'
+                    //}
+                    //div = div + '</tr>'
+                    //div = div + '<tr>'
+                    //for (var i = 0; i < data.length; i++) {
+                    //    div = div + '<td>' + + '</td>'
+                    //    div = div + '<td>' + + '</td>'
+                    //    div = div + '<td>' + + '</td>'
+                    //    div = div + '<td>' + + '</td>'
+                    //}
+                    //div = div + '</tr></table></div>'
+                    //$('#ClientProfile').modal({
+                    //    backdrop: 'static',
+                    //    keyboard: false,
+                    //})
+                }
+            });
+        });
+        $('#LstEmpCourseCode').change(function () {
+            var CourseCode = $("#LstEmpCourseCode").val();
+            $.ajax({
+                type: "post",
+                url: "/Report/GetBatch",
+                data: { CourseCode: $('#LstEmpCourseCode :selected').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var EmplyeeTrainingBatchName = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='LstBatchIdEmpTra' name='LstBatchIdEmpTra'>";
+                    EmplyeeTrainingBatchName = EmplyeeTrainingBatchName + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        EmplyeeTrainingBatchName = EmplyeeTrainingBatchName + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    EmplyeeTrainingBatchName = EmplyeeTrainingBatchName + '</select>';
+                    $('#EmplyeeTrainingBatchName').html(EmplyeeTrainingBatchName);
+                }
+            });
+        });
+        $('#ddlRolelist').change(function () {
+            var ddlRolelist = $('ddlRolelist').val();
+            $.ajax({
+                type: "post",
+                url: "/Report/Typelist",
+                data: { Role: $('#ddlRolelist :selected').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    // @Html.Label("Select Report Type", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    //var DivTypeList = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='sm-form-control' id='ddlTypelist' name='ddlTypelist'>";
+                    var DivTypeList = "<label class = 'control-label'>Select Report Type <small>*</small></label><select class='sm-form-control' id='ddlTypelist' name='ddlTypelist'>";
+                    DivTypeList = DivTypeList + '<option value="">--- Select Type ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        DivTypeList = DivTypeList + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    DivTypeList = DivTypeList + '</select>';
+                    $('#DivTypeList').html(DivTypeList);
+                }
+            });
+        })
+        if ('@TempData["NoRecordFound"]' != false) {
+
+            $.alert({
+                title: 'Alert',
+                content: 'No Record Found',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-amber',
+                icon: 'icon-thumbs-up icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+
+                }
+            });
+        }
+        if ('@TempData["RoleTypeRequired"]' != false) {
+
+            $.alert({
+                title: 'Alert',
+                content: 'Please Select Role and Report Type',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-amber',
+                icon: 'icon-thumbs-up icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+
+                }
+            });
+        }
+        else
+            if ('@TempData["ClientJobOrderRequired"]' != false) {
+
+                $.alert({
+                    title: 'Alert',
+                    content: 'Please Select Action',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-amber',
+                    icon: 'icon-thumbs-up icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+            }
+            else
+                if ('@TempData["ClientUserProfileRequired"]' != false) {
+
+                    $.alert({
+                        title: 'Alert',
+                        content: 'Please Select Atleast one  parameter',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-amber',
+                        icon: 'icon-thumbs-up icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+
+                        }
+                    });
+                }
+                else
+                    if ('@TempData["ClientJobOrderRequiredFields"]' != false) {
+
+                        $.alert({
+                            title: 'Alert',
+                            content: 'Please Select Atleast one  parameter for job Order',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'button button-3d button-rounded button-amber',
+                            icon: 'icon-thumbs-up icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+
+                            }
+                        });
+                    }
+                    else if ('@TempData["CourseBatchMendatory"]' != false) {
+
+                        $.alert({
+                            title: 'Alert',
+                            content: 'Please Select Course and Batch',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'button button-3d button-rounded button-amber',
+                            icon: 'icon-thumbs-up icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+
+                            }
+                        });
+                    }
+    });
+</script>
+<script type="text/javascript">
+    $("#AdminReport").validate({
+        submitHandler: function (form) {
+            var JOClient = "";
+            $('#JOClient').each(function (index) {
+                JOClient = JOClient + $(this).val();
+            });
+        }
+    })
+    $('#JOClient').selectize({
+        plugins: ['remove_button'],
+        persist: false,
+        maxItems: 1
+    });
+</script>
+<script type="text/javascript">
+    $("#AdminReport").validate({
+        submitHandler: function (form) {
+            var JOStatus = "";
+            $('#JOStatus').each(function (index) {
+                JOStatus = JOStatus + $(this).val();
+            });
+        }
+    })
+    $('#JOStatus').selectize({
+        plugins: ['remove_button'],
+        persist: false,
+        maxItems: 1
+    });
+</script>
+<script type="text/javascript">
+    function showPopup() {
+        $('#myModal').modal('show');
+    }
+    //$('#myModal').dialog({
+    //    autoOpen: false,
+    //    height: 500,
+    //    width: 700,
+    //    modal: false
+    //});
+</script>
+
+
+
+
+
+
+
+
+
+
+

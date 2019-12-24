@@ -1,0 +1,202 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.DAL
+@model EmployeeMonthlySalary
+@{
+    ViewBag.Title = "Edit Salary";
+ //   Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    Layout = "~/Areas/CMS/Views/Shared/_LayoutNoHeaderNoFooter.cshtml";
+    
+    List<EmployeeMonthlySalaryDetail> salaryHeads = ViewData["EmpMonthlySalaryHeads"] as List<EmployeeMonthlySalaryDetail>;
+
+    float TotalEarning = 0;
+    float TotalDeduction = 0;
+    float NetSalary = 0;
+  
+    var Alldeduction = salaryHeads.Where(s => s.PayrollCategory == "Deduction");
+    var Allearnings = salaryHeads.Where(s => s.PayrollCategory == "Earning");
+
+    var lopHeadId = Alldeduction.Where(d => d.PayrollHeadName == "LoP").FirstOrDefault().EmployeeMonthlySalaryHeadId;
+    var lopAmount =  Alldeduction.Where(d => d.PayrollHeadName == "LoP").FirstOrDefault().Amount;
+}
+
+@using (Html.BeginForm("Edit", "Payroll", FormMethod.Post, new { area = "PMS", @class = "form-horizontal needs-validation", id = "EditSalary", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.GrossCTC)
+    @Html.HiddenFor(model => model.WorkingDays)
+    @Html.HiddenFor(model => model.EmployeeMonthlySalaryPayoutId)
+    @Html.HiddenFor(model => model.PayoutMonth)
+    <div class="container">
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="col_full">
+                <div class="col_one_fourth">Employee Id</div>
+                <div class="col_one_fourth">: @Model.EmployeeId</div>
+                <div class="col_one_fourth">Name</div>
+                <div class="col_one_fourth col_last">: @Model.Name</div>
+            </div>
+            <div class="col_full">
+                <div class="col_one_fourth">Department</div>
+                <div class="col_one_fourth">: @Model.Department</div>
+                <div class="col_one_fourth">Designation</div>
+                <div class="col_one_fourth col_last">: @Model.DesignationName</div>
+            </div>
+            <div class="col_full">
+                <div class="col_one_fourth">Date of Joining</div>
+                <div class="col_one_fourth">: @if (Model.JoiningDate != null) { Model.JoiningDate.Value.ToString("dd-MMM-yyyy"); } </div>
+                <div class="col_one_fourth">Working Days</div>
+                <div class="col_one_fourth col_last">: @Model.WorkingDays</div>
+            </div>
+            <div class="col_full">
+                <div class="col_one_fourth">Total Leaves</div>
+                <div class="col_one_fourth">: @Model.TotalLeaves @*@Html.EditorFor(model => model.TotalLeaves, new { htmlAttributes = new { @class = "xs-form-control required", id = "TotalLeave", placeholder = "Total Leave" } })*@</div>
+                <div class="col_one_fourth">LWP</div>
+                <div class="col_one_fourth col_last">: @Html.EditorFor(model => model.LWP, new { htmlAttributes = new { @class = "xs-form-control required", id = "LWP", placeholder = "Loss of Pay" } })</div>
+            </div>
+            <div class="fancy-title title-bottom-border nobottommargin">
+                <h4></h4>
+            </div>
+
+            <div class="col_full">
+                <div class="col_half">
+                    <div class="col_full">
+                        <div class="col_half">
+                            <strong>Earning</strong>
+                        </div>
+                        <div class="col_half col_last">
+                            <strong>Amount</strong>
+                        </div>
+                    </div>
+                    <div class="fancy-title title-bottom-border nobottommargin">
+                        <h4></h4>
+                    </div>
+                    @foreach (var earning in salaryHeads.Where(s => s.PayrollCategory == "Earning"))
+                    {
+                        // @Html.Hidden("HeadId", earning.EmployeeMonthlySalaryHeadId)
+                        <div class="col_full">
+                            <div class="col_half">
+                                @earning.PayrollHeadName
+                            </div>
+                            <div class="col_half col_last">
+                                @Html.TextBox(earning.EmployeeMonthlySalaryHeadId.ToString(), earning.Amount, new { @class = "form-control earning required", id = earning.EmployeeMonthlySalaryHeadId, name = earning.EmployeeMonthlySalaryHeadId, placeholder = @earning.PayrollHeadName })
+                                @*@Html.EditorFor(e => earning.Amount, new { htmlAttributes = new { @class = "xs-form-control required", id = earning, placeholder = earning.PayrollHeadName } })*@
+                            </div>
+                        </div>
+                        TotalEarning = TotalEarning + earning.Amount;
+                    }
+
+                </div>
+                <div class="col_half col_last ">
+                    <div class="col_full">
+                        <div class="col_half">
+                            <strong>Deduction</strong>
+                        </div>
+                        <div class="col_half col_last">
+                            <strong>Amount</strong>
+                        </div>
+                    </div>
+                    <div class="fancy-title title-bottom-border nobottommargin">
+                        <h4></h4>
+                    </div>
+                    @foreach (var deduction in salaryHeads.Where(s => s.PayrollCategory == "Deduction"))
+                    {
+                        // @Html.Hidden("HeadId", deduction.EmployeeMonthlySalaryHeadId)
+                        <div class="col_full">
+                            <div class="col_half">
+                                @deduction.PayrollHeadName
+                            </div>
+                            <div class="col_half col_last">
+                                @Html.TextBox(deduction.EmployeeMonthlySalaryHeadId.ToString(), deduction.Amount, new { @class = "form-control deduction required", @id = @deduction.EmployeeMonthlySalaryHeadId, name = deduction.EmployeeMonthlySalaryHeadId, placeholder = @deduction.PayrollHeadName })
+                                @*@Html.EditorFor(d => deduction.Amount, new { htmlAttributes = new { @class = "form-control required", @id = "deduction" + (c++), placeholder = deduction.PayrollHeadName } })*@
+                            </div>
+                        </div>
+                        TotalDeduction = TotalDeduction + deduction.Amount;
+                    }
+
+                </div>
+            </div>
+            <div class="fancy-title title-bottom-border nobottommargin">
+                <h4></h4>
+            </div>
+            <div class="col_full">
+                <div class="col_one_fourth"><strong>Total Earning</strong></div>
+                <div class="col_one_fourth"><strong><span id="TotalEarning">@TotalEarning</span></strong></div>
+                <div class="col_one_fourth"><strong>Total Deduction</strong> </div>
+                <div class="col_one_fourth col_last"><strong><span id="TotalDeduction">@TotalDeduction</span></strong></div>
+            </div>
+            <div class="fancy-title title-bottom-border nobottommargin">
+                <h4></h4>
+            </div>
+            <div class="col_full">
+                @{
+    NetSalary = TotalEarning - TotalDeduction;
+                }
+                <div class="col_one_fourth"></div>
+                <div class="col_one_fourth"></div>
+                <div class="col_one_fourth"><strong>Net Salary</strong> </div>
+                <div class="col_one_fourth col_last" id="total">
+                    @if (@NetSalary != null)
+                    {
+                        <input type="text" name="NetSalary" id="NetSalary" value="@NetSalary" class="form-control" />
+                    }
+                    else
+                    {
+                        <input type="text" name="NetSalary" id="NetSalary" value="" class="form-control" />
+                    }
+                </div>
+            </div><br/>
+            <div class="fancy-title title-bottom-border nobottommargin">
+                <h4></h4>
+            </div>
+
+            <input type="submit" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal fright" id="AddEngagementType" name="AddEngagementType" />
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("EngagementType", "Employee"), new { Area = "EMS" });
+}
+<script>
+
+    $(document).on("change", ".earning", function () {
+        var sum = 0;
+        $(".earning").each(function () {
+            sum += +$(this).val();
+        });
+        //  $(".total").val(sum);
+        $("#TotalEarning").html(sum);
+        //   alert($("#TotalEarning").html());
+        $("#NetSalary").val($("#TotalEarning").html() - $("#TotalDeduction").html());
+    });
+
+    $(document).on("change", ".deduction", function () {
+        var sum = 0;
+        $(".deduction").each(function () {
+            sum += +$(this).val();
+        });
+        //  $(".total").val(sum);
+        $("#TotalDeduction").html(sum);
+        //   alert($("#TotalDeduction").html());
+        $("#NetSalary").val($("#TotalEarning").html() - $("#TotalDeduction").html());
+    });
+
+    $("#LWP").on("change", function () {
+
+        var lop = 0;       
+
+        lop = Math.round($("#LWP").val() * ($('#GrossCTC').val() / $('#WorkingDays').val()));
+        $("#" + @lopHeadId).val( @lopAmount + lop);
+
+        var sum = 0;
+        $(".deduction").each(function () {
+            sum += +$(this).val();
+        });
+        //  $(".total").val(sum);
+        $("#TotalDeduction").html(sum);
+        //   alert($("#TotalDeduction").html());
+        $("#NetSalary").val($("#TotalEarning").html() - $("#TotalDeduction").html());
+    });
+
+</script>
+
+
+

@@ -1,0 +1,457 @@
+﻿@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model InstructorLeadProfileView
+@{
+    ViewBag.Title = "Add Trainer";
+    if (User.IsInRole("Employee"))
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+
+
+}
+@using (Html.BeginForm("Add", "Trainer", FormMethod.Post, new { @area = "CMS", @class = "form-horizontal needs-validation", id = "AddTrainer", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("InstructorId", ViewBag.InstructorId as string)
+    @*@Html.Hidden("CityId", ViewBag.InstructorId as string)*@
+    @Html.Hidden("UserAction", ViewBag.UserAction as string)
+    @*@Html.Hidden("TrainerCity")*@
+    <section id="content">
+        <div class="container clearfix">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <div align="right">
+                    <a href="@Url.Action("Index", "Trainer", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Trainer</a>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Trainer Details</h4>
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Name, "Faculty Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control required", id = "Name", placeholder = "Enter Name" } })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Email, "Email")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email"> </i></span>
+
+                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control required email", id = "Email", placeholder = "ex:xyz@gmail.com", onchange = "UserExist()" } })
+
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.PhoneNumber, "Contact Number")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+
+                        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @maxlength = 12, @class = "form-control  required", id = "PhoneNumber", placeholder = "ex:8856230145", onchange = "PhoneExist()" } })
+
+                    </div>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Gender, "Gender")<small> </small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"></i><i class="icon-female"></i></span>
+                        @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.DOB, "Date of Birth")<small></small>
+                    <div class="input-group divcenter travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                        <input type="text" value="@ViewBag.dob" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="DOB" name="DOB">
+                        @*@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control required", @Placeholder = " yyyy-MM-dd" } })*@
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.CountryId, "Select Country")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("CountryId", null, "---  Select Country ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Country", id = "CountryId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.StateId, "Select State")<small>*</small>
+                    <div class="input-group divcenter" id="State">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("StateId", null, "---  Select State ---", htmlAttributes: new { @class = "form-control required", id = "StateId" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.CityId, "Select Location")<small>*</small>
+                    <div class="input-group divcenter" id="City">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("CityId", null, "---  Select Location ---", htmlAttributes: new { @class = "form-control required", name = "TrainnerCity", id = "TrainnerCity" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.Zone, "Zone / Region")<small>*</small>
+                    <div class="input-group divcenter" id="State">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @*@Html.EditorFor(model => model.Zone, new { htmlAttributes = new { @class = "form-control ", id = "Zone", placeholder = "ex:South Zone", } })*@
+                        @Html.DropDownList("Zone", null, "---  Select Zone ---", htmlAttributes: new { @class = "form-control required", id = "Zone" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Zone, "", new { @class = "text-danger" })
+                </div>
+
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Qualification, "Education / Qualification")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email"> </i></span>
+                        @Html.DropDownList("Qualification", null, "--- Add / Select Qualification ---", htmlAttributes: new { id = "Qualification", @multiple = "multiple" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Experience, "Professional Experience (Total no. of Years)")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                        @Html.EditorFor(model => model.Experience, new { htmlAttributes = new { @class = "form-control number", id = "Experience", placeholder = "ex: 1 ", maxlength = 2 } })
+                    </div>
+                </div>
+                <div class="col_full">
+                    <label>Domain Knowledge</label>
+                    <div class="input-group divcenter travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        @Html.DropDownList("Domain", null, "--- Add / Select Domain ---", htmlAttributes: new { id = "Domain", @multiple = "multiple" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Organization, "Under Organization")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                        @Html.DropDownList("Organization", null, "---  Add / Select Organization ---", htmlAttributes: new { id = "Organization", @multiple = "multiple" })
+                    </div>
+                </div>
+
+                <div class="col_full ">
+                    @Html.LabelFor(model => model.LanguageKnown, "Language Known")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("LanguageKnown", null, "---Select Language ---", htmlAttributes: new { id = "LanguageKnown", @multiple = "multiple" })
+
+                    </div>
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Specialization, "Training Specialization")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                        @Html.DropDownList("Specialization", null, "---  Add / Select Specialization ---", htmlAttributes: new { id = "Specialization", @multiple = "multiple" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.NibfProject, "Training project under taken with NIBF")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                        @Html.DropDownList("NibfProject", null, "---  Add / Select Project ---", htmlAttributes: new { id = "NibfProject", @multiple = "multiple" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.ReadyToReallocate, "Willing To Relocate")<br />
+
+                    @if (Model != null)
+                    {
+
+                        if (Model.ReadyToReallocate == true)
+                        {
+                            <label>Yes</label>
+                            <input type="radio" name="ReadyToReallocate" id="yesCheck" value="True" checked="checked" />
+                            <label>No</label>
+                            <input type="radio" name="ReadyToReallocate" id="NoCheck" value="False" />
+                        }
+                        else if (Model.ReadyToReallocate == false)
+                        {
+                            <label>Yes</label>
+                            <input type="radio" name="ReadyToReallocate" id="yesCheck" value="True" />
+                            <label>No</label>
+                            <input type="radio" name="ReadyToReallocate" id="NoCheck" value="False" checked="checked" />
+                        }
+
+                    }
+                    else
+                    {
+                         <label>Yes</label>
+                        <input type="radio" name="ReadyToReallocate" id="yesCheck" value="True"   />
+                        <label>No</label>
+                        <input type="radio" name="ReadyToReallocate" id="NoCheck" value="False"   />
+                    } 
+                </div>
+                @if (Model != null)
+                {
+                    if (Model.ReadyToReallocate == true)
+                    {  <div class="col_full" id="Isreallocate">
+                        @Html.LabelFor(model => model.TrainingLocation, "Preferred Location")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                            @Html.EditorFor(model => model.TrainingLocation, new { htmlAttributes = new { @class = "form-control", id = "Training Location", placeholder = "Enter Training Location" } })
+                        </div>
+                    </div>
+
+                    }
+                    else
+                    {
+                        <div class="col_full" style="display:none" id="Isreallocate">
+                            @Html.LabelFor(model => model.TrainingLocation, "Preferred Location")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                                @Html.EditorFor(model => model.TrainingLocation, new { htmlAttributes = new { @class = "form-control", id = "Training Location", placeholder = "Enter Training Location" } })
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col_full" style="display:none" id="Isreallocate">
+                        @Html.LabelFor(model => model.TrainingLocation, "Preferred Location")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                            @Html.EditorFor(model => model.TrainingLocation, new { htmlAttributes = new { @class = "form-control", id = "Training Location", placeholder = "Enter Training Location" } })
+                        </div>
+                    </div>
+                }
+               
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Remarks, "Remarks")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                        @Html.TextAreaFor(model => model.Remarks, 5, 124, htmlAttributes: new { @class = "form-control required", id = "Remarks", @placeholder = "Description here.." })
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="fancy-title title-bottom-border">
+                        <label>Upload CV</label>
+                        <h4></h4>
+                    </div>
+
+                    <div class="col_full">
+                        <input id="uploadImage" type="file" name="uploadPhoto" onchange="ValidatePreviewImage(@Global.MaxSize("CV"), this, 'CV')" class="form-control" /><br/>
+                        @if (Model != null)
+                        {
+                            if (Model.FileId > 0)
+                            {
+                                <a href="~/File/DownloadCV?Id=@Model.FileId" alt="CV" target="_blank" title="Click here to download the CV">Download Attached CV</a>
+
+                            }
+                        }
+                       
+                    </div>
+                </div>
+                <div class="col_full fright">
+                    <input type="submit" id="btnNext1" name="btnNext1" class="btn btn-success" value="Submit" />
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+}
+
+@section Scripts {
+    <script>
+        //$('select').selectize({
+        //    plugins: ['remove_button'],
+        //    persist: false,
+        //    create: true,
+        //    maxItems: 10,
+        //});
+        $(document).on("keydown", "#Experience", function () {
+            if ($("#Experience").val() != undefined || $('#CoursePrice').val() != '') {
+                // Allow: backspace, delete, tab, escape, and enter
+                if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                    // Allow: Ctrl+A
+                    (event.keyCode == 65 && event.ctrlKey === true) ||
+                    // Allow: home, end, left, right
+                    (event.keyCode >= 35 && event.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                else {
+                    // Ensure that it is a number and stop the keypress
+                    if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        });
+
+        $('#Domain').selectize({ create: true, maxItems: 10, plugins: ['remove_button'], persist: false });
+        $('#Qualification').selectize({ create: true, maxItems: 10, plugins: ['remove_button'], persist: false });
+        $('#Organization').selectize({ create: true, maxItems: 10, plugins: ['remove_button'], persist: false });
+        $('#LanguageKnown').selectize({ create: true, maxItems: 10, plugins: ['remove_button'], persist: false });
+        $('#Specialization').selectize({ create: true, maxItems: 10, plugins: ['remove_button'], persist: false });
+        $('#NibfProject').selectize({ create: true, maxItems: 10, plugins: ['remove_button'], persist: false });
+        $(document).ready(function () {
+            //for willing to reallocate text box
+            $(function () {
+                $("input[name='ReadyToReallocate']").click(function () {
+                    if ($("#yesCheck").is(":checked")) {
+                        $("#Isreallocate").show();
+                    }
+                    else {
+                        $("#Isreallocate").hide();
+                    }
+
+                });
+
+
+            });
+
+        });
+
+        $('#State').change(function () {
+            $('#SelState').val($('#StateId').val());
+            $.ajax({
+                type: "post",
+                url: "/CMS/Trainer/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "<span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' name='TrainnerCity' id='TrainnerCity'>";
+                    city = city + '<option value="">---  Select Location ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#City').html(city);
+                }
+            });
+        });
+
+        //$('#TrainnerCity').change(function () {
+
+        //    alert($('#TrainnerCity').val());
+
+        //});
+        //add trainerLead
+        $("#AddTrainer").validate({
+
+            submitHandler: function (form) {
+                var formData = new FormData();
+                //var TrainnerCity = $('#TrainnerCity').val();
+
+                var totalFiles = document.getElementById("uploadImage").files.length;
+                for (var i = 0; i < totalFiles; i++) {
+                    var file = document.getElementById("uploadImage").files[i];
+                    formData.append("uploadImage" + i, file);
+                }
+
+                $('.form-process').fadeIn()
+                $.ajax({
+                    type: "post",
+                    url: "/CMS/Trainer/Add",
+                    data: {
+                        Qualification: $('#Qualification').val(),
+                        Domain: $('#Domain').val(),
+                        Organization: $('#Organization').val(),
+                        LanguageKnown: $('#LanguageKnown').val(),
+                        Specialization: $('#Specialization').val(),
+                        NibfProject: $('#NibfProject').val(),
+                        uploadImage: formdata,
+                        InstructorId: $('#InstructorId').val(),
+                        UserAction: $('#UserAction').val(),
+
+
+
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $('.form-process').fadeOut()
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Lead has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                });
+            }
+        });
+        function UserExist() {
+            $.ajax({
+                type: "post",
+                url: "/Trainer/UserExist",
+                data: {
+
+                    UserName: $('#Email').val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if ((data) != null) {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'EmailId <b> Exist.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                $('#Email').val("");
+                                $('#Name').focus(); 
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        function PhoneExist() {
+            $.ajax({
+                type: "post",
+                url: "/Trainer/PhoneExist",
+                data: {
+
+                    phonenumber: $('#PhoneNumber').val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if ((data) != null) {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'PhoneNumber <b> Exist.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                $('#PhoneNumber').val("");
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+}
+

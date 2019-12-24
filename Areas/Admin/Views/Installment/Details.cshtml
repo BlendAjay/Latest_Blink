@@ -1,0 +1,24 @@
+﻿@model AJSolutions.Models.InstallmentMaster
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h3>Installment Details</h3>
+            </div>
+            <div class="col_half">
+                <b>@Html.LabelFor(model => model.Installment, "Installment")</b>
+                @Html.DisplayFor(model => model.Installment)
+                <br />
+            </div>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.InstallmentId }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+</div>

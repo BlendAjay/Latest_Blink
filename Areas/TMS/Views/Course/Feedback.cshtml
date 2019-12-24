@@ -1,0 +1,505 @@
+﻿@model AJSolutions.Models.TrackerReportView
+@{
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Feedback";
+}
+@using (Html.BeginForm("Feedback", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "Feedback", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+    @Html.Hidden("Result", ViewBag.Result as string)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h4>Master Trainer Training Order</h4>
+            </div>
+            <div class="row">
+                <div class="clear"></div>
+                <div class="fancy-title title-dotted-border title-center">
+                    <h4><span>Training Details</span></h4>
+                </div>
+                <div class="col_half">
+                    <label>Name of Circle</label>
+                    <select name="Answer1" id="Answer1" tabindex="9" class="form-control ">
+                        @if (string.IsNullOrEmpty(Model.Answer1))
+                        {
+                            <option value="" selected="selected">-- Select --</option>
+                        }
+                        else
+                        {
+                            <option value="">-- Select --</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "ANDHRA PRADESH")
+                        {
+                            <option value="ANDHRA PRADESH" selected="selected">Andhra Pradesh</option>
+                        }
+                        else
+                        {
+                            <option value="ANDHRA PRADESH">Andhra Pradesh</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "ASSAM")
+                        {
+                            <option value="ASSAM" selected="selected">Assam</option>
+                        }
+                        else
+                        {
+                            <option value="ASSAM">Assam</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "BIHAR")
+                        {
+                            <option value="BIHAR" selected="selected">Bihar</option>
+                        }
+                        else
+                        {
+                            <option value="BIHAR">Bihar</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "CHATTISGARH")
+                        {
+                            <option value="CHATTISGARH" selected="selected">Chattisgarh</option>
+                        }
+                        else
+                        {
+                            <option value="CHATTISGARH">Chattisgarh</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "DELHI")
+                        {
+                            <option value="DELHI" selected="selected">Delhi</option>
+                        }
+                        else
+                        {
+                            <option value="DELHI">Delhi</option>
+                        }@if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "GUJARAT")
+                        {
+                            <option value="GUJARAT" selected="selected">Gujarat</option>
+                        }
+                        else
+                        {
+                            <option value="GUJARAT">Gujarat</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "HARYANA")
+                        {
+                            <option value="HARYANA" selected="selected">Haryana</option>
+                        }
+                        else
+                        {
+                            <option value="HARYANA">Haryana</option>
+                        }@if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "HIMACHAL PRADESH")
+                        {
+                            <option value="HIMACHAL PRADESH" selected="selected">Himachal Pradesh</option>
+                        }
+                        else
+                        {
+                            <option value="HIMACHAL PRADESH">Himachal Pradesh</option>
+                        }@if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "Jammukashmir")
+                        {
+                            <option value="Jammukashmir" selected="selected">Jammukashmir</option>
+                        }
+                        else
+                        {
+                            <option value="Jammukashmir">Jammukashmir</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "JHARKHAND")
+                        {
+                            <option value="JHARKHAND" selected="selected">Jharkhand</option>
+                        }
+                        else
+                        {
+                            <option value="JHARKHAND">Jharkhand</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "KARNATAKA")
+                        {
+                            <option value="KARNATAKA" selected="selected">Karnataka</option>
+                        }
+                        else
+                        {
+                            <option value="KARNATAKA">Karnataka</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "KERALA")
+                        {
+                            <option value="KERALA" selected="selected">Kerala</option>
+                        }
+                        else
+                        {
+                            <option value="KERALA">Kerala</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "MADHYA PRADESH")
+                        {
+                            <option value="MADHYA PRADESH" selected="selected">Madhya Pradesh</option>
+                        }
+                        else
+                        {
+                            <option value="MADHYA PRADESH">Madhya Pradesh</option>
+                        }@if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "MAHARASHTRA")
+                        {
+                            <option value="MAHARASHTRA" selected="selected">Maharashtra</option>
+                        }
+                        else
+                        {
+                            <option value="MAHARASHTRA">Maharashtra</option>
+                        }@if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "NORTH EASTERN")
+                        {
+                            <option value="NORTH EASTERN" selected="selected">North Eastern</option>
+                        }
+                        else
+                        {
+                            <option value="NORTH EASTERN">North Eastern</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "ODISHA")
+                        {
+                            <option value="ODISHA" selected="selected">Odisha</option>
+                        }
+                        else
+                        {
+                            <option value="ODISHA">Odisha</option>
+                        }@if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "PUNJAB")
+                        {
+                            <option value="PUNJAB" selected="selected">Punjab</option>
+                        }
+                        else
+                        {
+                            <option value="PUNJAB">Punjab</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "RAJASTHAN")
+                        {
+                            <option value="RAJASTHAN" selected="selected">Rajasthan</option>
+                        }
+                        else
+                        {
+                            <option value="RAJASTHAN">Rajasthan</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "TAMILNADU")
+                        {
+                            <option value="TAMILNADU" selected="selected">Tamilnadu</option>
+                        }
+                        else
+                        {
+                            <option value="TAMILNADU">Tamilnadu</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "UTTAR PRADESH")
+                        {
+                            <option value="UTTAR PRADESH" selected="selected">Uttar Pradesh</option>
+                        }
+                        else
+                        {
+                            <option value="UTTAR PRADESH">Uttar Pradesh</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "UTTARAKHAND")
+                        {
+                            <option value="UTTARAKHAND" selected="selected">Uttarakhand</option>
+                        }
+                        else
+                        {
+                            <option value="UTTARAKHAND">Uttarakhand</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "WEST BENGAL")
+                        {
+                            <option value="WEST BENGAL" selected="selected">West Bengal</option>
+                        }
+                        else
+                        {
+                            <option value="WEST BENGAL">West Bengal</option>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Answer1) && Model.Answer1 == "TELENGANA")
+                        {
+                            <option value="TELENGANA" selected="selected">Telangana</option>
+                        }
+                        else
+                        {
+                            <option value="TELENGANA">Telangana</option>
+                        }
+
+                    </select>
+                </div>
+
+                <div class="col_half col_last">
+                    <label>Name of IPPB Branch</label>
+                    <input type="text" id="Answer2" name="Answer2" value="@Model.Answer2" class="form-control required" placeholder="Enter Name of IPPB Branch" />
+                </div>
+                <div class="clear"></div>
+                <div class="acctitle"></div>
+                <div class="clear"></div>
+                <div class="row">
+                    @*<div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Location</div>*@
+                    <div class="col_half ">
+                        <label>Name of the Office</label>
+                        <input type="text" id="Answer17" name="Answer17" value="@Model.Answer17" class="  form-control" placeholder="Name of the Office" />
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Division</label>
+                        <input type="text" id="Answer18" name="Answer18" value="@Model.Answer18" class="  form-control" placeholder="Division" />
+                    </div>
+
+                    <div class="col_half">
+                        <label>Training Start Date</label>
+                        <input type="date" name="Answer87" id="Answer87" value="@Model.Answer87" size="22" tabindex="4" class="form-control " />
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Training End Date</label>
+                        <input type="date" name="Answer88" id="Answer88" value="@Model.Answer88" size="22" tabindex="4" class="form-control " />
+                    </div>
+                    <div class="clear"></div>
+
+                </div>
+                <div class="row">
+                    <div class="col_half">
+                        <label>Reckonn is accessible at the Training Location</label>
+                        <select name="Answer25" id="Answer25" tabindex="9" class="form-control ">
+                            @if (string.IsNullOrEmpty(Model.Answer25))
+                            {
+                                <option value="" selected="selected">-- Select --</option>
+                            }
+                            else
+                            {
+                                <option value="">-- Select --</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Answer25) && Model.Answer25 == "Yes")
+                            {
+                                <option value="Yes" selected="selected">Yes</option>
+                            }
+                            else
+                            {
+                                <option value="Yes">Yes</option>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.Answer25) && Model.Answer25 == "No")
+                            {
+                                <option value="No" selected="selected">No</option>
+                            }
+                            else
+                            {
+                                <option value="No">No</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>SPOC - IPPB:</div>
+                    <div class="col_half">
+                        <label>Name </label>
+                        <input type="text" id="Answer26" name="Answer26" value="@Model.Answer26" class="form-control" placeholder="Name" />
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Designation </label>
+                        <input type="text" name="Answer27" id="Answer27" value="@Model.Answer27" size="22" tabindex="4" class="form-control " placeholder="Designation" />
+                    </div>
+                    <div class="col_half">
+                        <label>Contact Number</label>
+                        <input type="text" name="Answer28" id="Answer28" value="@Model.Answer28" size="22" tabindex="4" class="form-control number" placeholder="Contact Number" />
+                    </div>
+                    <div class="col_half col_last">
+                        <label>E-Mail </label>
+                        <input type="email" name="Answer29" id="Answer29" value="@Model.Answer29" size="22" tabindex="5" class="form-control email " placeholder="E-Mail" />
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                </div>
+                <div class="row">
+                    <div class="clear"></div>
+
+
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <div class="col_full">
+                <input type="submit" value="Submit Report" style="float: right;" class="button button-3d button-large btn-block nomargin" id="SubmitForm" />
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Index", "DashBoard", new { area = "Candidate" }))
+}
+
+
+<script type="text/javascript">
+
+    function showDiv(elem) {
+        if (elem.value == "PA") {
+            document.getElementById('active_sub').style.display = "block";
+            document.getElementById('active_GDS').style.display = "none";
+        }
+        if (elem.value == "GDS_Postmen") {
+            document.getElementById('active_GDS').style.display = "block";
+            document.getElementById('active_sub').style.display = "none";
+        }
+    }
+
+    $("#Feedback").validate({
+        submitHandler: function (form) {
+            if ($('#Answer65').is(":checked")) {
+
+                var Answer65 = "Yes";
+            }
+            if ($('#Answer66').is(":checked")) {
+
+                var Answer66 = "Yes";
+            }
+            if ($('#Answer67').is(":checked")) {
+
+                var Answer67 = "Yes";
+            }
+            if ($('#Answer69').is(":checked")) {
+
+                var Answer69 = "Yes";
+            }
+            if ($('#Answer79').is(":checked")) {
+
+                var Answer79 = "Yes";
+            }
+            if ($('#Answer80').is(":checked")) {
+
+                var Answer80 = "Yes";
+            }
+            if ($('#Answer81').is(":checked")) {
+
+                var Answer81 = "Yes";
+            }
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/TMS/Course/Feedback",
+                data: {
+                    Answer1: $('#Answer1').val(),
+                    Answer2: $('#Answer2').val(),
+                    Answer3: $('#Answer3').val(),
+                    Answer4: $('#Answer4').val(),
+                    Answer5: $('#Answer5').val(),
+                    Answer6: $('#Answer6').val(),
+                    Answer7: $('#Answer7').val(),
+                    Answer8: $('#Answer8').val(),
+                    Answer9: $('#Answer9').val(),
+                    Answer10: $('#Answer10').val(),
+                    Answer11: $('#Answer11').val(),
+                    Answer12: $('#Answer12').val(),
+                    Answer13: $('#Answer13').val(),
+                    Answer14: $('#Answer14').val(),
+                    Answer15: $('#Answer15').val(),
+                    Answer16: $('#Answer16').val(),
+                    Answer17: $('#Answer17').val(),
+                    Answer18: $('#Answer18').val(),
+                    Answer19: $('#Answer19').val(),
+                    Answer20: $('#Answer20').val(),
+                    Answer21: $('#Answer21').val(),
+                    Answer22: $('#Answer22').val(),
+                    Answer23: $('#Answer23').val(),
+                    Answer24: $('#Answer24').val(),
+                    Answer25: $('#Answer25').val(),
+                    Answer26: $('#Answer26').val(),
+                    Answer27: $('#Answer27').val(),
+                    Answer28: $('#Answer28').val(),
+                    Answer29: $('#Answer29').val(),
+                    Answer30: $('#Answer30').val(),
+                    Answer31: $('#Answer31').val(),
+                    Answer32: $('#Answer32').val(),
+                    Answer33: $('#Answer33').val(),
+                    Answer34: $('#Answer34').val(),
+                    Answer35: $('#Answer35').val(),
+                    Answer36: $('#Answer36').val(),
+                    Answer37: $('#Answer37').val(),
+                    Answer38: $('#Answer38').val(),
+                    Answer39: $('#Answer39').val(),
+                    Answer40: $('#Answer40').val(),
+                    Answer41: $('#Answer41').val(),
+                    Answer42: $('#Answer42').val(),
+                    Answer43: $('#Answer43').val(),
+                    Answer44: $('#Answer44').val(),
+                    Answer45: $('#Answer45').val(),
+                    Answer46: $('#Answer46').val(),
+                    Answer47: $('#Answer47').val(),
+                    Answer48: $('#Answer48').val(),
+                    Answer49: $('#Answer49').val(),
+                    Answer50: $('#Answer50').val(),
+                    Answer51: $('#Answer51').val(),
+                    Answer52: $('#Answer52').val(),
+                    //Answer53: $('#Answer53').val(),
+                    Answer54: $('#Answer54').val(),
+                    Answer55: $('#Answer55').val(),
+                    Answer56: $('#Answer56').val(),
+                    Answer57: $('#Answer57').val(),
+                    Answer58: $('#Answer58').val(),
+                    Answer59: $('#Answer59').val(),
+                    Answer60: $('#Answer60').val(),
+                    Answer61: $('#Answer61').val(),
+                    Answer62: $('#Answer62').val(),
+                    Answer63: $('#Answer63').val(),
+                    Answer64: $('#Answer64').val(),
+                    Answer65: Answer65,
+                    Answer66: Answer66,
+                    Answer67: Answer67,
+                    Answer68: $('#Answer68').val(),
+                    Answer69: Answer69,
+                    Answer70: $('#Answer70').val(),
+                    Answer71: $('#Answer71').val(),
+                    Answer71: $('#Answer71').val(),
+                    Answer72: $('#Answer72').val(),
+                    Answer73: $('#Answer73').val(),
+                    Answer74: $('#Answer74').val(),
+                    Answer75: $('#Answer75').val(),
+                    Answer76: $('#Answer76').val(),
+                    Answer77: $('#Answer77').val(),
+                    Answer78: $('#Answer78').val(),
+                    Answer79: Answer79,
+                    Answer80: Answer80,
+                    Answer81: Answer81,
+                    Answer82: $('#Answer82').val(),
+                    Answer83: $('#Answer83').val(),
+                    Answer84: $('#Answer84').val(),
+                    Answer85: $('#Answer85').val(),
+                    Answer86: $('#Answer86').val(),
+                    Answer87: $('#Answer87').val(),
+                    Answer88: $('#Answer88').val(),
+                    Answer89: $('#Answer89').val(),
+                    Answer90: $('#Answer90').val(),
+                    Answer91: $('#Answer91').val(),
+                    Answer92: $('#Answer92').val(),
+                    Answer93: $('#Answer93').val(),
+                    Answer94: $('#Answer94').val(),
+                    Answer94: $('#Answer95').val(),
+                    Answer94: $('#Answer96').val(),
+                    Answer94: $('#Answer97').val(),
+                    Phase: $('#Phase').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    if (data) {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Report has been submitted <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectTo").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    else {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'OOPS something went<b> WRONG</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectTo").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+</script>

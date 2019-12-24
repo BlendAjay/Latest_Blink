@@ -1,0 +1,207 @@
+﻿@using AJSolutions.Models;
+@model TaxMaster
+    @{
+    ViewBag.Title = "Tax";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<TaxMaster> Tax = ViewData["taxmaster"] as List<TaxMaster>;   
+
+    IEnumerable<TaxMaster> taxation = ViewData["taxmaster"] as IEnumerable<TaxMaster>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm("Tax", "Invoice", FormMethod.Post, new { @area = "CMS", @class = "form-horizontal needs-validation", id = "Tax", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h3>Add Tax Type</h3>
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.TaxName, "Service Tax")<small>*</small>
+
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-money"> </i></span>
+                        @Html.EditorFor(model => model.TaxName, new { htmlAttributes = new { @class = "form-control required", placeholder = "e.g.Service Tax", id = "TaxationName" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TaxName, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.TaxationValue, "Percentage Value")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-measure "> </i></span>
+                        @Html.EditorFor(model => model.TaxationValue, new { htmlAttributes = new { @class = "form-control required", placeholder = "e.g. value in %", id = "TaxationValue" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.TaxationValue, "", new { @class = "text-danger" })
+                </div>
+
+
+                <div class="col_full">
+                    @Html.HiddenFor(model => model.TaxationId)
+                    <input type="submit" value="Add" id="SubmitData" name="SubmitData" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>
+            </div>
+        </div>
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+        <br />
+ 
+
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            
+                            <th>TAX NAME</th>
+                            <th>TAXATION VALUE </th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    
+                        @foreach (TaxMaster item  in Tax)
+                        {
+                            <tr>
+                                <td>@item.TaxName</td>
+                                <td>@item.TaxationValue</td>
+                                <td><a href="@Url.Action("Tax", "Invoice", new { TaxationId = item.TaxationId, UserAction = "Edit" })" title="Edit" style="float:left"><i class="icon-pen"></i>|</a>
+                                   <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.TaxationId');" title="Remove" style="float:Left"><i class="icon-remove"></i></a>
+                                </td>
+                            </tr>
+                        }
+                   
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    @Html.Hidden("RedirectToHome", Url.Action("Tax", "Invoice"));
+    @Html.Hidden("RedirectTo", Url.Action("RemoveTax", "Invoice"));
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page has facility of adding Tax as per your requirement.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/taxadd.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/taxadd.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col_half">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/taxlist.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/taxlist.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col_half col_last">
+                                <p>
+                                    Here you are able to edit and delete tax added by you.
+                                </p>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script type="text/javascript">
+
+    $("#Tax").validate({
+        submitHandler: function (form) {
+            $(form).ajaxSubmit({
+                success: function () {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Tax Type Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+
+<script type="text/javascript">
+        function ConfirmationDialog(TaxationId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                    var url = $("#RedirectTo").val() + "?TaxationId=" + TaxationId;
+                location.href = url;
+            }
+        });
+        return false;
+        }
+
+        function pagehelp() {
+            $('#Popup').modal('show');
+            $("#Popup").modal({
+                backdrop: 'static',
+                keyboard: false,
+            })
+        };
+</script>
+

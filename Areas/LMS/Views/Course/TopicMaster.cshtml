@@ -1,0 +1,152 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@model TopicMaster
+@{
+    ViewBag.Title = "Add Topic";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<TopicMaster> topic = ViewData["TopicMaster"] as List<TopicMaster>;
+}
+
+@using (Html.BeginForm("TopicMaster", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "TopicMaster", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+    @Html.HiddenFor(model => model.TopicId)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">    
+                <div class="form-process"></div>        
+                <div class="fancy-title title-bottom-border">
+                    <h4>Topic Master</h4>
+                </div>
+                <div class="row">
+                   
+                    <div class="col_full">
+                        @Html.LabelFor(model => model.TopicName, "Topic Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line-paper-stack"> </i></span>
+                            @Html.EditorFor(model => model.TopicName, new { htmlAttributes = new { @class = "form-control required", id = "TopicName", @Placeholder = "Topic Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TopicName, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(model => model.TopicDescription, "Enter your Description", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    @Html.TextAreaFor(model => model.TopicDescription, 5, 124, htmlAttributes: new { @class = "form-control required", @Maxlength = 1024, id = "TopicDescription", @placeholder = "Description here.." })
+                    <div id="textarea_feedback" class="text-danger"></div>
+                    @Html.ValidationMessageFor(model => model.TopicDescription, "", new { @class = "text-danger" })
+                </div>
+                @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+               
+
+                <div class="col_full">
+                    <input type="submit" id="topicmaster" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>
+            </div>
+        </div>
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+    </div>
+    <div id="postresult">
+    </div>
+    <br /><br />
+    @*<div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>
+                            TopicId
+                        </th>
+                        <th>
+                            TopicName
+                        </th>
+
+                        <th>Edit</th>
+                        <th>Add</th>
+                    </tr>
+                        @foreach (var item in topic)
+                        {
+                            <tr>
+                                <td>                                  
+                                    @Html.DisplayFor(modelItem => item.TopicId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TopicName)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("TopicMaster", "Course", new { TopicId = item.TopicId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                </td>
+                                <td>
+
+                                    <a href="@Url.Action("AddTopicLecture", "Course", new { Area = "LMS", Id = item.TopicId })" class="btn btn-default btn-xs" align="right" target="_blank">Lectures</a>
+                                   
+                                </td>
+                            </tr>
+                        }
+                </table>
+
+
+            </div>
+        </div>
+    </div>*@
+    @Html.Hidden("RedirectToHome", Url.Action("TopicMaster", "Course"));
+}
+
+<script type="text/javascript">
+
+    $("#TopicMaster").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Topic Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+<script>
+    $(document).ready(function () {
+
+        var text_max = 1024;
+        if ($('#TopicDescription').val() != undefined || $('#TopicDescription').val() != '') {
+            text_max = text_max - $('#TopicDescription').val().length;
+        }
+
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 1024;
+        $('#TopicDescription').keyup(function () {
+            var text_length = $('#TopicDescription').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+    });
+
+</script>

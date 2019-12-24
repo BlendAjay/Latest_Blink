@@ -1,0 +1,49 @@
+﻿@using BlinkPortal.Models;
+@model BlinkPortal.Models.ReportInfo
+
+@{
+    ViewBag.Title = "Candidate Datewise Attendence Report";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    var UserId = ViewBag.UserId;
+    var UserName = ViewBag.UserName;       
+    var candidateAttendenceDetailsDateWise = ViewBag.candidateAttendenceDetailsDateWise;
+    List<CandidateAttendenceDetailsDateWise> CandidateAttendenceDatewise = candidateAttendenceDetailsDateWise as List<CandidateAttendenceDetailsDateWise>;
+}
+
+
+@using (Html.BeginForm("CandidateDetailsDateWise", "report", FormMethod.Post, new { @class = "form-horizontal", id = "CandidateDetailsDateWise", role = "form" }))
+{
+    @Html.ValidationSummary()
+    <div class="container">
+        <div class="row">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Candidate Date Wise Attendance Report for - @UserName (@UserId)</h4>
+                </div>
+            </div>
+            <div class="table-responsive" id="divtableResponsive">
+
+                <table class="table table-striped table-responsive" id="tblclientProfileReport">
+                    @if (candidateAttendenceDetailsDateWise != null)
+                    {
+                        <tr>
+                            <th>Date</th>
+                            <th>Attendence</th>
+                            <th>Comment</th>
+                        </tr>
+                        foreach (var items in CandidateAttendenceDatewise)
+                        {
+                            <tr>
+                                <td>@items.AttendenceDate</td>
+                                <td>@items.Ispresent</td>
+                                <td>@items.Comment</td>
+                            </tr>
+                        }                      
+                    }
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+}

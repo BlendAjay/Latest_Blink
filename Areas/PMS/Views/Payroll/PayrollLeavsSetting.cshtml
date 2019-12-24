@@ -1,0 +1,174 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.PayrollLeavsSettings
+@{
+    ViewBag.Title = "Payroll Leavs Settings";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role != "Admin")
+    {
+        //Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    IEnumerable<AJSolutions.Models.PayrollLeavsSettings> payrollLeaveSettings = ViewData["LeaveList"] as IEnumerable<AJSolutions.Models.PayrollLeavsSettings>;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        @*<div class="row">
+                <a href="@Url.Action("AddGradeMaster", "Employee", new { Area = "EMS" })" class="btn btn-default btn-xs">Add Grade</a>
+            </div>*@
+        <div id="contact-form-overlay" class="clearfix">
+            <div class=" row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Payroll Leavs Settings</h4>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.LeaveName, "Leave Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                            @Html.EditorFor(model => model.LeaveName, new { htmlAttributes = new { @class = "form-control required", id = "LeaveName", placeholder = "e.g. CL" } })
+
+                        </div>
+                        @Html.ValidationMessageFor(model => model.LeaveName, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.NoofDays, "No of Days")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                            @Html.EditorFor(model => model.NoofDays, new { htmlAttributes = new { @class = "form-control required", id = "NoofDays", placeholder = "e.g. 5" } })
+
+                        </div>
+                        @Html.ValidationMessageFor(model => model.NoofDays, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half">
+                        <label>Salary Calculate on</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user3"></i></span>
+                            @Html.DropDownList("SalaryCalCulatedOn", null, " --- Select Type --- ", htmlAttributes: new { @class = "form-control", @id = "SalaryCalCulatedOn" })
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Holidays include</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user3"></i></span>
+                            @Html.DropDownList("HolidayinSalary", null, " --- Select --- ", htmlAttributes: new { @class = "form-control", @id = "HolidayinSalary" })
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        <br />
+                        @if (user.Role == "Admin")
+                        {
+                            //@Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+                            <input type="submit" id="PayrollLeavsSettings" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+                        }
+                    </div>
+                    @Html.Hidden("HeadId")
+                </div>
+            </div>
+            <div class="row">
+                @if (payrollLeaveSettings != null)
+                {
+                    <div class="row">
+                        @*<div class="fancy-title title-bottom-border title-right">
+                                <h3>Grade List</h3>
+                            </div>*@
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    @*<th>
+                                            Grade ID
+                                        </th>*@
+
+                                    <th>
+                                        Leavs Name
+                                    </th>
+                                    <th>
+                                        No of Days
+                                    </th>
+                                    <th>
+                                        Salary Calculate on
+                                    </th>
+                                    <th>
+                                        Holidays include
+                                    </th>
+                                    <th>Actions</th>
+                                </tr>
+                                @foreach (var item in payrollLeaveSettings)
+                                {
+                                    <tr>
+                                        @*<td>
+                                                @Html.DisplayFor(modelItem => item.GradeId)
+                                            </td>*@
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.LeaveName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.NoofDays)
+                                        </td>
+                                        <td>
+
+                                            @if (@item.SalarycalculationOn == 0)
+                                            {
+                                                @Html.Raw("Total No of Days");
+                                            }
+                                            else if (@item.SalarycalculationOn == 1)
+                                            {
+                                                @Html.Raw("Total No of Working Days")
+                                            }
+                                        </td>
+                                        
+                                        <td>
+
+                                            @if (@item.HolidayInSalary == 0)
+                                            {
+                                                @Html.Raw("Include");
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw("Exclude")
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("PayrollLeavsSetting", "Payroll", new { SubscriberId = item.SubscriberId, LeaveId = item.LeaveId, SalaryCalCulatedOn = item.SalarycalculationOn, HolidayInSalary = item.HolidayInSalary, UserAction = "Edit" })" title="Edit" style="float:left"><i class="icon-pen"></i>|</a>
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.SubscriberId','@item.LeaveId');" title="Remove" style="float:Left"><i class="icon-remove"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveLeaveSettings", "Payroll"));
+}
+
+<script type="text/javascript">
+    function ConfirmationDialog(SubscriberId,LeaveId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?SubscriberId=" + SubscriberId + "&LeaveId="+LeaveId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

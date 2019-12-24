@@ -1,0 +1,145 @@
+﻿@using AJSolutions.Models
+@model AJSolutions.Models.LeaveType
+@{
+    ViewBag.Title = "LeaveTypeMaster";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<LeaveType> leavetype = ViewData["LeaveType"] as List<LeaveType>;
+}  
+@using (Html.BeginForm("LeaveTypeMaster", "Admin", FormMethod.Post, new { @area = "Admin", @class = "form-horizontal needs-validation", id = "LeaveTypeMaster", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.Hidden("SaveStatus", ViewBag.Result as string)*@
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add LeaveScheme</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m => m.LeaveTypeId, "Leave TypeId")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.LeaveTypeId, new { htmlAttributes = new { @class = "form-control required", id = "LeaveTypeId", placeholder = "Enter LeaveTypeId" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LeaveTypeId, "", new { @class = "text-danger" })
+                    <br>
+
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m => m.LeaveTypeName, "Leave Type Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.LeaveTypeName, new { htmlAttributes = new { @class = "form-control required", id = "LeaveTypeName", placeholder = "Enter LeaveTypeName" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LeaveTypeName, "", new { @class = "text-danger" })
+                    <br>
+
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m => m.LeaveTypeCategory, "Leave Type Category")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.DropDownList("LeaveCategory", null, "---Select LeaveCategory ---", htmlAttributes: new { @class = "form-control required", id = "LeaveCategory" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.LeaveTypeCategory, "", new { @class = "text-danger" })
+                    <br> 
+                </div>
+                <br />
+                <input type="submit" id="leavetypecategory" value="Add" class="button button-rounded button-teal" />
+
+                @Html.Hidden("SchemeId", ViewBag.ItemTypeId as string)
+            </div>
+            @if (leavetype != null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>LEAVE TYPE ID</th>
+                                <th>LEAVE TYPE NAME</th>
+                                <th>LEAVE CATEGORY</th> 
+                                <th>ACTIONS</th>
+                            </tr>
+
+                            @foreach (var item in leavetype)
+                            {
+                                <tr>
+                                    <td>@item.LeaveTypeId</td>
+                                    <td>@item.LeaveTypeName</td>
+                                    <td>@item.LeaveTypeCategory</td>
+                                    <td>
+
+                                        <a href="@Url.Action("LeaveTypeMaster", "Admin", new { LeaveTypeId = item.LeaveTypeId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a><span>&nbsp;|&nbsp;</span>
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.LeaveTypeId');" title="Remove"><i class="icon-remove"></i> </a>
+
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+        @Html.Hidden("RedirectToHome", Url.Action("LeaveTypeMaster", "Admin"))
+        @Html.Hidden("RedirectTo", Url.Action("RemoveLeaveTypeMaster", "Admin"))
+
+
+
+
+    </div>
+}
+<script type="text/javascript">
+
+    $("#CandidateIndex").validate({
+        submitHandler: function (form) { 
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/Admin/Admin/LeaveTypeMaster",
+                data: {
+                    LeaveCategory: $('#LeaveCategory : selected').val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Leave Type Record has been added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            })
+        }
+    });
+    function ConfirmationDialog(LeaveTypeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + LeaveTypeId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>
+

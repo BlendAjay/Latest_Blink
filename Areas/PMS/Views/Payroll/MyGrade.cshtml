@@ -1,0 +1,282 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.GradeMaster
+@{
+    ViewBag.Title = "Profile";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    List<GradeMaster> gradeMaster = ViewData["GMaster"] as List<GradeMaster>;
+    //IEnumerable<AJSolutions.Models.GradeMaster> gradeMaster = ViewData["mygrade"] as IEnumerable<AJSolutions.Models.GradeMaster>;
+    //AJSolutions.Areas.EMS.Models.EmployeeViewModel reporting = ViewData["Reporting"] as AJSolutions.Areas.EMS.Models.EmployeeViewModel;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("GradeMaster", "Payroll", FormMethod.Post, new { area = "PMS", @class = "form-horizontal needs-validation", id = "GradeMaster", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Result", ViewBag.ReturnResult as string)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class=" row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Grade</h4>
+                </div>
+           
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.GradeName, "Grade Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                            @Html.EditorFor(model => model.GradeName, new { htmlAttributes = new { @class = "form-control required", id = "GradeName", placeholder = "eg. Grade A" } })
+
+                        </div>
+                     
+                        <br>
+                       
+                    </div>
+                    <div class="col_half col_last">
+                        <br />
+                        @Html.Hidden("GradeId", ViewBag.GradeId as string)
+                        @if (user.Role == "Admin")
+                        {
+                            @Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+                            <input type="button" id="addGrade" value="SAVE"  class="button button-3d button-rounded button-teal fright" />
+                        }
+                    </div>
+             
+            </div>
+            @Html.Hidden("GradeTd", ViewBag.GradeTd as string)
+             @if (gradeMaster != null)
+             {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                <th>
+                                    GRADE
+                                </th>
+                                <th>ACTIONS</th>
+                            </tr>
+                            @foreach (var item in gradeMaster)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.GradeName)
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("MyGrade", "Payroll", new { GradeId = item.GradeId })" title="Edit"><i class="icon-pen"></i></a>|
+                                        @*<a href="@Url.Action("MyGrade", "Payroll", new { GradeId = item.GradeId, UserAction = "Edit" })" title="Edit" ><i class="icon-pen"></i></a> |*@
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.GradeId');" title="Remove"><i class="icon-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+
+             }
+        
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("MyGrade", "Payroll", new { area = "PMS"}));
+    @Html.Hidden("RedirectToHome", Url.Action("MyGrade", "Payroll"))
+}
+
+<script type="text/javascript">
+    function ConfirmationDialog(GradeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?GradeId=" + GradeId + "&UserAction=" + "Delete";
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+    $(document).ready(function () {
+        if ($("#Result").val() == "INUSE") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Sorry selected grade is in Use',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+    $(document).ready(function () {
+        if ($("#Result").val() == "DELETED") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Grade has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+</script>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding employee grade as per your requirement.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/gradeadd.png" target="_blank" data-lightbox="gallery-item">
+
+                                        <img src="~/images/HelpImages/gradeadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/gradelist.png" target="_blank" data-lightbox="gallery-item">
+
+                                        <img src="~/images/HelpImages/gradelist.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last">
+                            <p>
+                                Here you are able to edit and delete your added employee grade.
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#GradeMaster").validate({
+        submitHandler: function (form) {
+
+        }
+    });
+
+    $("#addGrade").click(function (e) {
+
+        if ($("#GradeMaster").valid()) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/MyGrade",
+                data: {
+                    GradeId: $('#GradeId').val(),
+                    GradeName: $('#GradeName').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    if (data == "Succeeded") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Unsucceeded") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went <b>wrong.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Exists") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Your Data is already <b> EXISTS.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'icon-info-sign icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                }
+            });
+        }
+
+    });
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

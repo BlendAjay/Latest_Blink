@@ -1,0 +1,495 @@
+﻿@using AJSolutions.DAL
+@using AJSolutions.Models
+@model AJSolutions.Models.CorporatePayrollHead
+@{
+    ViewBag.Title = "Payrollheads";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<CorporatePayrollHead> payrolls = ViewData["Allpayrolls"] as List<CorporatePayrollHead>;
+
+    List<Global.MarksList> Limit = Global.GetMarks();
+    List<Global.PayrollCategoryList> PayrollCategory = Global.GetPayrollCategoryList();
+    List<Global.PeriodFrequencyList> PeriodFrequency = Global.GetPeriodFrequencyList();
+
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("Payrollheads", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "Payrollheads", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CorporatePayrollHeadID", ViewBag.CorporatePayrollHeadID as string)
+    @Html.Hidden("PayrollHeadId", ViewBag.PayrollHeadId as string)
+    @Html.Hidden("Category", ViewBag.Category as string)
+    @Html.Hidden("PayrollPercentage", ViewBag.Mark as string)
+    @Html.Hidden("PayrollHead", ViewBag.PayrollHead as string)
+    @Html.Hidden("Periods", ViewBag.Period as string)
+    @Html.Hidden("Maxlimits", ViewBag.Maxlimit as string)
+    @*@Html.Hidden("SaveStatus", ViewBag.Result as string)*@
+    <div class="form-process"></div>
+    <div class="container">
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h4>Payroll Settings</h4>
+            </div>
+        </div>
+        <div class="table-responsive">
+
+            <table class="table table-bordered nobottommargin" id="addheads">
+                <tr>
+                    @*<th>Select</th>*@
+                    <th>Payroll Head</th>
+                    <th>Percentage</th>
+                    <th>Category</th>
+                    <th>Max Limit</th>
+                    <th>Period</th>
+                    <th>TaxExemption</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>
+                        @if (ViewBag.HeadId == Global.BasicHeadId() )
+                        {
+                            @Html.DropDownList("PayrollHeadName", null, htmlAttributes: new { @class = "control-group required", @multiple = "multiple", @id = "PayrollHeadName", name = "PayrollHeadName", placeholder = "Payroll Head Name", @disabled = "disabled" })
+                        }
+                        else
+                        {
+                            @Html.DropDownList("PayrollHeadName", null, htmlAttributes: new { @class = "control-group required", @multiple = "multiple", @id = "PayrollHeadName", name = "PayrollHeadName", placeholder = "Payroll Head" })
+                        }
+                    </td>
+                    <td>
+                        @Html.DropDownList("Marks", null, htmlAttributes: new { @class = "form-control", @id = "Marks", name = "Marks", placeholder = " Select Default Percentage " })
+                    </td>
+                    <td>
+                        @if (ViewBag.HeadId == Global.BasicHeadId() )
+                        {
+                            @Html.DropDownList("PayrollCategory", null, htmlAttributes: new { @class = "form-control", @id = "PayrollCategory", name = "PayrollCategory", placeholder = "Payroll Category", @disabled = "disabled" })
+                        }
+                        else
+                        { @Html.DropDownList("PayrollCategory", null, htmlAttributes: new { @class = "form-control", @id = "PayrollCategory", name = "PayrollCategory", placeholder = "Payroll Category" })}
+                    </td>
+
+                    <td>
+                        @if (ViewBag.HeadId != null)
+                        {
+                            if (ViewBag.HeadId == Global.BasicHeadId() )
+                            {
+                                <input type="text" id="MaxLimit" name="MaxLimit" value="@ViewBag.MaxLimit" class="form-control" readonly="readonly" />
+                            }
+                            else
+                            { 
+                            <input type="text" id="MaxLimit" name="MaxLimit" value="@ViewBag.MaxLimit" class="form-control" />}
+                        }
+                        else
+                        {
+                            <input type="text" id="MaxLimit" name="MaxLimit" class="form-control" style="width:80px;" />
+                        }
+                    </td>
+                    <td>
+                        @if (ViewBag.HeadId == Global.BasicHeadId() )
+                        {
+                            @Html.DropDownList("PeriodFrequencyStatus", null, htmlAttributes: new { @class = "form-control", @id = "PeriodFrequencyStatus", name = "PeriodFrequencyStatus", placeholder = "Payroll Period", @disabled = "disabled" })
+                        }
+                        else
+                        { @Html.DropDownList("PeriodFrequencyStatus", null, htmlAttributes: new { @class = "form-control", @id = "PeriodFrequencyStatus", name = "PeriodFrequencyStatus", placeholder = "Payroll Period" })}
+
+                    </td>
+                    <td>
+                      
+                        @if (ViewBag.HeadId != null)
+                        {
+                            if (ViewBag.HeadId == Global.BasicHeadId())
+                            {
+                                @Html.CheckBox("TaxExemption", htmlAttributes: new { @class = "form-control", @id = "TaxExemption", name = "TaxExemption", value = @ViewBag.TaxExemption, disabled = "disabled" })
+                            }
+                            else
+                            {
+                                @Html.CheckBox("TaxExemption", htmlAttributes: new { @class = "form-control", @id = "TaxExemption", name = "TaxExemption", value = @ViewBag.TaxExemption })
+                            }
+                        }
+                        else
+                        {
+                                @Html.CheckBox("TaxExemption", htmlAttributes: new { @class = "form-control ", @id = "TaxExemption", name = "TaxExemption" })
+                        }
+
+                    </td>
+                    <td>
+                      <input type="submit" value="Submit" class="btn btn-xs btn-success"  />
+                    </td>
+
+                </tr>
+                @foreach (var item in payrolls)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PayrollHeadName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PayrollPercent)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PayrollCategory)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MaxLimit)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Period)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TaxExemption)
+                        </td>
+                        @if (item.PayrollHeadID != 1 && item.PayrollHeadID != 2 && item.PayrollHeadID != Global.SpecialAllowancesHeadId())
+                        {
+                            <td>
+                                @Html.ActionLink("Edit", "Payrollheads", "Payroll", new
+                                        {
+                                            CorporatePayrollHeadID = item.CorporatePayrollHeadID,
+                                            useraction = "Edit"
+                                        }, new { title = "Edit" })
+                                @*!= 15 && item.PayrollHeadID != 16 && item.PayrollHeadID != 25)*@
+                                @if (item.PayrollHeadID != Global.BasicHeadId() ) 
+                                {
+                                   <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.CorporatePayrollHeadID');" title="Remove"> | Delete</a>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    </tr>
+
+                }
+            </table>
+            <small><b>Note: Heads which is non editable is used for employee specific calculations.</b></small>
+            @*<br />
+                <a href="javascript:void(0);" id="addCF" class="btn btn-default btn-xs">Add Row</a>
+                <br /><br />
+                    <input type="submit" value="Submit" class="button button-3d button-rounded button-teal" style="float:right" />*@
+            @Html.Hidden("EngagementTypeId", ViewBag.EngagementTypeId as string)
+        </div>
+        @Html.Hidden("RedirectToHome", Url.Action("Payrollheads", "Payroll", new { area = "PMS" }))
+        @Html.Hidden("RedirectTo", Url.Action("RemoveEngagementType", "Employee"))
+        @Html.Hidden("RedirectToRemovePayrollHeads", Url.Action("RemovePayrollHeads", "Payroll", new { area = "PMS" }))
+        @Html.Hidden("SaveStatus", ViewBag.Status as string)
+       
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        if ($("#SaveStatus").val() == "AllReadyUse") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Head cannot be removed because reference already used',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+    })
+
+   
+
+    function ConfirmationDialog(CorporatePayrollHeadID) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Delete this Payroll Head?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-success',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-danger',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'Zoom',
+            confirm: function () {
+                var url = $("#RedirectToRemovePayrollHeads").val() + "?CorporatePayrollHeadID=" + CorporatePayrollHeadID;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+</script>
+<script>
+    $('#PayrollHeadName').selectize({ maxItems: 1, plugins: ['remove_button'],create: true, persist: false });
+</script>
+
+<script type="text/javascript">
+    function Sortengagement() {
+        var SchemeId = $('#LeaveScheme :selected').val();
+        var url = $("#RedirectToHome").val() + "?SchemeId=" + SchemeId;
+        location.href = url;
+    }
+
+    $("#Payrollheads").validate({
+        submitHandler: function (form) {           
+           
+            if ($('#PayrollHeadName').val() == "" || $('#PayrollHeadName').val() == null ) {
+                $.alert({
+                    title: 'Warning',
+                    content: 'Select or In',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+            //$(form).ajaxSubmit({
+            //    success: function () {
+            //        $('.form-process').fadeOut()
+            //        $.alert({
+            //            title: 'Cheers',
+            //            content: 'Payroll head has been added <b> SUCCESSFULLY.</b>',
+            //            confirmButton: 'OK',
+            //            confirmButtonClass: 'btn btn-primary',
+            //            icon: 'fa fa-thumbs-up fa-2x',
+            //            animation: 'zoom',
+            //            confirm: function () {
+            //                var url = $("#RedirectToHome").val();
+            //                location.href = url;
+            //            }
+            //        });
+            //    }
+            //});
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/Payrollheads",
+                data: {
+                    CorporatePayrollHeadID: corporatePayrollHeadID,
+                    PayrollHeadID: payrollHeadID,
+                    PayrollHeadIDvalue: payrollHeadIDvalue,
+                    PayrollHeadName: payrollHeadName,
+                    PayrollCategory: categorypayroll,
+                    MaxLimit: maxLimit,
+                    PayrollPercent: limitpercent,
+                    Period: periodspayroll,
+                    TaxExemption: taxExemption
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Payroll Heads has been added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+        //submitHandler: function (form) {
+        //    var payrollHeadID = new Array();
+        //    var payrollHeadIDvalue = new Array();
+        //    var payrollHeadName = new Array();
+        //    var corporatePayrollHeadID = new Array();
+        //    var limitpercent = new Array();
+        //    var categorypayroll = new Array();
+        //    var periodspayroll = new Array();
+        //    var maxLimit = new Array();
+        //    var taxExemption = new Array();
+
+        //    //each for all fields
+        //    $.each($("input[name='PayrollHeadID[]']"), function () {
+        //        payrollHeadID.push($(this).prop('checked'));
+        //    });
+
+        //    $.each($("input[name='HeadID[]']"), function () {
+        //        payrollHeadIDvalue.push($(this).val());
+        //    });
+        //    $.each($("input[name='PayrollHeadName[]']"), function () {
+        //        payrollHeadName.push($(this).val());
+        //    });
+
+        //    $.each($("input[name='CorporatePayrollHeadID[]']"), function () {
+        //        corporatePayrollHeadID.push($(this).val());
+        //    });
+
+        //    $.each($("select[id='limit[]']"), function () {
+
+        //        limitpercent.push($(this).val());
+
+        //    });
+        //    $.each($("select[id='category[]']"), function () {
+
+        //        categorypayroll.push($(this).val());
+
+        //    });
+        //    $.each($("select[id='periods[]']"), function () {
+
+        //        periodspayroll.push($(this).val());
+
+        //    });
+        //    $.each($("input[name='MaxLimit[]']"), function () {
+        //        maxLimit.push($(this).val());
+        //    });
+        //    $.each($("input[name='TaxExemption[]']"), function () {
+        //        taxExemption.push($(this).val());
+        //    });
+
+        //    $('.form-process').fadeIn();
+        //    $.ajax({
+        //        type: "post",
+        //        url: "/PMS/Payroll/Payrollheads",
+        //        data: {
+        //            CorporatePayrollHeadID: corporatePayrollHeadID,
+        //            PayrollHeadID: payrollHeadID,
+        //            PayrollHeadIDvalue: payrollHeadIDvalue,
+        //            PayrollHeadName: payrollHeadName,
+        //            PayrollCategory: categorypayroll,
+        //            MaxLimit: maxLimit,
+        //            PayrollPercent: limitpercent,
+        //            Period: periodspayroll,
+        //            TaxExemption: taxExemption
+        //        },
+        //        datatype: "json",
+        //        traditional: true,
+        //        success: function (data) {
+        //            $('.form-process').fadeOut();
+        //            $.alert({
+        //                title: 'Cheers',
+        //                content: 'Payroll Heads has been added <b> SUCCESSFULLY.</b>',
+        //                confirmButton: 'OK',
+        //                confirmButtonClass: 'btn btn-primary',
+        //                icon: 'fa fa-thumbs-up fa-2x',
+        //                animation: 'zoom',
+        //                confirm: function () {
+        //                    var url = $("#RedirectToHome").val();
+        //                    location.href = url;
+        //                }
+        //            });
+        //        }
+        //    })
+        //}
+    });
+</script>
+<script type="text/javascript">
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    $("#addCF").on('click', function () {
+        //for Percent Dropdown
+        var LeaveLimit = [
+           @foreach (var i in Limit)
+        {
+            @:{ lim: @i.Marks },
+            }
+        ];
+        var selectlimit = '<select class="form-control" id="limit[]" name="limit[]"><option selected="selected" value=""> --- Select Percent --- </option>';
+        for(i=0;i<LeaveLimit.length;i++)
+        {
+            if(LeaveLimit[i].lim==0)
+            {
+                selectlimit = selectlimit + '<option selected="selected" value="' + LeaveLimit[i].lim +'">' + LeaveLimit[i].lim +'</option>';
+            }
+            else{
+                selectlimit = selectlimit + '<option value="' + LeaveLimit[i].lim +'">' + LeaveLimit[i].lim +'</option>';
+            }
+
+        }
+        selectlimit = selectlimit + '</select>';
+
+        //for Period Dropdown
+        var Frequency = [
+            @foreach (var k in PeriodFrequency)
+        {
+            @:{ per: "@k.PeriodFrequencyStatus" },
+            }
+        ];
+        var selectFrequency = '<select class="form-control" id="periods[]" name="periods[]"><option selected="selected" value=""> --- Select periods --- </option>';
+        for(k=0;k<Frequency.length;k++)
+        {
+            if(Frequency[k].per==0)
+            {
+                selectFrequency = selectFrequency + '<option selected="selected" value="' + Frequency[k].per +'">' + Frequency[k].per +'</option>';
+            }
+            else{
+                selectFrequency = selectFrequency + '<option value="' + Frequency[k].per +'">' + Frequency[k].per +'</option>';
+            }
+
+        }
+        selectFrequency = selectFrequency + '</select>';
+
+
+
+        //for category dropdown
+        var PCategory = [
+            @foreach (var j in PayrollCategory)
+        {
+            @:{ cate: "@j.PayrollCategory" },
+            }
+        ];
+
+
+        var selectcategory = '<select class="form-control" id="category[]" name="category[]"><option selected="selected" value=""> --- Select Percent --- </option>';
+        for(j=0;j<PCategory.length;j++)
+        {
+            if(PCategory[j].cate==0)
+            {
+                selectcategory = selectcategory + '<option selected="selected" value="' + PCategory[j].cate +'">' + PCategory[j].cate +'</option>';
+            }
+            else{
+                selectcategory = selectcategory + '<option value="' + PCategory[j].cate +'">' + PCategory[j].cate +'</option>';
+            }
+
+        }
+        selectcategory = selectcategory + '</select>';
+
+
+        $('#addheads').append('<tr>' + '<td><input type="checkbox" id="PayrollHeadID[]"  name="PayrollHeadID[]" style = "display:none" checked="checked"/>' +
+            '<input type="text" id="CorporatePayrollHeadID[]" name="CorporatePayrollHeadID[]" value="0" style = "display:none" /></td>' +
+            '<td><input type="text" id="PayrollHeadName[]" name="PayrollHeadName[]" class="form-control" value=""/>'+
+            '<input type="hidden" id="HeadID[]" name="HeadID[]" value="0" /></td>' +
+            '<td>' + selectlimit + ' </td>' +
+            '<td>' + selectcategory + ' </td>' +
+            '<td><input type="text" id="MaxLimit[]" name="MaxLimit[]" class="form-control" value=""/></td>' +
+           '<td>' + selectFrequency + ' </td>' +
+        '<td><input type="checkbox" id="chekTaxExemption" name="TaxExemption[]" class="form-control" value="true"> <br /><a href="javascript:void(0);" class="btn btn-default btn-xs" id="remCF1">Remove</a></td>' +
+         '</tr>'
+            );
+    });
+    $("#addheads").on('click', '#remCF1', function () {
+        $(this).parent().parent().remove();
+    });
+    //function payroll(PayrollHeadID)
+    //{
+    //    if($('#chkselect :checked',false) && PayrollHeadID != 0)
+    //    {
+    //        $.alert({
+    //            title: 'Cheers',
+    //            content: 'Payroll Head is already used<b>You cant delete.</b>',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'btn btn-primary',
+    //            icon: 'fa fa-thumbs-up fa-2x',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //                var url = $("#RedirectToHome").val();
+    //                location.href = url;
+    //            }
+    //        });
+    //    }
+    //}
+</script>

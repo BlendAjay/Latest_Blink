@@ -1,0 +1,212 @@
+﻿@using AJSolutions.Models
+@using AJSolutions.DAL
+@model AJSolutions.Models.CompanySetting
+@{
+    ViewBag.Title = "CompanySetting";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("CompanySetting", "User", FormMethod.Post, new { @area = "CMS", @class = "form-horizontal needs-validation", id = "CompanySetting", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SettingId", ViewBag.SettingId as string)
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h3>Company Setting</h3>
+                </div>
+                <div class="col_full">
+                    <div class="col_half">
+                        <label><small>Day Per Week</small> </label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+
+                            @if (Model != null)
+                            {
+                                <input type="text" class="form-control" value="@Model.WorkingDayPerWeek" id="txtworkingday" name="WorkingDayPerWeek" />
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" value="" id="txtworkingday" name="WorkingDayPerWeek" />
+                            }
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        <label><small>Probation Period</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-time"> </i></span>
+
+                            @if (Model != null)
+                            {
+                                <input type="text" class="form-control" value="@Model.ProbationPeriod" id="txtprobationperiods" name="ProbationPeriod" />
+
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" value="" id="txtprobationperiods" name="ProbationPeriod" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="col_half">
+                        <label><small>Default Currency</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-money"> </i></span>
+                            @Html.DropDownList("Currency", null, "--- Select Currency ---", htmlAttributes: new { @class = "form-control required", id = "Currency" })
+                            @Html.ValidationMessageFor(model => model.DefaultCurrency, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        <label><small>Calendar Year</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar2"> </i></span>
+                            @Html.DropDownList("CalendarYear", null, "--- Select Calendar Year ---", htmlAttributes: new { @class = "form-control required", id = "CalendarYear" })
+                            @Html.ValidationMessageFor(model => model.CalendarYear, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col_full">
+                        <div class="col_half">
+                           
+                            @if (Model != null)
+                            {
+                                if (Model.PayslipPasswordProtection == true)
+                                {
+                                    <input type="checkbox" checked="checked" id="PayslipPassword" name="PayslipPasswordProtaction" value="false" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="PayslipPassword" name="PayslipPasswordProtaction" value="false" />
+
+                                }
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="PayslipPassword" name="PayslipPasswordProtaction" value="false" />
+                            }
+                            <label><small>Pay Slip Password Protaction</small></label>
+                        </div>
+                        <br/>
+                        <div class="col_half">
+                            
+                            @if (Model != null)
+                            {
+                                if (Model.AutoenablePayrollProcess == true)
+                                {
+                                    <input type="checkbox" checked="checked" id="AutoEnablePayr" name="AutoeanblePayrollProcess" value="false" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="AutoEnablePayr" name="AutoeanblePayrollProcess" value="false" />
+
+                                }
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="AutoEnablePayr" name="AutoeanblePayrollProcess" value="false" />
+
+                            }
+                            <label><small>Auto Enable Payroll Process</small></label>
+                        </div>
+                        <br/>
+                        <div class="col_half">
+                          
+                            @if (Model != null)
+                            {
+                                if (Model.CompanyAttendance == true)
+                                {
+                                    <input type="checkbox" checked="checked" id="CompanyAttendance" name="compayattendance" value="false" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="CompanyAttendance" name="compayattendance" value="false" />
+
+                                }
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="CompanyAttendance" name="compayattendance" value="false" />
+
+                            }
+                            <label><small>Company Attendance</small></label>
+                                </div>
+                            </div>
+                                <div class="col_full">
+                                    <div class="col_half">
+                                        <label><small>Auto Process Payroll Date</small></label>
+                                        <div class="input-group divcenter">
+                                            <span class="input-group-addon"><i class="icon-calendar2"> </i></span>
+                                            @Html.DropDownList("Payrolldate", null, "--- Select Payroll Date ---", htmlAttributes: new { @class = "form-control required", id = "Payrolldate" })
+                                            @Html.ValidationMessageFor(model => model.AutoProcessPayrollDate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <input type="submit" id="btnsubmit" value="Submit" class="button button-rounded button-teal fright" />
+                            </div>
+                        </div>
+                                @Html.Hidden("RedirectToSettings", Url.Action("CompanySetting", "User", new { area = "CMS" }))
+                            </div>
+}
+                            <script type="text/javascript">
+                                $("#CompanySetting").validate({
+                                    submitHandler: function (form) {
+                                        var payslippasswordprotaction;
+                                        var autoenablepayroll;
+                                        var companyattendance;
+                                        if ($('#CompanyAttendance').is(':checked')) {
+                                            companyattendance = "True";
+                                        }
+                                        else {
+                                            companyattendance = "False";
+                                        }
+                                        if ($('#PayslipPassword').is(':checked')) {
+                                            payslippasswordprotaction = "True";
+                                        }
+                                        else {
+                                            payslippasswordprotaction = "False";
+                                        }
+                                        if ($('#AutoEnablePayr').is(':checked')) {
+                                            autoenablepayroll = "True";
+                                        }
+                                        else {
+                                            autoenablepayroll = "False";
+                                        }
+                                        $('.form-process').fadeIn();
+                                        $.ajax({
+                                            type: "post",
+                                            url: "/CMS/User/CompanySetting",
+                                            data: {
+                                                SettingId:$('#SettingId').val(),
+                                                WorkingDayPerWeek:$('#txtworkingday').val(),
+                                                ProbationPeriods:$('#txtprobationperiods').val(),
+                                                DefaultCurrency:$('#Currency :selected').val(),
+                                                CalendarYear:$('#CalendarYear :selected').val(),
+                                                PayslipPasswordProtaction:payslippasswordprotaction,
+                                                AutoeanblePayrollProcess:autoenablepayroll,
+                                                AutoProcessPayrollDate:$('#Payrolldate :selected').val(),
+                                                CompanyAttendance:companyattendance
+                                            },
+                                            datatype: "json",
+                                            traditional: true,
+                                            success: function (data) {
+                                                $('.form-process').fadeOut();
+                                                $.alert({
+                                                    title: 'Cheers',
+                                                    content: 'Your Company Settings has been added <b> SUCCESSFULLY.</b>',
+                                                    confirmButton: 'OK',
+                                                    confirmButtonClass: 'btn btn-primary',
+                                                    icon: 'fa fa-thumbs-up fa-2x',
+                                                    animation: 'zoom',
+                                                    confirm: function () {
+                                                        var url = $("#RedirectToSettings").val();
+                                                        location.href = url;
+                                                    }
+                                                });
+                                            }
+                                        })
+                                    }
+                                });
+                            </script>

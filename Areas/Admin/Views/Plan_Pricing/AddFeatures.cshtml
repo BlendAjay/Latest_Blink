@@ -1,0 +1,141 @@
+﻿@model AJSolutions.Models.Features
+@{
+    ViewBag.Title = "Add Features";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    IEnumerable<AJSolutions.Models.Features> features = ViewData["Features"] as IEnumerable<AJSolutions.Models.Features>;
+}
+@using (Html.BeginForm("AddFeatures", "Plan_Pricing", FormMethod.Post, new { @class = "form-horizontal", id = "AddFeatures", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Status as string)
+    @Html.Hidden("Deleted", ViewBag.Deleted as string)
+    if (Model != null)
+    {
+        @Html.Hidden("FeatureId", Model.FeatureId)
+    }
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Plan</h4>
+                </div>
+                <div class="row">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.Feature, "Feature")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.Feature, new { htmlAttributes = new { @class = "form-control required", id = "Feature", @Placeholder = "Enter Feature" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Feature, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.FeatureSequence, "Feature Sequence")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.FeatureSequence, new { htmlAttributes = new { @class = "form-control required", id = "FeatureSequence", @Placeholder = "Enter Feature Sequence" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FeatureSequence, "", new { @class = "text-danger" })
+                        <br>
+
+
+                        <input type="submit" id="AddFeatures" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+                    </div>
+                </div>
+
+            </div>
+            <br /><br />
+            <div class="row">
+                <div class="container">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Features</th>
+                                <th>Features Sequence</th>
+                                <th>Actions</th>
+                            </tr>
+                            @if (features != null)
+                            {
+                                foreach (var item in features)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Feature)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.FeatureSequence)
+                                        </td>
+
+                                        <td>
+                                            @Html.ActionLink("Edit", "AddFeatures", "Plan_Pricing", new { area = "Admin", FeatureId = item.FeatureId }, new { title = "Edit" })
+                                            |
+                                            @Html.ActionLink("Delete", "AddFeatures", "Plan_Pricing", new { area = "Admin", FeatureId = item.FeatureId, UserAction = "Delete" }, new { title = "Delete" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("AddFeatures", "Plan_Pricing", new { area = "Admin" }))
+}
+<script type="text/javascript">
+
+
+    $("#CreatePlan").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/Admin/Plan_Pricing/AddFeatures",
+                data: {
+                    FeatureId: $('#FeatureId').val(),
+                    Feature: $('#Feature').val(),
+                    FeatureSequence: $('#FeatureSequence').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Feature has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        if ($("#Deleted").val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Feature has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>

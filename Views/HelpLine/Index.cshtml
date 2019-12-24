@@ -1,0 +1,273 @@
+﻿@using AJSolutions.Models
+@model UserViewModel
+@{
+    ViewBag.Title = "Index";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user == null)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        if (user.Role == "Employee")
+        {
+            Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+        }
+        else if (user.Role == "Admin" || user.Role == "Client")
+        {
+            Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+        }
+    }
+}
+
+@using (Html.BeginForm("Index", "HelpLine", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <br />
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <a href="http://www.surveychunk.com/Respondent?Id=WEBLINK1183" title="Click here to Submit your Query" target="_blank" class="fright">
+                    IPPB / DOP End User Training Feedback
+                </a>
+                <div class="fancy-title title-bottom-border">
+                    <h4>IPPB Help Line Queries</h4>                   
+                </div>
+                <div class="col_full">
+                    <div class="col_half">
+                        @Html.Label("Name*")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user"> </i></span>
+                            <input type="text" id="Name" name="Name" class="sm-form-control" value="@Model.Name" />
+                        </div>
+                        <br />
+                        @Html.Label("Email ID")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-email"> </i></span>
+                            <input type="text" id="Email" name="Email" class="sm-form-control" value="@Model.Email" />
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.Label("Phone Number*")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-phone"> </i></span>
+                            <input type="text" id="PhoneNumber" name="PhoneNumber" class="sm-form-control" min="10" maxlength="10" value="@Model.PhoneNumber" />
+                        </div>
+                        <br />
+                        @Html.Label("Blink ID (if any)")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            <input type="text" id="UserName" name="UserName" class="sm-form-control" value="@Model.UserName" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.Label("Category")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-file"> </i></span>
+                        @Html.DropDownList("Category", null, "--- Select ---", htmlAttributes: new { @class = "form-control required", id = "Category" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.Label("Sub Category")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-copy"> </i></span>
+                        @Html.DropDownList("SubCategory", null, "--- Select ---", htmlAttributes: new { @class = "form-control required", id = "SubCategory" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.Label("Query")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-question"> </i></span>
+                        @Html.DropDownList("Query", null, "--- Select ---", htmlAttributes: new { @class = "form-control required", id = "Query" })
+                    </div>
+                </div>
+                <div class="col_full" id="divDynamicQuery">
+                    @Html.Label("Enter Your Query")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-question"> </i></span>
+                        <textarea id="DynamicQuery" name="DynamicQuery" class="sm-form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="col_full" id="divSubmit">
+                    <input type="button" id="Submit" name="Submit" class="button button-3d button-rounded fright" value="Submit" />
+                </div>
+                <div class="col_full" id="divResolution">
+                    @Html.Label("Resolution")
+                    <textarea id="Resolution" name="Resolution" class="sm-form-control" style="background-color: lightyellow;"></textarea>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="fancy-title title-bottom-border">
+                <h4>Training Helpdesk Contact Details</h4>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <td>For all issues related to Micro ATM, Finacle,MDM, Assessment Test</td>
+                        <td>1800-267-2688 followed by 91903452#</td>
+                        </tr>
+                    <tr>
+                        <td>For Device & Biometric issues call</td>
+                        <td>9884272096</td>
+                    </tr>
+                    <tr>
+                        <td>For Network Connectivity Issues</td>
+                        <td>9921569922 / 7204413676</td>
+                    </tr>
+                    <tr>
+                        <td>For Blink / Training Content Issues</td>
+                        <td>180030026170</td>
+                    </tr>
+                    <tr>
+                        <td>For Any Other Assistance please call</td>
+                        <td>9890973363 / 9650024377 / 9949113840</td>
+                    </tr>
+                    </table>
+            </div>
+        </div>
+        </div>
+    @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+}
+
+<script>
+
+    $(document).ready(function () {
+        $("#divDynamicQuery").hide();
+        $("#divSubmit").hide();
+        $("#divResolution").hide();
+    });
+
+    $(document).on("keydown", "#PhoneNumber", function () {
+        if ($("#PhoneNumber").val() != undefined || $('#PhoneNumber').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $("#Category").change(function () {
+        $.ajax({
+            url: "/HelpLine/GetNextLayerDetails",
+            data: {
+                LayerDetailsId: $("#Category :selected").val()
+            },
+            datatype: "JSON",
+            type: "Post",
+            success: function (data) {
+                var subcat = "<span class='input-group-addon'><i class='icon-newspaper'> </i></span><select class='sm-form-control' id='SubCategory'>";
+                subcat = subcat + '<option value="">--- Select ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    subcat = subcat + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                subcat = subcat + '</select>';
+                $('#SubCategory').html(subcat);
+            }
+        });
+    });
+
+    $("#SubCategory").change(function () {
+        $.ajax({
+            url: "/HelpLine/GetNextLayerDetails",
+            data: {
+                LayerDetailsId: $("#SubCategory :selected").val()
+            },
+            datatype: "JSON",
+            type: "Post",
+            success: function (data) {
+                var query = "<span class='input-group-addon'><i class='icon-newspaper'> </i></span><select class='sm-form-control' id='Query'>";
+                query = query + '<option value="">--- Select ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    query = query + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                if (data.length > 0) {
+                    query = query + '<option value=0>New query not listed above</option>';
+                }
+                query = query + '</select>';
+                $('#Query').html(query);
+            }
+        });
+    });
+
+    $("#Query").change(function () {
+        if ($("#Query :selected").val() == 0) {
+            $("#divDynamicQuery").show();
+        }
+        else {
+            $("#divDynamicQuery").hide();
+        }
+        $("#divSubmit").show();
+        $("#divResolution").hide();
+    });
+
+    $("#Submit").click(function () {
+
+        if ($("#Name").val() == undefined || $("#Name").val() == '') {
+            $.alert({
+                title: 'Info',
+                content: 'Please enter Name',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+        else if ($("#PhoneNumber").val() == undefined || $("#PhoneNumber").val() == '') {
+            $.alert({
+                title: 'Info',
+                content: 'Please enter Phone Number',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+        else {
+            $.ajax({
+                url: "/HelpLine/GetResolution",
+                data: {
+                    Name: $("#Name").val(),
+                    PhoneNumber: $("#PhoneNumber").val(),
+                    Email: $("#Email").val(),
+                    UserName: $("#UserName").val(),
+                    Category: $("#Category").val(),
+                    SubCategory: $("#SubCategory").val(),
+                    Query: $("#Query").val(),
+                    DynamicQuery: $("#DynamicQuery").val(),
+                    SubscriberId: $("#SubscriberId").val()
+                },
+                datatype: "JSON",
+                type: "Post",
+                success: function (data) {
+                    $("#Resolution").val(data);
+                    $("#divResolution").show();
+                    $("#divSubmit").hide();
+                }
+            });
+        }
+    });
+</script>

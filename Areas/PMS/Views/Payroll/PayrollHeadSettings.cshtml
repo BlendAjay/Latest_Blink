@@ -1,0 +1,166 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.PayrollHeadSettings
+@{
+    ViewBag.Title = "Payroll Leavs Settings";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role != "Admin")
+    {
+        //Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    IEnumerable<AJSolutions.Models.PayrollHeadSettings> payrollHeadSettings = ViewData["HeadList"] as IEnumerable<AJSolutions.Models.PayrollHeadSettings>;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        @*<div class="row">
+                <a href="@Url.Action("AddGradeMaster", "Payroll", new { Area = "EMS" })" class="btn btn-default btn-xs">Add Grade</a>
+            </div>*@
+        <div id="contact-form-overlay" class="clearfix">
+            <div class=" row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Payroll Heads Settings</h4>
+                    <div class="col_half">
+                        <label>Head Name</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user3"></i></span>
+                            @Html.DropDownList("HeadId", null, " --- Select Head --- ", htmlAttributes: new { @class = "form-control", @id = "HeadId" })
+                        </div>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.Deduction, "Deduction")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                            @Html.EditorFor(model => model.Deduction, new { htmlAttributes = new { @class = "form-control required", id = "Deduction", placeholder = "e.g. CL" } })
+
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Deduction, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.DeductionCriteria, "Deduction Criteria")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user3"></i></span>
+                            @Html.DropDownList("MethodName", null, " --- Select Head --- ", htmlAttributes: new { @class = "form-control", @id = "MethodName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DeductionCriteria, "", new { @class = "text-danger" })
+                        <br>
+                    </div>                    
+                    <div class="col_half col_last">
+                        <br />
+                        @if (user.Role == "Admin")
+                        {
+                            //@Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+                            <input type="submit" id="PayrollLeavsSettings" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+                        }
+                    </div>
+                    @*@Html.Hidden("HeadId")*@
+                    <input type="hidden" id="hidheadText" name="hidheadText" />
+                    @Html.HiddenFor(m => m.DateFrom, htmlAttributes: new { @class = "form-control", @id = "hfDateFrom" })
+                </div>
+            </div>
+            <div class="row">
+                @if (payrollHeadSettings != null)
+                {
+                    <div class="row">
+                        @*<div class="fancy-title title-bottom-border title-right">
+                                <h3>Grade List</h3>
+                            </div>*@
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    @*<th>
+                                            Grade ID
+                                        </th>*@
+
+                                    <th>
+                                        Head Name
+                                    </th>
+                                    <th>
+                                        Deduction
+                                    </th>
+                                    <th>
+                                        Deduction Criteria
+                                    </th>  
+                                    <th>
+                                        Action
+                                    </th>                                  
+                                </tr>
+                                @foreach (var item in payrollHeadSettings)
+                                {
+                                    <tr>                                        
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.HeadName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Deduction)
+                                        </td>
+                                        <td>
+
+                                            @if (@item.DeductionCriteria == 0)
+                                            {
+                                                @Html.Raw("Calculated on Grosss");
+                                            }
+                                            else if (@item.DeductionCriteria == 1)
+                                            {
+                                                @Html.Raw("Calculated on Basic")
+                                            }
+                                            else if (@item.DeductionCriteria == 2)
+                                            {
+                                                @Html.Raw("Fixed")
+                                            }
+                                        </td>                                        
+                                        <td>
+                                            <a href="@Url.Action("PayrollHeadSettings", "Payroll", new { SubscriberId = item.SubscriberId, hfDateFrom=item.DateFrom, HeadId = item.HeadId, DeductionCriteria = item.DeductionCriteria, UserAction = "Edit" })" title="Edit" style="float:left"><i class="icon-pen"></i>|</a>
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.SubscriberId','@item.DateFrom','@item.HeadId');" title="Remove" style="float:Left"><i class="icon-remove"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveHeadSettings", "Payroll"));
+}
+
+<script type="text/javascript">
+    function ConfirmationDialog(SubscriberId, DateFrom, HeadId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?SubscriberId=" + SubscriberId + "&DateFrom=" + DateFrom + "&HeadId="+HeadId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>
+
+<script>
+    $(function () {
+        $("form").submit(function () {
+            var selTypeText = $("#HeadId :selected").text();
+            alert(selTypeText);
+            $("#hidheadText").val($("#HeadId :selected").text());
+        });
+    });
+</script>

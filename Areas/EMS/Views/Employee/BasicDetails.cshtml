@@ -1,0 +1,182 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.EmployeeBasicDetails
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Areas.EMS.Models.EmployeeViewModel reporting = ViewData["Reporting"] as AJSolutions.Areas.EMS.Models.EmployeeViewModel;
+}
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("BasicDetails", "Employee", FormMethod.Post, new { @class = "form-horizontal", id = "BasicDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Profile Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">My Profile</h5>
+                <div class="card-body">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Name, "Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control required", id = "Name", @Placeholder = "e.g. john smith", required = "required" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.Nationality, "Nationality")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-flag"> </i></span>
+                            @Html.DropDownList("Nationality", null, "---Select Nationality---", htmlAttributes: new { @class = "form-control required", @id = "Nationality", required = "required" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Nationality, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.DOB, "Date of Birth")<small>*</small>
+                        <div class="input-group divcenter travel-date-group">
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                            <input type="text" value="@ViewBag.dob" class="form-control required past-enabled" placeholder="DD/MM/YYYY" id="DOB" name="DOB" required="required">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                        <br>
+                        @Html.LabelFor(model => reporting.UName, "Reporting Authority")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                            @Html.EditorFor(model => reporting.UName, new { htmlAttributes = new { id = "UName", @class = "form-control", @readonly = true } })
+                        </div>
+                        @Html.ValidationMessageFor(model => reporting.UName, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Gender, "Gender")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-male"></i><i class="icon-female"></i></span>
+                            @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                        <br>
+                        @Html.LabelFor(model => model.MaritalStatus, "Marital Status")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-glass"></i></span>
+                            @Html.DropDownList("MaritalStatus", null, " --- Select Marital Status --- ", htmlAttributes: new { @class = "form-control", @id = "MaritalStatus" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MaritalStatus, "", new { @class = "text-danger" })
+                        <br>
+                        @Html.LabelFor(model => model.AlternateContact, "Alternate Contact")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                            @Html.EditorFor(model => model.AlternateContact, new { htmlAttributes = new { @class = "form-control", @Placeholder = "Contact Number", @id = "AlternateContact" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AlternateContact, "", new { @class = "text-danger" })
+                        <br>
+                        @Html.LabelFor(model => model.AlternateEmail, "Alternate Email")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                            @Html.EditorFor(model => model.AlternateEmail, new { htmlAttributes = new { @class = "form-control", @Placeholder = "e.g. xyz@domain.com" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AlternateEmail, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <input type="submit" value="submit" style="float: right;" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("BasicDetails", "Employee"));
+}
+
+<script type="text/javascript">
+    $(document).on("keydown", "#AlternateContact", function () {
+        if ($("#AlternateContact").val() != undefined || $('#AlternateContact').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $("#BasicDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/BasicDetails",
+                data: {
+                    Name: $('#Name').val(),
+                    Designation: $('#Designation').val(),
+                    Nationality: $('#Nationality :selected').val(),
+                    EmployeeId: $('#EmployeeId').val(),
+                    DOB: $('#DOB').val(),
+                    Gender: $('#Gender :selected').val(),
+                    MaritalStatus: $('#MaritalStatus :selected').val(),
+                    AlternateContact: $('#AlternateContact').val(),
+                    AlternateEmail: $('#AlternateEmail').val(),
+                    UName: $('#UName').val(),
+                    fatherName: $('#FatherName').val(),
+                    spouseName: $('#SpouseName').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+

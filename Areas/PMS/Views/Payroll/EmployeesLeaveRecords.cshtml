@@ -1,0 +1,320 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.Helpers;
+@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.Models;
+@model  PagedList.IPagedList<AJSolutions.Areas.EMS.Models.EmployeeViewModel>
+@{
+    ViewBag.Title = "Employees Leave Records";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    var currPage = ViewBag.page ?? 1;
+    var currPageSize = ViewBag.Paging;
+
+    IEnumerable<EngagementTypeMaster> corporateLeaves = ViewData["CorporateLeaves"] as IEnumerable<EngagementTypeMaster>;
+    IEnumerable<EmployeeLeaveSummariesViewModel> empLeaves = ViewData["EmpLeaveRecords"] as IEnumerable<EmployeeLeaveSummariesViewModel>;
+
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+
+            @if (user.Role != "Employee")
+            {
+                <div class="col_one_third">
+                    @Html.Label("Scheme Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("SchemeId", null, "---Select Scheme Name ---", htmlAttributes: new { id = "SchemeId", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col_one_third">
+                    @Html.Label("Departments Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("DepartmentId", null, "---Select Departments Name ---", htmlAttributes: new { id = "DepartmentId", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col_one_third col_last">
+                    <br />
+                    <button class="button  button-rounded button-teal fright" id="buttonclear" title="click here to Clear Search">Clear</button>&nbsp;
+                    <button type="button" id="search" class="button  button_apply fright" title="click here to Search">Search</button>
+                </div>
+
+            }
+            @*@if (user.ManagerLevel == true || user.Role == "Admin")
+                {
+                    <div class="col_one_third">
+                        <label>Select Range</label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" class="form-control daterange4" value="" id="Schedule" name="Schedule" />
+                        </div>
+                    </div>
+                }
+                <div class="col_one_third">
+                    @Html.Label("Leave Type")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("LeaveTypeId", null, "---Select Leave Type---", htmlAttributes: new { id = "LeaveTypeId", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col_one_third">
+                    @Html.Label("Search By Name")
+                    @Html.TextBox("Name", ViewBag.Name as string, new { @class = "form-control", @id = "Name", placeholder = "Name" })
+                </div>*@
+        </div>
+        <div class="fancy-title title-bottom-border title-right">
+            <h4></h4>
+        </div>
+        <div class="row">
+
+            @if (Model != null)
+            {
+                if (Model.Count() > 0 && empLeaves.Count() > 0)
+                {
+                    int count = (currPageSize * (currPage - 1)) + 1;
+                    <div class="col_full">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    <th>
+                                        S.No.
+                                    </th>
+                                    <th>
+                                        Name
+                                    </th>
+                                    <th>
+                                        Department
+                                    </th>
+                                    @foreach (var enagement in corporateLeaves)
+                                    {
+                                        <th>
+                                            @enagement.EngagementType
+                                        </th>
+                                    }
+                                </tr>
+
+
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td class="text-center">
+                                            @count
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink(item.Name, "EmployeeProfile", "Employee", new { area = "EMS", UserId = item.UserId }, htmlAttributes: new { target = "_blank" })
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Department)
+                                        </td>
+                                        @foreach (var enagement in corporateLeaves)
+                                        {
+                                            <td>
+                                                @foreach (var empEngagement in empLeaves.Where(e => e.UserId == item.UserId && e.EngagementTypeId == enagement.EngagementTypeId))                                               
+                                                {
+                                                    @empEngagement.EngagementCount<span>/</span>@empEngagement.LeaveLimit
+                                                }
+
+                                            </td>
+                                        }
+
+                                    </tr>
+                                        count++;
+                                }
+
+                            </table>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <br /><br />
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Record found<span class="subtitle">Select Other Scheme to view Leaves Record</span></h3>
+                    </div>
+                }
+            }
+            else
+            {
+                <br /><br />
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-thumbs-down2"></i>
+                    </div>
+                    <h3>Select Scheme to view Leaves Record<span class="subtitle"></span></h3>
+                </div>
+            }
+        </div>
+@if (user.Role != "Employee")
+            {
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("EmployeesLeaveRecords", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+}
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("EmployeesLeaveRecords", "Payroll", new { area = "PMS" }));
+
+    //.........help icon.........//
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel15" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel16"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                <li><a href="#tabs-3">Video</a></li>
+                            </ul>
+                            <div class="tab-container">
+
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4> Navigation to Employee Leave Record</h4>
+                                    <img src="~/images/gif/navigation to employee leave record.gif" alt="Save icon" />
+                                </div>
+
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6> Navigation to Employee Leave Record</h6>
+                                    <p>Click on Navigation bar "Calendar" then click on MenuItem "Employee Leave Record".</p>
+                                    <img src="~/images/Images1/employee Leave.jpg" width="300" height="500">
+
+                                    <p><b>1. Leave Type</b> – Select Leave type from drop down.</p>
+                                    <img src="~/images/Images1/Leave type.jpg" width="300" height="150"><br></br>
+
+                                    <b>
+                                        2. After select Leave type, click on search button then your searching list will be show.when your searching is completed then you can clear it.
+                                    </b><br></br>
+                                    <img src="~/images/Images1/Clear.search.JPG" width="200" height="100"><br></br>
+
+                                    <b>3.	Now you can see list will be show bottom in Page.you can also see the limit duration of leave.</b><br></br>
+                                    <img src="~/images/Images1/leave Record.JPG" width="600" height="300"><br></br>
+
+                                </div>
+
+                                <div class="tab-content clearfix" id="tabs-3">
+
+                                    <h4>help video for See holiday</h4>
+                                    <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/uPHOYjNoCvo" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+}
+<script>
+    function submitform() {
+
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+
+            var url = $("#RedirectTo").val() + "?SchemeId=" + $('#SchemeId :selected').val() + "&DepartmentId=" + $("#DepartmentId :selected").val() + "&PageSize=" + $("#PageSize :selected").val();
+            location.href = url;
+        }
+    }
+
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var url = $("#RedirectTo").val();
+        location.href = url;
+
+    });
+
+    $('#search').click(function (e) {
+        e.preventDefault();
+
+        if ($('#SchemeId :selected').val() == '0' || $('#SchemeId :selected').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: 'Select scheme to view leave record',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            return false;
+        }
+
+
+        var url = $("#RedirectTo").val() + "?SchemeId=" + $('#SchemeId :selected').val() + "&DepartmentId=" + $("#DepartmentId :selected").val() + "&PageSize=" + $("#PageSize :selected").val();
+        location.href = url;
+
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    //function GetData() {
+    //    alert($("#Schedule").val());
+    //    $.ajax({
+    //        type: "",
+    //        url: "/PMS/Payroll/EmployeesLeaveRecords",
+    //        data: {
+    //            SchemeId: $("#SchemeId").val(),
+    //            Name: $("#Name").val(),
+    //            DepartmentId :$("#DepartmentId").val(),
+    //            Schedule: $("#Schedule").val()
+    //        },
+    //        datatype: "json",
+    //        traditional: true,
+    //        success: function (data) {
+
+    //        }
+    //    })
+    //}
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+
+</script>

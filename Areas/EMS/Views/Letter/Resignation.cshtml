@@ -1,0 +1,196 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.ResignationViewModel 
+@{
+    ViewBag.Title = "Resignation"; 
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    PagedList.IPagedList<AJSolutions.Models.ResignationViewModel> reg = ViewData["Resignation"] as PagedList.IPagedList<AJSolutions.Models.ResignationViewModel>;
+    if (user.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+
+    }
+}
+
+
+@using (Html.BeginForm("Resignation", "Letter", FormMethod.Post, new { @class = "form-horizontal", id = "Resignation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Resignation</h4>
+
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="col_full">
+                    <label>Reason for Leaving<small>*</small></label>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                        @Html.DropDownList("LeavingReason", null, "--- Select Reason of Leaving ---", htmlAttributes: new { @class = "form-control required", id = "LeavingReason" })
+                    </div>
+                </div>
+                <div class="col_full">
+                    <label>Reason<small>*</small></label>
+                    @Html.TextAreaFor(model => model.Reason, 5, 124, htmlAttributes: new { @class = "form-control required", @Maxlength = 2048, id = "Reason", @placeholder = "Reason here.." })
+                </div>
+                <div class="col_full">
+                    <input type="submit" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" id="SubmitForm" />
+                </div>
+            </div>
+            <br />
+            @if (reg!=null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th> Reason of Leaving</th>
+                                <th> Message </th>
+                                <th> Resignation Date </th>
+                                <th> Last working Days</th>
+                                <th>Status</th>
+                                @if (user.Role != "Admin")
+                                {
+                                    <th>Approved By</th>
+                                }
+                            </tr>
+                            @foreach(var item in reg)
+                            { 
+                            <tr>
+                                <td>
+                                    @item.Reason
+                                </td>
+                                <td>@item.RelievingReason</td>
+                                <td>
+                                    @item.DateofResignation.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    @item.LastWorkingDate.ToString("dd-MMM-yyyy")
+                                </td>
+
+                                @if (item.Status == 0)
+                                {
+                                    <td>
+                                        @*@Html.ActionLink("Edit", "TrainerPlanner", "TMS", new { PlannerId = item.PlannerId, useraction = "Edit" }, new { title = "Edit" })
+                                            /*@
+                                        <a href="@Url.Action("CencelResignation", "Letter", new { area = "EMS", ResignationId = item.ResignationId, Action = "Cancel" })">Cancel</a>
+                                    </td>
+                                }
+                                else if (item.Status == 3)
+                                {
+                                    <td><b>Cancelled</b></td>
+                                }
+                                else if (item.Status == 2)
+                                {
+                                    <td>
+                                        <b>Disapproved</b>
+                                    </td>
+                                }
+                                else if (item.Status == 1)
+                                {
+                                    <td>
+                                        <b>Approved</b>
+                                    </td>
+                                }
+                                <td>
+                                    @if (item.Status != 3 && item.ApprovedByName != null)
+                                    {
+
+                                        <span>@item.ApprovedByName</span>
+
+                                    }
+                                </td>
+                            </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <br /><br />
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-thumbs-down2"></i>
+                    </div>
+                    <h3>No Resignation<span class="subtitle"></span></h3>
+                </div>
+            }
+        </div>
+        @Html.Hidden("RedirectToHome", Url.Action("Resignation", "Letter"), new { area = "EMS" })
+    </div>
+}
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        if ($("#Deleted").val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Engagement has been Cancelled Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+    $("#Resignation").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+
+            $.ajax({
+                type: "post",
+                url: "/EMS/Letter/Resignation",
+                data: {
+                    ReasonId: $('#LeavingReason').val(),
+                    RelievingReason: $('#Reason').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Resignation added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+</script>
+
+
+
+
+

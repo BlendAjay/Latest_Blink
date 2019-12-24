@@ -1,0 +1,347 @@
+﻿@model List<AJSolutions.Models.EndUserTrainingOrderView>
+@{
+    ViewBag.Title = "End User Trainee Details";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    //Layout = "~/Areas/Candidate/Views/Shared/_PrintLayout.cshtml";
+    AJSolutions.Models.EndUserTrainingOrderView trainingOrders = ViewData["TrainingOrders"] as AJSolutions.Models.EndUserTrainingOrderView;
+    var To = "TRO";
+    var EUId = @trainingOrders.EUTrainingOrderId;
+    var year = DateTime.Now.Year;
+    var type = @trainingOrders.TrainingType;
+    var finalId = @To + @EUId + type + year;
+}
+<section id="content">
+    @Html.AntiForgeryToken()
+    <br /><br />
+    <div class="container">
+        <div class="row">
+            <br />
+            <div class="form-process"></div>
+            @if (trainingOrders.Status != "Freezed")
+            {
+                @*<a href="@Url.Action("FeedbackBatchWise", "Course", new { Area = "TMS", TrainingId = @trainingOrders.EUTrainingOrderId, status = "Edit" })" class="button button-3d button-mini button-rounded button-teal" style="float:right;">Edit</a>*@
+                <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@trainingOrders.EUTrainingOrderId', 'Freez');" title="Submit Training" class="button button-3d button-mini button-rounded button-green" style="float:right;">Submit Training Order</a>
+                @*<a href="@Url.Action("FeedbackBatchWise", "Course", new { Area = "TMS", TrainingId = @trainingOrders.EUTrainingOrderId, status = "Freez" })" class="button button-3d button-mini button-rounded button-green" style="float:right;">Freeze Training Order</a>*@
+                @*<a href="@Url.Action("FeedbackBatchWise", "Course", new { Area = "TMS", TrainingId = @trainingOrders.EUTrainingOrderId, status = "Delete" })" class="button button-3d button-mini button-rounded button-teal" style="float:right;">Delete</a>*@
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Dashboard", new { Area = "Candidate" })"  class="button button-3d button-mini button-rounded button-green" style="float:right;"><i class="icon-home"></i></a>
+            }
+
+            <br />
+
+
+            <div class="col_full">
+                <div class="fancy-title title-bottom-border">
+                    <h5>
+                        End User Training Order Details - @finalId @if (@trainingOrders.BatchName != null)
+                        {<small class="fright">BatchId - @trainingOrders.BatchName</small>}
+                    </h5>
+                </div>
+            </div>
+
+            @if (trainingOrders != null)
+            {
+                <div class="col_full">
+
+                    <div class="col_half">
+                        <div class="table-responsive">
+                            <table class="table table-bordered nobottommargin small">
+                                <tr>
+                                    <td>
+                                        Wave : @trainingOrders.Wave
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Training Type : @trainingOrders.TrainingType
+                                    </td>
+                                </tr>
+
+                                @if (trainingOrders.TrainingType == "PA")
+                                {
+                                    if (@trainingOrders.RegionName != null)
+                                    {
+                                        <tr>
+                                            <td class="nobottommargin">  Training Location Region : @trainingOrders.RegionName</td>
+                                        </tr>
+                                    }
+                                    <tr>
+
+                                        <td class="nobottommargin">  Master Trainer Designation : @trainingOrders.PAMTDesignation</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="nobottommargin">  Training Schedule : @trainingOrders.PATrainingStartDate.ToString("dd-MMM-yyyy") - @trainingOrders.PATrainingEndDate.ToString("dd-MMM-yyyy")</td>
+                                    </tr>
+                                    @*<tr>
+
+                                        <td class="nobottommargin">  Updated On: @trainingOrders.UpdatedOn.ToString("dd-MMM-yyyy")</td>
+                                    </tr>*@
+                                }
+                                else
+                                {
+                                    if (@trainingOrders.RegionName != null)
+                                    {
+                                        <tr>
+                                            <td class="nobottommargin">  Training Location Region : @trainingOrders.RegionName</td>
+                                        </tr>
+                                    }
+                                    <tr>
+
+
+                                        <td class="nobottommargin">  Master Trainer Name : @trainingOrders.GDSMTName</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="nobottommargin">  Training Schedule : @trainingOrders.GDSTrainingStartDate.ToString("dd-MMM-yyyy") - @trainingOrders.GDSTrainingEndDate.ToString("dd-MMM-yyyy")</td>
+                                    </tr>
+                                    @*<tr>
+
+                                        <td class="nobottommargin">  Updated On: @trainingOrders.UpdatedOn.ToString("dd-MMM-yyyy")</td>
+                                    </tr>*@
+
+                                }
+
+
+                            </table>
+                        </div>
+
+
+                        @*<b class="nobottommargin"> Wave : @trainingOrders.Wave</b><br />
+
+                            <b class="nobottommargin">  Training Type : @trainingOrders.TrainingType</b><br />
+
+                            @if (trainingOrders.TrainingType == "PA")
+                            {
+                                <b class="nobottommargin">  Training Location Division : @trainingOrders.PADivision</b><br />
+
+                                <b class="nobottommargin">  Master Trainer Designation : @trainingOrders.PAMTDesignation</b><br />
+
+                                <b class="nobottommargin">  Training Schedule : @trainingOrders.PATrainingStartDate.ToString("dd-MMM-yyyy") - @trainingOrders.PATrainingEndDate.ToString("dd-MMM-yyyy")</b><br />
+
+                            }
+                            else
+                            {
+                                <b class="nobottommargin">  Training Office Location : @trainingOrders.GDSOfficeName</b><br />
+
+                                <b class="nobottommargin">  Master Trainer Name : @trainingOrders.GDSMTName</b><br />
+
+                                <b class="nobottommargin">  Training Schedule : @trainingOrders.GDSTrainingStartDate.ToString("dd-MMM-yyyy") - @trainingOrders.GDSTrainingEndDate.ToString("dd-MMM-yyyy")</b><br />
+
+                                <b class="nobottommargin">  Updated On: @trainingOrders.UpdatedOn.ToString("dd-MMM-yyyy")</b><br />
+
+                            }*@
+                    </div>
+                    <div class="col_half  col_last">
+                        <div class="table-responsive">
+                            <table class="table table-bordered nobottommargin small">
+                                <tr>
+                                    <td>
+                                        Circle : @trainingOrders.Circle
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Divisional Officer Contact : @trainingOrders.DOContact
+                                    </td>
+                                </tr>
+
+                                @if (trainingOrders.TrainingType == "PA")
+                                {
+                                    <tr>
+                                        <td class="nobottommargin">  Training Office Location : @trainingOrders.PAOfficeName</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="nobottommargin">  Master Trainer Name : @trainingOrders.PAMTName</td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="nobottommargin">  Master Trainer Contact Number : @trainingOrders.PAMTContact</td>
+                                    </tr>
+                                    if (trainingOrders.MTReckonnId != null)
+                                    {
+                                        <tr>
+                                            <td class="nobottommargin success">  Master Trainer UserId: @trainingOrders.MTReckonnId - Password: changeme</td>
+                                        </tr>
+                                    }
+
+                                }
+                                else
+                                {
+                                    @*if (@trainingOrders.RegionName != null)
+                                    {
+                                        <tr>
+                                            <td class="nobottommargin">  Training Location Region : @trainingOrders.RegionName</td>
+                                        </tr>
+                                    }*@
+                                    <tr>
+
+                                        <td class="nobottommargin">  Master Trainer Designation : @trainingOrders.GDSMTDesignation</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="nobottommargin">  Master Trainer Contact Number : @trainingOrders.GDSMTContact</td>
+                                    </tr>
+                                    if (trainingOrders.MTReckonnId != null)
+                                    {
+                                        <tr>
+                                            <td class="nobottommargin success">  Master Trainer UserId: @trainingOrders.MTReckonnId - Password: changeme</td>
+                                        </tr>
+                                    }
+
+                                }
+
+
+                            </table>
+                        </div>
+
+                        @*<b class="nobottommargin">  Circle : @trainingOrders.Circle</b><br />
+
+                            <b class="nobottommargin">  Divisional Officer Contact : @trainingOrders.DOContact</b><br />
+
+                            @if (trainingOrders.TrainingType == "PA")
+                            {
+                                <b class="nobottommargin">  Training Office Location : @trainingOrders.PAOfficeName</b><br />
+
+                                <b class="nobottommargin">  Master Trainer Name : @trainingOrders.PAMTName</b><br />
+
+                                <b class="nobottommargin">  Master Trainer Contact Number : @trainingOrders.PAMTContact</b><br />
+
+
+                            }
+                            else
+                            {
+                                <b class="nobottommargin">  Training Location Division : @trainingOrders.GDSDivision</b><br />
+
+                                <b class="nobottommargin">  Master Trainer Designation : @trainingOrders.GDSMTDesignation</b><br />
+
+                                <b class="nobottommargin">  Master Trainer Contact Number : @trainingOrders.GDSMTContact</b><br />
+
+                            }*@
+                    </div>
+                </div>
+            }
+            @if (Model != null)
+            {
+                <div class="col_full">
+                    <div class="fancy-title title-bottom-border">
+                        <h5>Trainee Details</h5>
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin small">
+                            <tr>
+                                <th>TrackerId</th>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                                <th>Gender</th>
+                                <th>CSI Employee Id</th>
+                                <th>Designation</th>
+                                <th>Facility Id Of Access Point</th>
+                                <th>Access Point Name</th>
+                                <th>IPPB Branch</th>
+                            </tr>
+                            @foreach (var qitem in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.TrackerId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.PhoneNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Gender)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.EmpId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Designation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.FaciltyId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Accesspoint)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Branch)
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <br />
+                    <input type="submit" class="button button-3d button-mini button-rounded button-teal" id="printpagebutton" value="Print" onclick="printpage();" />
+                    @if (trainingOrders.Status != "Freezed")
+                    {
+                        <a href="@Url.Action("FeedbackBatchWise", "Course", new { Area = "TMS", TrainingId = @trainingOrders.EUTrainingOrderId, status = "Edit" })" class="button button-3d button-mini button-rounded button-yellow">Edit</a>
+                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@trainingOrders.EUTrainingOrderId', 'Freez');" title="Submit Training" class="button button-3d button-mini button-rounded button-green" style="float:right;">Submit Training Order</a>
+                        @*<a href="@Url.Action("FeedbackBatchWise", "Course", new { Area = "TMS", TrainingId = @trainingOrders.EUTrainingOrderId, status = "Delete" })" class="button button-3d button-mini button-rounded button-teal" style="float:right;">Delete</a>*@
+                    }
+                </div>
+
+            }
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("FeedbackBatchWise", "Course", new { area = "TMS" }))
+</section><!-- Contact Form & Map Overlay Section End -->
+
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+
+    function ConfirmationDialogs(TrainingId, UserAction) {
+        $('.form-process').fadeIn();
+        $.confirm({
+            title: 'Confirmation',
+            content: 'You are going to submit your data. If you need to modify data, please drop a mail on <b>it@nibf.in </b>',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-success',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-danger',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'Zoom',
+            confirm: function () {
+
+                var url = $("#RedirectTo").val() + "?TrainingId=" + TrainingId + "&status=" + UserAction;
+                location.href = url;
+            },
+            cancel: function () {
+                $('.form-process').fadeOut();
+            }
+        });
+        return false;
+    }
+</script>
+<script type="text/javascript">
+    function preventBack() { window.history.forward(); }
+    setTimeout("preventBack()", 0);
+    window.onunload = function () { null };
+</script>
+

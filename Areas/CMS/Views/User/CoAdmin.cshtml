@@ -1,0 +1,93 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.Helpers;
+@model  PagedList.IPagedList<AJSolutions.Areas.EMS.Models.EmployeeViewModel>
+@{
+    ViewBag.Title = "My Co-Admin";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+            <a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "ADI" })" class="btn btn-default btn-xs">Add New Co-Admin</a>
+        </div>
+        @if (Model != null)
+        {
+            if (Model.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border title-right">
+                        <h3>My Co-Admin</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Registered On
+                                </th>
+                                <th>
+                                    Last Logged In
+                                </th>
+
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Html.ActionLink(item.Name, "CoAdminProfile", "User", new { area = "CMS", UserId = item.UserId }, htmlAttributes: new { target = "_blank" })
+                                        @*@Html.DisplayFor(modelItem => item.Name)*@
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RegisteredOn)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LastLogin)
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-thumbs-down2"></i>
+                    </div>
+                    <h3>No Employees<span class="subtitle"></span></h3>
+                </div>
+            }
+        }
+
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Employees", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Employees", "User"));
+}
+
+<script>
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+</script>

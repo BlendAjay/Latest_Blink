@@ -1,0 +1,297 @@
+﻿@using AJSolutions.Models;
+@model EngagementTypeMaster
+@{
+    ViewBag.Title = "Add Engagement Type";
+    Layout = "~/Areas/CMS/Views/Shared/_LayoutNoHeaderNoFooter.cshtml";
+}
+
+@using (Html.BeginForm("AddEngagementType", "Employee", FormMethod.Post, new { area = "EMS", @class = "form-horizontal needs-validation", id = "AddEngagementType", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SchemeId", ViewBag.SchemeId as string);
+    @Html.Hidden("EngagementTypeId", ViewBag.EngagementTypeId as string);
+    @Html.Hidden("LeaveTypeId", ViewBag.LeaveTypeId as string);
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Add Engagement</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Add Engagement Type</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.EngagementType, "Leave Type")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-book2"> </i></span>
+                                @if (ViewBag.LeaveTypeId == "CL" || ViewBag.LeaveTypeId == "EL" || ViewBag.LeaveTypeId == "LW")
+                                {
+                                    @Html.EditorFor(model => model.EngagementType, new { htmlAttributes = new { @class = "form-control required", id = "LeaveTypeName", @Placeholder = "Casual Leave", @readonly = "readonly", required = "required" } })
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.EngagementType, new { htmlAttributes = new { @class = "form-control required", id = "LeaveTypeName", @Placeholder = "Casual Leave", required = "required" } })
+                                }
+                            </div>
+                            @Html.ValidationMessageFor(model => model.EngagementType, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.ShortName, "Short Name")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                                @Html.EditorFor(model => model.ShortName, new { htmlAttributes = new { @class = "form-control required", id = "ShortName", @Placeholder = "CL", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.ShortName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.LeaveLimit, "Max Limit")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                                @Html.DropDownList("limit", null, "--- Select Max Limit ---", htmlAttributes: new { @class = "form-control required", id = "limit", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.LeaveLimit, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.LeaveTypeCategory, "Leave Category")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                @if (ViewBag.LeaveTypeId == "CL" || ViewBag.LeaveTypeId == "EL" || ViewBag.LeaveTypeId == "LW")
+                                {
+                                    @Html.DropDownList("LeaveType", null, "--- Select Leave Category ---", htmlAttributes: new { @class = "form-control required", id = "LeaveTypeCategory", @disabled = "disabled", required = "required" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("LeaveType", null, "--- Select Leave Category ---", htmlAttributes: new { @class = "form-control required", id = "LeaveTypeCategory", required = "required" })
+                                }
+                            </div>
+                            @Html.ValidationMessageFor(model => model.LeaveTypeCategory, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.YearEndAction, "Year End Action")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-building"> </i></span>
+                                @Html.DropDownList("yearendactions", null, "--- Select Year End Action ---", htmlAttributes: new { @class = "form-control", id = "yearendactions" })
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div id="leavelimit">
+                                @Html.LabelFor(model => model.MaxLimit, "Leave Limit")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                    @Html.DropDownList("Maxlimit", null, "--- Select Leave Limit ---", htmlAttributes: new { @class = "form-control required", id = "Maxlimit", required = "required" })
+
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MaxLimit, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.EffectiveFrom, "Effective From")
+                            <div class="input-group divcenter travel-date-group">
+                                <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                <input type="text" value="@ViewBag.EffectiveFrom" class="form-control required past-enabled" placeholder="DD/MM/YYYY" id="EffectiveFrom" name="EffectiveFrom" required="required">
+                            </div>
+                            @Html.ValidationMessageFor(model => model.EffectiveFrom, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <input type="submit" value="Submit" style="float: right;" class="btn btn-primary" id="AddEngagementType" name="AddEngagementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("EngagementType", "Employee"), new { Area = "EMS" });
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('.travel-date-group .default').datepicker({
+            autoclose: true,
+            startDate: "today",
+        });
+
+        $('.travel-date-group .today').datepicker({
+            autoclose: true,
+            startDate: "today",
+            todayHighlight: true
+        });
+
+        $('.travel-date-group .past-enabled').datepicker({
+            format: "dd-mm-yyyy",
+            autoclose: true,
+        });
+        $('.travel-date-group .format').datepicker({
+            autoclose: true,
+            format: "dd-mm-yyyy",
+        });
+
+        $('.travel-date-group .autoclose').datepicker();
+
+        $('.travel-date-group .disabled-week').datepicker({
+            autoclose: true,
+            daysOfWeekDisabled: "0"
+        });
+
+        $('.travel-date-group .highlighted-week').datepicker({
+            autoclose: true,
+            daysOfWeekHighlighted: "0"
+        });
+
+        $('.travel-date-group .mnth').datepicker({
+            autoclose: true,
+            minViewMode: 1,
+            format: "mm/yy"
+        });
+
+        $('.travel-date-group .multidate').datepicker({
+            multidate: true,
+            multidateSeparator: " , "
+        });
+
+        $('.travel-date-group .input-daterange').datepicker({
+            autoclose: true
+        });
+
+        $('.travel-date-group .inline-calendar').datepicker();
+
+        $('.datetimepicker').datetimepicker({
+            format: 'DD/MM/YYYY h:mm A',
+            showClose: true
+        });
+
+        $('.datetimepicker1').datetimepicker({
+            //format: 'LT',
+            format: 'DD/MM/YYYY h:mm A',
+            showClose: true
+        });
+
+        $('.datetimepicker2').datetimepicker({
+            format: 'DD/MM/YYYY h:mm A',
+            inline: true,
+            sideBySide: true
+        });
+
+        $('.timepicker1').datetimepicker({
+            format: 'LT',
+            format: 'hh:mm A',
+            showClose: true
+        });
+    });
+
+
+</script>
+
+<script type="text/javascript">
+    $("#AddEngagementType").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/EngagementType",
+                data: {
+                    LeaveTypeName: $('#LeaveTypeName').val(),
+                    EffectiveFrom: $('#EffectiveFrom').val(),
+                    EngagementTypeId: $('#EngagementTypeId').val(),
+                    SchemeId: $('#SchemeId').val(),
+                    ShortName: $('#ShortName').val(),
+                    LeaveLimit: $('#limit').val(),
+                    YearEndAction: $('#yearendactions').val(),
+                    MaxLimit: $('#Maxlimit').val(),
+                    LeaveTypeId: $('#LeaveTypeId').val(),
+                    LeaveTypeCategory: $('#LeaveTypeCategory').val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    if (data) {
+                        SuccessAlert();
+                    }
+                    else {
+                        FailedAlert();
+                    }
+                }
+            });
+        }
+    });
+    function SuccessAlert() {
+        $.alert({
+            title: 'Cheers',
+            content: 'Leave Type saved <b> SUCCESSFULLY.</b>',
+            confirmButton: 'OK',
+            confirmButtonClass: 'btn btn-primary',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'zoom',
+            confirm: function () {
+                var url = $("#RedirectToHome").val();
+                location.href = url;
+            }
+        });
+    }
+    function FailedAlert() {
+        $.alert({
+            title: 'Cheers',
+            content: '<b>Failed </b>to save Engagement.',
+            confirmButton: 'OK',
+            confirmButtonClass: 'btn btn-primary',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'zoom',
+            confirm: function () {
+                var url = $("#RedirectToHome").val();
+                location.href = url;
+            }
+        });
+    }
+    $(document).ready(function () {
+        if ($('#yearendactions').val() != '' && $('#yearendactions').val() != "L")
+            $("#leavelimit").show();
+        else
+            $("#leavelimit").hide();
+
+    });
+    $('#yearendactions').on('change', function () {
+        if ($('#yearendactions').val() != '' && $('#yearendactions').val() != "L")
+            $("#leavelimit").show();
+        else
+            $("#leavelimit").hide();
+    });
+    $('#limit').on('change', function () {
+        var limit = $('#limit').val();
+        $.ajax({
+            type: "post",
+            url: "/EMS/Employee/Maxlimit",
+            data: { Limit: $('#limit').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var limitval = "<span class='input-group-addon'><i class='icon-calendar'> </i></span><select class='form-control required' id='Maxlimit'>";
+                limitval = limitval + '<option value="">--- Select Leave Limit ---</option>';
+                for (var i = 0; i <= limit; i++) {
+                    limitval = limitval + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                limitval = limitval + '</select>';
+                $('#Maxlimit').html(limitval);
+            }
+        });
+    });
+
+</script>

@@ -1,0 +1,58 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@model TopicMaster
+@{
+    TopicMaster topic = ViewData["TopicMaster"] as TopicMaster;
+    ViewBag.Title = "Topic Details";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("TopicDetails", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "TopicDetails", role = "form" }))
+{
+@Html.AntiForgeryToken()
+
+@Html.HiddenFor(model => model.TopicId)
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h4>Lecture Master</h4>
+                @Html.ActionLink("Edit", "TopicMaster", "Course", new { TopicId = topic.TopicId, UserAction = "Edit" }, htmlAttributes: new { target = "_blank", @class = "button button-3d button-rounded button-teal", @style = "float:right" })
+            </div>
+            <div class="row">
+
+                <div class="col_half">
+                    <b>Topic Id: </b>  <span class="badge" style="font-size:14px">@Html.DisplayFor(modelItem => topic.TopicId)@Html.HiddenFor(modelItem => topic.TopicId, htmlAttributes: new { Id = "TopicId" })</span>
+                    <br />
+                </div>
+                <div class="col_half col_last">
+                    <b>Topic Name: </b>  <span class="badge" style="font-size:14px">@Html.DisplayFor(modelItem => topic.TopicId)</span>
+                    <br />
+                </div>
+                <div class="col_full">
+                    <b>Topic Description: </b>
+                    <br />
+                    @*@Html.DisplayFor(modelItem => topic.TopicDescription)*@
+                    @Html.Raw(topic.TopicDescription.Replace("&nbsp;", " "))
+                    <br>
+                </div>
+            </div>
+            @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+            @Html.Hidden("CorporateProfile", ViewBag.CorporateProfile as string)
+
+        </div>
+    </div>
+    <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+              <!-- JEResponsive -->
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-6029014565691295"
+                   data-ad-slot="6109277368"
+                   data-ad-format="auto"></ins>
+              <script>
+                  (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
+    </center>
+</div>
+<br /><br />
+
+}
+

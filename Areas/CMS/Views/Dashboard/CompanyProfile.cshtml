@@ -1,0 +1,276 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model AJSolutions.Models.CompanyProfile
+@{
+    ViewBag.Title = "Company Profile";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    IEnumerable<AddressViewModel> addresses = ViewData["AddressList"] as IEnumerable<AddressViewModel>;
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("CompanyProfile", "Dashboard", FormMethod.Post, new { @area = "CMS", @class = "needs-validation", id = "CompanyProfile", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    var module = ViewBag.Id as string;
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Company Profile</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Company Profile</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.CompanyName, "Company Name")<small>*</small>
+                            @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control required", id = "CompanyName", placeholder = "e.g. xyz", required = "required" } })
+
+                            @Html.ValidationMessageFor(model => model.CompanyName, "", new { @class = "text-danger" })
+                            <br />
+                            @Html.LabelFor(model => model.Website, "Website")
+                            @if (Model != null)
+                            {
+                                if (!string.IsNullOrEmpty(Model.Website))
+                                {
+                                    <small style="float:right"><a href="@Global.ExternalLink(Model.Website)" target="_blank">Open Url</a></small>
+                                }
+                            }
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                                @Html.EditorFor(model => model.Website, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. http://www.xyz.in " } })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Website, "", new { @class = "text-danger" })
+                            <br />
+                            @Html.LabelFor(model => model.CompanySize, "Company Size")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-bucket"> </i></span>
+                                @Html.DropDownList("CompanySize", null, " --- Select Company Size ---", htmlAttributes: new { @class = "form-control required", @id = "CompanySize", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CompanySize, "", new { @class = "text-danger" })
+                            <br />
+                            @if (user.UserId == user.SubscriberId && user.DepartmentId == "ADI")
+                            {
+                                @Html.LabelFor(model => model.EmployeeStateInsurance, "Employee State Insurance")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-line2-home"> </i></span>
+                                    @Html.EditorFor(model => model.EmployeeStateInsurance, new { htmlAttributes = new { @class = "form-control", id = "EmployeeStateInsurance", placeholder = "e.g. xyz" } })
+
+                                </div>
+                                @Html.ValidationMessageFor(model => model.EmployeeStateInsurance, "", new { @class = "text-danger" })
+                            }
+
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+
+                            @Html.LabelFor(model => model.TaxDeductionAccNo, "Tax Deduction Account No")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-home"> </i></span>
+                                @Html.EditorFor(model => model.TaxDeductionAccNo, new { htmlAttributes = new { @class = "form-control required", id = "TaxDeductionAccNo", placeholder = "e.g.19214420740954785" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.TaxDeductionAccNo, "", new { @class = "text-danger" })
+                            <br />
+                            @Html.LabelFor(model => model.PANCardNo, "PAN Card No")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-home"> </i></span>
+                                @Html.EditorFor(model => model.PANCardNo, new { htmlAttributes = new { @class = "form-control required", id = "PANCardNo", placeholder = "e.g. xyz", required = "required" } })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PANCardNo, "", new { @class = "text-danger" })
+                            <br />
+                            @if (user.UserId == user.SubscriberId && user.DepartmentId == "ADI")
+                            {
+                                @Html.LabelFor(model => model.ProvidentFund, "Provident Fund")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-line2-home"> </i></span>
+                                    @Html.EditorFor(model => model.ProvidentFund, new { htmlAttributes = new { @class = "form-control", id = "ProvidentFund", placeholder = "e.g. KX/XXX/1921442/074/0954785" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ProvidentFund, "", new { @class = "text-danger" })
+                            }<br />
+                            @Html.LabelFor(model => model.GSTTax, "GST Tax")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line2-home"> </i></span>
+                                @Html.EditorFor(model => model.GSTTax, new { htmlAttributes = new { @class = "form-control required", id = "GSTTax", placeholder = "e.g. KX/XXX/1921442/074/0954785", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.GSTTax, "", new { @class = "text-danger" })
+                            <br />
+                            <input type="submit" value="Submit" id="comapanydetails" name="comapanydetails" style="float: right;" class="btn btn-primary" />
+                        </div>
+                    </div>
+
+                    @if (user.UserId != user.SubscriberId && user.DepartmentId == "ADI")
+                    {
+                        <div class="fancy-title title-bottom-border">
+                            <h4>Company Address</h4>
+                        </div>
+                        <div class="container">
+                            @foreach (var item in addresses)
+                            {
+                                if (item.AddressType == "CM")
+                                {
+                                    <div class="row">
+                                        <div class="panel panel-danger">
+                                            @if (Model != null)
+                                            {
+                                                <div class="panel-heading">@Model.CompanyName</div>
+                                            }
+                                            <ul class="iconlist nobottommargin">
+                                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                                {
+                                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                                }
+                                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                                <li>
+                                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                                    {<i> - </i> @item.PostalCode}
+                                                </li>
+                                                @if (!string.IsNullOrEmpty(item.FaxNo))
+                                                {
+                                                    <li><i class="icon-printer"></i> @item.FaxNo</li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+
+                    <div class="col_full">
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("CompanyProfile", "Dashboard"));
+
+}
+<script type="text/javascript">
+
+    $("#CompanyProfile").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+@*<script type="text/javascript">
+        $('#comapanydetails').click(function (e) {
+            e.preventDefault();
+
+            if ($("#CompanyName").val() == undefined || $('#CompanyName').val() == '') {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Company Name</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#CompanyName").focus();
+                return false;
+            }
+            if ($("#CompanyType :selected").val() == undefined || $('#CompanyType :selected').val() == '' || $('#CompanyType :selected').val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Company Type</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#CompanyType").focus();
+                return false;
+            }
+            if ($("#CompanySize :selected").val() == undefined || $('#CompanySize :selected').val() == '' || $('#CompanySize :selected').val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Company Size</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#CompanySize").focus();
+                return false;
+            }
+
+            $('#CompanyProfile').submit();
+        });
+
+
+        $(document).ready(function () {
+
+            if ($('#SaveStatus').val() == "Succeeded") {
+
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+            }
+
+        });
+
+    </script>*@

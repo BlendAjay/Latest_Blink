@@ -1,0 +1,278 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.CourseBatchViewModel
+@{
+    ViewBag.Title = "Add Batch";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+@using (Html.BeginForm("CourseBatch", "TMS", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "CourseBatch", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-process"></div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Batches</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Add New Batch</h5>
+                <div class="card-body">
+                    @Html.Hidden("BatchId", ViewBag.BatchId as string)
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <label>Batch Name<small>*</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                            @Html.EditorFor(model => model.BatchName, new { htmlAttributes = new { @class = "form-control required", placeholder = "Enter Batch Name", id = "BatchName", required = "required" } })
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <label>Course<small>*</small></label>
+                        <small style="float:right"><a href="@Url.Action("CourseMasters", "TMS", new { Area = "TMS" })" target="_blank">Add Sector</a></small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                            @Html.DropDownList("CourseCode", null, "--- Select Course ---", htmlAttributes: new { @class = "form-control required ", id = "CourseCode", @disabled = "disabled", required = "required" })
+
+                        </div>
+                    </div><br />
+                    <div class="row">
+                        <h5 class="card-header">Schedule</h5>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 travel-date-group">
+                            <label>Batch Schedule</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                <input type="text" class="form-control daterange2" value="@ViewBag.Schedule" id="Schedule" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.CountryId, "Select Country")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("CountryId", null, "---  Select Country ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Country", id = "CountryId", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+                            <br>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.StateId, "Select State")<small>*</small>
+                            <div class="input-group divcenter" id="State">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("StateId", null, "---  Select State ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select State", id = "StateId", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                            <br>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.CityId, "Select City")<small>*</small>
+                            <div class="input-group divcenter" id="City">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("CityId", null, "---  Select City ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select City", id = "CityId", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+                            <br>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="row">
+                        <h5 class="card-header">Feedback Link <small> (If Any)</small></h5>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.FeedbackLink, new { htmlAttributes = new { @class = "form-control ", id = "FeedbackLink", placeholder = "Enter Feedback Link" } })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h5 class="card-header">Content Link <small> (If Any)</small></h5>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.ContentLink, new { htmlAttributes = new { @class = "form-control ", id = "ContentLink", placeholder = "Enter Content Link" } })
+                        </div>
+                    </div>
+
+                    <h5 class="card-header">Content Availability</h5><br />
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Content Availability to Candidates<small>*</small></label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-list-ul"> </i></span>
+                                @Html.DropDownList("ContentAvailability", null, "--- Select  ---", htmlAttributes: new { @class = "form-control required ", id = "ContentAvailability", required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Available Till </label>
+                            <div class="input-group divcenter travel-date-group">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                <input type="text" value="@ViewBag.AvailableTillDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="AvailableTillDate" name="AvailableTillDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelFor(model => model.AttendenceNeeded, "Attendance Needed ?", htmlAttributes: new { @class = "control-label" })</td>
+                                        <td>
+                                            @Html.CheckBoxFor(model => model.AttendenceNeeded, htmlAttributes: new { @class = "checkbox", @id = "chkAttandence" })
+                                            @Html.ValidationMessageFor(model => model.AttendenceNeeded, "", new { @class = "text-danger" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelFor(model => model.AccomondationNeeded, "Accommodation Needed ?", htmlAttributes: new { @class = "control-label" })</td>
+                                        <td>
+                                            @Html.CheckBoxFor(model => model.AccomondationNeeded, htmlAttributes: new { @class = "checkbox", @id = "chkAcomodation" })
+                                            @Html.ValidationMessageFor(model => model.AccomondationNeeded, "", new { @class = "text-danger" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" id="active_sub" style="display: none">
+                            <label>Warden</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                                @Html.DropDownList("WardenId", null, "--- Select Warden ---", htmlAttributes: new { @class = "form-control ", id = "WardenId" })
+                            </div>
+
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <br /><input type="submit" value="Submit" style="float: right;" class="btn btn-primary" id="SubmitForm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("CourseBatch", "TMS"));
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#CountryId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control' id='StateId'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#State').html(state);
+                }
+            });
+        });
+    });
+
+    $('#State').change(function () {
+        $('#SelState').val($('#StateId').val());
+        $.ajax({
+            type: "post",
+            url: "/TMS/TMS/GetCity",
+            data: { StateId: $('#StateId').val() },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control' id='CityId'>";
+                city = city + '<option value="">--- Select City ---</option>';
+                for (var i = 0; i < data.length; i++) {
+                    city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                }
+                city = city + '</select>';
+                $('#City').html(city);
+            }
+        });
+    });
+
+    $(document).ready(function () {
+
+        if ($('#chkAcomodation').is(":checked")) {
+            var dvWarden = document.getElementById("active_sub");
+            dvWarden.style.display = "block";
+        }
+
+        $('#chkAcomodation').change(function () {
+            //alert($('#chkAcomodation').is(":checked"));
+            var dvWarden = document.getElementById("active_sub");
+            dvWarden.style.display = $('#chkAcomodation').is(":checked") ? "block" : "none";
+        });
+
+        //$('#chkAcomodation').click(function () {
+        //    //alert($('#chkAcomodation').is(":checked"));
+        //    var dvWarden = document.getElementById("active_sub");
+        //    dvWarden.style.display = $('#chkAcomodation').is(":checked") ? "block" : "none";
+        //});
+    })
+
+    $("#CourseBatch").validate({
+
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/CourseBatch",
+                data: {
+                    CourseCode: $('#CourseCode').val(),
+                    batchId: $('#BatchId').val(),
+                    BatchName: $('#BatchName').val(),
+                    ContentAvailability: $('#ContentAvailability').val(),
+                    AvailableTillDate: $('#AvailableTillDate').val(),
+                    AccomondationNeeded: $('#chkAcomodation').is(":checked"),
+                    AttendenceNeeded: $('#chkAttandence').is(":checked"),
+                    WardenId: $('#WardenId').val(),
+                    Schedule: $('#Schedule').val(),
+                    CountryId: $('#CountryId').val(),
+                    StateId: $('#StateId').val(),
+                    CityId: $('#CityId').val(),
+                    FeedbackLink: $('#FeedbackLink').val(),
+                    ContentLink: $('#ContentLink').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Batch Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>

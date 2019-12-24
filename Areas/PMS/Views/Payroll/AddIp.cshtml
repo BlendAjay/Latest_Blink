@@ -1,0 +1,344 @@
+﻿@using AJSolutions.Models;
+@model IpMasters
+@{
+    ViewBag.Title = "AddIp";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    List<AJSolutions.Models.BranchLocationView> ip = ViewData["Ip"] as List<AJSolutions.Models.BranchLocationView>;
+}
+@using (Html.BeginForm("AddIp", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "AddIp", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("UserId", user.UserId as string)
+    @Html.Hidden("SaveStatus", ViewBag.Data as string)
+    @Html.Hidden("Result", ViewBag.Result as string)
+    if (Model != null)
+    {
+        @Html.Hidden("IpId", Model.IpId)
+    }
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class=" row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Work Location IP / Latitude & Longitude for Attendance</h4>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.BranchId, "Work Location")<small>*</small>
+
+                    @Html.DropDownList("BranchId", null, "---Select Work Location ---", htmlAttributes: new { id = "BranchId", @class = "form-control required" })
+
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Authenticate, "Authentication")<small>*</small>
+
+                    @Html.DropDownList("Authenticate", null, "---Select Authentication Type ---", htmlAttributes: new { id = "Authenticate", @class = "form-control required" })
+
+                </div>
+                <div id="IPRange" class="col_full">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.IPAddressFrom, "IP Address 1")<small>*</small>
+                        <div class="input-group divcenter form-control">
+                            <input type="text" id="first" value="@ViewBag.ips1" name="first" size="4" onkeyup="movetoNext(this, 'second')" maxlength="3" />
+                            <input type="text" id="second" value="@ViewBag.ips2" name="second" size="4" onkeyup="movetoNext(this, 'third')" maxlength="3" />
+                            <input type="text" id="third" value="@ViewBag.ips3" name="third" size="4" onkeyup="movetoNext(this, 'forth')" maxlength="3" />
+                            <input type="text" id="forth" value="@ViewBag.ips4" name="forth" size="5" maxlength="3" />
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IPAddressFrom, "", new { @class = "text-danger" })
+
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.IPAddressTo, "IP Address 2")<small>*</small>
+                        <div class="input-group divcenter form-control">
+                            <input type="text" id="ipsTo1" value="@ViewBag.ipsTo1" name="ipsTo1" size="4" onkeyup="movetoNext(this, 'ipsTo2')" maxlength="3" />
+                            <input type="text" id="ipsTo2" value="@ViewBag.ipsTo2" name="ipsTo2" size="4" onkeyup="movetoNext(this, 'ipsTo3')" maxlength="3" />
+                            <input type="text" id="ipsTo3" value="@ViewBag.ipsTo3" name="ipsTo3" size="4" onkeyup="movetoNext(this, 'ipsTo4')" maxlength="3" />
+                            <input type="text" id="ipsTo4" value="@ViewBag.ipsTo4" name="ipsTo4" size="5" maxlength="3" />
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IPAddressFrom, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+                <div id="LatLong" class="col_full">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.LatitudeFrom, "Latitude From")<small>*</small>
+
+                        @Html.EditorFor(model => model.LatitudeFrom, new { htmlAttributes = new { @class = "form-control", id = "LatitudeFrom", placeholder = "Latitude Range From" } })
+
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.LatitudeTo, "Latitude To")<small>*</small>
+
+                        @Html.EditorFor(model => model.LatitudeTo, new { htmlAttributes = new { @class = "form-control", id = "LatitudeTo", placeholder = "Latitude Range To" } })
+
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.LongitudeFrom, "Longitude From")<small>*</small>
+
+                        @Html.EditorFor(model => model.LongitudeFrom, new { htmlAttributes = new { @class = "form-control", id = "LongitudeFrom", placeholder = "Longitude Range From" } })
+
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.LongitudeTo, "Longitude To")<small>*</small>
+
+                        @Html.EditorFor(model => model.LongitudeTo, new { htmlAttributes = new { @class = "form-control", id = "LongitudeTo", placeholder = "Longitude Range To" } })
+
+                    </div>
+                </div>
+                <div class="col_full">
+                    <br />
+                    <input type="submit" id="AddIp" value="Submit" class="button button-3d button-rounded button-teal" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Brach Name</th>
+                        <th>Authentication</th>
+                        <th>Ip Address 1</th>
+                        <th>Ip Address 2</th>
+                        <th>Latitude From</th>
+                        <th>Latitude To</th>
+                        <th>Longitude From</th>
+                        <th>Longitude To</th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (ip != null)
+                    {
+                        foreach (var item in ip)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(modelItem => item.BranchId)
+                                    @Html.HiddenFor(modelItem => item.Authenticate)
+                                    @Html.DisplayFor(modelItem => item.BranchName)
+                                </td>
+                                <td>
+                                    @if (item.Authenticate == 1)
+                                    {
+                                        <span>Static IP Based Authentication</span>
+                                    }
+                                    else if (item.Authenticate == 2)
+                                    {
+                                        <span>
+                                            Office Premises Based Authentication
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Static IP & Office Premises Based Authentication
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.IPAddressFrom)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.IPAddressTo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LatitudeFrom)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LatitudeTo)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LongitudeFrom)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LongitudeTo)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "AddIp", "Payroll", new { area = "PMS", IpId = item.IpId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "AddIp", "Payroll", new { area = "PMS", IpId = item.IpId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("AddIp", "Payroll", new { area = "PMS" }));
+}
+<script type="text/javascript">
+    function movetoNext(current, nextFieldID) {
+        if (current.value.length >= current.maxLength) {
+            document.getElementById(nextFieldID).focus();
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#IPRange").hide();
+        $("#LatLong").hide();
+
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Ip has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+    $("#Authenticate").change(function () {
+
+
+        if ($("#Authenticate :selected").val() == 1) {
+            $("#IPRange").show();
+            $("#LatLong").hide();
+
+        }
+        else if ($("#Authenticate :selected").val() == 2) {
+            $("#IPRange").hide();
+            $("#LatLong").show();
+        }
+        else {
+            $("#IPRange").show();
+            $("#LatLong").show();
+        }
+    })
+
+
+
+    $("#AddIp").validate({
+        submitHandler: function (form) {
+
+
+            if ($("#Authenticate :selected").val() == 1 && ($("#first").val() == "" || $("#first").val() == null || $("#second").val() == "" || $("#second").val() == null
+                || $("#third").val() == "" || $("#third").val() == null || $("#forth").val() == "" || $("#forth").val() == null || $("#ipsTo1").val() == "" || $("#ipsTo1").val() == null
+                || $("#ipsTo2").val() == "" || $("#ipsTo2").val() == null || $("#ipsTo3").val() == "" || $("#ipsTo3").val() == null || $("#ipsTo4").val() == "" || $("#ipsTo4").val() == null
+                )) {
+
+
+                $.alert({
+                    title: 'Warning',
+                    content: 'Please provide full IP Range',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-down fa-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+            else if ($("#Authenticate :selected").val() == 2 && ($("#LatitudeFrom").val() == "" || $("#LatitudeFrom").val() == null || $("#LatitudeTo").val() == "" || $("#LatitudeTo").val() == null
+                || $("#LongitudeFrom").val() == "" || $("#LongitudeFrom").val() == null || $("#LongitudeTo").val() == "" || $("#LongitudeTo").val() == null)) {
+
+
+                $.alert({
+                    title: 'Warning',
+                    content: 'Please provide full Latitude & Longitude Range',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-down fa-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+
+            }
+            else if ($("#Authenticate :selected").val() == 3) {
+
+                if (($("#first").val() == "" || $("#first").val() == null || $("#second").val() == "" || $("#second").val() == null
+              || $("#third").val() == "" || $("#third").val() == null || $("#forth").val() == "" || $("#forth").val() == null || $("#ipsTo1").val() == "" || $("#ipsTo1").val() == null
+              || $("#ipsTo2").val() == "" || $("#ipsTo2").val() == null || $("#ipsTo3").val() == "" || $("#ipsTo3").val() == null || $("#ipsTo4").val() == "" || $("#ipsTo4").val() == null
+              )) {
+
+                    $.alert({
+                        title: 'Warning',
+                        content: 'Please provide full IP Range',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+
+                        }
+                    });
+                    return false;
+                }
+                else if (($("#LatitudeFrom").val() == "" || $("#LatitudeFrom").val() == null || $("#LatitudeTo").val() == "" || $("#LatitudeTo").val() == null
+                || $("#LongitudeFrom").val() == "" || $("#LongitudeFrom").val() == null || $("#LongitudeTo").val() == "" || $("#LongitudeTo").val() == null)) {
+
+                    $.alert({
+                        title: 'Warning',
+                        content: 'Please provide full Latitude & Longitude Range',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+
+                        }
+                    });
+                    return false;
+
+                }
+            }
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/AddIp",
+                data: {
+                    WorkLocation: $("#BranchId :selected").val(),
+                    Authenticate: $("#Authenticate :selected").val(),
+                    firstIp: $('#first').val(),
+                    thirdIp: $('#third').val(),
+                    forthIp: $('#forth').val(),
+                    ipsTo1: $('#ipsTo1').val(),
+                    ipsTo2: $('#ipsTo2').val(),
+                    ipsTo3: $('#ipsTo3').val(),
+                    ipsTo4: $('#ipsTo4').val(),
+                    UserId: $('#UserId').val(),
+                    LatitudeFrom: $('#LatitudeFrom').val(),
+                    LatitudeTo: $('#LatitudeTo').val(),
+                    LongitudeFrom: $('#LongitudeFrom').val(),
+                    LongitudeTo: $('#LongitudeTo').val(),
+                    IpId: $('#IpId').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: ' Your Ip Address Saved<b> Successfully.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>

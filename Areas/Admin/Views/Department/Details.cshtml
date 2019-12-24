@@ -1,0 +1,32 @@
+﻿@model AJSolutions.Models.DepartmentMaster
+
+@{
+    ViewBag.Title = "Details";
+}
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h3>Department Details</h3>
+            </div>
+            <div class="col_half">
+                <b>@Html.DisplayNameFor(model => model.DepartmentId)</b>
+                @Html.DisplayFor(model => model.DepartmentId)
+                <br />
+                <b>  @Html.DisplayNameFor(model => model.Department)</b>
+                @Html.DisplayFor(model => model.Department)
+            </div>
+            <div class="col_half col_last">
+                <b> @Html.DisplayNameFor(model => model.RoleId)</b>
+                @Html.DisplayFor(model => model.RoleId)
+                <br />
+                <b>@Html.DisplayNameFor(model => model.IsVisible)</b>
+                @Html.DisplayFor(model => model.IsVisible)
+            </div>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.DepartmentId }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+</div>

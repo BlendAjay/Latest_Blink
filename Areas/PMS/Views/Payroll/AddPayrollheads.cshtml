@@ -1,0 +1,234 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model PayrollHeads
+@{
+    ViewBag.Title = "Add Payroll heads";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    List<AJSolutions.Models.PayrollHeads> payrollHeads = ViewData["AllPayrollHeads"] as List<AJSolutions.Models.PayrollHeads>;
+}
+@using (Html.BeginForm("AddPayrollheads", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "AddPayrollheads", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Data as string)
+    @Html.Hidden("Result", ViewBag.Result as string)
+    if (Model != null)
+    {
+        @Html.Hidden("PayrollHeadID", Model.PayrollHeadID)
+    }
+    else
+    {
+        @Html.Hidden("PayrollHeadID", 0)
+    }
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class=" row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Payroll Heads</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.HeadName, "Head Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                        @Html.EditorFor(model => model.HeadName, new { htmlAttributes = new { @class = "form-control required", id = "HeadName", placeholder = "e.g. General" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.HeadName, "", new { @class = "text-danger" })
+                    <br /><br />
+
+
+                    @Html.LabelFor(model => model.DefaultPercentage, "DefaultPercentage")<small>*</small>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="icon-clock"></i></span>
+                        @Html.DropDownList("Marks", null, "--- Select Default Percentage ---", htmlAttributes: new { @class = "form-control required ", id = "Marks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DefaultPercentage, "", new { @class = "text-danger" })
+                    <br /><br />
+
+
+                    @Html.LabelFor(model => model.Category, "Category")<small>*</small>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="icon-clock"></i></span>
+                        @Html.DropDownList("PayrollCategory", null, "--- Select Category ---", htmlAttributes: new { @class = "form-control required ", id = "PayrollCategory" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                    <br /><br />
+
+                    @Html.LabelFor(model => model.MaxLimit, "Max Limit")
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="icon-clock"></i></span>
+                        @Html.EditorFor(model => model.MaxLimit, new { htmlAttributes = new { @class = "form-control", id = "MaxLimit", placeholder = "e.g. MaxLimit" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaxLimit, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.Period, "Period")<small>*</small>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="icon-clock"></i></span>
+                        @Html.DropDownList("PeriodFrequencyStatus", null, "--- Select Period ---", htmlAttributes: new { @class = "form-control required ", id = "PeriodFrequencyStatus" })
+                    </div>
+                    <br /><br />
+
+
+                    @Html.LabelFor(model => model.TaxExemption, "Tax Exemption")
+                    @Html.EditorFor(model => model.TaxExemption, new { htmlAttributes = new { @class = "form-control", id = "TaxExemption", name = "TaxExemption" } })
+
+                    @Html.ValidationMessageFor(model => model.TaxExemption, "", new { @class = "text-danger" })
+                    <br /><br />
+
+
+                    @Html.LabelFor(model => model.AvailableByDefault, "Available By Default")
+                    @*@if (Model.AvailableByDefault)
+                    {
+                        <input type="checkbox" class="form-control" id="AvailableByDefault" name="AvailableByDefault" checked ="checked" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="form-control" id="AvailableByDefault" name="AvailableByDefault" />
+                    }*@
+                           @Html.EditorFor(model => model.AvailableByDefault, new { htmlAttributes = new { @class = "form-control", id = "AvailableByDefault", name = "AvailableByDefault" } })
+                           @Html.ValidationMessageFor(model => model.AvailableByDefault, "", new { @class = "text-danger" })<br /><br /><br /><br />
+                    <input type="submit" id="AddPayroll" value="Submit" class="button button-3d button-rounded button-teal trigh" />
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>HeadName</th>
+                        <th>Category</th>
+                        <th>Default Percentage</th>
+                        <th>MaxLimit</th>
+                        <th>Period</th>
+                        <th>Tax Exemption</th>
+                        <th>Available ByDefault</th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (payrollHeads != null)
+                    {
+                        foreach (var item in payrollHeads)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.HeadName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Category)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DefaultPercentage)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MaxLimit)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Period)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TaxExemption)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.AvailableByDefault)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "AddPayrollheads", "Payroll", new { area = "PMS", PayrollHeadID = item.PayrollHeadID, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "AddPayrollheads", "Payroll", new { area = "PMS", PayrollHeadID = item.PayrollHeadID, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("AddPayrollheads", "Payroll", new { area = "PMS" }));
+}
+<script>
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Payrollhead has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    $("#AddPayrollheads").validate({
+        submitHandler: function (form) {
+            var maxlimit = 0;
+
+            if($('#MaxLimit').val() != '' && $('#MaxLimit').val() != null )
+            {
+                maxlimit = $('#MaxLimit').val();
+            }
+           
+            $('.form-process').fadeIn();
+            $(form).ajaxSubmit({
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: ' Your Payroll head Added<b> Successfully.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+            //$.ajax({
+            //    type: "post",
+            //    url: "/PMS/Payroll/AddPayrollheads",
+            //    data: {
+            //        HeadName: $('#HeadName').val(),                  
+            //        Category: $('#PayrollCategory :selected').val(),
+            //        MaxLimit: maxlimit,
+            //        Period: $('#PeriodFrequencyStatus :selected').val(),
+            //        TaxExemption: $('input[name="TaxExemption"]:checked').val(),
+            //        AvailableByDefault: $('input[name="AvailableByDefault"]:checked').val(),
+            //        PayrollHeadID: $('#PayrollHeadID').val(),
+            //        DefaultPercentage: $('#Marks').val()
+            //    },
+            //    datatype: "json",
+            //    traditional: true,
+            //    success: function (data) {
+            //        $('.form-process').fadeOut()
+            //        $.alert({
+            //            title: 'Cheers',
+            //            content: ' Your Payroll head Added<b> Successfully.</b>',
+            //            confirmButton: 'OK',
+            //            confirmButtonClass: 'btn btn-primary',
+            //            icon: 'fa fa-thumbs-up fa-2x',
+            //            animation: 'zoom',
+            //            confirm: function () {
+            //                var url = $("#RedirectToHome").val();
+            //                location.href = url;
+            //            }
+            //        });
+            //    }
+            //});
+        }
+    });
+</script>

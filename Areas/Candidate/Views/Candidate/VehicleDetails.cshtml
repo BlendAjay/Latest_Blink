@@ -1,0 +1,230 @@
+﻿@model AJSolutions.Models.UserVehicleDetails
+@{
+    ViewBag.Title = "Vehicle Details";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("VehicleDetails", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "VehicleDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="container">
+
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Vehicle Details</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.DrivingLicence, "Driving Licence")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-caret-down"> </i></span>
+                        @Html.EditorFor(model => model.DrivingLicence, new { htmlAttributes = new { @class = "sm-form-control required", id = "DrivingLicence", placeholder = "Driving Licence" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DrivingLicence, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.VehicleNumber, "Vehicle Number")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list"> </i></span>
+                        @Html.EditorFor(model => model.VehicleNumber, new { htmlAttributes = new { @class = "sm-form-control required", id = "VehicleNumber", placeholder = "Vehicle Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleNumber, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.VehicleOwner, "Vehicle Owner")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                        @Html.EditorFor(model => model.VehicleOwner, new { htmlAttributes = new { @class = "sm-form-control required", id = "VehicleOwner", placeholder = "Vehicle Owner" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleOwner, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.VehicleType, "Vehicle Type")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-alt"> </i></span>
+                        @Html.EditorFor(model => model.VehicleType, new { htmlAttributes = new { @class = "sm-form-control required", placeholder = "Vehicle Type", id = "VehicleType" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.VehicleType, "", new { @class = "text-danger" })
+                    <br>
+                    <input type="submit" id="vehicledetails" value="Save" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>             
+            </div>
+        </div>
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("VehicleDetails", "Candidate"));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    In this page candidates are able to add their vehicle details.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/vechilecandidate.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/vechilecandidate.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+    $("#VehicleDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+@*<script type="text/javascript">
+    $('#vehicledetails').click(function (e) {
+        e.preventDefault();
+
+        if ($("#DrivingLicence").val() == undefined || $('#DrivingLicence').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Driving Licence</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#DrivingLicence").focus();
+            return false;
+        }
+        if ($("#VehicleNumber").val() == undefined || $('#VehicleNumber').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Vehicle Number</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#VehicleNumber").focus();
+            return false;
+        }
+        if ($("#VehicleOwner").val() == undefined || $('#VehicleOwner').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Vehicle Owner</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#VehicleOwner").focus();
+            return false;
+        }
+        if ($("#VehicleType").val() == undefined || $('#VehicleType').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Vehicle Type</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#VehicleType").focus();
+            return false;
+        }
+        $('#VehicleDetails').submit();
+    });
+
+
+
+    $(document).ready(function () {
+
+        if ($('#SaveStatus').val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+
+    });
+
+</script>*@

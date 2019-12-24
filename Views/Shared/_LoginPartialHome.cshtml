@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        if (ViewBag.UserRole == "Client")
+        {
+            if (ViewBag.DeptId.ToUpper() == "CLI")
+            {
+                <ul class="nav-menu">
+                    <li class="current">
+                        <a href="@Url.Action("Client", "Dashboard", new { Area = "CMS" })"><div>My Home</div></a>
+                    </li>
+                    <li class="current">
+                        <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                    </li>
+                </ul>
+            }
+            else if (ViewBag.DeptId.ToUpper() == "BPT")
+            {
+                <ul class="nav-menu">
+                    <li class="current">
+                        <a href="@Url.Action("Partner", "Dashboard", new { Area = "CMS" })"><div>My Home</div></a>
+                    </li>
+                    <li class="current">
+                        <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                    </li>
+                </ul>
+            }
+        }
+        else if (ViewBag.UserRole == "Admin")
+        {
+            <ul class="nav-menu">
+                <li class="current"><a href="@Url.Action("Index", "Dashboard", new { Area = "CMS" })"><div>My Home</div></a></li>
+                <li class="current">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                </li>
+            </ul>
+        }
+        else if (ViewBag.UserRole == "Employee")
+        {
+            <ul class="nav-menu">
+                <li class="current">
+                    <a href="@Url.Action("Index", "Dashboard", new { Area = "EMS" })"><div>My Home</div></a>
+                </li>
+                <li class="current">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                </li>
+            </ul>
+        }
+        else if (ViewBag.UserRole == "Candidate")
+        {
+            <ul class="nav-menu">
+                <li class="current">
+                    <a href="@Url.Action("Index", "Dashboard", new { Area = "Candidate" })"><div>My Home</div></a>
+                </li>
+                <li class="current">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                </li>
+            </ul>
+        }
+        else if (ViewBag.UserRole == "Administrator")
+        {
+            <ul class="nav-menu">
+                <li class="current">
+                    <a href="@Url.Action("Index", "Admin", new { Area = "Admin" })" class="current"><div>My Home</div></a>
+                </li>
+                <li class="current">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                </li>
+            </ul>
+        }
+        else
+        {
+            <ul class="nav-menu">
+                <li class="current">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" class="current">Log off</a>
+                </li>
+            </ul>
+        }
+
+    }
+}
+else
+{
+    <ul class="nav-menu">
+        <li class="current"><a href="@Url.Action("Index", "Home", new { area = ""})" title="Home"><div><i class="fa fa-home fa-2x"></i></div></a></li>
+        <li class="buy-tickets">
+            <a href="@Url.Action("Login", "Account", new { area = "" })" title="LogIn"><div><i class="fa fa-power-off fa-2x"></i></div></a>
+        </li>
+    </ul>
+}

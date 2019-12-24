@@ -1,0 +1,95 @@
+﻿@using AJSolutions.Areas.Admin.Models
+@model GetAllTypeUserCount
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Index", "Dashboard", FormMethod.Post, new { area = "Admin", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+
+    <section id="content">
+        <div class="content-wrap">
+            <div class="container clearfix">
+
+                <div class="row clearfix">
+
+                    <div class="col_one_fifth nobottommargin center" style="background-color: #eeeeee;">
+                        <a href=@Url.Action("Admins", "Admin", new { Area = "Admin" }) />
+                        <div class="counter counter-large" style="color: green;"><span data-from="100" data-to="@Model.TOTALADMIN" data-refresh-interval="50" data-speed="2000"></span></div>
+                        <h5>SUBSCRIBERS</h5>
+                    </div>
+
+                    <div class="col_one_fifth nobottommargin center" style="background-color: #eeeeee;">
+                        <a href=@Url.Action("Clients", "Admin", new { Area = "Admin" }) />
+                        <div class="counter counter-large" style="color: #e74c3c;"><span data-from="100" data-to="@Model.TOTALCLIENT" data-refresh-interval="50" data-speed="2500"></span></div>
+                        <h5>CLIENTS</h5>
+                    </div>
+
+                    <div class="col_one_fifth nobottommargin center" style="background-color: #eeeeee;">
+                        <a href=@Url.Action("Employees", "Admin", new { Area = "Admin" }) />
+                        <div class="counter counter-large" style="color: #3498db;"><span data-from="100" data-to="@Model.TOTALEMPLOYEE" data-refresh-interval="50" data-speed="2500"></span></div>
+                        <h5>EMPLOYEES</h5>
+                    </div>
+
+                    <div class="col_one_fifth nobottommargin center" style="background-color: #eeeeee;">
+                        <a href=@Url.Action("ThirdParty", "Admin", new { Area = "Admin" }) />
+                        <div class="counter counter-large" style="color: #f0ad4e;"><span data-from="100" data-to="@Model.TOTALVENDOR" data-refresh-interval="30" data-speed="2500"></span></div>
+                        <h5>VENDORS</h5>
+                    </div>
+
+                    <div class="col_one_fifth nobottommargin center col_last" style="background-color: #eeeeee;">
+                        <a href=@Url.Action("Candidates", "Admin", new { Area = "Admin" }) />
+                        <div class="counter counter-large" style="color: #f0ad4e;"><span data-from="100" data-to="@Model.TOTALSTUDENT" data-refresh-interval="30" data-speed="2500"></span></div>
+                        <h5>CANDIDATES</h5>
+                    </div>
+                 
+
+                   
+                </div>
+                <br /><br /><br />
+                <div class="row">
+                    <div class="col_five_sixth col_last feature-box fbox-bg notopmargin" id="barChart" style="opacity:0;">
+                        <center>  <canvas id="barChartCanvas" width="500" height="300"></canvas>  </center>
+                    </div>
+
+                    <script type="text/javascript">
+                        jQuery(window).load(function()
+                        {
+                            var ADI=@Model.TOTALADMIN   ;
+                            var CLI=@Model.TOTALCLIENT   ;
+                            var EMP=@Model.TOTALEMPLOYEE   ;
+                            var VND=@Model.TOTALVENDOR   ;
+                            var CND=@Model.TOTALSTUDENT   ;
+                            var barChartData={labels:["Admins","Clients","Employees","Vendors","Candidates"],
+                                datasets:[
+                                {
+                                    fillColor:"rgb(0,134,211)",
+                                    strokeColor:"rgb(1,42,66)",
+                                    data:[ADI,CLI,EMP,VND,CND]
+                                }
+                                ]
+                            };
+                            var globalGraphSettings={animation:Modernizr.canvas};
+                            function showBarChart(){
+                                var ctx= document.getElementById("barChartCanvas").getContext("2d");
+                                new Chart(ctx).Bar(barChartData,globalGraphSettings);
+                            }
+                            $('#barChart').appear(function(){$(this).css({opacity:1});setTimeout(showBarChart,300);},{accX:0,accY:-155},'easeInCubic');
+
+                        } );
+
+                    </script>
+                </div>
+
+
+
+
+
+
+            </div>
+        </div>
+
+    </section>
+}

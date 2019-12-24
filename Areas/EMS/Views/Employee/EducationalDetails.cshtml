@@ -1,0 +1,580 @@
+﻿@model IEnumerable<AJSolutions.Models.EmpEducationView>
+@{
+    ViewBag.Title = "Educational Details";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("EducationalDetails", "Employee", FormMethod.Post, new { @class = "form-horizontal", id = "EducationalDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+    <div class="container">
+        @if (Model != null)
+        {
+            <br /><br />
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Education</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            @*<th>
+                                    Sno
+                                </th>*@
+                            <th class="strong-left">
+                                Education Level<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Degree<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Institution<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Grade<small>*</small>  <b>%</b>
+                            </th>
+                            <th class="strong-left">
+                                Specialization<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                University / Board<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Passing Year<small>*</small>
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @*<th>
+
+                                </th>*@
+                            <th class="strong-left">
+                                @Html.Hidden("EduLevelId", ViewBag.EduLevelId as string)
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.DropDownList("EducationLevel", ViewBag.EducationLevelList as SelectList, "Education Level", htmlAttributes: new { @class = "form-control required", @id = "EducationLevelId", placeholder = "Education Level" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("EducationLevel", ViewBag.EducationLevelList as SelectList, "Education Level", htmlAttributes: new { @disabled = "disabled", @class = "form-control required", @id = "EducationLevelId", placeholder = "Education Level" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Degree", ViewBag.Degree as string, new { @class = "form-control required", @id = "Degree", placeholder = "Degree" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Degree", ViewBag.Degree as string, new { @class = "form-control required", @id = "Degree", placeholder = "Degree" })
+                                }
+
+
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Institution", ViewBag.Institution as string, new { @class = "form-control required", @id = "Institution", placeholder = "Institution" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Institution", ViewBag.Institution as string, new { @class = "form-control required", @id = "Institution", placeholder = "Institution" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Percentage", ViewBag.Percentage as string, new { @class = "form-control required", @id = "Percentage", placeholder = "Percentage" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Percentage", ViewBag.Percentage as string, new { @class = "form-control required", @id = "Percentage", placeholder = "Percentage" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Specialization", ViewBag.Specialization as string, new { @class = "form-control required", @id = "Specialization", placeholder = "Specialization" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Specialization", ViewBag.Specialization as string, new { @class = "form-control required", @id = "Specialization", placeholder = "Specialization" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("University", ViewBag.University as string, new { @class = "form-control required", @id = "University", placeholder = "University" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("University", ViewBag.University as string, new { @class = "form-control required", @id = "University", placeholder = "University" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.DropDownList("YearOfPassing", ViewBag.YearOfPassing as SelectList, "Passing Year", htmlAttributes: new { @class = "form-control required", @id = "YearOfPassing", placeholder = "Year of Passing" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("YearOfPassing", ViewBag.YearOfPassing as SelectList, "Passing Year", htmlAttributes: new { @class = "form-control required", @id = "YearOfPassing", placeholder = "Year of Passing" })
+                                }
+                            </th>
+                            <th>
+                                <input type="submit" id="educatiodetails" value="Submit" style="float: right;" class="btn btn-primary" />
+                                @Html.Hidden("UserId", ViewBag.UserId as string)
+                                @Html.Hidden("UserProfile", ViewBag.UserProfile as string)
+                            </th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                @*<td>
+                                        @Html.DisplayFor(modelItem => item.EducationLevel)
+                                    </td>*@
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EducationLevelName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Degree)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Institution)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Percentage)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Specialization)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.University)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                </td>
+                                <td>
+
+                                    @Html.ActionLink("Edit", "EducationalDetails", "Employee", new
+                               {
+                                   EducationLevel = item.EducationLevel,
+                                   Degree = item.Degree,
+                                   Institution = item.Institution,
+                                   Percentage = item.Percentage,
+                                   Specialization = item.Specialization,
+                                   University = item.University,
+                                   YearOfPassing = item.YearOfPassing,
+                                   useraction = "Edit"
+                               }, new { title = "Edit" }) | <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.EducationLevel');" title="Remove">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+
+                </div>
+            </div>
+        }
+        <br /><center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JEResponsive -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+        @Html.Hidden("RedirectTo", Url.Action("RemoveEducationDetails", "Employee"))
+        @Html.Hidden("RedirectToHome", Url.Action("EducationalDetails", "Employee"))
+    </div>
+}
+
+@*<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                   This page provides you facility of adding educational details.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/educationtrainer.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/educationtrainer.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+<div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel2"><b>Help & Support</b></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="tabs clearfix" id="tab-1">
+
+                        <ul class="tab-nav clearfix">
+                            <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                            <li><a href="#tabs-2">Page Elements </a></li>
+                            <li><a href="#tabs-3">Video</a></li>
+                        </ul>
+
+
+                        <div class="tab-container">
+
+                            <div class="tab-content clearfix" id="tabs-1">
+
+                                <h4> Navigation to Education </h4>
+                                <img src="~/images/gif/navigation to education.gif" alt="Save icon" />
+                            </div>
+
+                            <div class="tab-content clearfix" id="tabs-2">
+
+                                <h6> This page contains Education details of Trainer.</h6>
+                                <h6> Navigation To Address Details:</h6>
+                                <p>Click on Navigation Bar "My Account", Then click on MenuItem "Education".</p>
+                                <img src="~/images/Images1/Education.png" width="300" height="500" /><br>
+                                </br>
+
+                                <h6>Add your Educational Details-</h6>
+
+                                <p><b>• Education Level </b> – Select the Education Level from Drop Down.</p>
+                                <img src="~/images/Images1/EducationPage1.png" width="800" height="100">
+                                <p> - select the Education Level from Drop Down.</p>
+                                <img src="~/images/Images1/EducationLevel.png" width="250" height="200">
+                                <p>
+                                    - In Education Page, you will see Education Level is with Asterisk Mark means it is a Mandatory field.
+                                    if you not enter details on this field validation appears in red.
+                                </p>
+                                <img src="~/images/Images1/EducationLevel1.png" width="100" height="100">
+                                <br></br>
+
+                                <p><b>• Degree </b> - Fill Name of your degree.</p>
+                                <img src="~/images/Images1/Degree.png" width="100" height="100">
+                                <p>
+                                    - In Education Page, you will see Degree is with Asterisk Mark, means it is a mandatory field,
+                                    if you not enter details on this field validation appears in red.
+                                </p>
+                                <img src="~/images/Images1/Degree1.jpg" width="100" height="100">
+                                <br></br>
+
+                                <p><b>• Institution</b> - Fill Your Institution Name.<p>
+                                    <img src="~/images/Images1/Institution.png" width="100" height="100">
+                                <p>
+                                    - In Education Page, you will see Institute is with Asterisk Mark, means it is a mandatory field,
+                                    if you not enter details on this field validation appears in red.
+                                </p>
+                                <img src="~/images/Images1/Institution2.jpg" width="100" height="100" />
+                                <br></br>
+
+                                <p><b>• Grade </b> - Fill your Grade.</p>
+                                <img src="~/images/Images1/Grade.jpg" width="100" height="100">
+                                <p>
+                                    - In Education Page, you will see Grade is with Asterisk Mark, means it is a mandatory field,
+                                    if you not enter details on this field validation appears in red.
+                                </p>
+                                <img src="~/images/Images1/Grade1.jpg" width="100" height="100">
+                                <br></br>
+
+                                <p><b>• Specialization</b> - Fill Your Specialization.</p>
+                                <img src="~/images/Images1/Specialzation.jpg" width="100" height="100">
+                                <p>
+                                    - In Education Page, you will see Specialization is with Asterisk Mark, means it is a mandatory field,
+                                    if you not enter details on this field validation appears in red.
+                                </p>
+                                <img src="~/images/Images1/Specialization1.jpg" width="100" height="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <br></br>
+
+                                <p><b>•	University/Board </b> - Fill your University or Board name.</p>
+                                <img src="~/images/Images1/University.jpg" width="100" height="100">
+                                <p>
+                                    - In Education Page, you will see University is with Asterisk Mark, means it is a mandatory field,
+                                    if you not enter details on this field validation appears in red.
+                                <p>
+                                    <img src="~/images/Images1/University1.jpg" width="100" height="100">
+                                    <br></br>
+
+                                <p><b>• Passing Year </b> – Select your Passing Year from Drop Down.</p>
+                                <img src="~/images/Images1/\PassingYear.jpg" width="150" height="250" />
+                                <p>
+                                    - In Education Page, you will see Passing Year is with Asterisk Mark, means it is a mandatory field,
+                                    if you not enter details on this field validation appears in red.
+                                </p>
+                                <img src="~/images/Images1/Passing year.jpg" width="100" height="100">
+                                <br></br>
+
+                                <h6> NOTE: “Without fill Mandatory fields, you cannot submit it”.</h6>
+                                <img src="~/images/Images1/Education.jpg" width="550" height="150">
+                                <br></br>
+
+                                <p> fill all details then click on submit Button</p>
+                                <img src="~/images/Images1/education...JPG" width="550" height="150">
+                                <br></br>
+
+                                <p><b>• Submit</b> - To save this detail click on this Submit button.</p>
+                                <img src="~/images/Images1/Submit.jpg" width="80" height="50"><br></br>
+
+                                <h6> After clicking on submit button a popup window opens indicating that your data has been saved successfully.</h6>
+                                <img src="~/images/Images1/Message.png" width="200" height="100"><br></br>
+
+                                <h6>You will see your Education details as a list, from here you can edit and delete your Education details. </h6>
+                                <p> - If you want to edit something in your educational details, click on Edit and If you want to delete your educational details, click on Delete.</p>
+
+                                <img src="~/images/Images1/Education (edit,delete).jpg" width="550" height="200">
+
+                            </div>
+
+
+                            <div class="tab-content clearfix" id="tabs-3">
+
+                                <h4> Help video for Add Education details</h4>
+                                <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/6gvkHDHQlO4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+    $("#EducationalDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    function ConfirmationDialog(EducationLevel) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + EducationLevel;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+    //$(document).ready(function () {
+
+    //    if ($('#SaveStatus').val() == "Succeeded") {
+
+    //        $.alert({
+    //            title: 'Cheers',
+    //            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'btn btn-primary',
+    //            icon: 'fa fa-thumbs-up fa-2x',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //    }
+    //});
+
+
+    //$('#educatiodetails').click(function (e) {
+    //    e.preventDefault();
+
+    //    if ($("#EducationLevelId").val() == undefined || $('#EducationLevelId').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Education Level </b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#EducationLevelId").focus();
+    //        return false;
+    //    }
+
+    //    if ($("#Degree").val() == undefined || $('#Degree').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Degree</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#Degree").focus();
+    //        return false;
+    //    }
+
+
+    //    if ($("#Institution").val() == undefined || $('#Institution').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Institution</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#Institution").focus();
+    //        return false;
+    //    }
+
+    //    if ($("#Percentage").val() == undefined || $('#Percentage').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Percentage</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#Percentage").focus();
+    //        return false;
+    //    }
+
+    //    if ($("#Specialization").val() == undefined || $('#Specialization').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Specialization</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#Specialization").focus();
+    //        return false;
+    //    }
+
+
+    //    if ($("#University").val() == undefined || $('#University').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>University</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#University").focus();
+    //        return false;
+    //    }
+
+
+
+    //    if ($("#YearOfPassing").val() == undefined || $('#YearOfPassing').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Year Of Passing</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#YearOfPassing").focus();
+    //        return false;
+    //    }
+
+
+
+    //    $('#EducationalDetails').submit();
+    //});
+
+</script>

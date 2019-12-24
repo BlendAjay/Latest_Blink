@@ -1,0 +1,269 @@
+﻿@using AJSolutions.Models;
+@model UserExperienceDetails
+@{
+    ViewBag.Title = "Experience Details";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    IEnumerable<UserExperienceDetails> experience = ViewData["Empexperiencedetails"] as IEnumerable<UserExperienceDetails>;
+}
+@using (Html.BeginForm("ExperienceDetails", "Candidate", FormMethod.Post, new { area = "Candidate", @class = "form-horizontal", id = "ExperienceDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Data", ViewBag.Data as string)
+    @Html.HiddenFor(model => model.ExperienceId)
+    <div class="container">
+
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Experience</h4>
+                </div>
+                <div class="row">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.ComapanyName, "Company Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.ComapanyName, new { htmlAttributes = new { @class = "sm-form-control required", id = "CompanyName", @Placeholder = "Enter Company Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ComapanyName, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.WorkLocation, "Work Location")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-money"> </i></span>
+                            @Html.EditorFor(model => model.WorkLocation, new { htmlAttributes = new { @class = "sm-form-control required", id = "WorkLocation", @Placeholder = "Enter Work Location" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.WorkLocation, "", new { @class = "text-danger" })
+                        <br>
+                        @Html.LabelFor(model => model.LeavingDate, "Leaving Date")
+                        <div class="input-group divcenter travel-date-group">
+                            <span class="input-group-addon"><i class="icon-money"> </i></span>
+                            <input type="text" value="@ViewBag.LeavingDate" class="sm-form-control past-enabled" placeholder="DD/MM/YYYY" id="LeavingDate" name="LeavingDate">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.LeavingDate, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.LatestDesignation, "Latest Designation")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-money"> </i></span>
+                            @Html.EditorFor(model => model.LatestDesignation, new { htmlAttributes = new { @class = "sm-form-control required", id = "LatestDesignation", @Placeholder = "Enter Latest Designation" } })
+                        </div>
+                        <br>
+                        @Html.LabelFor(model => model.JoiningDate, "Joining Date")<small>*</small>
+                        <div class="input-group divcenter travel-date-group">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            <input type="text" value="@ViewBag.JoiningDate" class="sm-form-control past-enabled required" placeholder="DD/MM/YYYY" id="JoiningDate" name="JoiningDate">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.JoiningDate, "", new { @class = "text-danger" })
+                        <br>
+                        @Html.LabelFor(model => model.WorkingStatus, "Working Status")
+                        @Html.CheckBoxFor(model => model.WorkingStatus, new { htmlAttributes = new { @class = "sm-form-control", @id = "WorkingStatus" } })
+                        @Html.ValidationMessageFor(model => model.WorkingStatus, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                </div>
+                <input type="submit" id="experiencedetails" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+            </div>
+        </div>
+        <br />
+
+        <div class="row">
+            @if (experience != null)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>
+                                Company Name
+                            </th>
+
+                            <th>
+                                Latest Designation
+                            </th>
+                            <th>
+                                Working Location
+                            </th>
+                            <th>
+                                Joining date
+                            </th>
+                            <th>
+                                Leaving Date
+                            </th>
+                            <th>
+                                Working Status
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+
+                        @foreach (var item in experience)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ComapanyName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LatestDesignation)
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.WorkLocation)
+                                </td>
+                                <td>
+                                    @item.JoiningDate.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    @if (item.LeavingDate != null)
+                                    {
+                                        @item.LeavingDate.Value.ToString("dd-MMM-yyyy")
+                                    }
+                                    else
+                                    {
+                                        @item.LeavingDate
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.WorkingStatus)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "ExperienceDetails", "Candidate", new { area = "Candidate", ExperienceId = item.ExperienceId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.ExperienceId');" title="Remove">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <br />
+            }
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("ExperienceDetails", "Candidate"));
+    @Html.Hidden("RedirectTo", Url.Action("RemoveExperienceDetails", "Candidate"));
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    In this page candidates are able to fill their experience details.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/experience.png" target="_blank" data-lightbox="gallery-item">
+
+                                            <img src="~/images/HelpImages/experience.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+
+        if ($('#Data').val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Experience has been <b> Deleted.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+    });
+
+    $("#ExperienceDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function ConfirmationDialog(ExperienceId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?ExperienceId=" + ExperienceId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>
+
+

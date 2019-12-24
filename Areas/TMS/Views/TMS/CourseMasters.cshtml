@@ -1,0 +1,409 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model IEnumerable<AJSolutions.Models.CourseMasterView>
+@{
+    ViewBag.Title = "Add Sector";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    //Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    //CourseAttachment content = ViewData["Content"] as CourseAttachment;
+}
+@using (Html.BeginForm("CourseMasters", "TMS", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "CourseMasters", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Add Sector</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <div align="right">
+                    <a href="@Url.Action("Mycourses", "TMS", new { Area = "TMS" })" class="btn btn-default btn-xs" align="right">My Sector</a>
+                </div>
+                <h5 class="card-header">Add New Sector</h5>
+                <div class="card-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    @Html.Hidden("CourseCode", ViewBag.CourseCode as string)
+                    @Html.Hidden("IsLMS", ViewBag.IsLMS as string)
+
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <label>Sector Name<small>*</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                            @Html.TextBox("CourseName", ViewBag.CourseName as string, new { @class = "form-control required", @id = "CourseName", placeholder = "Eg: JAVA", required = "required" })
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <label>Sector Description<small>*</small></label>
+
+                        @Html.TextArea("CourseDescription", ViewBag.CourseDescription as string, 5, 124, new { @Maxlength = 1024, @class = "form-control required", @id = "CourseDescription", placeholder = "Enter The Description", required = "required" })
+                        <div id="textarea_feedback" class="text-danger"></div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+
+                            <label>Sector Duration</label><small>*</small><small style="float:right">In Days</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                @Html.DropDownList("CourseDuration", null, "--- Select Duration ---", htmlAttributes: new { @class = "form-control required", id = "CourseDuration", required = "required" })
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Client</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                                @Html.DropDownList("CorporateId", null, "--- Select Client ---", htmlAttributes: new { @class = "form-control required", id = "CorporateId", placeholder = "Select Client", required = "required" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <br /><input type="submit" value="Submit" style="float: right;" class="btn btn-primary" id="SubmitForm" name="SubmitForm" />
+                        </div>
+                    </div>
+                    @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Sector Code</th>
+                        <th>Sector Name</th>
+                        <th>Duration</th>
+                        <th>Likes</th>
+                        <th>Batches</th>
+                        <th>Edit</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("CourseDetail", "TMS", new { Area = "TMS", CourseCode = item.CourseCode, TrainingId = item.TrainingId })" target="_blank">@item.CourseCode</a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CourseName) <span>(@Html.DisplayFor(modelItem => item.CategoryName))</span>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CourseDuration)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CountLikes)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TotalBatches)
+                            </td>
+                            <td>
+                                <a href="@Url.Action("CourseMasters", "TMS", new { CourseCode = item.CourseCode, UserAction = "Edit" })" title="Edit"><i class="fa fa-pen-square fa-2x"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("CourseMasters", "TMS"));
+}
+
+<script>
+    $(document).on("keydown", "#CourseFee", function () {
+        if ($("#CourseFee").val() != undefined || $('#CourseFee').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#Accommodation", function () {
+        if ($("#Accommodation").val() != undefined || $('#Accommodation').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#Transport", function () {
+        if ($("#Transport").val() != undefined || $('#Transport').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#Others", function () {
+        if ($("#Others").val() != undefined || $('#Others').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#InstallmentInterest", function () {
+        if ($("#InstallmentInterest").val() != undefined || $('#InstallmentInterest').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#Discount", function () {
+        if ($("#Discount").val() != undefined || $('#Discount').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+</script>
+<script type="text/javascript">
+    $("#CourseMasters").validate({
+        submitHandler: function (form) {
+            var total = $("#CourseFee").val();
+            if (parseFloat(total) > 0) {
+                if ($("#Currency :selected").val() == '' || $('#Currency :selected').val() == '0') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Currency</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#Currency").focus();
+                    return false;
+                }
+            }
+            //var data = new FormData($('input[name^="uploadPhoto"]'));
+            //jQuery.each($('input[name^="uploadPhoto"]')[0].files, function (i, file) {
+            //    data.append(i, file);
+            //});
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/CourseMasters",
+                data: {
+                    CourseCode: $('#CourseCode').val(),
+                    CourseName: $('#CourseName').val(),
+                    CourseDuration: $('#CourseDuration :selected').val(),
+                    CourseFee: $('#CourseFee').val(),
+                    CourseLateFee: $('#CourseLateFee').val(),
+                    Accommodation: $('#Accommodation').val(),
+                    Transport: $('#Transport').val(),
+                    Others: $('#Others').val(),
+                    InstallmentInterest: $('#InstallmentInterest').val(),
+                    Discount: $('#Discount').val(),
+                    CorporateId: $('#CorporateId :selected').val(),
+                    SubscriberId: $('#SubscriberId').val(),
+                    Currency: $('#Currency').val(),
+                    ContentVisiblity: $('#ContentVisiblity :selected').val(),
+                    CourseDescription: $('#CourseDescription').val(),
+                    CategoryId: $('#CategoryId').val()
+                    //uploadImage: data
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if (data) {
+                        SuccessAlert();
+                    }
+                    else {
+                        FailedAlert();
+                    }
+                }
+            });
+        }
+    });
+
+    function SuccessAlert() {
+        $.alert({
+            title: 'Cheers',
+            content: 'Course has been Saved <b> SUCCESSFULLY.</b>',
+            confirmButton: 'OK',
+            confirmButtonClass: 'btn btn-primary',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'zoom',
+            confirm: function () {
+                var url = $("#RedirectToHome").val();
+                location.href = url;
+            }
+        });
+    }
+    function FailedAlert() {
+        $.alert({
+            title: 'Cheers',
+            content: '<b>Failed </b>to save data.',
+            confirmButton: 'OK',
+            confirmButtonClass: 'btn btn-primary',
+            icon: 'fa fa-thumbs-down fa-2x ',
+            animation: 'zoom',
+            confirm: function () {
+                var url = $("#RedirectToHome").val();
+                location.href = url;
+            }
+        });
+    }
+</script>
+
+<script>
+
+    $(document).ready(function () {
+
+        var text_max = 1024;
+        if ($('#CourseDescription').val() != undefined || $('#CourseDescription').val() != '') {
+            text_max = text_max - $('#CourseDescription').val().length;
+        }
+
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 1024;
+        $('#CourseDescription').keyup(function () {
+            var text_length = $('#CourseDescription').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+
+        //iterate through each textboxes and add keyup
+        //handler to trigger sum event
+        $(".txt").each(function () {
+            $(this).keyup(function () {
+                calculateSum();
+            });
+        });
+
+    });
+
+    function calculateSum() {
+
+        var sum = 0;
+        var total = "";
+        //iterate through each textboxes and add the values
+        $(".txt").each(function () {
+
+            var CourseFee = $('#CourseFee').val();
+            var Accommodation = $('#Accommodation').val();
+            var Transport = $('#Transport').val();
+            var Others = $('#Others').val();
+            var Discount = $('#Discount').val();
+            var InstallmentInterest = $('#InstallmentInterest').val();
+            ////add only if the value is number
+            //if (!isNaN(this.value) && this.value.length != 0) {
+            //    sum += parseFloat(this.value);
+            //}
+
+            sum = (parseFloat(CourseFee) + parseFloat(Accommodation) + parseFloat(Transport) + parseFloat(Others) + parseFloat(InstallmentInterest) - parseFloat(Discount));
+
+            total = "<input type='text' name='name' value='" + sum + "' readonly='readonly' class='form-control' />"
+
+        });
+        //.toFixed() method will roundoff the final sum to 2 decimal places
+        $("#total").html(total);
+    }
+</script>
+

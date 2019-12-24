@@ -1,0 +1,243 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.CorporateTemplateView
+@{
+    ViewBag.Title = "GenreateCorporateLetter";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Areas.CMS.Models.AdminLogoFile content = ViewData["CompanyLogo"] as AJSolutions.Areas.CMS.Models.AdminLogoFile;
+    List<LetterFieldNameViewModel> PlaceHolderDetail = ViewData["LetterPlaceHolder"] as List<LetterFieldNameViewModel>;
+    List<CorporateLetter> letterlist = ViewData["LetterList"] as List<CorporateLetter>;
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckeditor/samples/js/sample.js"></script>
+<link href="~/Scripts/ckeditor/skins/bootstrapck/editor.css" rel="stylesheet" />
+@*<link href="~/Scripts/ckeditor/contents.css" rel="stylesheet" />*@
+
+<div class="container">
+    @using (Html.BeginForm("GenreateCorporateLetter", "Payroll", FormMethod.Post, new { @class = "form-horizontal", id = "GenreateCorporateLetter", role = "form", enctype = "multipart/form-data" }))
+    {
+        if (Model.LetterId == 0)
+        {
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Genreate Letter</h4>
+                </div>
+
+                <div class="col_one_third">
+                    @Html.Label("Template Name")<small>*</small>
+                </div>
+                <div class="col_two_third col_last">
+                    @Html.DropDownList("TemplateId", null, "Select Template", htmlAttributes: new { @class = "form-control required", id = "TemplateId" })
+                </div>
+                <div class="col_one_third">
+                    @Html.Label("Employee Name")<small>*</small>
+                </div>
+                <div class="col_two_third col_last">
+                    @Html.DropDownList("UserId", null, "Select Employee", htmlAttributes: new { @class = "form-control required", id = "UserId" })
+                </div>
+                <div class="col_full fright">
+                    <input type="submit" value="Genreate Letter" class="button button-3d" id="GenreateCorporateLetter" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <br /><br />
+            <div class="row">
+                <div class="col_full">
+                    @if (Model.Content != null)
+                    {
+                        <div class="col_full">
+                            @Html.Label("Letter Description")
+                            @Html.TextAreaFor(model => model.Content, new { @class = "ckeditor", id = "Content", style = "margin:5px;" })
+                        </div>
+                        <input type="Submit" value="Add to my Breifcase" class="button button-3d" id="Email" />
+                        @Html.Hidden("LetterId", ViewBag.LetterId as string)
+                        @Html.Hidden("TemplateId", ViewBag.TemplateId as string)
+                        @Html.Hidden("UserId", ViewBag.UserId as string)
+                        @Html.Hidden("LetterTypeId", Model.LetterTypeId)
+                        @Html.Hidden("Content", ViewBag.Content as string)
+                    }
+
+                </div>
+            </div>
+        }
+        <br />
+        <br />
+
+    @*<div style='height:100px;width:100%;margin-top:20px;'>
+        <div style='height:100px;width:20%;float:left;'>
+        <img src='" + url + "' style='height:100px;width:80px;' />
+        </div><div style='height:100px;width:80%;text-align:center;'>
+            
+        </div>
+    </div>"*@
+
+        @*if (letterlist.Count != 0)
+            {
+                <div class="row">
+                    <div class="table-responsive  pre-scrollable">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>Letter Name</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in letterlist)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>
+                                            <a href="@Url.Action("GenreateCorporateLetter", "Payroll", new { TemplateId = item.TemplateId, UserId = item.UserId })" title="Preview"><i class="icon-briefcase"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }*@
+        <div class="row">
+
+        </div>
+    }
+    @Html.Hidden("SaveStatus", ViewBag.status as string)
+
+    @Html.Hidden("RedirectToHome", Url.Action("GenreateCorporateLetter", "Payroll"))
+</div>
+
+
+<script type="text/javascript">
+    $("#Email").click(function () {
+        $("#GenreateCorporateLetter").submit();
+    })
+</script>
+
+<script type="text/javascript">
+    CKEDITOR.replace('Content', {
+        filebrowserImageUploadUrl: '/UploadImage'
+
+    });
+    CKEDITOR.on('dialogDefinition', function (event) {
+        if ('placeholder' == event.data.name) {
+            var input = event.data.definition.getContents('info').get('name');
+            input.type = 'select';
+            input.items = [
+           @{
+                    foreach (var colum in PlaceHolderDetail)
+                    {
+                        @:['@colum.Coloum'],
+                    }
+                }
+            ];
+            input.setup = function () {
+                this.setValue('@PlaceHolderDetail.FirstOrDefault().Coloum');
+            };
+        }
+    });
+</script>
+
+<style>
+    @@media print {
+        body {
+            margin: 20px;
+            margin-left: 40px;
+        }
+    }
+</style>
+
+<script type="text/javascript">
+    $("#GenreateCorporateLetter").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/GenreateCorporateLetter",
+                data: {
+                    TemplateId: $('#TemplateId : selected').val(),
+                    UserId: $('#UserId : selected').val(),
+                    LetterTypeId:($('#LetterTypeId').val())
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                }
+
+            });
+        }
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#SaveStatus").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Letter has been SUCCESSFULLY Mail and updated in the employees Folder',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Letter has been <b>SUCCESSFULLY Genreated.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                 
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "Unsucceeded") {
+            $.alert({
+                title: 'Sorry',
+                content: 'Something went <b>wrong.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "Exists") {
+            $.alert({
+                title: 'Sorry',
+                content: 'Letter Name already <b> EXISTS.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'icon-info-sign icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>
+
+@*<script>
+    function JobPostDetailprint(UserId) {
+        alert('Hello');
+        alert(TemplateId);
+        //var url = "/Payroll/GenreateCorporateLetter?TemplateId=" + TemplateId + "&UserId=" + UserId;
+        var url = "/Payroll/GenreateCorporateLetter?UserAction=" + "Mail" + "&UserId=" + UserId;
+        location.href = url;
+    }
+</script>*@

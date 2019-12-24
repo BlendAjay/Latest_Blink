@@ -1,0 +1,243 @@
+﻿@using AJSolutions.Models;
+@model LeavingReason
+
+@{
+    ViewBag.Title = "Leaving Reason";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<LeavingReason> leavingReason = ViewData["leavingReason"] as List<LeavingReason>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("LeavingReason", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "LeavingReason", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Oragnization Leaving Reason</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Reason, "Reason")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                        @Html.EditorFor(model => model.Reason, new { htmlAttributes = new { @class = "form-control required", id = "Reason", placeholder = "Enter Reason" } })
+                    </div>
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Description, "Description")
+                    <div class="input-group divcenter">
+                      @Html.TextAreaFor(model => model.Description, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Description", @placeholder = "Enter Description Here.." })
+                    </div>
+                </div>
+
+             
+                <input type="button" id="LReason" value="Save" class="button button-rounded button-teal fright" />
+               
+             
+                @Html.Hidden("ReasonId", ViewBag.ReasonId as string)
+                @*@Html.Hidden("CorporateId", ViewBag.CorporateId as string)*@
+               </div>
+           
+            <br/>
+            @if (leavingReason.Count != 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>REASON</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in leavingReason)
+                                {
+                                    <tr>
+                                        <td>@item.Reason</td>
+                                        <td>@item.Description</td>
+                                        <td>
+                                            <a href="@Url.Action("LeavingReason", "Payroll", new { ReasonId = item.ReasonId })" title="Edit"><i class="icon-pen"></i></a>|
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.ReasonId');" title="Remove"><i class="icon-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.Hidden("RedirectTo", Url.Action("RemoveLeavingReason", "Payroll"))
+        @Html.Hidden("RedirectToHome", Url.Action("LeavingReason", "Payroll"))
+    </div>
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding leaving reason of orgnization as per your requirement.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/orgnizationleavingreasonadd.png" target="_blank" data-lightbox="gallery-item">
+
+                                        <img src="~/images/HelpImages/orgnizationleavingreasonadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/orgleavingreason.png" target="_blank" data-lightbox="gallery-item">
+
+                                        <img src="~/images/HelpImages/orgleavingreason.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last">
+                            <p>
+                                Here you are able to edit and delete your added leaving reasons.
+                            </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#LeavingReason").validate({
+        submitHandler: function (form) {
+          
+        }
+    });
+
+
+    $("#LReason").click(function (e) {
+
+        if ($("#LeavingReason").valid()) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/LeavingReason",
+                data: {
+                    ReasonId: $('#ReasonId').val(),
+                    Reason: $('#Reason').val(),
+                    Description: $('#Description').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    if (data == "Succeeded") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Unsucceeded") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went <b>wrong.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Exists") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Your Data is already <b> EXISTS.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'icon-info-sign icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                }
+            });
+        }
+
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>
+<script type="text/javascript">
+    function ConfirmationDialog(ReasonId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?ReasonId=" + ReasonId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

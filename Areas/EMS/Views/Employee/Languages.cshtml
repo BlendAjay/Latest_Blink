@@ -1,0 +1,355 @@
+﻿@using AJSolutions.Models;
+@model LanguagesView
+@{
+    ViewBag.Title = "Languages";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<LanguagesView> language = ViewData["Language"] as IEnumerable<LanguagesView>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("Languages", "Employee", FormMethod.Post, new { area = "EMS", @class = "form-horizontal needs-validation", id = "Languages", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Result", ViewBag.Data as string)
+    if (Model != null)
+    {
+        @Html.Hidden("UserLanguageId", Model.UserLanguageId)
+    }
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Language Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Identification Details</h5>
+                <div class="card-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="table-responsive">
+                        <table id="dataTable" class="table table-bordered table-striped">
+                            <thead>
+                                <!-------------------Title Section---------------------->
+                                <tr>
+                                    <th class="strong">Language</th>
+                                    <th class="strong">Read</th>
+                                    <th class="strong">Write</th>
+                                    <th class="strong">Speak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-------------------First Language Section---------------------->
+                                <tr>
+
+                                    <td data-title="Language">
+                                        @Html.DropDownList("LanguageId", null, "---Select Language---", htmlAttributes: new { @class = "form-control required", @id = "Language", @required = "required" })
+                                        @Html.ValidationMessageFor(model => model.LanguageId, "", new { @class = "text-danger" })
+                                    </td>
+
+                                    <td data-title="Read">
+                                        @Html.CheckBoxFor(model => model.ReadLanguage, new { htmlAttributes = new { @class = "form-control", id = "ReadLanguage" } })
+                                        @Html.ValidationMessageFor(model => model.ReadLanguage, "", new { @class = "text-danger" })
+                                    </td>
+                                    <td data-title="Write">
+                                        @Html.CheckBoxFor(model => model.Write, new { htmlAttributes = new { @class = "form-control", id = "Write" } })
+                                        @Html.ValidationMessageFor(model => model.Write, "", new { @class = "text-danger" })
+                                    </td>
+                                    <td data-title="Speak">
+                                        @Html.CheckBoxFor(model => model.Speak, new { htmlAttributes = new { @class = "form-control", id = "Speak" } })
+                                        @Html.ValidationMessageFor(model => model.Speak, "", new { @class = "text-danger" })
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <input type="submit" id="Languages" value="Save" style="float: right;" class="btn btn-primary" />
+                    <br />
+                    @if (language != null)
+                    {
+                        <div class="col_full">
+                            <div class="fancy-title title-bottom-border">
+                                <h4>Languages Known</h4>
+                            </div>
+                            <br />
+                            <div class="table-responsive">
+                                <table id="dataTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <!-------------------Title Section---------------------->
+                                        <tr>
+                                            <th class="strong">Language</th>
+                                            <th class="strong">Read</th>
+                                            <th class="strong">Write</th>
+                                            <th class="strong">Speak</th>
+                                            <th class="strong">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-------------------First Language Section---------------------->
+                                        @foreach (var item in language)
+                                        {
+                                            <tr>
+                                                <td data-title="Language">
+                                                    @Html.DisplayFor(modelItem => item.Language)
+                                                </td>
+                                                <td data-title="Read">
+                                                    @Html.DisplayFor(modelItem => item.ReadLanguage)
+                                                </td>
+                                                <td data-title="Write">
+                                                    @Html.DisplayFor(modelItem => item.Write)
+                                                </td>
+                                                <td data-title="Speak">
+                                                    @Html.DisplayFor(modelItem => item.Speak)
+                                                </td>
+                                                <td>
+                                                    @Html.ActionLink("Edit", "Languages", "Employee", new { UserLanguageId = item.UserLanguageId, UserAction = "Edit" }, new { title = "Edit" })
+                                                    |
+                                                    @Html.ActionLink("Delete", "Languages", "Employee", new { UserLanguageId = item.UserLanguageId, UserAction = "Delete" }, new { title = "Delete" })
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("Languages", "Employee"));
+}
+
+@*<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    Here you can add what are the diffrent languages known by you.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/language.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/language.png" />
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel9" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel16"><b>Help & Support</b> </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="tabs clearfix" id="tab-1">
+
+                        <ul class="tab-nav clearfix">
+                            <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                            <li><a href="#tabs-2">Page Elements </a></li>
+                            <li><a href="#tabs-3">Video</a></li>
+                        </ul>
+                        <div class="tab-container">
+
+                            <div class="tab-content clearfix" id="tabs-1">
+                                <h4> Navigation to Language</h4>
+                                <img src="~/images/gif/navigation to social details.gif" alt="Save icon" />
+
+                            </div>
+
+                            <div class="tab-content clearfix" id="tabs-2">
+                                <h6> In this page you will add your Languages detail.</h6>
+                                <h6> Navigation to Add Language Details</h6>
+                                <p>Click on Navigation bar "My Account" then click on MenuItem "Language".</p>
+                                <img src="~/images/Images1/Language.jpg" width="300" height="500"><br></br>
+
+                                <p><b>1. Select Language</b> - Select Language from drop down.</p>
+                                <img src="~/images/Images1/Selectlang..jpg" width="400" height="100"><br></br>
+                                <img src="~/images/Images1/SelectLanguage.JPG" width="250" height="250"><br></br>
+                                <p> - In this Page, you will see Select Language is with asterisk mark, means it is a mandatory fields if you not enter detail on this field validation come on appears red.</p>
+                                <img src="~/images/Images1/Language11.jpg" width="500" height="100"><br></br>
+
+                                <h6> After selecting Language then there are three option.</h6>
+                                <p> First if you have only Read Language then click on Read checkbox.</p>
+                                <img src="~/images/Images1/Read.jpg" width="400" height="100"><br></br>
+
+                                <p> if you have only Write Language then click on Write checkbox.</p>
+                                <img src="~/images/Images1/Write.jpg" width="400" height="100"><br></br>
+
+                                <p> if you have only Speak then click on Speak checkbox.</p>
+                                <img src="~/images/Images1/speak.JPG" width="400" height="100"><br></br>
+
+                                <p> If you Read, write, speak Language then you have to click on all three Checkbox.</p>
+                                <img src="~/images/Images1/Language(three).jpg" width="400" height="100"><br></br>
+
+                                <p>2. You can edit or Delete your Previous Language Details.</p>
+                                <img src="~/images/Images1/Language(edit,delete).jpg" width="400" height="100"><br></br>
+
+                            </div>
+
+                            <div class="tab-content clearfix" id="tabs-3">
+
+                                <h4> Help video for Add Language Details</h4>
+                                <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/SBpuBgWu9j0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#Result").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Language has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+    $("#Languages").validate({
+        submitHandler: function () {
+            $('.form-process').fadeIn()
+            if ($('#ReadLanguage').is(":checked")) {
+
+                var read = "True";
+            }
+            else {
+                read = "False";
+            }
+            if ($('#Write').is(":checked")) {
+
+                var write = "True";
+            }
+            else {
+                write = "False";
+            }
+            if ($('#Speak').is(":checked")) {
+
+                var speak = "True";
+            }
+            else {
+                speak = "False";
+            }
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/Languages",
+                data: {
+                    UserLanguageId: $('#UserLanguageId: selected').val(),
+                    LanguageId: $('#Language: selected').val(),
+                    ReadLanguage: read,
+                    Write: write,
+                    Speak: speak
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    //$("#Languages").validate({
+    //    submitHandler: function (form) {
+    //        $('.form-process').fadeIn()
+    //        $(form).ajaxSubmit({
+    //            success: function () {
+    //                $('.form-process').fadeOut()
+    //                $.alert({
+    //                    title: 'Cheers',
+    //                    content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+    //                    confirmButton: 'OK',
+    //                    confirmButtonClass: 'btn btn-primary',
+
+    //                    icon: 'fa fa-thumbs-up fa-2x',
+    //                    animation: 'zoom',
+    //                    confirm: function () {
+    //                        var url = $("#RedirectToHome").val();
+    //                        location.href = url;
+    //                    }
+    //                });
+    //            }
+    //        });
+    //    }
+    //});
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

@@ -1,0 +1,237 @@
+﻿@using AJSolutions.Models;
+@model HoldSalaryReason
+@{
+    ViewBag.Title = "Hold Salary Reason";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<HoldSalaryReason> holdsalaryReason = ViewData["holdSalaryReason"] as List<HoldSalaryReason>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("HoldSalaryReason", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "HoldSalaryReason", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Hold Salary Reason</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.HoldReason, "Reason")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                        @Html.EditorFor(model => model.HoldReason, new { htmlAttributes = new { @class = "form-control required", id = "HoldReason", placeholder = "Enter Reason" } })
+                    </div>
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.Description, "Description")
+                    <div class="input-group divcenter">
+                        @Html.TextAreaFor(model => model.Description, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Description", @placeholder = "Enter Description Here.." })
+                    </div>
+                </div>
+
+
+                <input type="button" id="addHoldreason" value="Save" class="button button-rounded button-teal fright" />
+
+
+                @Html.Hidden("ReasonId", ViewBag.ReasonId as string)
+                @*@Html.Hidden("CorporateId", ViewBag.CorporateId as string)*@
+            </div>
+
+            <br />
+            @if (holdsalaryReason.Count != 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>REASON</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in holdsalaryReason)
+                                {
+                                    <tr>
+                                        <td>@item.HoldReason</td>
+                                        <td>@item.Description</td>
+                                        <td>
+                                            <a href="@Url.Action("HoldSalaryReason", "Payroll", new { ReasonId = item.ReasonId })" title="Edit"><i class="icon-pen"></i></a>|
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.ReasonId');" title="Remove"><i class="icon-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.Hidden("RedirectTo", Url.Action("RemoveHoldSalaryReason", "Payroll"))
+        @Html.Hidden("RedirectToHome", Url.Action("HoldSalaryReason", "Payroll"))
+    </div>
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding salary hold reasons of employee as per your requirement.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/holdsalaryadd.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/holdsalaryadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/holdsalaryreason1.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/holdsalaryreason1.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last">
+                            <p>
+                                Here you are able to edit and delete your added hold salary reason.                          </p>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $("#HoldSalaryReason").validate({
+        submitHandler: function (form) {
+           
+        }
+    });
+
+    $("#addHoldreason").click(function (e) {
+
+        if ($("#HoldSalaryReason").valid()) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/HoldSalaryReason",
+                data: {
+                    ReasonId: $('#ReasonId').val(),
+                    HoldReason: $('#HoldReason').val(),
+                    Description: $('#Description').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    if (data == "Succeeded") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Unsucceeded") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went <b>wrong.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Exists") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Your Data is already <b> EXISTS.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'icon-info-sign icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                }
+            });
+        }
+
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+<script type="text/javascript">
+    function ConfirmationDialog(ReasonId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?ReasonId=" + ReasonId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

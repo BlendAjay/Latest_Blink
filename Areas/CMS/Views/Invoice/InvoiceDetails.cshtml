@@ -1,0 +1,403 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.GenerateInvoiceView
+@{
+    ViewBag.Title = "Invoice Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    var userId = ViewBag.UserId as string;
+    IEnumerable<InvoiceItemsView> JOItem = ViewData["InvoiceItems"] as IEnumerable<InvoiceItemsView>;
+    IEnumerable<InvoiceTaxationDetailsView> InvoiceTaxes = ViewData["InvoiceTaxes"] as IEnumerable<InvoiceTaxationDetailsView>;
+    List<InVoiceAttachment> content = ViewData["Content"] as List<InVoiceAttachment>;
+}
+}
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@if (Model != null)
+{
+    float itemTotal = 0;
+    float GrandTotal = 0;
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="col_two_third col_last">
+
+                    @if ((user.Role == "Client" && Model.ReferenceId.StartsWith("JO")) || ((user.Role == "Admin" && Model.ReferenceId.StartsWith("TA")) && (Model.Status == "Accepted" || Model.Status == "Onhold")))
+                    {
+                        @Html.ActionLink("Pay Now", "Payment", "Invoice", new { Id = Model.InvoiceNumber }, htmlAttributes: new { @class = "button button-3d nomargin", @id = "paynowbutton", @style = "float:left" })
+
+                    }
+                </div>
+                <div class="col_one_third ">
+                    @*<input type="submit" class="button button-3d nomargin" id="printpagebutton" value="Print" onclick="printpage();" style="float:right" />*@
+                    <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("DownloadInvoice", "Report", new { area = "", InvoiceNumber = @Model.InvoiceNumber })'">Download Report</button>
+                    @if (content != null)
+                    {
+                        foreach (var attachment in content)
+                        {
+                            if (Model.ReferenceId == attachment.ReferenceId)
+                            {
+                                <a href="~/File/InvoiceAttachment?id=@attachment.FileId" alt="CV" target="_blank" title="Click here to download your attachment" ><i class="icon-clip"></i> Download Attachment</a>
+                            }
+                        }
+                    }
+                </div>
+
+                @*<input type="submit" value="Print" style="float: right;" class="button button-3d button-rounded button-teal" id="SubmitForm" />*@
+                <br />
+                <div class="fancy-title title-bottom-border">
+                    <h4>Invoice for @Model.ReferenceId</h4>
+                </div>
+                @*<ul class="entry-meta clearfix">
+                        <li><a href="#"><i class="icon-line-circle-check"></i> @Model.InvoiceToName</a></li>
+                        <li><a href="#"><i class="icon-anchor"></i>@Model.Status</a></li>
+                        <li><a href="#"><i class="icon-check"></i>@Model.InvoiceNumber</a></li>
+                        <li><a href="#"><i class="icon-folder-open"></i>@Model.ReferenceId</a></li>
+                    </ul>*@
+                <div class="row">
+                    <div class="col_one_third"></div>
+                    <div class="col_one_third"></div>
+                    <div class="col_one_third col_last">
+                        <label>Invoice No.</label> @Model.InvoiceNumber
+                        <br />
+                        <label>Invoice Date</label> @Model.InvoiceDate.ToShortDateString()
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col_one_third">
+                        <label>Invoice To:</label>
+                        <br />
+                        @if (Model.InvoiceToCompany != null)
+                        {
+                            <span>@Model.InvoiceToCompany</span><span>,</span><br />
+                        }
+                        @Model.InvoiceToName
+                        @if (!string.IsNullOrEmpty(Model.InvoiceToAddressLine1))
+                        {
+                            <span> , <br /> @Model.InvoiceToAddressLine1</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.InvoiceToAddressLine2))
+                        {<span> , <br /> @Model.InvoiceToAddressLine2</span>  }
+                        @if (!string.IsNullOrEmpty(Model.InvoiceToCity))
+                        {<span> , <br /> @Model.InvoiceToCity</span>  }
+                        @if (!string.IsNullOrEmpty(Model.InvoiceToState))
+                        {<span> , @Model.InvoiceToState</span>  }
+                        @if (!string.IsNullOrEmpty(Model.InvoiceToCountry))
+                        {<span> , <br /> @Model.InvoiceToCountry</span>
+                            if (!string.IsNullOrEmpty(Model.InvoiceToPostalCode))
+                            {<span> - @Model.InvoiceToPostalCode</span>}
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(Model.InvoiceToPostalCode))
+                            {<span><br />@Model.InvoiceToPostalCode</span>}
+                        }
+
+                    </div>
+                    <div class="col_one_third"></div>
+                    <div class="col_one_third col_last"></div>
+                    <div class="col_full">
+                        <label>@Model.ReferenceId : @Model.InvoiceSubject</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <blockquote><p align="justify">@Model.EntryDescription</p></blockquote>
+                    <div class="table-responsive bottommargin">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="cart-product-name">Entry Detail</th>
+                                    <th class="cart-product-type">Entry Type</th>
+                                    <th class="cart-product-quantity">Units</th>
+                                    <th class="cart-product-price">Unit Price <small>(in @Model.Currency)</small></th>
+                                    <th class="cart-product-duration">Duration <small>(in Days)</small></th>
+                                    <th class="cart-product-subtotal">Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (JOItem != null)
+                                {
+                                    foreach (var item in JOItem)
+                                    {
+                                        if (item.Duration != 0)
+                                        {
+                                            itemTotal = item.Unit * item.UnitPrice * item.Duration;
+                                        }
+                                        else
+                                        {
+                                            itemTotal = item.Unit * item.UnitPrice;
+                                        }
+
+                                        GrandTotal = GrandTotal + itemTotal;
+
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name">
+                                                <a href="#">@item.ItemDescription</a>
+                                            </td>
+                                            <td class="cart-product-price">
+                                                <span class="amount">@item.ItemTypeName</span>
+                                            </td>
+                                            <td class="cart-product-price">
+                                                <span class="amount">@item.Unit</span>
+                                            </td>
+                                            <td class="cart-product-quantity">
+                                                <div class="quantity clearfix">
+                                                    <span class="amount">@item.UnitPrice</span>
+                                                </div>
+                                            </td>
+                                            <td class="cart-product-price text-right">
+                                                <span class="amount">@item.Duration</span>
+                                            </td>
+                                            <td class="cart-product-subtotal text-right">
+                                                <span class="amount">@itemTotal</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-md-6 clearfix">
+                            @*<h4>Totals</h4>*@
+                        </div>
+                        <div class="col-md-6 clearfix">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <tbody>
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name">
+                                                <strong> Subtotal</strong>
+                                            </td>
+                                            <td class="cart-product-name text-right">
+                                                <span class="amount text-right">@Model.Total</span>
+                                            </td>
+                                        </tr>
+                                        @if (InvoiceTaxes != null)
+                                        {
+                                            foreach (var tax in InvoiceTaxes)
+                                            {
+                                                <tr class="cart_item">
+                                                    <td class="cart-product-name">
+                                                        <strong>@tax.TaxName ( @tax.TaxationValue %) </strong>
+                                                    </td>
+                                                    <td class="cart-product-name  text-right">
+                                                        <span class="amount">@tax.TaxactionAmount</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name">
+                                                <strong>Additional Cost </strong>
+                                            </td>
+                                            <td class="cart-product-name text-right">
+                                                <span class="amount">@Model.AdditionalCost</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name">
+                                                <strong>Deduction </strong>
+                                            </td>
+                                            <td class="cart-product-name text-right">
+                                                <span class="amount">@Model.Deductions</span>
+                                            </td>
+                                        </tr>
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name">
+                                                <strong>Total</strong>
+                                                @if (Model.Currency != null)
+                                                {
+                                                    <strong>(In @Model.Currency)</strong>
+                                                }
+                                            </td>
+                                            <td class="cart-product-name text-right">
+                                                <span class="amount color lead"><strong>@Model.NetAmount</strong></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <label>Remarks</label>
+                    <p align="justify">@Model.Remarks</p>
+                </div>
+                <div class="row">
+                    @if (Model.AccountNumber != null)
+                    {
+                        <label>Bank Details:</label>
+                    }
+                    <br />
+
+                    @if (!string.IsNullOrEmpty(Model.AccountOwner))
+                    {<span>Beneficiary Name : @Model.AccountOwner</span>  }
+                    @if (!string.IsNullOrEmpty(Model.PayeeBankName))
+                    {<span> , <br />Bank Name : @Model.PayeeBankName</span>  }
+                    @if (!string.IsNullOrEmpty(Model.AccountNumber))
+                    {<span> , <br />Account Number : @Model.AccountNumber</span>  }
+                    @if (!string.IsNullOrEmpty(Model.IfscCode))
+                    {<span> , <br />IFSC code : @Model.IfscCode</span>  }
+                    @if (!string.IsNullOrEmpty(Model.BranchAddress))
+                    {<span> , <br />Branch Name : @Model.BranchAddress</span>  }
+
+
+                </div>
+                <div class="row">
+                    <div class="col_one_third"></div>
+                    <div class="col_one_third"></div>
+                    <div class="col_one_third col_last">
+                        <label>Greetings</label>
+                        <br />@Model.Name
+                        @if (Model.CompanyName != null)
+                        {
+                            <span>, <br />@Model.CompanyName</span>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.AddressLine1))
+                        {<span> , <br /> @Model.AddressLine1</span>  }
+                        @if (!string.IsNullOrEmpty(Model.AddressLine2))
+                        {<span> , <br /> @Model.AddressLine2</span>  }
+                        @if (!string.IsNullOrEmpty(Model.City))
+                        {<span> , <br /> @Model.City</span>  }
+                        @if (!string.IsNullOrEmpty(Model.State))
+                        {<span> , @Model.State</span>  }
+                        @if (!string.IsNullOrEmpty(Model.Country))
+                        {<span> , <br /> @Model.Country</span>
+                            if (!string.IsNullOrEmpty(Model.PostalCode))
+                            {<span> - @Model.PostalCode</span>}
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(Model.PostalCode))
+                            {<span><br />@Model.PostalCode</span>}
+                        }
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h5>Thank You For Your <span>Business</span></h5>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel19" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel19"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                <li><a href="#tabs-3">Video</a></li>
+                            </ul>
+
+
+                            <div class="tab-container">
+
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4> Navigation to view detail of  Invoice  </h4>
+
+                                    <img src="~/images/gif/navigation to view invoice details.gif" alt="Save icon" />
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6> Click on invoice title to see full details of invoice </h6>
+
+                                    <img src="~/images/Images1/194.png" width="400" height="150">
+                                    <h6> This Page contain details of invoice  </h6>
+                                    <img src="~/images/Images1/195.png" width="418" height="559">
+                                    <br /><br /><br />
+                                    <div class="fancy-title title-bottom-border">
+                                        <h6> You can download the invoice report here  ,Click on download report   </h6>
+                                        <img src="~/images/Images1/199.png" width="418" height="559">
+                                        <h6>After clicking on download report ,report will be downloaded in pdf form .  </h6>
+                                        <img src="~/images/Images1/200.png" width="500" height="559">
+                                        </div>
+                                    </div>
+                                <div class="tab-content clearfix" id="tabs-3">
+                                    <div class="col_full">
+                                        <h4> Training Video for  Invoice detail view  </h4>
+                                        <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/8wRKS4O1cJc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                        </div>
+                                    <br /><br />
+                                   
+                                        <div class="col_full">
+                                            <h4> Training Video to download invoice report   </h4>
+                                            <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/Sx4eTPFm9BY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                        </div>
+
+                                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+}
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+

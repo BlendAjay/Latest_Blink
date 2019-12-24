@@ -1,0 +1,185 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model TrainerPlannerSummary
+@{
+    ViewBag.Title = "EmployeeLeaveBulkUploadRecord";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<EngagementTypeMaster> engagement = ViewData["Engagement"] as List<EngagementTypeMaster>;
+}
+@using (Html.BeginForm("EmployeeLeaveBulkUploadRecord", "Calendar", FormMethod.Post, new { @class = "form-horizontal", id = "EmployeeLeaveBulkUploadRecord", enctype = "multipart/form-data", role = "form" }))
+{
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Employee Leave Bulk Upload</h4>
+                </div>
+                <div class="col_half">
+                    @Html.Label("Scheme")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                        @Html.DropDownList("SchemeId", null, "---Select Scheme  ---", htmlAttributes: new { id = "SchemeId", @class = "form-control required" })@*, onchange = "EngagementCheck();*@
+                    </div>
+                </div>
+                <div class="col_full">
+                    <center>
+                        <ul class="process-steps process-3 bottommargin clearfix">
+                            <li class="active">
+                                <a href="#" class=" i-bordered i-circled divcenter icon-download-alt" onclick="GenreateBulk();"></a>
+                                <h5>Download Template</h5>
+                            </li>
+                            <li>
+                                <span class="i-bordered i-circled divcenter icon-table"></span>
+                                <h5>Fill Excel sheet</h5>
+                            </li>
+                            <li>
+                                @*<input type="file" name="files" id="files" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewImage(@Global.MaxSize("CSV"), this, 'CSV')" />*@
+                                <input type="file" name="FileUpload" id="csvFile" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewfile(@Global.MaxSize("CSV"), this, 'CSV')" accept="text/csv" />
+                                <h5>Select File to Upload</h5>
+                                <label id="lblgetfilename"></label>
+                            </li>
+                        </ul>
+                        
+                        <input type="submit" name="Submit" id="Submit" value="Upload" class="button button-3d button-rounded button-teal" />
+                        <p>@Html.Encode(ViewData["Feedback"])</p>
+                            @if (ViewBag.result == "Success")
+                            {
+                                @ViewBag.SuccessCount <span>uploaded Successfully</span><br />
+                                @ViewBag.FailureCount <span>Failed</span><br />
+                                if (@ViewBag.Download == "Yes")
+                                {
+                                    <a href="/CMS/Calendar/DownoladFile">Download Result</a>
+                                }
+                            }
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("Result", ViewBag.Result as string)
+    @Html.Hidden("SaveStatus", ViewBag.Status as string)
+    @Html.Hidden("RedirectToEngagement", Url.Action("EngagementType", "Employee", new { area = "EMS" }))
+    @Html.Hidden("RedirectTo", Url.Action("EmployeeLeaveBulkUploadRecord", "Calendar", new { area = "CMS" }))
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+    
+}
+<script src="~/Scripts/CustomValidation.js"></script>
+<script type="text/javascript">
+    function GenreateBulk() {
+        var schema = $('#SchemeId').val();
+
+        if (schema == "" || schema == undefined) {
+            $.alert({
+                title: 'Warning',
+                content: 'Scheme name has been required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+
+                }
+            });
+            return false;
+        }
+        var url = $('#weburl').val() + "/CMS/Calendar/Download?SchemeId=" + schema;
+        location.href = url;
+    }
+    $('#csvFile').change(function () {
+        var path = $(this).val();
+        if (path != '' && path != null) {
+            var q = path.substring(path.lastIndexOf('\\') + 1);
+            $('#lblgetfilename').html(q);
+        }
+    })
+
+    $(document).ready(function () {
+        if ($('#SaveStatus').val() == "Unsuccess") {
+            $.alert({
+                title: 'Cheers',
+                content: 'You have Not any <b> Engagement Type.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToEngagement").val();
+                    location.href = url;
+                }
+            });
+        }
+
+        $('#SchemeId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/CMS/Calendar/Engagement",
+                data: { SchemeId: $('#SchemeId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if (data == "Unsuccess") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'You have Not any <b> Engagement Type.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToEngagement").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                }
+            });
+        });
+        
+        $("#EmployeeLeaveBulkUploadRecord").validate({
+            submitHandler: function (form) {
+                $('.form-process').fadeIn();
+
+                var formData = new FormData();
+                var totalFiles = document.getElementById("csvFile").files.length;
+                for (var i = 0; i < totalFiles; i++) {
+                    var file = document.getElementById("csvFile").files[i];
+                    formData.append("csvFile" + i, file);
+                }
+                $.ajax({
+                    type: "post",
+                    url: "/CMS/Calendar/EmployeeLeaveBulkUploadRecord",
+                    data: {
+                        SchemeId: $('#SchemeId').val(),
+                        FileUpload: formdata
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        $('.form-process').fadeOut()
+
+                    }
+                });
+                //var fileInput = document.getElementById('csvFile');
+                //if (fileInput.files.length == 0) {
+                //    $.alert({
+                //        title: 'Alert',
+                //        content: 'Select <b>file</b> to upload',
+                //        confirmButton: 'OK',
+                //        confirmButtonClass: 'button button-3d button-rounded button-red',
+                //        icon: 'icon-thumbs-down2 icon-2x ',
+                //        animation: 'zoom',
+                //        confirm: function () {
+                //        }
+                //    });
+
+                //    return false;
+                //}
+
+            }
+        });
+    })
+
+</script>
+
+       

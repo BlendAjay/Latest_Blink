@@ -1,0 +1,64 @@
+﻿@model AJSolutions.Models.JobOrder
+
+<section id="content">
+
+
+    <div class="container clearfix">
+
+        <div class="single-post nobottommargin">
+    <br /><br />
+    <div class="postcontent nobottommargin clearfix">
+        @using (Html.BeginForm())
+                {
+           
+
+            <div class="form-horizontal">
+
+
+                <div class="row">
+                    <div class="col_half">
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.DropDownList("CountryId", null, htmlAttributes: new { @class = "form-control", placeholder = "Select Country" , id = "CountryId"})                          
+                        </div>
+                    </div>
+
+                    <div class="col_half  col_last">
+                        <div class="input-group divcenter" id="State">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.DropDownList("StateId", new List<SelectListItem>(), "--- Select State ---", htmlAttributes: new { @class = "form-control", placeholder = "Select State" , id = "StateId" })
+                        </div>
+                    </div>
+                </div>
+
+
+             
+            </div>
+           
+                }
+        </div>
+    </div>
+    </div>
+</section>
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#CountryId').change(function () {              
+                $.ajax({
+                    type: "post",
+                    url: "/Home/GetState",
+                    data: { CountryId: $('#CountryId').val() },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        var state = "   <span class='input-group-addon'><i class='icon-pen'> </i></span><select class='form-control' id='StateId'>";
+                        state = state + '<option value="">--- Select ---</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                        }
+                        state = state + '</select>';
+                        $('#State').html(state);
+                    }
+                });
+            });
+        });
+</script>

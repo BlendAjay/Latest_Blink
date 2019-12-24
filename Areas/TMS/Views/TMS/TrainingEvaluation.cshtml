@@ -1,0 +1,379 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model IEnumerable<TrainingAssessmentView>
+@{
+    ViewBag.Title = "Training Evaluation";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    List<AJSolutions.Areas.Candidate.Models.CandidateViewModel> stu = ViewData["Candidate"] as List<AJSolutions.Areas.Candidate.Models.CandidateViewModel>;
+    IEnumerable<AssessmentEvaluationView> assessment = ViewData["Assessments"] as IEnumerable<AssessmentEvaluationView>;
+    int c = 1;
+    List<Global.MarksList> marks = ViewData["Marks"] as List<Global.MarksList>;
+}
+
+@using (Html.BeginForm("TrainingEvaluation", "TMS", FormMethod.Post, new { @class = "form-horizontal", id = "TrainingEvaluation", role = "form" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.Hidden("Status", ViewBag.Status as string)
+    @Html.Hidden("TrainingId", Model.FirstOrDefault().TrainingId)
+    bool saveFlag = false;
+    <div class="container">
+        <div class="fancy-title title-bottom-border">
+            <h4>@Model.FirstOrDefault().SubjectLine</h4>
+        </div>
+        <div class="form-process"></div>
+        <div class="col_one_third">
+            <label>Trainer:</label>  @Model.FirstOrDefault().Name
+        </div>
+        <div class="col_one_third">
+            <label>Total Trainee:</label> @ViewBag.CandidateCount
+        </div>
+        <div class="col_one_third col_last">
+            <label>Training From: </label>@Model.FirstOrDefault().FromDate.ToString("dd-MMM-yyyy")
+            <br />
+            <label>Training To:</label> @Model.FirstOrDefault().ToDate.ToString("dd-MMM-yyyy")
+        </div>
+        <div>
+            @*<small> <a href="/TMS/TMS/DownloadScoreTemplate?Id=@Model.FirstOrDefault().TrainingId&Assessment=@Model.FirstOrDefault().AssessmentId" class="fright">Download Score Template</a></small>&nbsp;&nbsp;*@
+            <small> <a href="/TMS/TMS/DownloadAssessmentEvaluation?TrainingId=@Model.FirstOrDefault().TrainingId" class="fright">Download Consolidated Report</a></small>
+            <a href="@Url.Action("ScoreBulkUpload", "TMS", new { Area = "TMS", Id = Model.FirstOrDefault().TrainingId, Assessment =Model.FirstOrDefault().AssessmentId })" class="btn btn-default btn-xs" style="float:right;">Score Bulk Upload</a>
+        </div>
+        <div class="col_full">
+            <table class="table table-bordered table-striped table-responsive nobottommargin">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Candidate Name</th>
+                        @if (Model.Count() > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <th>
+                                    @item.Assessment (@item.Weightage %)
+                                    @if (!string.IsNullOrEmpty(item.PublicationId) && item.PublicationId != "0")
+                                    {
+                                        <a class="fright" onclick="javascript: ViewSummaryReport('@item.PublicationId','@Model.FirstOrDefault().BatchId', '@Model.FirstOrDefault().TrainingId')"><i class="icon-printer"></i></a>
+                                        <a class="fright" onclick="javascript: ViewExcelReport('@item.PublicationId','@Model.FirstOrDefault().BatchId', '@Model.FirstOrDefault().TrainingId')"><i class="icon-file"></i></a>
+                                    }
+
+                                </th>
+                            }
+                        }
+                        @if (Model.Count() > 1)
+                        {
+                            <th>Percentage</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in stu)
+                    {
+                        <tr>
+                            <td>@(c++)</td>
+                            <td>@item.Name - @item.RegistrationId</td>
+
+                            @foreach (var mItem in Model)
+                            {
+                                var qitem = assessment.Where(m => m.UserId == item.UserId && m.AssessmentId == mItem.AssessmentId).FirstOrDefault();
+                                string rdonly = "disabled";
+                                @Html.Hidden("UserId", item.UserId)
+                                @Html.Hidden("AssessmentId", mItem.AssessmentId)
+                                <td>
+
+                                    @if (!string.IsNullOrEmpty(mItem.PublicationId) && mItem.PublicationId != "0")
+                                    {
+                                        rdonly = "pointer-events: none; opacity: 0.4;";
+                                    }
+                                    else
+                                    {
+                                        rdonly = "pointer-events: stroke;";
+                                    }
+
+                                    @if (qitem == null)
+                                    {
+
+                                        if (Model.Count() == 1)
+                                        {
+                                            if (!saveFlag)
+                                            {
+                                                saveFlag = true;
+                                            }
+                                        }
+                                        @*@Html.DropDownList("Marks", null, "--- Select Marks ---", htmlAttributes: new { @class = "form-control required ", id = "Marks" })*@
+
+                                        if (user.DepartmentId == "ADI" || Model.Count() == 1)
+                                        {
+                                            //Codition added as per the IPPB Requirement for IPPB Course Only
+                                            @*if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+                                                {
+                                                    if (item.CourseCode == "CC201804230001" || item.CourseCode == "CC201801230002" || item.CourseCode == "CC201808310001")
+                                                    {
+                                                        string Justread = "disabled";
+                                                        if (item.CourseCode == "CC201804230001" || item.CourseCode == "CC201801230002" || item.CourseCode == "CC201808310001")
+                                                        {
+                                                            Justread = "pointer-events: none; opacity: 0.4;";
+                                                        }
+                                                        else
+                                                        {
+                                                            Justread = "pointer-events: stroke;";
+                                                        }
+                                                        <select name="Marks" id="Marks[]" class="form-control" style="@Justread">
+                                                            @if (qitem == null)
+                                                            {
+                                                                <option value="">-- Select --</option>
+                                                            }
+                                                            else if (qitem.Percentage == 100)
+                                                            {
+                                                                <option value="100">Certified</option>
+                                                            }
+                                                            else if (qitem.Percentage == 10)
+                                                            {
+                                                                <option value="10">Reappear</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="0">Absent</option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                    else
+                                                    {
+                                                        <select class="form-control" id="Marks" name="Marks[]" style="@rdonly">
+                                                            <option value="0">--- Select Marks ---</option>
+                                                            @foreach (var mark in marks)
+                                                            {
+                                                                <option value="@mark.Marks">@mark.Marks </option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                }
+                                                else
+                                                {*@
+                                            <select class="form-control" id="Marks" name="Marks[]" style="@rdonly">
+                                                <option value="0">--- Select Marks ---</option>
+                                                @foreach (var mark in marks)
+                                                {
+                                                    <option value="@mark.Marks">@mark.Marks </option>
+                                                }
+                                            </select>
+                                            //}
+                                        }
+                                        else
+                                        {
+                                            <span></span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (user.DepartmentId == "ADI" || (qitem.Percentage == 0 && Model.Count() == 1))
+                                        {
+                                            if (!saveFlag)
+                                            {
+                                                saveFlag = true;
+                                            }
+                                            //Codition added as per the IPPB Requirement for IPPB Course Only
+                                            if (item.CourseCode == "CC201804230001" || item.CourseCode == "CC201801230002" || item.CourseCode == "CC201808310001")
+                                            {
+                                                string Justread = "disabled";
+                                                if (item.CourseCode == "CC201804230001" || item.CourseCode == "CC201801230002" || item.CourseCode == "CC201808310001")
+                                                {
+                                                    Justread = "pointer-events: none; opacity: 0.4;";
+                                                }
+                                                else
+                                                {
+                                                    Justread = "pointer-events: stroke;";
+                                                }
+                                                <select name="Marks" id="Marks[]" class="form-control" style="@Justread">
+                                                    @if (qitem == null)
+                                                    {
+                                                        <option value="">-- Select --</option>
+                                                    }
+                                                    else if (qitem.Percentage == 100)
+                                                    {
+                                                        <option value="100">Certified</option>
+                                                    }
+                                                    else if (qitem.Percentage == 10)
+                                                    {
+                                                        <option value="10">Reappear</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="0">Absent</option>
+                                                    }
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <select class="form-control" id="Marks" name="Marks[]" style="@rdonly">
+                                                    <option value="">--- Select Marks ---</option>
+                                                    @{
+                                                int i = 0;
+                                                foreach (var mark in marks)
+                                                {
+                                                    if (qitem.Percentage > 0 && qitem.Percentage == marks[i].Marks)
+                                                    {
+                                                        <option selected="selected" value="@mark.Marks">@mark.Marks </option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@mark.Marks">@mark.Marks </option>
+                                                    }
+
+                                                    i++;
+                                                }
+                                                    }
+                                                </select>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (qitem.Percentage == 0 || qitem.Percentage > 0)
+                                            {
+
+                                                //Codition added as per the IPPB Requirement for IPPB Course Only
+                                                if (item.CourseCode == "CC201804230001" || item.CourseCode == "CC201801230002" || item.CourseCode == "CC201808310001")
+                                                {
+                                                    if (@qitem.Percentage == 100)
+                                                    {
+                                                        <span>Certified</span>
+                                                    }
+                                                    else if (@qitem.Percentage == 10)
+                                                    {
+                                                        <span>Re-Appear</span>
+                                                    }
+                                                    else if (@qitem.Percentage == 0)
+                                                    {
+                                                        <span>Absent</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Absent</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>@qitem.Percentage</span>
+                                                }
+                                            }
+                                        }
+                                        if (!string.IsNullOrEmpty(mItem.PublicationId) && mItem.PublicationId != "0")
+                                        {
+                                            if (qitem.Percentage > 0)
+                                            {
+                                                <a class="fright" onclick="javascript: ViewReport('@mItem.TrainingId','@mItem.PublicationId','@qitem.UserId')">View Report</a>
+
+                                            }
+                                        }
+                                    }
+
+                                </td>
+                            }
+                            @if (Model.Count() > 1)
+                            {
+                                <td>
+                                    @if (assessment.Count() > 0)
+                                    {
+
+                                        var MarksList = assessment.Where(x => x.UserId == item.UserId).Where(d => d.TrainingId == Model.FirstOrDefault().TrainingId).ToList();
+                                        double total = 0.0;
+                                        foreach (var mark in MarksList)
+                                        {
+                                            if (mark.Weightage == 0 || mark.Weightage == null)
+                                            {
+                                                total = total + Convert.ToDouble(mark.Percentage);
+                                            }
+                                            else
+                                            {
+                                                total = total + Convert.ToDouble(mark.Percentage * mark.Weightage) / 100;
+                                            }
+                                        }
+                                        <span>@total %</span>
+                                    }
+                                    else
+                                    {
+                                        <span>NIL</span>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (saveFlag)
+        {
+            <div class="col_full">
+                <input type="submit" value="Submit" id="SubmitData" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+            </div>
+        }
+        <br /><center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JEResponsive -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+        @Html.Hidden("RedirectToReport", Url.Action("CandidateReport", "TMS"))
+        @Html.Hidden("RedirectToAssessmentEvalution", Url.Action("DownloadAssessmentEvaluation", "TMS", new { area = "TMS" }))
+        @Html.Hidden("RedirectToSummaryReport", Url.Action("CandidateAssessmentSummaryReport", "TMS", new { area = "TMS" }))
+        @Html.Hidden("RedirectToSummaryExcelReport", Url.Action("CandidateAssessmentExcelReport", "TMS", new { area = "TMS" }))
+
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+
+        $('.form-process').fadeOut();
+
+        if ($('#Status').val() == "True") {
+            $.alert({
+                title: 'Info',
+                content: 'Evaluation Added successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-up2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+    });
+
+    function ViewReport(TrainingId, PublicationId, UserId) {
+        var url = $("#RedirectToReport").val() + "?Id=" + TrainingId + "&PublicationId=" + PublicationId + "&CandidateId=" + UserId;
+        location.href = url;
+    }
+
+    function ViewAssessmentEvalution() {
+        var TrainingId = $('#TrainingId').val();
+        var url = $("#RedirectToAssessmentEvalution").val() + "?TrainingId=" + TrainingId;
+        location.href = url;
+    }
+
+    function ViewSummaryReport(PublicationId, BatchId, TrainingId) {
+        var url = $("#RedirectToSummaryReport").val() + "?PublicationId=" + PublicationId + "&BatchId=" + BatchId + "&TrainingId=" + TrainingId;
+        location.href = url;
+    }
+
+    function ViewExcelReport(PublicationId, BatchId, TrainingId) {
+        var url = $("#RedirectToSummaryExcelReport").val() + "?PublicationId=" + PublicationId + "&BatchId=" + BatchId + "&TrainingId=" + TrainingId;;
+        location.href = url;
+    }
+
+
+</script>

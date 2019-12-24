@@ -1,0 +1,79 @@
+﻿@using AJSolutions.DAL;
+@{
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    AJSolutions.Models.UserPlanDetailView plandetail = ViewData["plandetail"] as AJSolutions.Models.UserPlanDetailView;
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Client", "Dashboard", new { Area = "CMS" })"><i class="icon-home2"></i>Home</a>
+    </li>
+    <li class="current">
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="icon-bolt2"></i>My Account</a>
+        <div id="submenu-1" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("MyProfile", "Dashboard", new { Area = "CMS" })"><i class="icon-info-sign"></i>My Profile</a></li>
+                @if (user.CorporateId == user.SubscriberId)
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("CompanyProfile", "Dashboard", new { Area = "CMS" })"><i class="icon-briefcase"></i>Company Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("AddressDetails", "Dashboard", new { Area = "CMS" })"><i class="icon-location"></i>Address</a></li>
+                }
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("ChangePassword", "Manage", new { Area = "" })"><i class="icon-lock2"></i>Change Password</a></li>
+            </ul>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="icon-play"></i>My Stuff</a>
+        <div id="submenu-2" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+
+                @*<li class="nav-item"><a class="nav-link" href="@Url.Action("MyJobOrders", "JobOrder", new { Area = "CMS", IsClientView = true })"><i class="icon-list-ol"></i>Job Orders</a></li>*@
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("MyInvoices", "Invoice", new { Area = "CMS", Tag = "Outgoing" })"><i class="icon-bill"></i>Invoices</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("Mycourses", "TMS", new { Area = "TMS"})"><i class="icon-book"></i>Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action("MyTraining", "TMS", new { Area = "TMS"})"><i class="icon-table"></i>My Trainings</a></li>
+                <li class="nav-item">@*<a class="nav-link" href="@Url.Action("MentorTrainings", "TMS", new { Area = "TMS" })"><i class="icon-table"></i>My Mentor</a>*@</li>
+
+            </ul>
+        </div>
+    </li>
+    @*<li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3"><i class="icon-cogs"></i>Create New</a>
+            <div id="submenu-3" class="collapse submenu" style="">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Create", "JobOrder", new { area = "CMS" })"><i class="icon-list-ol"></i>Job Order</a></li>
+                </ul>
+            </div>
+        </li>*@
+
+    <li class="nav-item"><a class="nav-link" href="@Url.Action("MeetingMinutesListing", "User", new { area = "CMS" })"><i class="icon-list"></i>Meeting Minutes</a></li>
+
+    if (user.CorporateId == user.SubscriberId)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><i class="icon-users"></i>Add Team</a>
+            <div id="submenu-4" class="collapse submenu" style="">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("AddTeamMember", "Client", new { Area = "CMS" })"><i class="icon-lock3"></i>Add Team</a></li>
+                </ul>
+            </div>
+        </li>
+    }
+    @*else
+        {
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("MasterTrainerTO", "Course", new { area = "TMS" })"><i class="icon-file-text"></i>Add Master Trainer Training Order</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("GetMasterTrainerTO", "Course", new { area = "TMS" })"><i class="icon-file-text"></i> View Master Trainer Training Order</a></li>
+        }*@
+    @*if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+        {
+            //<li class="nav-item"><a class="nav-link" href="@Url.Action("MasterTrainerTrainingOrder", "Course", new { Area = "TMS" })"><i class="icon-file"></i>Master Trainer Training Order</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("EndUserDashBoard", "Course", new { Area = "TMS" })"><i class="icon-file"></i>Live Data Trends</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://drive.google.com/open?id=1c15bzGg_lpbstXeQgn6KaD6GyjcK_wnR" target="_blank"><i class="icon-file-text"></i>Certified End User Data</a></li>
+            //<li class="nav-item"><a class="nav-link" href="@Url.Action("TrackerDashBoard", "Course", new { Area = "TMS" })"><i class="icon-file"></i>Tracker DashBoard</a></li>
+            //<li class="nav-item"><a class="nav-link" href="@Url.Action("CertifiedUsers", "Course", new { Area = "TMS" })"><i class="icon-file"></i>OPS Data</a></li>
+        }*@
+    @*<li class="nav-item"><a class="nav-link" href="@Url.Action("GetFeedBacks", "RMS", new { Area = "RMS" })"><i class="icon-lock3"></i>Get Status</a></li>*@
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Notifications", "UserNotification", new { Area = ""})">
+            <i class="icon-inbox"></i>Notifications<label style="color:white" class="badge">@ViewBag.NotificationCount</label>
+        </a>
+    </li>
+    <li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()"><i class="icon-login"></i>Logout</a></li>
+}

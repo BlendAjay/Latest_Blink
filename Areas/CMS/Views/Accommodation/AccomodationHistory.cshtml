@@ -1,0 +1,219 @@
+﻿@using AJSolutions.Models
+@model  PagedList.IPagedList<AJSolutions.Models.CheckInCheckOutView>
+@using PagedList.Mvc;
+@{
+    UserViewModel userDetails = ViewData["UserProfile"] as UserViewModel;
+    ViewBag.Title = "CheckIn";
+    ViewBag.Title = "Accomodation";
+    if (userDetails.DepartmentId == "ADI")
+    {
+        Layout = " ~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = " ~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+
+}
+<div class="container">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Candidate CheckOut</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="form-process"></div>
+        <h5 class="card-header">Candidate CheckOut</h5>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <label>Course<small>*</small></label>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                        @Html.DropDownList("CourseCode", null, "--- Select Course ---", htmlAttributes: new { @class = "form-control", id = "CourseCode" })
+                        @*@Html.ValidationMessageFor(model => model.CourseCode, "", new { @class = "text-danger" })*@
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                    <label>Batch<small>*</small></label>
+                    <div class="input-group divcenter" id="Batch">
+                        <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                        @Html.DropDownList("BatchId", null, "--- Select Batch ---", htmlAttributes: new { @class = "form-control  ", id = "BatchId" })
+                    </div>
+
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 filter-group">
+                    <br />
+                    <button type="button" id="btnSearch" class="btn btn-success btn-xs" onclick="SendValue()" title="Search">Search</button>
+                    <button type="button" class="btn btn-danger btn-xs" onclick="location.href='@Url.Action("AccomodationHistory", "Accommodation", new { Area = "CMS" })'" title="Clear">Clear</button>
+                </div>
+            </div>
+        </div>
+        @if (Model != null)
+        {
+            if (Model.Count() > 0)
+            {
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            Search By Name
+                            @Html.TextBox("FilterName", ViewBag.Name as string, new { @class = "form-control", @id = "FilterName", placeholder = "Name" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <br />
+                            <a href='#' onclick='javascript:submit();' class="btn btn-success btn-xs">Search</a>
+                            <button class="btn btn-danger btn-xs" id="buttonclear" title="click here to Clear Search">Clear</button>
+                        </div>
+                    </div><br />
+                    <div class="row">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    <th><a href="@Url.Action("AccomodationHistory", "Accommodation", new { CourseCode = ViewBag.Course, BatchId = ViewBag.Batch, sortOrder = ViewBag.NameSortParam, FilterName = ViewBag.Name, CheckIn = ViewBag.CheckIn, checkOut = ViewBag.checkOut, page = ViewBag.Page, PageSize = ViewBag.Paging })">Student Name&nbsp;<span class="icon-sort"></span></a></th>
+                                    <th><a href="@Url.Action("AccomodationHistory", "Accommodation", new { CourseCode = ViewBag.Course, BatchId = ViewBag.Batch, sortOrder = ViewBag.CheckInSortParam, FilterName = ViewBag.Name, CheckIn = ViewBag.CheckIn, checkOut = ViewBag.checkOut, page = ViewBag.Page, PageSize = ViewBag.Paging })">CheckInDate&nbsp;<span class="icon-sort"></span></a></th>
+                                    <th><a href="@Url.Action("AccomodationHistory", "Accommodation", new { CourseCode = ViewBag.Course, BatchId = ViewBag.Batch, sortOrder = ViewBag.CheckOutSortParam, FilterName = ViewBag.Name, CheckIn = ViewBag.CheckIn, checkOut = ViewBag.checkOut, page = ViewBag.Page, PageSize = ViewBag.Paging })">CheckOutDate&nbsp;<span class="icon-sort"></span></th>
+                                </tr>
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.CheckInDate</td>
+                                        <td>@item.CheckOutDate</td>
+                                    </tr>
+                                }
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <ul class="pagination">
+                    <li>@Html.PagedListPager(Model, page => Url.Action("AccomodationHistory", new { CourseCode = ViewBag.Course, BatchId = ViewBag.Batch, page, PageSize = ViewBag.Paging }))</li>
+                    <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+                </ul>
+            }
+
+            else
+            {
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <h3 class="text-center">No Accomodation History<span class="subtitle"> Select Course & Batch</span></h3>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+</div>
+@Html.Hidden("RedirectTo", Url.Action("AccomodationHistory", "Accommodation"));
+<script>
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var course = $('#CourseCode :selected').val();
+            var batch = $('#BatchId :selected').val();
+            var url = $("#RedirectTo").val() + "?CourseCode=" + course + "&BatchId=" + batch + "&PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    function submit() {
+        var name = $("#FilterName").val();
+        var course = $('#CourseCode :selected').val();
+        var batch = $('#BatchId :selected').val();
+        var url = $("#RedirectTo").val() + "?CourseCode=" + course + "&BatchId=" + batch + "&FilterName=" + name;
+        location.href = url;
+    }
+
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var url = $("#RedirectTo").val();
+        location.href = url;
+
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.form-process').fadeOut();
+        $('#CourseCode').change(function () {
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/Accommodation/GetBatch",
+                data: { CourseCode: $('#CourseCode').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    var batch = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control' id='BatchId'>";
+                    batch = batch + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        batch = batch + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    batch = batch + '</select>';
+                    $('#Batch').html(batch);
+                }
+            });
+        });
+    });
+    function SendValue() {
+        $('.form-process').fadeIn();
+        var batchid = $("#BatchId").find(":selected").val();
+        var coursecode = $("#CourseCode").find(":selected").val();
+        if (coursecode == "") {
+            $.alert({
+                title: 'Warning',
+                content: 'Course has been required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    $('.form-process').fadeOut();
+                }
+            });
+            return false;
+        }
+        if (batchid == "") {
+            $.alert({
+                title: 'Warning',
+                content: 'Batch has been required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    $('.form-process').fadeOut();
+                }
+            });
+            return false;
+        }
+        if (coursecode != "" && batchid != "") {
+            var url = "AccomodationHistory?CourseCode=" + coursecode + "&BatchId=" + batchid;
+            window.location.href = url;
+        }
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+

@@ -1,0 +1,98 @@
+﻿@using AJSolutions.Models;
+@model IEnumerable<EndUserTrainingOrderAdminView>
+@{
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "SYNC";
+}
+
+<h2></h2>
+@using (Html.BeginForm("SyncUser", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    <div class="container">
+        <div class="form-process"></div>
+        <div class="row">
+            <div class="fancy-title title-dotted-border title-center">
+                <h5><span>Sync User</span></h5>
+            </div>
+            <div class="col_full">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-responsive nobottommargin small">
+                        <thead>
+                            <tr>
+                                <th class="success center">EUTrainingOrderId</th>
+                                <th class="center success">Batch Name</th>
+                                <th class="center success">MT ReckonnId</th>
+                                <th class="center success">Total Trainee Nominated</th>
+                                <th class="center success">Total Trainee Assigned</th>
+                                <th class="center success">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var To = "TRO";
+                                var EUId = @item.EUTrainingOrderId;
+                                var year = DateTime.Now.Year;
+                                var type = @item.TrainingType;
+                                var finalId = @To + @EUId + type + year;
+                                <tr>
+                                    <td class="info center">@finalId</td>
+                                    <td class="info center">@item.BatchName</td>
+                                    <td class="info center">@item.MTReckonnId</td>
+                                    <td class="info center">@item.TotalTraineeNominated</td>
+                                    <td class="info center">@item.TotalTraineeAssigned</td>
+                                    <td class="info center">
+                                        @if (@item.TotalTraineeNominated > @item.TotalTraineeAssigned)
+                                        {
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.EUTrainingOrderId', '@item.BatchName');" title="Submit Training" class="btn btn-default btn-xs" style="float:right;">Sync</a>
+                                        }
+                                        else
+                                        {
+                                            <span>Correct</span>
+                                        }
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("SyncUser", "Course", new { area = "TMS" }))
+}
+<script>
+    function ConfirmationDialogs(TrainingOrderId, BatchName) {
+        $('.form-process').fadeIn();
+        $.ajax({
+            type: "Post",
+            url: "/TMS/Course/SyncUser",
+            data: {
+                TrainingOrderId: TrainingOrderId,
+                BatchName: BatchName
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('.form-process').fadeOut()
+                if (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'All Trainees are Synced',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+</script>

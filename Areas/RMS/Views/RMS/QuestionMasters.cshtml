@@ -1,0 +1,133 @@
+﻿@using AJSolutions.Areas.RMS.Models;
+@model QuestionMaster
+@{
+    ViewBag.Title = "Add Question";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<QuestionMaster> questions = ViewData["Questions"] as List<QuestionMaster>;
+}
+
+@using (Html.BeginForm("QuestionMasters", "RMS", FormMethod.Post, new { @class = "form-horizontal", id = "QuestionMasters", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("DeleteResult", ViewBag.DeleteResult as string)
+    @Html.HiddenFor(model => model.QuestionId)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Question</h4>
+                </div>
+                <div class="row">
+
+                    <div class="col_full">
+                        @Html.LabelFor(model => model.Question, "Question")
+                        @Html.TextAreaFor(model => model.Question, 5, 80, htmlAttributes: new { @class = "form-control required", @Maxlength = 512, id = "Question", @placeholder = "Add question" })
+                        @Html.ValidationMessageFor(model => model.Question, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.Category, "Category")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.Category, new { htmlAttributes = new { @class = "form-control required", id = "Category", @Placeholder = "Enter Category" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half col_last">
+                        <input type="submit" id="questionmaster" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+    <br /><br />
+
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Question</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (questions != null)
+                    {
+                        foreach (var item in questions)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Question)
+                                </td>
+                                <td>
+                                @Html.DisplayFor(modelItem => item.Category)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "QuestionMasters", "RMS", new { QuestionId = item.QuestionId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "QuestionMasters", "RMS", new { QuestionId = item.QuestionId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("QuestionMasters", "RMS"));
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#DeleteResult").val() != null && $("#DeleteResult").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Question has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+    $("#QuestionMasters").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/RMS/RMS/QuestionMasters",
+                data: {
+                    QuestionId: $('#QuestionId').val(),
+                    Question: $('#Question').val(),
+                    Category: $('#Category').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>

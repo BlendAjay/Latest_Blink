@@ -1,0 +1,778 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model AJSolutions.Models.JobOrder
+@{
+    ViewBag.Title = "Create Job Order";
+    IEnumerable<JobOrderItemsView> JoItems = ViewData["JOItems"] as IEnumerable<JobOrderItemsView>;
+    var ItemTypeValues = ViewData["ItemType"] as IEnumerable<ItemTypeMasters>;
+    JobOrderAttachment content = ViewData["Content"] as JobOrderAttachment;
+}
+<div class="container clearfix">
+
+    @using (Html.BeginForm("Create", "JobOrder", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", id = "Create", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.JobOrderNumber)
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header">
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Job Order</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card">
+                    <div class="form-process"></div>
+                    <h5 class="card-header">Create Job Order</h5>
+                    @Html.LabelFor(model => model.Subject, "Subject", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-book2"> </i></span>
+                        @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control required", id = "Subject", placeholder = "Subject", required = "required" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.JobOrderTypeId, "Select JobOrder Type", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-newspaper"> </i></span>
+                            @Html.DropDownList("JobOrderTypeId", null, "--- Select  JobOrder Type ---", htmlAttributes: new { @class = "form-control required", id = "JobOrderTypeId", placeholder = "Select Job Order type", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Industry, "Industry", htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-building"> </i></span>
+                            @Html.EditorFor(model => model.Industry, new { htmlAttributes = new { @class = "form-control", placeholder = "Industry Name" } })
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.FunctionalPosition, "Functional Position", htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line-paper-stack"> </i></span>
+                            @Html.EditorFor(model => model.FunctionalPosition, new { htmlAttributes = new { @class = "form-control", placeholder = " Functional Position" } })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    @Html.LabelFor(model => model.Description, "Enter your Description", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    @Html.TextAreaFor(model => model.Description, 5, 124, htmlAttributes: new { @class = "form-control required", @Maxlength = 2048, id = "Description", @placeholder = "Description here..", required = "required" })
+                    <div id="textarea_feedback" class="text-danger"></div>
+                </div>
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                <br />
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.SalaryRange, "Salary Range", htmlAttributes: new { @class = "control-label" })<small style="float:right">In Lakhs</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-money"> </i></span>
+                            @Html.DropDownList("SalaryRange", null, "--- Select Salary Range ---", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.ExpRange, "Experience Range", htmlAttributes: new { @class = "control-label" })<small style="float:right">In Years</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                            @Html.DropDownList("ExpRange", null, "--- Select Experience Range ---", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ExpRange, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Conditions, "Conditions", htmlAttributes: new { @class = "control-label" })
+                        @Html.TextAreaFor(model => model.Conditions, 5, 80, htmlAttributes: new { @class = "form-control", @Maxlength = 1024, id = "Conditions", @placeholder = "Condition here.." })
+                        <div id="textarea" class="text-danger"></div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Conditions, "", new { @class = "text-danger" })
+
+                </div>
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <label>DURATION</label><small style="float:right">If Any</small>
+                        <h4></h4>
+                    </div>
+
+                    <<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.StartDate, "Start Date", htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group divcenter travel-date-group">
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                            <input type="text" value="@ViewBag.startDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="StartDate" name="StartDate">
+                            @*@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", placeholder = "YYYY-MM-DD" } })*@
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Duration, "Duration", htmlAttributes: new { @class = "control-label", @Value = "0" })<small style="float:right">In Days</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                            @Html.EditorFor(model => model.Duration, new { htmlAttributes = new { @class = "form-control", placeholder = "Duration" } })
+
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <label>COSTING</label><small style="float:right">If Any</small>
+                        <h5></h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="customFields" class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Item Type</th>
+                                <th>Description</th>
+                                <th>Unit</th>
+                                <th>Unit Price</th>
+                                <th>Duration <small>(in Days)</small></th>
+                                <th> Total Amount</th>
+                                <th></th>
+                            <tr />
+                            @if (JoItems.Count() > 0)
+                            {
+                                var cnt = 0;
+                                foreach (var joItem in JoItems)
+                                {
+                                    var itemDuration = "NA";
+                                    var itemAmt = 0.0;
+
+
+
+                                    <tr>
+                                        <td style = "display:none">
+                                            <input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="@joItem.ItemId" />
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="ItemType" name="ItemType[]">
+                                                <option value="0"> - - - Select Item Type - - - </option>
+                                                @{
+
+                                    foreach (var row in ItemTypeValues)
+                                    {
+                                        if (row.ItemTypeId == joItem.ItemTypeId)
+                                        {
+
+                                            <option selected="selected" value="@row.ItemTypeId"> @row.ItemTypeName </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@row.ItemTypeId"> @row.ItemTypeName </option>
+                                        }
+                                    }
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="ItemDescription form-control" id="itemDesc" name="ItemDescription[]" value="@joItem.ItemDescription" placeholder="Item Description" />
+                                        </td>
+
+                                        <td>
+                                            <input type="text" class="Unit form-control" id="Unit" name="Unit[]" value="@joItem.Unit" placeholder="Unit" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="UnitPrice form-control" id="UnitPrice" name="UnitPrice[]" value="@joItem.UnitPrice" placeholder="Unit Price" />
+                                        </td>
+                                        <td>
+
+                                            @if (joItem.Duration > 0)
+                                            {
+                                                itemDuration = Convert.ToString(joItem.Duration);
+                                                itemAmt = Convert.ToSingle(joItem.Unit) * joItem.UnitPrice * Convert.ToSingle(joItem.Duration);
+                                            }
+                                            else
+                                            {
+                                                itemAmt = Convert.ToSingle(joItem.Unit) * joItem.UnitPrice;
+                                            }
+
+                                            <select class="dura form-control" id="ItemDuration" name="ItemDuration[]">
+                                                @{
+
+                                                    <option selected="selected" value="0">NA</option>
+                                            var itemDurations = ViewData["ItemDuration"] as IEnumerable<AJSolutions.DAL.Global.DurationList>;
+
+                                            foreach (var duration in itemDurations)
+                                            {
+                                                if (duration.Duration == joItem.Duration)
+                                                {
+                                                    <option selected="selected" value="@duration.Duration">@duration.DurationName</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@duration.Duration">@duration.DurationName</option>
+                                                }
+                                            }
+
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="TAmt form-control" id="TAmt" name="TAmt[]" value="@itemAmt" readonly="readonly" />
+                                        </td>
+                                        <td>
+                                            @if (cnt == 0)
+                                            {
+                                                <a href="javascript:void(0);" id="addCF">Add</a> }
+                                            else
+                                            {  <a href="javascript:void(0);" id="delCF">Remove</a>}
+                                        </td>
+                                        <td style = "display:none">
+                                            <input type="text" class="code form-control" id="Actions" name="Actions[]" value="U" />
+                                        </td>
+                                    </tr>
+                                            cnt++;
+                                }
+                            }
+                            else
+                            {
+
+                                <tr>
+                                    <td style = "display:none">
+                                        <input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="0" />
+                                    </td>
+                                    <td>
+                                        <select class="form-control" id="ItemType" name="ItemType[]">
+                                            <option selected="selected" value="0"> - - - Select Item Type - - - </option>
+
+
+                                            @foreach (var row in ItemTypeValues)
+                                            {
+
+                                                <option value="@row.ItemTypeId"> @row.ItemTypeName </option>
+
+                                            }
+
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="ItemDescription form-control" id="itemDesc" name="ItemDescription[]" value="" placeholder="Item Description" />
+                                    </td>
+
+                                    <td>
+                                        <input type="text" class="Unit form-control" id="Unit" name="Unit[]" value="" placeholder="Unit" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="UnitPrice form-control" id="UnitPrice" name="UnitPrice[]" value="" placeholder="Unit Price" />
+                                    </td>
+                                    <td>
+                                        <select class="dura form-control" id="ItemDuration" name="ItemDuration[]">
+                                            <option selected="selected">NA</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="TAmt form-control" id="TAmt" name="TAmt[]" value="" readonly="readonly" />
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);" id="addCF">Add</a>
+                                    </td>
+                                    <td style = "display:none">
+                                        <input type="text" class="code form-control" id="Actions" name="Actions[]" value="I" />
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.Currency, "Currency", htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-money"> </i></span>
+                            @Html.DropDownList("Currency", null, "--- Select Currency ---", htmlAttributes: new { @class = "form-control", id = "Currency" })
+                            @Html.ValidationMessageFor(model => model.Currency, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12"></div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        <label>Grand Total</label>
+                        @Html.EditorFor(model => model.TotalCost, new { htmlAttributes = new { @class = "form-control", placeholder = "Duration", id = "TotalCost", @readonly = "readonly" } })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="fancy-title title-bottom-border">
+                        <label>ATTACHMENT</label><small style="float:right">If Any</small>
+                        <h4></h4>
+                    </div>
+
+                    <div class="col_full">
+                        <input id="uploadImage" type="file" name="uploadPhoto" onchange="ValidatePreviewImage(@Global.MaxSize("ATTACHMENT"), this, 'ATTACHMENT')" class="form-control" />
+                        @if (content != null)
+                        {
+                            <a href="~/File/JobOrderAttachment?id=@content.FileId" alt="CV" target="_blank">( Click here to download your attachment)</a>
+                        }
+                    </div>
+
+                </div>
+                <div class="row">
+                    <br />  <input type="submit" value="Submit" class="button button-3d button-rounded button-teal" style="float: right;" id="SubmitForm" />
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+
+            $(document).ready(function () {
+                var text_max = 2048;
+                if ($('#Description').val() != undefined || $('#Description').val() != '') {
+                    text_max = text_max - $('#Description').val().length;
+                }
+                $('#textarea_feedback').html(text_max + ' characters remaining');
+                text_max = 2048;
+                $('#Description').keyup(function () {
+                    var text_length = $('#Description').val().length;
+                    var text_remaining = text_max - text_length;
+
+                    $('#textarea_feedback').html(text_remaining + ' characters remaining');
+                    if (text_length >= text_max)
+                        return false;
+                });
+            });
+
+            $(document).ready(function () {
+
+                var text_max = 1024;
+                if ($('#Conditions').val() != undefined || $('#Conditions').val() != '') {
+                    text_max = text_max - $('#Conditions').val().length;
+                }
+
+                $('#textarea').html(text_max + ' characters remaining');
+                text_max = 1024;
+                $('#Conditions').keyup(function () {
+                    var text_length = $('#Conditions').val().length;
+                    var text_remaining = text_max - text_length;
+
+                    $('#textarea').html(text_remaining + ' characters remaining');
+                    if (text_length >= text_max)
+                        return false;
+                });
+            });
+        </script>
+    }
+
+    @Html.Hidden("RedirectToHome", Url.Action("MyJoborders", "JobOrder", new { area = "CMS", IsClientView = true }))
+
+</div>
+
+<script>
+    $(document).on("keydown", "#itemDesc", function () {
+        if ($("#itemDesc").val() != undefined || $('#itemDesc').val() != '') {
+            // Allow: backspace, delete, tab, escape
+            if (event.keyCode == 13)
+                return false;
+        }
+    });
+
+    $(document).on("keydown", "#Duration", function () {
+        if ($("#Duration").val() != undefined || $('#Duration').val() != '') {
+            // Allow: backspace, delete, tab, escape
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                    (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // Allow: home, end, left, right
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $(document).on("keydown", "#Unit", function () {
+        if ($("#Unit").val() != undefined || $('#Unit').val() != '') {
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 ||
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                return;
+            }
+            else {
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $(document).on("keydown", "#UnitPrice", function () {
+        if ($("#UnitPrice").val() != undefined || $('#UnitPrice').val() != '') {
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 ||
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                return;
+            }
+            else {
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.form-process').fadeOut()
+
+    });
+    $("#Create").validate({
+        submitHandler: function (form) {
+            var total = $("#TotalCost").val();
+            if (parseFloat(total) > 0) {
+                if ($("#Currency :selected").val() == '' || $('#Currency :selected').val() == '0') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Currency</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#Currency").focus();
+                    return false;
+                }
+            }
+
+            var data = new FormData($('input[name^="uploadPhoto"]'));
+            jQuery.each($('input[name^="uploadPhoto"]')[0].files, function (i, file) {
+                data.append(i, file);
+            });
+
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/JobOrder/Create",
+                data: {
+                    Subject: $('#Subject').val(),
+                    JobOrderTypeId: $('#JobOrderTypeId :selected').val(),
+                    Industry: $('#Industry :selected').val(),
+                    FunctionalPosition: $('#FunctionalPosition :selected').val(),
+                    Description: $('#Description').val(),
+                    SalaryRange: $('#SalaryRange :selected').val(),
+                    ExpRange: $('#ExpRange : selected').val(),
+                    Conditions: $('#Conditions').val(),
+                    StartDate: $('#StartDate :selected').val(),
+                    Duration: $('#Duration').val(),
+                    ItemType: $('#ItemType').val(),
+                    ItemDescription: $('#ItemDescription').val(),
+                    Unit: $('#Unit').val(),
+                    UnitPrice: $('#UnitPrice').val(),
+                    ItemDuration: $('#ItemDuration').val(),
+                    Currency: $('#Currency :selected').val(),
+                    uploadImage: data,
+                    fileName: $('#Name').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    if ($("#SaveStatus").val() == "Success") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Job Order Created <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        if ($("#SaveStatus").val() != null && $("#SaveStatus").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Job Order ' + $("#SaveStatus").val() + ' <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+        var ItemTypeValues = [];
+        // Binding Item type dropdown
+        // alert("hello");
+        if (ItemTypeValues.length == 0) {
+            $.ajax({
+                url: "/Admin/Admin/GetItemTypes",
+                datatype: "JSON",
+                type: "Get",
+                success: function (data) {
+                    // $("#ItemType").empty();
+                    debugger;
+                    for (var i = 0; i < data.length; i++) {
+                        var opt = new Option(data[i].ItemTypeName, data[i].ItemTypeId);
+                        //   $("#ItemType").append(opt);
+                        ItemTypeValues.push([data[i].ItemTypeId, data[i].ItemTypeName]);
+                    }
+                }
+
+            });
+        }
+
+        // Binding Duration dropdown
+        var itemDurations = [];
+
+        $.ajax({
+            url: "/Admin/Admin/GetDuration",
+            datatype: "JSON",
+            type: "Get",
+            success: function (data) {
+                debugger;
+                for (var i = 0; i < data.length; i++) {
+                    var opt = new Option(data[i].DurationName, data[i].Duration);
+                    $("#ItemDuration").append(opt);
+                    itemDurations.push([data[i].Duration, data[i].DurationName]);
+                }
+            }
+
+        });
+
+
+        $("#addCF").click(function () {
+
+            var state = '<select class="form-control" id="ItemType" name="ItemType[]">';
+            state = state + ' <option selected="selected" value="0"> - - - Select Item Type - - - </option>';
+
+            if (ItemTypeValues.length == 0) {
+                $.ajax({
+                    url: "/Admin/Admin/GetItemTypes",
+                    datatype: "JSON",
+                    type: "Get",
+                    success: function (data) {
+                        // $("#ItemType").empty();
+                        debugger;
+                        for (var i = 0; i < data.length; i++) {
+                            var opt = new Option(data[i].ItemTypeName, data[i].ItemTypeId);
+                            $("#ItemType").append(opt);
+                            ItemTypeValues.push([data[i].ItemTypeId, data[i].ItemTypeName]);
+                        }
+                    }
+                });
+            }
+            else {
+
+                for (var i = 0; i < ItemTypeValues.length; i++) {
+                    state = state + '<option value=' + ItemTypeValues[i][0] + '>' + ItemTypeValues[i][1] + '</option>';
+                }
+            }
+            state = state + '</select>';
+
+
+
+            var itemDuration = '<select class="dura form-control" id="ItemDuration" name="ItemDuration[]">';
+            itemDuration = itemDuration + ' <option selected="selected">NA</option>';
+
+
+            for (var i = 0; i < itemDurations.length; i++) {
+                itemDuration = itemDuration + '<option value=' + itemDurations[i][0] + '>' + itemDurations[i][1] + '</option>';
+            }
+            itemDuration = itemDuration + '</select>';
+
+            $("#customFields").append('<tr><td> ' + state + ' </td>' +
+                                            '<td style = "display:none"><input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="0" /></td>' +
+                                            '<td><input type="text" class="code form-control" id="itemDesc" name="ItemDescription[]" value="" placeholder="Item Description" /></td>' +
+                                            '<td><input type="text" class="Unit form-control" id="Unit" name="Unit[]" value="" placeholder="Unit" /></td>' +
+                                            '<td><input type="text" class="UnitPrice form-control" id="UnitPrice" name="UnitPrice[]" value="" placeholder="Unit Price" /></td>' +
+                                            '<td> ' + itemDuration + ' </td>' +
+                                            '<td><input type="text" class="TAmt form-control" id="TAmt" name="TAmt[]" value=""  readonly="readonly" /></td>' +
+                                            '<td><a href="javascript:void(0);" id="remCF">Remove</a></td></tr>' +
+                                            '<td style = "display:none"><input type="text" class="code form-control" id="Actions" name="Actions[]" value="I" /></td>'
+                                      );
+
+            $("#customFields").on('click', '#remCF', function () {
+                $(this).closest('tr').remove();
+                calculateGrandTotal();
+            });
+
+        });
+
+
+
+        $("#customFields").on('click', '#delCF', function () {
+            var row = $(this).closest('tr')
+            row.find('.Unit').val(0);
+            row.find('.UnitPrice').val(0);
+            row.find('.dura').val(0);
+            row.find('.TAmt').val(0);
+            row.find('.code').val('D');
+            row.hide();
+            calculateGrandTotal();
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+
+    //$(document).ready(function () {
+    //    var text_max = 2048;
+    //    if ($('#Description').val() != undefined || $('#Description').val() != '') {
+    //        text_max = text_max - $('#Description').val().length;
+    //    }
+    //    $('#textarea_feedback').html(text_max + ' characters remaining');
+    //    text_max = 2048;
+    //    $('#Description').keyup(function () {
+    //        var text_length = $('#Description').val().length;
+    //        var text_remaining = text_max - text_length;
+
+    //        $('#textarea_feedback').html(text_remaining + ' characters remaining');
+    //        if (text_length >= text_max)
+    //            return false;
+    //    });
+    //});
+
+    //$(document).ready(function () {
+
+    //    var text_max = 1024;
+    //    if ($('#Conditions').val() != undefined || $('#Conditions').val() != '') {
+    //        text_max = text_max - $('#Conditions').val().length;
+    //    }
+
+    //    $('#textarea').html(text_max + ' characters remaining');
+    //    text_max = 1024;
+    //    $('#Conditions').keyup(function () {
+    //        var text_length = $('#Conditions').val().length;
+    //        var text_remaining = text_max - text_length;
+
+    //        $('#textarea').html(text_remaining + ' characters remaining');
+    //        if (text_length >= text_max)
+    //            return false;
+    //    });
+    //});
+
+    $(function () {
+
+
+        $("body").on("change", ".Unit",
+                       function () {
+                           var row = $(this).closest('tr');
+                           var customPRICE = row.find('.UnitPrice').val();
+                           var customQTY = row.find('.Unit').val();
+                           var customDuration = row.find('.dura').val();
+                           var total = parseFloat(customPRICE) * parseFloat(customQTY);
+                           if (!(customDuration == "NA" || customDuration == 0)) {
+                               total = total * parseFloat(customDuration);
+                           }
+                           row.find('.TAmt').val(total);
+                           calculateGrandTotal();
+                       });
+
+        $("body").on("change", ".UnitPrice",
+                      function () {
+                          var row = $(this).closest('tr');
+                          var customPRICE = row.find('.UnitPrice').val();
+                          var customQTY = row.find('.Unit').val();
+                          var customDuration = row.find('.dura').val();
+                          var total = parseFloat(customPRICE) * parseFloat(customQTY);
+                          if (!(customDuration == "NA" || customDuration == 0)) {
+                              total = total * parseFloat(customDuration);
+                          }
+                          row.find('.TAmt').val(total);
+                          calculateGrandTotal();
+                      });
+
+        $("body").on("change", ".dura",
+                  function () {
+                      var row = $(this).closest('tr');
+                      var customPRICE = row.find('.UnitPrice').val();
+                      var customQTY = row.find('.Unit').val();
+                      var customDuration = row.find('.dura').val();
+                      var total = parseFloat(customPRICE) * parseFloat(customQTY);
+                      if (!(customDuration == "NA" || customDuration == 0)) {
+                          total = total * parseFloat(customDuration);
+                      }
+                      row.find('.TAmt').val(total);
+                      calculateGrandTotal();
+                  });
+
+    });
+
+
+    function calculateGrandTotal() {
+        var grandTotal = 0;
+
+        $(".TAmt").each(function () {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                grandTotal += parseFloat(this.value);
+            }
+        });
+        $('#TotalCost').val(grandTotal);
+    }
+
+
+    $("#StartDate").on("change", function () {
+        var d = new Date();
+        var SDate = new Date($("#StartDate").val());
+
+        if (sdate.toISOString() < d.toISOString()) {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Start Date</b> should not be less than <b>Today </b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn-primary',
+                icon: 'icon-thumbs-down2 icon-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#StartDate").focus();
+            $('#StartDate').val(null);
+            return false;
+
+        }
+
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

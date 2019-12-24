@@ -1,0 +1,266 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@using AJSolutions.DAL;
+@model LectureMaster
+@{
+    ViewBag.Title = "Add Lecture";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<LectureMaster> lecture = ViewData["LectureMaster"] as List<LectureMaster>;
+    LectureContentUpload content = ViewData["Content"] as LectureContentUpload;
+    List<LectureContentUpload> contentlist = ViewData["Content"] as List<LectureContentUpload>;
+}
+
+@using (Html.BeginForm("LectureMaster", "Course", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", id = "LectureMaster", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+    @Html.HiddenFor(model => model.LectureId)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Lecture</h4>
+                </div>
+                <div class="row">
+
+                    <div class="col_full">
+                        @Html.LabelFor(model => model.LectureName, "Lecture Name")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.LectureName, new { htmlAttributes = new { @class = "form-control required", id = "LectureName", @Placeholder = "Enter Lecture Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.LectureName, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_full">
+                        @Html.LabelFor(model => model.LectureDescription, "Description", htmlAttributes: new { @class = "control-label" })
+                        @Html.TextAreaFor(model => model.LectureDescription, 5, 124, htmlAttributes: new { @class = "form-control required", @Maxlength = 1024, id = "LectureDescription", @placeholder = "Enter your Description here.." })
+                        <div id="textarea_feedback" class="text-danger"></div>
+                        @Html.ValidationMessageFor(model => model.LectureDescription, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_full">
+                        @Html.LabelFor(model => model.Keywords, "Keywords")
+                        <input type="text" name="Keywords" data-val="true" value=@ViewBag.Keywords @*class="form-control"*@ id="Keywords" placeholder="Enter Keywords" />
+                        @Html.ValidationMessageFor(model => model.Keywords, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.Weightage, "Weightage")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.Weightage, new { htmlAttributes = new { @class = "form-control", id = "Weightage", @Placeholder = "Weightage" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Weightage, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col_half col_last">
+                        <br />
+                        <table class="table table-striped table-responsive">
+                            <tbody>
+                                <tr>
+                                    <td><label>READ ONLY ? </label></td>
+                                    <td>
+                                        @Html.EditorFor(model => model.Permission)
+                                        @Html.ValidationMessageFor(model => model.Permission, "", new { @class = "text-danger", id = "Permission" })
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => content.FileName, "Name your Document")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-doc"></i></span>
+                            @Html.TextBox("Name", content.FileName as string, new { @class = "form-control", @id = "Name", placeholder = "Enter Document Name" })
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => content.FileId, "Browse")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-upload-alt"></i></span>
+                            <input id="uploadImage" type="file" name="uploadPhoto" onchange="ValidatePreviewImage(@Global.MaxSize("ATTACHMENT"), this, 'ATTACHMENT')" class="form-control" /><nobr></nobr>
+                            @if (content.FileId != 0)
+                            {
+                                <a href="~/File/Attachment?id=@content.FileId" alt="Attachment" id="FileId" target="_blank"><span class="fa fa-download"></span>&nbsp;@content.FileName</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+                @Html.Hidden("CorporateProfile", ViewBag.CorporateProfile as string)
+                <input type="submit" id="lecturemaster" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+
+
+
+
+            </div>
+        </div>
+        <br />
+        <center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>              
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+    </div>
+    <br /><br />
+
+    @*<div class="row">
+            <div class="container">
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>
+                                Lecture Id
+                            </th>
+                            <th>
+                                Lecture Name
+                            </th>
+
+                            <th>
+                                Weightage
+                            </th>
+                            <th>
+                                Read Only
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                        @foreach (var item in lecture)
+                        {
+                            if (item.IsDelete == false)
+                            {
+                        <tr>
+                            <td>
+                                @Html.ActionLink(item.LectureId, "LectureDetails", "Course", new { LectureId = item.LectureId }, htmlAttributes: new { target = "_blank" })
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LectureName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Weightage)
+                            </td>
+                            <td>
+                                        @if (item.Permission == true)
+                                        {
+                                            <span> Yes</span>
+                                        }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("LectureMaster", "Course", new { LectureId = item.LectureId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                |
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.LectureId', 'Delete');" title="Remove"><i class="icon-trash"></i></a>
+                            </td>
+                        </tr>
+                            }
+                        }
+
+                    </table>
+
+
+                </div>
+            </div>
+        </div>*@
+
+    @Html.Hidden("RedirectToHome", Url.Action("LectureMaster", "Course"));
+    @Html.Hidden("RedirectTo", Url.Action("LectureMaster", "Course"));
+}
+
+<script type="text/javascript">
+    $("#LectureMaster").validate({
+        submitHandler: function (form) {
+
+            // Create FormData object
+            //var fileData = new FormData();
+            //if (window.FormData !== undefined) {
+            //    var fileUpload = $("#uploadImage").get(0);
+            //    var files = fileUpload.files;
+
+
+
+            //    // Looping over all files and add it to FormData object
+            //    for (var i = 0; i < files.length; i++) {
+            //        fileData.append(files[i].name, files[i]);
+            //    }
+            //}
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/LMS/Course/LectureMaster",
+                data: {
+                    LectureId: $('#LectureId').val(),
+                    LectureName: $('#LectureName').val(),
+                    LectureDescription: $('#LectureDescription').val(),
+                    Keywords: $('#Keywords').val(),
+                    Weightage: $('#Weightage').val(),
+                    Permission: $('#Permission').attr("checked") ? 1 : 0,
+                    Name: $('#Name').val(),
+                    uploadPhoto: fileData
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+
+        }
+    });
+
+    $('#Keywords').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        persist: false,
+        create: function (input) {
+            return {
+                value: input,
+                text: input
+            }
+        }
+    });
+
+
+
+
+    $(document).ready(function () {
+
+        var text_max = 1024;
+        if ($('#LectureDescription').val() != undefined || $('#LectureDescription').val() != '') {
+            text_max = text_max - $('#LectureDescription').val().length;
+        }
+
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 1024;
+        $('#LectureDescription').keyup(function () {
+            var text_length = $('#LectureDescription').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+    });
+
+</script>

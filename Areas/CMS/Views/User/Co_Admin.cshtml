@@ -1,0 +1,164 @@
+﻿@model IEnumerable<AJSolutions.Models.ClientViewModel>
+
+@{
+    ViewBag.Title = "Co_Admin";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm())
+{
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col_full fright"><a href="@Url.Action("Add", "User", new { Area = "CMS", Id = "ADI" })"><i class="icon-plus"></i>Add Co-Admin</a></div>
+        </div>
+        @if (Model != null)
+        {
+            if (Model.Count() > 0)
+            {
+                <div class="row">
+                    <div class="fancy-title title-bottom-border title-right">
+                        <h4>My Co-Admins (@Model.Count())</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                <th>
+                                    S.No
+                                </th>
+
+                                <th>
+                                    Name
+                                </th>
+
+                                <th>
+                                    Registered On
+                                </th>
+                                <th>
+                                    Last Logged On
+                                </th>
+
+                                <th>
+                                    Email Id
+                                </th>
+                                <th>
+                                    Contact
+                                </th>
+                                <th>Edit</th>
+                            </tr>
+                            @{
+                                var count = 1;
+                                foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td>
+                                            @count
+                                        </td>
+
+                                        <td>
+                                            @Html.ActionLink(item.Name, "CoAdminProfile", "User", new { area = "CMS", CorporateId = item.CorporateId }, htmlAttributes: new { target = "_blank" })
+                                        </td>
+
+                                        <td>
+                                            @item.RegisteredOn
+                                        </td>
+                                        <td>
+                                            @item.LastLogin
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Email)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("Add", "User", new { area = "CMS", Id = "ADI", Uid = item.CorporateId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                        </td>
+                                    </tr>
+                                    count++;
+                                }
+                            }
+                        </table>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <br /><br />
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <h3 class="text-center">No Co-Admin(S)</h3>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Clients", "User"));
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has list of all co-admins added by you.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/coadminlist.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/coadminlist.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "&PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+

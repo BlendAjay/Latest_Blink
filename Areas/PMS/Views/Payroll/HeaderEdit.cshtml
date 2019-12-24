@@ -1,0 +1,97 @@
+﻿@using AJSolutions.Models;
+@{
+    
+    ViewBag.Title = ViewBag.Type;
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("HeaderEdit", "Payroll", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data", id = "HeaderEdit", role = "form" }))
+{
+    @Html.Hidden("type", ViewBag.Type as string)
+    <div class="container">
+
+        @if (ViewBag.Type == "Header"){
+            @*if (Headerlist.Count > 0){
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>Header Name</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var headerlist in Headerlist){
+                                    <tr>
+                                        <td>@headerlist.HeaderName</td>
+                                        <td>
+                                            <a href="@Url.Action("LContent", "Payroll", new { HeaderId = headerlist.HeaderId })" title="Edit"><i class="icon-pen"></i></a>|
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }*@
+        }
+        @if (ViewBag.Type == "Content")
+        {
+            @*if (Contentlist.Count > 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>Contnet Name</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var contentlist in Contentlist)
+                                {
+                                    <tr>
+                                        <td>@contentlist.ContentName</td>
+                                        <td>
+                                            <a href="@Url.Action("LContent", "Payroll", new { ContentId = contentlist.ContentId })" title="Edit"><i class="icon-pen"></i></a>|
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }*@
+        }
+        @if (ViewBag.Type == "Footer")
+        {
+            @*if (FooterList.Count > 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>Footer Name</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var footerList in FooterList)
+                                {
+                                    <tr>
+                                        <td>@footerList.FooterName</td>
+                                        <td>
+                                            <a href="@Url.Action("LContent", "Payroll", new { FooterId = footerList.FooterId })" title="Edit"><i class="icon-pen"></i></a>|
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }*@
+        }
+    </div>
+}

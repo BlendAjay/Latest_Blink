@@ -1,0 +1,85 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.DAL;
+@{
+    ViewBag.Title = "Salary Statement";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<EmployeeSalaryProcessedDetail> EmpStatement = ViewData["EmployeeSalaryProcessedDetail"] as List<EmployeeSalaryProcessedDetail>;
+
+}
+
+@using (Html.BeginForm("SalaryStatement", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "SalaryStatement", role = "form" }))
+{
+
+    @Html.AntiForgeryToken()
+    Html.Hidden("Flag", ViewBag.Flag as string);
+    <div class="container">
+    
+        <div class="fancy-title title-bottom-border floatRight">
+            <h4>
+                @if (ViewBag.Flag)             {
+                <div class="row">
+                    <div class="col_two_fifth">
+                        Salary Statement for the month of
+                    </div>
+                    <div class="col_one_fifth">
+                        @Html.DropDownList("Month", null, "Select Month", htmlAttributes: new { @class = "form-control", id = "Month" })
+                    </div>
+                    <div class="col_two_fifth col_last floatRight">
+                        <input type="submit" id="Process" value="Search" class="button button-rounded button-teal" />
+                    </div>
+                </div>
+                }
+                else
+                {
+                    <span> Salary Statement for the month of @ViewBag.FinYear </span>
+                }
+            </h4>
+        </div>
+        <div class="row">
+            <div class=" table-responsive">
+                @if (EmpStatement != null)
+                {
+                    if(EmpStatement.Count() > 0 )
+                    { 
+                    int i = 1;
+                    <table class="table table-bordered table-striped  nobottommargin">
+                        <thead>
+                            <tr>
+                                <th>S. No.</th>
+                                <th>Processed Date</th>
+                                <th>No. of Employee</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var emp in EmpStatement)
+                            {
+                             
+                                <tr>
+                                    <td>@i </td>
+                                    <td>@emp.ProcessedDate</td>
+                                    <td>@emp.NoOfEmployee</td>
+                                    <td><a href="@Url.Action("EmployeeSalaryStatement", "Payroll", new { pdate = emp.ProcessedDate, Month = ViewBag.PayoutMonth })"><i class="icon icon-download2"></i></a>
+                                        </td>
+                                </tr>
+                                i = i + 1;
+                            }
+                        </tbody>
+                    </table>
+                    }
+                    else                   
+                    {
+                        <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                            <div class="fbox-icon">
+                                <i class="icon-thumbs-down2"></i>
+                            </div>
+                            <h3>No statement found for current filter<span class="subtitle"></span></h3>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+}

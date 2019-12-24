@@ -1,0 +1,175 @@
+﻿@using AJSolutions.Models;
+@{
+    ViewBag.Title = "Holiday Calender";
+    UserViewModel userdetails = ViewData["UserProfile"] as UserViewModel;
+    if (userdetails.Role.ToUpper() == "ADMIN")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    IEnumerable<Holiday> holiday = ViewData["Holidays"] as IEnumerable<Holiday>;
+}
+
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("HolidayCalendar", "Calendar", FormMethod.Post, new { @class = "form-horizontal", id = "HolidayCalendar", role = "form" }))
+{
+    <div class="container-fluid  dashboard-content">
+        <!-- ============================================================== -->
+        <!-- pageheader -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header">
+                    <h2 class="pageheader-title">Calendar </h2>
+                    <p class="pageheader-text">Proin placerat ante duiullam scelerisque a velit ac porta, fusce sit amet vestibulum mi. Morbi lobortis pulvinar quam.</p>
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Pages</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Calendar</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end pageheader -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- simple calendar -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id='calendar1'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id='wrap'>
+                            <div id='external-events'>
+                                <h4>Draggable Events</h4>
+                                <div class='fc-event'>My Event 1</div>
+                                <div class='fc-event bg-secondary border-secondary'>My Event 2</div>
+                                <div class='fc-event bg-brand border-brand'>My Event 3</div>
+                                <div class='fc-event bg-info border-info'>My Event 4</div>
+                                <div class='fc-event bg-success border-success'>My Event 5</div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id='drop-remove'>
+                                    <label class="custom-control-label" for="drop-remove">Remove after drop</label>
+                                </div>
+                            </div>
+                                <div id='calendar'></div>
+                                @*<div style='clear:both'></div>*@
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end events calendar -->
+        <!-- ============================================================== -->
+    </div>
+
+
+
+
+
+
+
+
+
+    @*<div class="container">
+        <div class="col_full fright"><a href="@Url.Action("Holiday", "TMS", new { Area = "TMS" })"><i class="icon-plus-sign2"></i>Add Holidays </a></div>
+
+        <div class="col_full"><div data-provide="calendar" id="calendar"></div></div>
+    </div>*@
+
+    //..........help icon.......//
+
+}
+
+<script>
+
+
+    $(function () {
+        var currentYear = new Date().getFullYear();
+
+        $('#calendar').calendar({
+
+            enableContextMenu: true,
+            mouseOnDay: function (e) {
+                if (e.events.length > 0) {
+                    var content = '';
+
+                    for (var i in e.events) {
+                        content += '<div class="event-tooltip-content">'
+                                + '<div class="event-name" style="color:' + e.events[i].color + '">' + e.events[i].name + '</div>'
+                                + '</div>';
+
+                    }
+
+                    $(e.element).popover({
+                        trigger: 'manual',
+                        container: 'body',
+                        html: true,
+                        content: content
+                    });
+
+                    $(e.element).popover('show');
+                }
+            },
+            mouseOutDay: function (e) {
+                if (e.events.length > 0) {
+                    $(e.element).popover('hide');
+                }
+            },
+            dayContextMenu: function (e) {
+                $(e.element).popover('hide');
+            },
+            dataSource: []
+        });
+
+        $(document).ready(function () {
+
+            var calList = [
+                @if (holiday != null)
+                    {
+                        foreach (var item in holiday)
+                        {
+                            @:{id: @item.HolidayId, name:  "@item.HolidayType", startDate: new Date(@item.FromDate.Year, @item.FromDate.Month - 1, @item.FromDate.Day), endDate: new Date(@item.ToDate.Year, @item.ToDate.Month -1, @item.ToDate.Day) },
+                        }
+                    }]
+
+            $('#calendar').data('calendar').setDataSource(calList, false);
+
+        });
+
+
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

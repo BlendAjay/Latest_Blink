@@ -1,0 +1,346 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.Helpers;
+@model  PagedList.IPagedList<AJSolutions.Models.OPSData>
+@{
+    ViewBag.Title = "Certified Users";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Client")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    }
+    var currPage = ViewBag.page ?? 1;
+    var currPageSize = ViewBag.Paging;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.Hidden("Result", ViewBag.Result as string)
+    <div class="container">
+        <div class="row">
+            <a href="@Url.Action("AddCertifiedUsers", "Course", new { area = "TMS" })" class="btn btn-default btn-xs">Add OPS Data</a>
+        </div>
+        <div class="row">
+            <div class="col_full fancy-title title-bottom-border title-right">
+                <h4>Total OPS ( @Model.Count() )</h4>
+            </div>
+            <div class="col_half">
+                Search By Circle
+                @Html.DropDownList("CircleName", null, "--- Select Circle ---", new { @class = "form-control", @id = "CircleName", @onchange = "submitBranch();" })
+            </div>
+            <div class="col_half col_last">
+                Search By Branch
+                @Html.DropDownList("IPPBSolName", null, "--- Select Branch ---", new { @class = "form-control", @id = "IPPBSolName", @onchange = "submitBranch();" })
+            </div>
+
+            <br />
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="col_full">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    <th class="text-center">S.No.</th>
+                                    <th class="text-center">Circle Name</th>
+                                    <th class="text-center">IPPB SOL ID</th>
+                                    <th class="text-center">IPPB Sol Name</th>
+                                    <th class="text-center">Facility ID</th>
+                                    @*<th class="text-center">Facility Type</th>*@
+                                    <th class="text-center">Employee ID</th>
+                                    <th class="text-center">Full Name</th>
+                                    <th class="text-center">Mobile Number</th>
+                                    <th class="text-center">Certified</th>
+                                    <th class="text-center">Posted At Access Point</th>
+                                    <th class="text-center">Availiblity of Device</th>
+                                    <th class="text-center">Remarks /  Comments</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                                @{
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center">@item.CertifiedUsersId </td>
+                            <td class="text-center">@item.CircleName </td>
+                            <td class="text-center">@item.IPPBSOLID </td>
+                            <td class="text-center">@item.IPPBSolName </td>
+                            <td class="text-center">@item.FacilityID </td>
+                            @*<td class="text-center">@item.FacilityType </td>*@
+                            <td class="text-center">@item.EmpID </td>
+                            <td class="text-center">@item.FullName </td>
+                            <td class="text-center">@item.MobileNumber </td>
+                            <td class="text-center">
+                                @if (item.IsCertified == true)
+                                {
+                                    <span> Yes</span>
+                                }
+                                else
+                                {
+                                    <span> No</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsAvailableLaunch == true)
+                                {
+                                    <span> Yes</span>
+                                }
+                                else
+                                {
+                                    <span> No</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (item.IsMobileDevice == true)
+                                {
+                                    <span> Yes</span>
+                                }
+                                else
+                                {
+                                    <span> No</span>
+                                }
+                            </td>
+                            @*<td class="text-center">
+                                    @Html.CheckBoxFor(model => item.IsCertified, new { Id = "IsCertified" + item.CertifiedUsersId })
+                                </td>
+                                <td class="text-center">
+                                    @Html.CheckBoxFor(model => item.IsAvailableLaunch, new { Id = "IsAvailableLaunch" + item.CertifiedUsersId })
+                                </td>
+                                <td class="text-center">
+                                    @Html.CheckBoxFor(model => item.IsMobileDevice, new { Id = "IsMobileDevice" + item.CertifiedUsersId })
+                                </td>*@
+                            <td>
+                                @Html.TextBoxFor(model => item.Comments, new { Id = "Comments" + item.CertifiedUsersId, @class = "form-control", @placeholder = "Enter Remarks" })
+                                @*<input type="text" name="Remarks" + @item.CertifiedUsersId " id=" remarks + @item.CertifiedUsersId " value=" @item.Comments " size=" 22" tabindex="4" class="form-control number" />*@
+                            </td>
+                            <td>
+                                @*<button type="button" class="btn btn-default btn-xs" onclick="CertifiedUser( @item.CertifiedUsersId)">Submit</button>*@
+                                <a href="@Url.Action("AddCertifiedUsers", "Course", new { CertifiedUsersId = item.CertifiedUsersId, UserAction = "EDIT" })" class="btn btn-default btn-xs">Edit</a> /
+                                <button type="button" class="btn btn-default btn-xs" onclick="DeleteCertifiedUser( @item.CertifiedUsersId)">Delete</button>
+
+                            </td>
+                        </tr>
+                    }
+                                }
+                            </table>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <br /><br />
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Users<span class="subtitle"></span></h3>
+                    </div>
+                }
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("CertifiedUsers", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("CertifiedUsers", "Course", new { area = "TMS" }));
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>
+<script>
+    function submitBranch() {
+
+        var IPPBCircle = $("#CircleName :selected").val();
+        var IPPBSolName = $("#IPPBSolName :selected").val();
+        var PageSize = $("#PageSize :selected").val();
+        var url = $("#RedirectTo").val() + "?IPPBCircle=" + IPPBCircle + "&IPPBSolName=" + IPPBSolName + "&PageSize=" + PageSize;
+        //var url = $("#RedirectTo").val() + "?IPPBSolName=" + IPPBSolName + "&PageSize=" + PageSize;
+        location.href = url;
+    }
+    function CertifiedUser(CertifiedUsersId) {
+        var remarks = $('#Comments' + CertifiedUsersId + '').val();
+        var Certified;
+        if ($('#IsCertified' + CertifiedUsersId + '').is(':checked')) {
+            Certified = "True";
+        }
+        else {
+            Certified = "False";
+        }
+        var AvailableLaunch;
+        if ($('#IsAvailableLaunch' + CertifiedUsersId + '').is(':checked')) {
+            AvailableLaunch = "True";
+        }
+        else {
+            AvailableLaunch = "False";
+        }
+        var MobileDevice;
+        if ($('#IsMobileDevice' + CertifiedUsersId + '').is(':checked')) {
+            MobileDevice = "True";
+        }
+        else {
+            MobileDevice = "False";
+        }
+
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Certified the user ?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                $.ajax({
+                    type: "post",
+                    url: "/TMS/Course/CertifyUser",
+                    data: {
+                        CertifiedUsersId: CertifiedUsersId,
+                        IsCertified: Certified,
+                        IsAvailableLaunch: AvailableLaunch,
+                        IsMobileDevice: MobileDevice,
+                        Remarks: remarks
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data != null && data == true) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Successfully Marked as Certified",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-up fa-2x',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var IPPBSolName = $("#IPPBSolName :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize + "&IPPBSolName=" + IPPBSolName;
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            cancel: function () {
+                var PageSize = $("#PageSize :selected").val();
+                var IPPBSolName = $("#IPPBSolName :selected").val();
+                var url = $("#RedirectTo").val() + "?PageSize=" + PageSize + "&IPPBSolName=" + IPPBSolName;
+                location.href = url;
+            }
+        });
+    }
+    function DeleteCertifiedUser(CertifiedUsersId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?CertifiedUsersId=" + CertifiedUsersId + "&UserAction=" + "DELETE";
+                location.href = url;
+            }
+        });
+    }
+    function NonCertifiedUser(UId, Name) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to mark as not Certified?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                $.ajax({
+                    type: "post",
+                    url: "/User/CertifyUser",
+                    data: {
+                        CertifiedUsersId: CertifiedUsersId,
+                        action: "FALSE"
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data != null && data == true) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Successfully Marked as Not Certified",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+
+                        if (data == false) {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Deactivated user " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-down fa-2x ',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            cancel: function () {
+                var PageSize = $("#PageSize :selected").val();
+                var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+                location.href = url;
+            }
+        });
+    }
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+</script>

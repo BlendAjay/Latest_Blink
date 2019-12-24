@@ -1,0 +1,161 @@
+﻿@using AJSolutions.Models;
+@model Relation
+@{
+    ViewBag.Title = "Relation";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    List<Relation> relation = ViewData["Relation"] as List<Relation>;
+}
+
+
+@using (Html.BeginForm("Relation", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "Relation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Relation</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.RelationType, "Relation Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                        @Html.EditorFor(model => model.RelationType, new { htmlAttributes = new { @class = "form-control required", id = "RelationType", placeholder = "Enter relation(eg. Mother)" } })
+                    </div>
+
+
+                </div>
+                <br />
+                <input type="button" id="addrelation" value="Save" class="button button-rounded button-teal" />
+
+                @Html.Hidden("RelationId", ViewBag.AssetStatusId as string)
+            </div>
+
+            @if (relation != null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>RELATION</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in relation)
+                                {
+                                    <tr>
+                                        <td>@item.RelationType</td>
+                                        <td>
+                                            <a href="@Url.Action("Relation", "Payroll", new { RelationId = item.RelationId })" title="Edit"><i class="icon-pen"></i></a>|
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.RelationId');" title="Remove"><i class="icon-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @Html.Hidden("RedirectTo", Url.Action("RemoveRelation", "Payroll"))
+        @Html.Hidden("RedirectToHome", Url.Action("Relation", "Payroll"))
+    </div>
+}
+<script type="text/javascript">
+
+    $("#Relation").validate({
+        submitHandler: function (form) {
+        }
+    });
+
+    $("#addrelation").click(function (e) {
+
+        if ($("#Relation").valid()) {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/Relation",
+                data: {
+                    RelationId: $('#RelationId').val(),
+                    RelationType: $('#RelationType').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                    if (data == "Succeeded") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Unsucceeded") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went <b>wrong.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Exists") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Your Data is already <b> EXISTS.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'icon-info-sign icon-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+
+                }
+            });
+        }
+
+    });
+
+</script>
+<script type="text/javascript">
+    function ConfirmationDialog(RelationId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'icon-warning-sign icon-2x ',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?RelationId=" + RelationId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>
+

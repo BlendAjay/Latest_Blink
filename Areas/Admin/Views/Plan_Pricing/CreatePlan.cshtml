@@ -1,0 +1,224 @@
+﻿@model AJSolutions.Models.Plan
+@{
+    ViewBag.Title = "CreatePlan";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    IEnumerable<AJSolutions.Models.Plan> plans = ViewData["Plans"] as IEnumerable<AJSolutions.Models.Plan>;
+}
+@using (Html.BeginForm("CreatePlan", "Plan_Pricing", FormMethod.Post, new { @class = "form-horizontal", id = "CreatePlan", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Status as string)
+    @Html.Hidden("Deleted", ViewBag.Deleted as string)
+    if (Model != null)
+    {
+        @Html.Hidden("PlanId", Model.PlanId)
+    }
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add Plan</h4>
+                </div>
+                <div class="row">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.PlanName, "Plan Name")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.PlanName, new { htmlAttributes = new { @class = "form-control required", id = "PlanName", @Placeholder = "Enter Plan Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PlanName, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.CommenceMentDate, "Commencement Date")
+                        <div class="input-group travel-date-group">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" value="@ViewBag.CommenceDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="CommenceMentDate">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CommenceMentDate, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.INRAmount, "INR Amount")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.INRAmount, new { htmlAttributes = new { @class = "form-control required", id = "INRAmount", @Placeholder = "Enter INR Amount" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.INRAmount, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.OtherAmount, "Other Amount")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.OtherAmount, new { htmlAttributes = new { @class = "form-control required", id = "OtherAmount", @Placeholder = "Enter Other Amount" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.OtherAmount, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.PlanSequence, "Plan Sequence")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.PlanSequence, new { htmlAttributes = new { @class = "form-control required", id = "PlanSequence", @Placeholder = "Enter Plan Sequence" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PlanSequence, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.RetiredDate, "Retired Date")
+                        <div class="input-group travel-date-group">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" value="@ViewBag.RetiredDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="RetiredDate">
+                        </div>
+                        @Html.ValidationMessageFor(model => model.RetiredDate, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.INRDiscount, "INR Discount")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.INRDiscount, new { htmlAttributes = new { @class = "form-control required", id = "INRDiscount", @Placeholder = "Enter INR Discount" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.INRDiscount, "", new { @class = "text-danger" })
+                        <br>
+
+                        @Html.LabelFor(model => model.OtherDiscount, "Other Discount")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                            @Html.EditorFor(model => model.OtherDiscount, new { htmlAttributes = new { @class = "form-control required", id = "OtherDiscount", @Placeholder = "Enter Other Discount" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.OtherDiscount, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    @Html.LabelFor(model => model.ShortDescription, "Enter your Description", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                    @Html.TextAreaFor(model => model.ShortDescription, 5, 124, htmlAttributes: new { @class = "form-control", id = "ShortDescription", @placeholder = "Description here.." })
+
+                    @Html.ValidationMessageFor(model => model.ShortDescription, "", new { @class = "text-danger" })
+                    <br />
+                    <input type="submit" id="CreatePlan" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+                </div>
+            </div>
+
+        </div>
+        <br /><br />
+        <div class="row">
+            <div class="container">
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>Plan Name</th>
+                            <th>Plan Sequence</th>
+                            <th>CommenceMent Date</th>
+                            <th>Retired Date</th>
+                            <th>INR Amount</th>
+                            <th>INR Discount</th>
+                            <th>Other Amount</th>
+                            <th>Other Discount</th>
+                            <th>Actions</th>
+                        </tr>
+                        @if (plans != null)
+                        {
+                            foreach (var item in plans)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PlanName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PlanSequence)
+                                    </td>
+                                    <td>
+                                        @item.CommenceMentDate.ToString("dd-MMM-yyyy")
+                                    </td>
+                                    <td>
+                                        @if (@item.RetiredDate != null)
+                                        {
+                                            @item.RetiredDate.Value.ToString("dd-MMM-yyyy")
+                                        }
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.INRAmount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.INRDiscount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.OtherAmount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.OtherDiscount)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "CreatePlan", "Plan_Pricing", new { area = "Admin", PlanId = item.PlanId }, new { title = "Edit" })
+                                        |
+                                        @Html.ActionLink("Delete", "CreatePlan", "Plan_Pricing", new { area = "Admin", PlanId = item.PlanId, UserAction = "Delete" }, new { title = "Delete" })
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("CreatePlan", "Plan_Pricing", new { area = "Admin" }))
+}
+<script type="text/javascript">   
+
+    $("#CreatePlan").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/Admin/Plan_Pricing/CreatePlan",
+                data: {
+                    PlanId: $('#PlanId').val(),
+                    PlanName: $('#PlanName').val(),
+                    CommenceMentDate: $('#CommenceMentDate').val(),
+                    PlanSequence: $('#PlanSequence').val(),
+                    RetiredDate: $('#RetiredDate').val(),
+                    INRAmount: $('#INRAmount').val(),
+                    INRDiscount: $('#INRDiscount').val(),
+                    OtherAmount: $('#OtherAmount').val(),
+                    OtherDiscount: $('#OtherDiscount').val(),
+                    ShortDescription: $('#ShortDescription').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Your Plan has been saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        if ($("#Deleted").val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Plan has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>

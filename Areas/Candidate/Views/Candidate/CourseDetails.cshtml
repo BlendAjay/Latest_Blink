@@ -1,0 +1,291 @@
+﻿@model IEnumerable<AJSolutions.Models.CourseView>
+@{
+    ViewBag.Title = "Course Details";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("CourseDetails", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "CourseDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Course Details</h4>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="col_half">
+                    <span><b>COURSE NAME</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @if (ViewBag.Action == "Add")
+                        {
+                            @Html.DropDownList("Course", ViewBag.Course as SelectList, "--- Select Identification Type ---", htmlAttributes: new { @class = "sm-form-control", @id = "Course", placeholder = "Enter Your Course" })
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Course", ViewBag.Course as SelectList, "--- Select Identification Type ---", htmlAttributes: new { @class = "sm-form-control", @id = "Course", placeholder = "Enter Your Course" })
+                        }
+                    </div>
+                    <br>
+                    <span><b>COURSE START DATE</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @if (ViewBag.Action == "Add")
+                        {
+                            <input type="date" name="CourseStartdate" value=@ViewBag.CourseStartdate class="sm-form-control" id="CourseStartdate" />                            
+                        }
+                        else
+                        {
+                            <input type="date" name="CourseStartdate" value=@ViewBag.CourseStartdate class="sm-form-control" id="CourseStartdate" />                            
+                        }
+                    </div>
+                    <br>
+                    <span><b>COURSE END DATE</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @if (ViewBag.Action == "Add")
+                        {
+                            <input type="date" name="CourseEndDate" value=@ViewBag.CourseEndDate class="sm-form-control" id="CourseEndDate" />
+                        }
+                        else
+                        {
+                            <input type="date" name="CourseEndDate" value=@ViewBag.CourseEndDate class="sm-form-control" id="CourseEndDate" />
+                        }
+                    </div>
+                </div>
+
+                <div class="col_half col_last">
+                    <span><b>TOTAL FEE</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @if (ViewBag.Action == "Add")
+                        {
+                            @Html.TextBox("TotalFee", ViewBag.TotalFee as string, new { @class = "sm-form-control", @id = "TotalFee", placeholder = "Enter Total Fee" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("TotalFee", ViewBag.TotalFee as string, new { @class = "sm-form-control", @id = "TotalFee", placeholder = "Enter Total Fee" })
+                        }
+
+                    </div>
+                    <br />
+                    <span><b>DISCOUNT</b></span> <br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @if (ViewBag.Action == "Add")
+                        {
+                            @Html.TextBox("Discount", ViewBag.Discount as string, new { @class = "sm-form-control", @id = "Discount", placeholder = "Enter Discount" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("Discount", ViewBag.Discount as string, new { @class = "sm-form-control", @id = "Discount", placeholder = "Enter Discount" })
+                        }
+                    </div>
+                    <br>
+                    <span><b>REMAINING FEE</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @if (ViewBag.Action == "Add")
+                        {
+                            @Html.TextBox("RemainingFee", ViewBag.RemainingFee as string, new { @class = "sm-form-control", @id = "RemainingFee", placeholder = "Enter Remaining Fee" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("RemainingFee", ViewBag.RemainingFee as string, new { @class = "sm-form-control", @id = "RemainingFee", placeholder = "Enter Remaining Fee" })
+                        }
+
+                        @Html.Hidden("UserId", ViewBag.UserId as string)
+                    </div>
+                    <br>
+
+                    <button class="button button-3d button-rounded button-teal" id="coursedetails" style="float: right;" type="submit">Submit</button>
+                </div>
+            </div>
+        </div>
+        <br /><br />
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="container">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>
+                                </th>
+                                <th class="strong-left">
+                                    @Html.DisplayNameFor(model => model.CourseName)
+                                </th>
+                                <th class="strong-left">
+                                    @Html.DisplayNameFor(model => model.CourseStartdate)
+                                </th>
+                                <th class="strong-left">
+                                    @Html.DisplayNameFor(model => model.CourseEndDate)
+                                </th>
+                                <th class="strong-left">
+                                    @Html.DisplayNameFor(model => model.TotalFee)
+                                </th>
+                                <th class="strong-left">
+                                    @Html.DisplayNameFor(model => model.Discount)
+                                </th>
+                                <th class="strong-left">
+                                    @Html.DisplayNameFor(model => model.RemainingFee)
+                                </th>
+                                <th></th>
+                            </tr>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(modelItem => item.CourseCode)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CourseName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CourseStartdate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CourseEndDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TotalFee)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Discount)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RemainingFee)
+                                    </td>
+                                    <td>
+
+                                        @Html.ActionLink("Edit", "CourseDetails", "Candidate", new
+                               {
+                                   Course = item.CourseCode,
+                                   CourseStartdate = item.CourseStartdate,
+                                   CourseEndDate = item.CourseEndDate,
+                                   TotalFee = item.TotalFee,
+                                   Discount = item.Discount,
+                                   RemainingFee = item.RemainingFee,
+                                   useraction = "Edit"
+                               }, new { title = "Edit" })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+    </div>
+
+}
+<script type="text/javascript">
+    $('#coursedetails').click(function (e) {
+        e.preventDefault();
+
+        if ($("#Course").val() == undefined || $('#Course').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Course</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#Course").focus();
+            return false;
+        }        
+        if ($("#CourseStartdate").val() == undefined || $('#CourseStartdate').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Course Start date</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#CourseStartdate").focus();
+            return false;
+        }
+        if ($("#CourseEndDate").val() == undefined || $('#CourseEndDate').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Course End Date</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#CourseEndDate").focus();
+            return false;
+        }
+        if ($("#TotalFee").val() == undefined || $('#TotalFee').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Total Fee</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#TotalFee").focus();
+            return false;
+        }
+        if ($("#RemainingFee").val() == undefined || $('#RemainingFee').val() == '') {
+            $.alert({
+                title: 'Alert',
+                content: '<b>Remaining Fee</b> is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#RemainingFee").focus();
+            return false;
+        }
+        $('#CourseDetails').submit();
+    });
+
+
+    $(document).ready(function () {
+
+        if ($('#SaveStatus').val() == "Succeeded") {
+
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+
+    });
+
+</script>

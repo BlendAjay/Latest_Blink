@@ -1,0 +1,126 @@
+﻿@model List<AJSolutions.Models.MTTrainingOrderTraineeDetailsView>
+@{
+    ViewBag.Title = "Master Training Trainee Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Candidate")
+    {
+        Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    AJSolutions.Models.MTTrainingOrderTraineeDetailsView trainingOrders = ViewData["TrainingOrders"] as AJSolutions.Models.MTTrainingOrderTraineeDetailsView;
+    var To = "TRO";
+    var EUId = @trainingOrders.TrainingOrderId;
+    var year = DateTime.Now.Year;
+    var type = "MT";
+    var finalId = @To + @EUId + type + year;
+}
+<section id="content">
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <input type="submit" class="button button-3d nomargin" id="printpagebutton" value="Print" onclick="printpage();" />
+                <div class="fancy-title title-bottom-border">
+                    <h4>Training Order Trainee(s) Details - @finalId</h4>
+                </div>
+                @if (trainingOrders != null)
+                {
+                    <div class="row">
+                        <div class="col_half">
+                            <label><i class="icon-list"></i> Training Week : @trainingOrders.TrainingWeek</label><br />
+                            <label><i class="icon-calendar"></i> Circle : @trainingOrders.Circle</label><br />
+                        </div>
+                        <div class="col_half  col_last">
+                            <label><i class="icon-calendar"></i> Contact Number : @trainingOrders.TOFilledByContactNumber</label><br />
+                            <label><i class="icon-calendar"></i> Updated On : @trainingOrders.UpdatedOn.ToString("dd-MMM-yyyy")</label><br />
+                        </div>
+                    </div>
+                }
+                @if (Model.Count > 0)
+                {
+                    <div class="fancy-title title-bottom-border">
+                        <h4>Trainee Details</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Tracker Id</th>
+                                <th>Name</th>
+                                <th>Designation</th>
+                                <th>Branch</th>
+                                <th>CSI Employee Id</th>
+                                <th>Gender</th>                                
+                                <th>MobileNumber</th>
+                                <th>Training type</th>
+                                <th>Training Location</th>
+                            </tr>
+                            @foreach (var qitem in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.TrackerId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Designation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.IppbBranch)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.EmpId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.Gender)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.MobileNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.TrainingType)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => qitem.TrainingLocation)
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <br />    <br />
+                }
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Certifications", "Candidate", new { area = "Candidate" }))
+
+</section>
+
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+</script>
+

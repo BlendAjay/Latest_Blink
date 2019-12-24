@@ -1,0 +1,169 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.DAL;
+@{
+    ViewBag.Title = "Payslip";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+
+
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("Payslip", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "SalaryProcess", role = "form" }))
+{
+
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="form-process"></div>
+        <div class="fancy-title title-bottom-border">
+            <h4>Download Payslip</h4>
+        </div>
+        <div class="row">
+
+            <div class="col_one_fourth" style="display:@ViewBag.VisibilityFlag">
+                <small>Active Employees</small>
+                @Html.DropDownList("UserId", null, "Select Employee", htmlAttributes: new { @class = "form-control", id = "UserId", })
+            </div>
+            <div class="col_one_fourth" style="display:@ViewBag.visibilityflag">
+                <small>Deactivated Employees</small>
+                @Html.DropDownList("DeactivatedUserId", null, "Select Employee", htmlAttributes: new { @class = "form-control", id = "DeactivatedUserId", style = "display:" + @ViewBag.VisibilityFlag })
+            </div>
+
+            <div class="col_one_fourth">
+                <small>Select Month</small>
+                @Html.DropDownList("Month", null, "Select Month", htmlAttributes: new { @class = "form-control", id = "Month" })
+            </div>
+            <div class="col_one_fourth col_last">
+                <small> &nbsp; &nbsp; &nbsp;</small>
+                <a id='btnSearch' onclick="Payslip()" class="button button-rounded button-teal"> Download Payslip</a>
+                @*<input type="submit" id="DownloadPayslip" value="Download Payslip" class="button button-rounded button-teal" />
+                    <a href="@Url.Action("DownloadPayslip", "Payroll", new { UserId = ViewBag.UserId, DeactiveUser = ViewBag.UserId, ViewBag.PayoutMonth })"><i class="icon icon-download2"></i></a>*@
+            </div>
+        </div>
+
+    </div>
+
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+    @*@Html.Hidden("RedirectToHome", Url.Action("Payslip", "Payroll"))*@
+    @Html.Hidden("RedirectToPayslip", Url.Action("DownloadPayslip", "Payroll", new { area = "PMS" }))
+}
+<script type="text/javascript">
+    function Payslip() {
+        var userId = $('#UserId').val();
+
+        deactivateduserId = $('#DeactivatedUserId').val();
+
+        if (userId == "" || userId == null) {
+
+            $.alert({
+                title: 'Alert',
+                content: 'Select User to download Payslip',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn-primary',
+                icon: 'icon-thumbs-down2 icon-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+
+            return false;
+        }
+        if ($('#Month').val() == 0) {
+            $.alert({
+                title: 'Alert',
+                content: 'Select Month to download Payslip',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn-primary',
+                icon: 'icon-thumbs-down2 icon-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            return false;
+        }
+        var url = $("#RedirectToPayslip").val() + "?UserId=" + userId + "&DeactiveUser=" + "" + "&Month=" + $('#Month').val();
+        window.location.href = url;
+    }
+
+
+
+
+    //$("#SalaryProcess").validate({
+    //    submitHandler: function (form) {
+
+    //        var userId = $('#UserId').val();
+
+    //        if (userId == "" || userId == null) {
+
+    //            userId = $('#DeactivatedUserId').val();
+    //        }
+
+    //        if (userId == "" || userId == null) {
+
+    //            $.alert({
+    //                title: 'Alert',
+    //                content: 'Select User to download Payslip',
+    //                confirmButton: 'OK',
+    //                confirmButtonClass: 'btn-primary',
+    //                icon: 'icon-thumbs-down2 icon-2x',
+    //                animation: 'zoom',
+    //                confirm: function () {
+    //                }
+    //            });
+
+    //            return false;
+    //        }
+
+    //        if ($('#Month').val() == 0) {
+    //            $.alert({
+    //                title: 'Alert',
+    //                content: 'Select Month to download Payslip',
+    //                confirmButton: 'OK',
+    //                confirmButtonClass: 'btn-primary',
+    //                icon: 'icon-thumbs-down2 icon-2x',
+    //                animation: 'zoom',
+    //                confirm: function () {
+    //                }
+    //            });
+    //            return false;
+    //        }
+
+    //        $.ajax({
+    //            type: "post",
+    //            url: "/PMS/Payroll/DownloadPayslip",
+    //            data: {
+    //                UserId: userId,
+    //                DeactiveUser: userId,
+    //                Month: $('#Month').val()
+    //            },
+    //            datatype: "json",
+    //            traditional: true,
+    //            success: function () {
+
+    //            }
+    //        });
+    //    }
+
+    //});
+
+
+
+</script>
+
+
+
+
+
+

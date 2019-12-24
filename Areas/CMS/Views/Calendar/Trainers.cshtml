@@ -1,0 +1,199 @@
+﻿@using AJSolutions.Models;
+@using System.Text.RegularExpressions;
+@{
+    ViewBag.Title = "Employee Availibility";
+
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Employee")
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    IEnumerable<TrainerPlannerView> Planner = ViewData["Planner"] as IEnumerable<TrainerPlannerView>;
+}
+@using (Html.BeginForm("Trainers", "Calendar", FormMethod.Post, new { @class = "form-horizontal", id = "Calendar", role = "form" }))
+{
+    <div class="container">
+        <div data-provide="calendar" id="calendar"></div>
+    </div>
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="actionPopup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Employee Engagement</h4>
+                    </div>
+                    <div class="modal-body" id="modBody">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped nobottommargin" id="tbltrainner"></table>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+@*<input type="button" data-toggle="modal" data-target=".bs-example-modal-lg" id="btnPopup" hidden />*@
+@Html.Hidden("RedirectToHome", Url.Action("Trainers", "Calendar"));
+<script>
+
+    $(function () {
+        var currentYear = new Date().getFullYear();
+
+        $('#calendar').calendar({
+            enableContextMenu: true,
+
+            mouseOnDay: function (e) {
+                if (e.events.length > 0) {
+                    var content = '';
+
+                    for (var i in e.events) {
+                        var isapp=e.events[i].approve;
+                        if(isapp=='2')
+                        {
+                            content +=
+
+                                '<div class="event-tooltip-content">'
+                                    + '<div class="event-name" style="color:' + e.events[i].color + '"  >' + e.events[i].name +  '</div>'+'<i class="icon-thumbs-down icon-1x "></i>'
+                                    + '</div>';
+                        }
+                        else if(isapp=='1')
+                        {
+                            content += '<div class="event-tooltip-content">'
+                                         + '<div class="event-name" style="color:' + e.events[i].color + '"  >' + e.events[i].name +  '</div>'+'<i class="icon-thumbs-up icon-1x "></i>'
+                                        + '</div>';
+                        }
+                    }
+
+                    $(e.element).popover({
+                        trigger: 'manual',
+                        container: 'body',
+                        html: true,
+                        content: content
+                    });
+
+                    $(e.element).popover('show');
+
+                    $(e.element).click( function ()
+                    {
+                        $('#tbltrainner').empty();
+
+
+                        tr = $('<tr>');
+                        tr.append("<th>Name</th>");
+                        tr.append("<th>FromDate</th>");
+                        tr.append("<th>ToDate</th>");
+                        tr.append("<th>Type</th>");
+                        tr.append("<th>Reason</th>");
+                        tr.append("<th>IsApproved</th></tr>")
+                        $('#tbltrainner').append(tr);
+
+                        if (e.events.length > 0)
+                        {
+
+                            for (var i in e.events)  {
+                                tr = $('<tr>');
+                                tr.append("<td> " + e.events[i].Name + "</td>");
+                                tr.append("<td>" + e.events[i].fdate  + " </td>");
+                                tr.append("<td>" +e.events[i].tdate  + "</td>");
+                                tr.append("<td>" +e.events[i].egtype  + "</td>");
+                                tr.append("<td>" +e.events[i].reson  + "</td>");
+                                var isapp=e.events[i].approve;
+
+                                if(isapp=='0')
+                                {
+                                    tr.append("<td><input type='submit' id='IsApprove' value='Approve' class='button button-3d button-mini button-rounded button-teal' onclick='onsave(" + e.events[i].id + ", 1)'  /><input type='submit' id='IsDisApprove' value='DisApprove' class='button button-3d button-mini button-rounded button-teal' onclick='onsave(" + e.events[i].id + ", 2)'  /></td></tr>");
+                                }
+                                else if(isapp=='1')
+                                {
+                                    tr.append("<td><label style='color:green;'>Approved</label></td></tr>");
+                                }
+                                else if(isapp=='2')
+                                {
+                                    tr.append("<td><label style='color:red;'>DisApproved</label></td></tr>");
+                                }
+                                else if(isapp=='3')
+                                {
+                                    tr.append("<td><label style='color:red;'>Canceled</label></td></tr>");
+                                }
+                                $('#tbltrainner').append(tr);
+                                $('#actionPopup').modal('show');
+                            }
+                        }
+                    });
+                }
+            },
+
+            mouseOutDay: function (e) {
+                if (e.events.length > 0) {
+                    $(e.element).popover('hide');
+                }
+            },
+            dayContextMenu: function (e) {
+                $(e.element).popover('hide');
+            },
+
+            dataSource: []
+
+        });
+
+
+        $(document).ready(function () {
+
+            var calList = [
+            @foreach (var item in Planner)
+            {
+                var str = item.Reson.Replace("%", " ");
+                @:{id: @item.PlannerId,reson:"@str",egtype:"@item.EngagementType",Name:"@item.Name",fdate:'@item.FromDate',tdate:'@item.ToDate',approve:'@item.IsApproved', name:  "@item.Remarks", startDate: new Date(@item.FromDate.Year, @item.FromDate.Month -1, @item.FromDate.Day), endDate: new Date(@item.ToDate.Year, @item.ToDate.Month -1, @item.ToDate.Day) , trainerId: "@item.TrainerId"},
+            }]
+            $('#calendar').data('calendar').setDataSource(calList, false);
+
+
+        });
+
+
+    });
+    function onsave(planerid, ApprovalStatus) {
+
+        $.ajax({
+            type: "post",
+            url: "/CMS/Calendar/Trainers",
+            data: {
+                PlannerId:planerid,
+                IsApproved: ApprovalStatus
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Approved <b> SUCCESSFULL.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                        var url = $("#RedirectToHome").val();
+                        location.href = url;
+                    }
+                });
+            }
+        });
+    }
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

@@ -1,0 +1,299 @@
+﻿@model IEnumerable<AJSolutions.Models.UserEduactionView>
+@{
+    ViewBag.Title = "Education";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("EducationDetails", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "EducationDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+    <div class="container">
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+        <div class="form-process"></div>
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Education</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th class="strong-left">
+                                <p class="nobottommargin" x>Education Level<small>*</small></p>
+                            </th>
+                            <th class="strong-left">
+                                Degree<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Institution<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Grade<small>*</small>  <b>%</b>
+                            </th>
+                            <th class="strong-left">
+                                Specialization<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                University / Board<small>*</small>
+                            </th>
+                            <th class="strong-left">
+                                Passing Year<small>*</small>
+                            </th>
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+                        <tr>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @*<th>
+
+                                </th>*@
+                            <th class="strong-left">
+                                @Html.Hidden("EduLevelId", ViewBag.EduLevelId as string)
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.DropDownList("EducationLevelId", ViewBag.EducationLevelList as SelectList, "---  Select Education Level ---", htmlAttributes: new { @class = "sm-form-control required", @id = "EducationLevelId", placeholder = "Education Level" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("EducationLevelId", ViewBag.EducationLevelList as SelectList, "---  Select Education Level ---", htmlAttributes: new { @disabled = "disabled", @class = "sm-form-control required", @id = "EducationLevelId", placeholder = "Education Level" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Degree", ViewBag.Degree as string, new { @class = "sm-form-control required", @id = "Degree", placeholder = "Degree" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Degree", ViewBag.Degree as string, new { @class = "sm-form-control required", @id = "Degree", placeholder = "Degree" })
+                                }
+
+
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Institution", ViewBag.Institution as string, new { @class = "sm-form-control required", @id = "Institution", placeholder = "Institution" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Institution", ViewBag.Institution as string, new { @class = "sm-form-control required", @id = "Institution", placeholder = "Institution" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Percentage", ViewBag.Percentage as string, new { @class = "sm-form-control required", @id = "Percentage", placeholder = "Percentage" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Percentage", ViewBag.Percentage as string, new { @class = "sm-form-control required", @id = "Percentage", placeholder = "Percentage" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("Specialization", ViewBag.Specialization as string, new { @class = "sm-form-control required", @id = "Specialization", placeholder = "Specialization" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("Specialization", ViewBag.Specialization as string, new { @class = "sm-form-control required", @id = "Specialization", placeholder = "Specialization" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.TextBox("University", ViewBag.University as string, new { @class = "sm-form-control required", @id = "University", placeholder = "University" })
+                                }
+                                else
+                                {
+                                    @Html.TextBox("University", ViewBag.University as string, new { @class = "sm-form-control required", @id = "University", placeholder = "University" })
+                                }
+                            </th>
+                            <th class="strong-left">
+                                @if (ViewBag.Action == "Add")
+                                {
+                                    @Html.DropDownList("YearOfPassing", ViewBag.YearOfPassing as SelectList, "Passing Year", htmlAttributes: new { @class = "sm-form-control required", @id = "YearOfPassing", placeholder = "Year of Passing" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("YearOfPassing", ViewBag.YearOfPassing as SelectList, "Passing Year", htmlAttributes: new { @class = "sm-form-control required", @id = "YearOfPassing", placeholder = "Year of Passing" })
+                                }
+                            </th>
+                            <th>
+                                <input type="submit" id="educatiodetails" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+                                @Html.Hidden("UserId", ViewBag.UserId as string)
+                                @Html.Hidden("UserProfile", ViewBag.UserProfile as string)
+                            </th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                @*<td>
+                                        @Html.DisplayFor(modelItem => item.EducationLevel)
+                                    </td>*@
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EducationLevelName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Degree)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Institution)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Percentage)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Specialization)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.University)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.YearOfPassing)
+                                </td>
+                                <td>
+                                @Html.ActionLink("Edit", "EducationDetails", "Candidate", new
+                                {
+                                   EducationLevelId = item.EducationLevel,
+                                   Degree = item.Degree,
+                                   Institution = item.Institution,
+                                   Percentage = item.Percentage,
+                                   Specialization = item.Specialization,
+                                   University = item.University,
+                                   YearOfPassing = item.YearOfPassing,
+                                   useraction = "Edit"
+                                }, new { title = "Edit" })  | 
+                                <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.EducationLevel');" title="Remove">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+
+                    <br />
+                </div>
+            </div>
+
+        }
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveEducationDetails", "Candidate"));
+    @Html.Hidden("RedirectToHome", Url.Action("EducationDetails", "Candidate"));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    In this page candidates are able to fill their educational details.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/education.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/education.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+    $("#EducationDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function ConfirmationDialog(EducationLevel) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + EducationLevel;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+
+
+

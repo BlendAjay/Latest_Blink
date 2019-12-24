@@ -1,0 +1,814 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model AJSolutions.Models.TaskMasterView
+@{
+    ViewBag.Title = "Create Task";
+    if (ViewBag.UserRole != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+
+    AJSolutions.Models.EmployeeBasicDetails details = ViewData["EmpDetails"] as AJSolutions.Models.EmployeeBasicDetails;
+    IEnumerable<TaskItemsView> taskItems = ViewData["TaskItems"] as IEnumerable<TaskItemsView>;
+    var ItemTypeValues = ViewData["ItemType"] as IEnumerable<ItemTypeMasters>;
+    TaskAttachment content = ViewData["Content"] as TaskAttachment;
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    int RCount = 0;
+}
+
+@using (Html.BeginForm("Task", "Task", FormMethod.Post, new { @class = "form-horizontal needs-validation", id = "Task", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("result", ViewBag.Result as string)
+    @Html.Hidden("UserRole", ViewBag.UserRole as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Create Task</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <div class="card-body">
+                    <div class="row">
+                        <h5 class="card-header">Create Task</h5>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <label>Subject<small>*</small></label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-book2"> </i></span>
+                                @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control required", id = "Subject", placeholder = "Enter Subject", required = "required" } })
+                            </div>
+                            <br>
+                        </div>
+
+                        @*<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                                <div id="JO">
+                                    <label>Select Job Order</label>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-newspaper"></i></span>
+                                        @Html.DropDownListFor(model => model.JobOrderNumber, new SelectList(ViewBag.JobOrderList, "Value", "Text", ViewBag.JONo), "--- Select Job Order ---", htmlAttributes: new { @class = "form-control", @id = "JobOrderNumber", placeholder = "Enter Your Job Order Number" })
+                                    </div>
+                                </div>
+                            </div>*@
+                        @*<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                                <div id="IF">
+                                    <label>Select Invoice Frequency</label>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-line2-bar-chart"></i></span>
+                                        @Html.DropDownListFor(model => model.InvoiceFrequency, new SelectList(ViewBag.InvoiceFrequencyList, "Value", "Text"), "--- Select Invoice Frequency ---", htmlAttributes: new { @class = "form-control", @id = "InvoiceFrequency", placeholder = "Enter Your Invoice Frequency" })
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <label>Select Country<small>*</small></label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownListFor(model => model.Country, new SelectList(ViewBag.CountryId, "Value", "Text"), "---  Select Country ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Country", id = "CountryId", required = "required" })
+                            </div>
+                            <br>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <label>Select State<small>*</small></label>
+                            <div class="input-group divcenter" id="MState">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownListFor(model => model.State, new SelectList(ViewBag.StateId, "Value", "Text"), "---  Select State ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select State", @id = "StateId", required = "required" })
+                            </div>
+                            <br>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <label>Select City<small>*</small></label>
+                            <div class="input-group divcenter" id="MCity">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownListFor(model => model.City, new SelectList(ViewBag.CityId, "Value", "Text"), "---  Select City ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select City", @id = "CityId", required = "required" })
+                            </div>
+                            <br>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <label>Select Task Type<small>*</small></label><small style="float:right"><a href="@Url.Action("Index", "JobOrderType", new { Area = "Admin" })" target="_blank">Add New</a></small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-tasks"></i></span>
+                                @Html.DropDownListFor(model => model.TaskTypeId, new SelectList(ViewBag.JobOrderTypeList, "Value", "Text"), "--- Select Task Type ---", htmlAttributes: new { @class = "form-control required", @id = "TaskTypeId", placeholder = "Enter Your TaskTypeId", required = "required" })
+                            </div>
+                            <br>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Venue<small>*</small></label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-road"> </i></span>
+                                @Html.EditorFor(model => model.Venue, new { htmlAttributes = new { @class = "form-control required", id = "Venue", placeholder = "Enter Venue" } })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Assign To<small>*</small></label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user3"></i></span>
+                                @Html.DropDownListFor(model => model.AssignedTo, new SelectList(ViewBag.AssignedToList, "Value", "Text"), "--- Select Employee ---", htmlAttributes: new { @class = "form-control required", @id = "AssignedTo", placeholder = "Enter AssignedTo ", required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <label>Enter Description<small>*</small></label>
+                            <div class="input-group divcenter">
+                                @Html.TextAreaFor(model => model.Description, 5, 124, htmlAttributes: new { @class = "form-control required", id = "Description", @placeholder = "Enter Description", required = "required" })
+                            </div><div id="textarea_feedback" class="text-danger"></div>
+                            <br>
+                        </div>
+                        <div class="col-xl-6 col-lg- col-md-12 col-sm-12 col-12">
+                            <label> Start Date</label><small>*</small>
+                            <div class="input-group divcenter travel-date-group">
+                                <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                @*@Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", id = "StartDate", placeholder = "MM-dd-yyyy" } })*@
+                                <input type="text" value="@ViewBag.startDate" class="form-control past-enabled required" placeholder="DD/MM/YYYY" id="StartDate" name="StartDate" required="required">
+
+                            </div>
+                            <br>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Duration</label><small style="float:right">In days</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                                @Html.EditorFor(model => model.Duration, new { htmlAttributes = new { @class = "form-control", id = "Duration", placeholder = "Enter Your Duration" } })
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="fancy-title title-bottom-border">
+                            <label>COSTING</label><small style="float:right">If Any</small>
+                            <h5></h5>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="customFields" class="table table-bordered nobottommargin">
+                                <tr>
+                                    <th>Item Type</th>
+                                    <th>Item</th>
+                                    <th>Unit</th>
+                                    <th>Unit Price</th>
+                                    <th>Duration <small>(in Days)</small></th>
+                                    <th>Total Amount</th>
+                                    <th></th>
+                                <tr />
+                                @if (taskItems.Count() > 0)
+                                {
+                                    foreach (var item in taskItems)
+                                    {
+                                        var itemDuration = "NA";
+                                        var itemAmt = 0.0;
+                                        <tr>
+                                            <td style="display:none">
+                                                <input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="@item.ItemId" />
+                                            </td>
+                                            @*<td>
+                                                    <select class="form-control" id="ItemType" name="ItemType[]">
+                                                        <option selected="selected" value="@item.ItemTypeId"> @item.ItemTypeName </option>
+                                                    </select>
+                                                </td>*@
+                                            <td>
+                                                <select class="form-control" id="ItemType" name="ItemType[]">
+                                                    <option value="0"> - - - Select Item Type - - - </option>
+                                                    @{
+
+                                                        foreach (var row in ItemTypeValues)
+                                                        {
+                                                            if (row.ItemTypeId == item.ItemTypeId)
+                                                            {
+
+                                                                <option selected="selected" value="@row.ItemTypeId"> @row.ItemTypeName </option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@row.ItemTypeId"> @row.ItemTypeName </option>
+                                                            }
+                                                        }
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="code form-control" id="ItemDescription" name="ItemDescription[]" value="@item.ItemDescription" placeholder="Item Description" />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="Unit form-control" id="Unit" name="Unit[]" value="@item.Unit" placeholder="Unit" />
+                                            </td>
+                                            <td>
+                                                <input type="text" class="UnitPrice form-control" id="UnitPrice" name="UnitPrice[]" value="@item.UnitPrice" placeholder="Unit Price" />
+                                            </td>
+                                            <td>
+                                                @if (item.Duration > 0)
+                                                {
+                                                    itemDuration = Convert.ToString(item.Duration);
+                                                    itemAmt = Convert.ToSingle(item.Unit) * item.UnitPrice * Convert.ToSingle(item.Duration);
+                                                }
+                                                else
+                                                {
+                                                    itemAmt = Convert.ToSingle(item.Unit) * item.UnitPrice;
+                                                }
+                                                <select class="dura form-control" id="ItemDuration" name="ItemDuration[]">
+                                                    @{
+                                                        <option value="0">NA</option>
+                                                        var itemDurations = ViewData["ItemDuration"] as IEnumerable<AJSolutions.DAL.Global.DurationList>;
+
+                                                        foreach (var duration in itemDurations)
+                                                        {
+                                                            if (duration.Duration == item.Duration)
+                                                            {
+                                                                <option selected="selected" value="@duration.Duration">@duration.DurationName</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@duration.Duration">@duration.DurationName</option>
+                                                            }
+                                                        }
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="TAmt form-control" id="TAmt" name="TAmt[]" value="@itemAmt" readonly="readonly" />
+                                            </td>
+                                            <td>
+                                                @if (RCount == 0)
+                                                {
+                                                    <a href="javascript:void(0);" id="addCF">Add</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="javascript:void(0);" id="delCF">Remove</a>
+                                                }
+                                            </td>
+                                            <td style="display:none">
+                                                <input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="U" />
+                                            </td>
+                                        </tr>
+                                        RCount = RCount + 1;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td style="display:none">
+                                            <input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="0" />
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="ItemType" name="ItemType[]">
+                                                <option selected="selected" value="0"> - - - Select Item Type - - - </option>
+
+
+                                                @foreach (var row in ItemTypeValues)
+                                                {
+
+                                                    <option value="@row.ItemTypeId"> @row.ItemTypeName </option>
+
+                                                }
+
+
+
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="ItemDescription form-control" id="ItemDescription" name="ItemDescription[]" value="" placeholder="Item Description" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="Unit form-control" id="Unit" name="Unit[]" value="" placeholder="Unit" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="UnitPrice form-control" id="UnitPrice" name="UnitPrice[]" value="" placeholder="Unit Price" />
+                                        </td>
+                                        <td>
+                                            <select class="dura form-control" id="ItemDuration" name="ItemDuration[]">
+                                                <option selected="selected">NA</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="TAmt form-control" id="TAmt" name="TAmt[]" value="" readonly="readonly" />
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" id="addCF">Add</a>
+                                        </td>
+                                        <td style="display:none">
+                                            <input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="I" />
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    @*<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <label>Currency</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-money"> </i></span>
+                                 @Html.DropDownList("Currency", null, "--- Select Currency ---", htmlAttributes: new { @class = "form-control", id = "Currency" })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <label> Task Amount</label>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-money"></i></span>
+                                @Html.EditorFor(model => model.TaskAmount, new { htmlAttributes = new { @class = "form-control", id = "TaskAmount", placeholder = "Enter Your TaskAmount" } })
+                            </div>
+                        </div>*@
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        @Html.HiddenFor(model => model.SubscriberId, new { @id = "SubscriberId" })
+                        @Html.HiddenFor(model => model.CreatedBy, new { @id = "CreatedBy" })
+                        @Html.HiddenFor(model => model.TaskId, new { @id = "TaskId" })
+
+                    </div>
+                    <div class="row">
+                        <div class="fancy-title title-bottom-border">
+                            <label>ATTACHMENT</label><small style="float:right">If Any</small>
+                            <h4></h4>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <input id="uploadImage" type="file" name="uploadPhoto" onchange="ValidatePreviewImage(@Global.MaxSize("ATTACHMENT"), this, 'ATTACHMENT')" class="form-control" />
+                            @if (content != null)
+                            {
+                                <a href="~/File/TaskAttachment?id=@content.FileId" alt="CV" target="_blank">( Click here to download your attachment)</a>
+                            }
+                        </div>
+                    </div> <br />
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        <input type="submit" value="Submit" class="btn btn-primary" id="SubmitForm" name="SubmitForm" style="float:right" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("State", "");
+    @Html.Hidden("City", "");
+    @Html.Hidden("RedirectToHome", Url.Action("Task", "Task"));
+}
+<script>
+    $(document).ready(function () {
+        if ($('#UserRole').val() != "Employee") {
+            $('#JO').fadeIn();
+            $('#IF').fadeIn();
+        }
+        else {
+            $('#JO').fadeOut();
+            $('#IF').fadeOut();
+        }
+
+        var text_max = 1024;
+        if ($('#Description').val() != undefined || $('#Description').val() != '') {
+            text_max = text_max - $('#Description').val().length;
+        }
+
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 1024;
+        $('#Description').keyup(function () {
+            var text_length = $('#Description').val().length;
+            var text_remaining = text_max - text_length;
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+
+    });
+
+
+    $(document).on("keydown", "#itemDesc", function () {
+        if ($("#itemDesc").val() != undefined || $('#itemDesc').val() != '') {
+            // Allow: backspace, delete, tab, escape
+            if (event.keyCode == 13)
+                return false;
+        }
+    });
+
+
+    $(document).on("keydown", "#Duration", function () {
+        if ($("#Duration").val() != undefined || $('#Duration').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+
+    $(document).on("keydown", "#Unit", function () {
+
+
+        if ($("#Unit").val() != undefined || $('#Unit').val() != '') {
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                return;
+            }
+            else {
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $(document).on("keydown", "#UnitPrice", function () {
+        if ($("#UnitPrice").val() != undefined || $('#UnitPrice').val() != '') {
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                return;
+            }
+            else {
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+</script>
+
+
+<script type="text/javascript">
+    $("#Task").validate({
+        submitHandler: function (form) {
+
+
+            var total = $("#TaskAmount").val();
+            if (parseFloat(total) > 0) {
+                if ($("#Currency :selected").val() == '' || $('#Currency :selected').val() == '0') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Currency</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#Currency").focus();
+                    return false;
+                }
+            }
+
+            var itemId = new Array();
+            $.each($("input[name = 'ItemId[]']"), function () {
+                itemId.push($(this).val());
+            });
+
+            var itemType = new Array();
+            $.each($("select[name = 'ItemType[]']"), function () {
+                itemType.push($(this).val());
+            });
+
+            var itemDescription = new Array();
+            $.each($("input[name='ItemDescription[]']"), function () {
+                itemDescription.push($(this).val());
+            });
+
+            var unit = new Array();
+            $.each($("input[name='Unit[]']"), function () {
+                unit.push($(this).val());
+            });
+
+            var unitPrice = new Array();
+            $.each($("input[name='UnitPrice[]']"), function () {
+                unitPrice.push($(this).val());
+            });
+
+            var itemDuration = new Array();
+            $.each($("select[name = 'ItemDuration[]']"), function () {
+                itemDuration.push($(this).val());
+            });
+
+            var actions = new Array();
+            $.each($("input[name='Actions[]']"), function () {
+                actions.push($(this).val());
+            });
+
+            $('#City').val($('#CityId').val());
+            $('#State').val($('#StateId').val());
+
+            $('.form-process').fadeIn();
+
+            var data = new FormData($('input[name^="uploadPhoto"]'));
+            jQuery.each($('input[name^="uploadPhoto"]')[0].files, function (i, file) {
+                data.append(i, file);
+            });
+
+            $.ajax({
+                type: "post",
+                url: "/CMS/Task/Task",
+                data: {
+                    TaskId: $('#TaskId').val(),
+                    Subject: $('#Subject').val(),
+                    Description: $('#Description').val(),
+                    Venue: $('#Venue').val(),
+                    StartDate: $('#StartDate').val(),
+                    JobOrderNumber: $('#JobOrderNumber :selected').val(),
+                    City: $('#City').val(),
+                    State: $('#State').val(),
+                    Country: $('#CountryId').val(),
+                    SubscriberId: $('#SubscriberId').val(),
+                    InvoiceFrequency: $('#InvoiceFrequency :selected').val(),
+                    AssignedTo: $('#AssignedTo :selected').val(),
+                    Duration: $('#Duration').val(),
+                    TaskStatus: $('#TaskStatus').val(),
+                    TaskTypeId: $('#TaskTypeId :selected').val(),
+                    TaskAmount: $('#TaskAmount').val(),
+                    Currency: $('#Currency :selected').val(),
+                    ItemId: itemId,// $('#ItemId').val(),
+                    ItemType: itemType,//$('#ItemType').val(),
+                    ItemDescription: itemDescription,//$('#ItemDescription').val(),
+                    Unit: unit,//$('#Unit').val(),
+                    UnitPrice: unitPrice,//$('#UnitPrice').val(),
+                    ItemDuration: itemDuration, //$('#ItemDuration').val(),
+                    Currency: $('#Currency :selected').val(),
+                    Actions: actions,// $('#Actions').val(),
+                    uploadImage: data,
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Task has been Created <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        if ($("#result").val() == "True") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Task Added <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+
+        var ItemTypeValues = [];
+        // Binding Item type dropdown
+        // alert("hello");
+        if (ItemTypeValues.length == 0) {
+            $.ajax({
+                url: "/Admin/Admin/GetItemTypes",
+                datatype: "JSON",
+                type: "Get",
+                success: function (data) {
+                    // $("#ItemType").empty();
+                    debugger;
+                    for (var i = 0; i < data.length; i++) {
+                        var opt = new Option(data[i].ItemTypeName, data[i].ItemTypeId);
+                        //   $("#ItemType").append(opt);
+                        ItemTypeValues.push([data[i].ItemTypeId, data[i].ItemTypeName]);
+                    }
+                }
+
+            });
+        }
+
+        // Binding Duration dropdown
+        var itemDurations = [];
+
+        $.ajax({
+            url: "/Admin/Admin/GetDuration",
+            datatype: "JSON",
+            type: "Get",
+            success: function (data) {
+                debugger;
+                for (var i = 0; i < data.length; i++) {
+                    var opt = new Option(data[i].DurationName, data[i].Duration);
+                    $("#ItemDuration").append(opt);
+                    itemDurations.push([data[i].Duration, data[i].DurationName]);
+                }
+            }
+
+        });
+
+
+        $("#addCF").click(function () {
+
+            var state = '<select class="form-control" id="ItemType" name="ItemType[]">';
+            state = state + ' <option selected="selected" value="0"> - - - Select Item Type - - - </option>';
+
+            if (ItemTypeValues.length == 0) {
+                $.ajax({
+                    url: "/Admin/Admin/GetItemTypes",
+                    datatype: "JSON",
+                    type: "Get",
+                    success: function (data) {
+                        // $("#ItemType").empty();
+                        debugger;
+                        for (var i = 0; i < data.length; i++) {
+                            var opt = new Option(data[i].ItemTypeName, data[i].ItemTypeId);
+                            $("#ItemType").append(opt);
+                            ItemTypeValues.push([data[i].ItemTypeId, data[i].ItemTypeName]);
+                        }
+                    }
+                });
+            }
+            else {
+
+                for (var i = 0; i < ItemTypeValues.length; i++) {
+                    state = state + '<option value=' + ItemTypeValues[i][0] + '>' + ItemTypeValues[i][1] + '</option>';
+                }
+            }
+            state = state + '</select>';
+
+            var itemDuration = '<select class="dura form-control" id="ItemDuration" name="ItemDuration[]">';
+            itemDuration = itemDuration + ' <option selected="selected">NA</option>';
+
+            for (var i = 0; i < itemDurations.length; i++) {
+                itemDuration = itemDuration + '<option value=' + itemDurations[i][0] + '>' + itemDurations[i][1] + '</option>';
+            }
+            itemDuration = itemDuration + '</select>';
+
+            $("#customFields").append('<tr><td> ' + state + ' </td>' +
+                '<td style = "display:none"><input type="text" class="ItemId form-control" id="ItemId" name="ItemId[]" value="0" /></td>' +
+                '<td><input type="text" class="code form-control" id="itemDesc" name="ItemDescription[]" value="" placeholder="Item Description" /></td>' +
+                '<td><input type="text" class="Unit form-control" id="Unit" name="Unit[]" value="" placeholder="Unit" /></td>' +
+                '<td><input type="text" class="UnitPrice form-control" id="UnitPrice" name="UnitPrice[]" value="" placeholder="Unit Price" /></td>' +
+                '<td> ' + itemDuration + ' </td>' +
+                '<td><input type="text" class="TAmt form-control" id="TAmt" name="TAmt[]" value=""  readonly="readonly" /></td>' +
+                '<td><a href="javascript:void(0);" id="remCF">Remove</a></td></tr>' +
+                '<td style = "display:none"><input type="text" class="Actions form-control" id="Actions" name="Actions[]" value="I" /></td>'
+            );
+
+
+            $("#customFields").on('click', '#remCF', function () {
+
+                $(this).closest('tr').remove();
+
+                calculateGrandTotal();
+            });
+
+        });
+
+        $("#customFields").on('click', '#delCF', function () {
+            var row = $(this).closest('tr')
+            row.find('.Unit').val(0);
+            row.find('.UnitPrice').val(0);
+            row.find('.TAmt').val(0);
+            row.find('.Actions').val('D');
+            row.hide();
+            calculateGrandTotal();
+        });
+
+    });
+
+    $(document).ready(function () {
+
+        $('#CountryId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/CMS/Task/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='StateId' required = 'required'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#MState').html(state);
+                }
+            });
+        });
+
+        $('#MState').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/CMS/Task/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='CityId' required = 'required'>";
+                    city = city + '<option value="">--- Select City ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#MCity').html(city);
+                }
+            });
+        });
+
+    });
+
+    $(function () {
+
+        $("body").on("change", ".Unit",
+            function () {
+                var row = $(this).closest('tr');
+                var customPRICE = row.find('.UnitPrice').val();
+                var customQTY = row.find('.Unit').val();
+                var customDuration = row.find('.dura').val();
+                var total = parseFloat(customPRICE) * parseFloat(customQTY);
+                if (!(customDuration == "NA" || customDuration == 0)) {
+                    total = total * parseFloat(customDuration);
+                }
+                row.find('.TAmt').val(total);
+                calculateGrandTotal();
+            });
+
+        $("body").on("change", ".UnitPrice",
+            function () {
+                var row = $(this).closest('tr');
+                var customPRICE = row.find('.UnitPrice').val();
+                var customQTY = row.find('.Unit').val();
+                var customDuration = row.find('.dura').val();
+                var total = parseFloat(customPRICE) * parseFloat(customQTY);
+                if (!(customDuration == "NA" || customDuration == 0)) {
+                    total = total * parseFloat(customDuration);
+                }
+                row.find('.TAmt').val(total);
+                calculateGrandTotal();
+            });
+
+        $("body").on("change", ".dura",
+            function () {
+                var row = $(this).closest('tr');
+                var customPRICE = row.find('.UnitPrice').val();
+                var customQTY = row.find('.Unit').val();
+                var customDuration = row.find('.dura').val();
+                var total = parseFloat(customPRICE) * parseFloat(customQTY);
+                if (!(customDuration == "NA" || customDuration == 0)) {
+                    total = total * parseFloat(customDuration);
+                }
+                row.find('.TAmt').val(total);
+                calculateGrandTotal();
+            });
+    });
+
+    function calculateGrandTotal() {
+        var grandTotal = 0;
+
+        $(".TAmt").each(function () {
+            if (!isNaN(this.value) && this.value.length != 0) {
+                grandTotal += parseFloat(this.value);
+            }
+        });
+        $('#TaskAmount').val(grandTotal);
+    }
+
+    function calculateEndDate() {
+        var newDate = new Date($('#StartDate').val());
+        var duration = parseInt($('#Duration').val());
+        newDate.setDate(newDate.getDate() + duration);
+
+
+        var yr = newDate.getFullYear();
+        var month = newDate.getMonth() + 1;
+        var day = newDate.getDate();
+        newDate = month + '/' + day + '/' + yr;
+        $('#EndDate').val(newDate);
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>

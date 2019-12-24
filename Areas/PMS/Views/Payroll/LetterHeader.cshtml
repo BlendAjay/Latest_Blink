@@ -1,0 +1,150 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.LetterHeader
+@{
+    ViewBag.Title = "LetterHeader";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<LetterFieldNameViewModel> PlaceHolderDetail = ViewData["LetterPlaceHolder"] as List<LetterFieldNameViewModel>;
+    LetterLogoAttachment LetterLogo = ViewData["Header"] as LetterLogoAttachment;
+}
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<script src="~/Scripts/ckeditor/samples/js/sample.js"></script>
+<link href="~/Scripts/ckeditor/skins/bootstrapck/editor.css" rel="stylesheet" />
+<link href="~/Scripts/ckeditor/contents.css" rel="stylesheet" />
+<link href="~/Scripts/ckeditor/plugins/ckawesome/dialogs/ckawesome.css" rel="stylesheet" />
+<link href="~/Scripts/ckeditor/plugins/ckeditor_fa/css/ckeditor-fa.css" rel="stylesheet" />
+
+@using (Html.BeginForm("LetterHeader", "Payroll", FormMethod.Post, new { @class = "form-horizontal", id = "LetterHeader", enctype = "multipart/form-data", role = "form" }))
+{
+    <div class="container">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="form-process"></div>
+
+            <div class="col_half">
+                <label>Same As Company Logo</label>
+            </div>
+            <div class="col_half col_last">
+                @Html.CheckBoxFor(model => model.SameAsCompanyLogo, htmlAttributes: new { @class = "checkbox", @id = "SameAsCompanyLogo" })
+            </div>
+            <div class="col_full">
+                <div class="row" id="dvPassport">
+                    <div class="col_half">
+                        <input id="uploadImage" type="file" name="uploadPhoto" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col_full">
+                <label>Header Name<small>*</small></label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                    @Html.TextBoxFor(model => model.HeaderName, new { @class = "form-control required", @id = "HeaderName" })
+                </div>
+            </div>
+            @if (Model.HeaderId != 0)
+            {
+                <div class="col_full">
+                    <a href="@Url.Action("Preview", "Payroll", new { Area = "PMS", HeaderId = Model.HeaderId })" class="btn btn-default btn-xs">Preview</a>
+                </div>
+            }
+            <div>
+                @Html.Label("Header Description")
+                @Html.TextAreaFor(model => model.HeaderTitle, new { @class = "ckeditor", id = "HeaderTitle" })
+            </div>
+            <input type="button" value="Submit" class="button button-3d button-rounded button-teal" id="LetterHeader" />
+        </div>
+
+        @if (Model.HeaderTitle != null)
+        {
+            @Html.Hidden("LetterHeaderTitle", Model.HeaderTitle as string)
+            @Html.Hidden("HeaderId", Model.HeaderId);
+            @Html.Hidden("CorporateId", Model.CorporateId as string)
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#SameAsCompanyLogo").click(function () {
+            if ($(this).is(":checked")) {
+                $("#dvPassport").hide();
+            } else {
+                $("#dvPassport").show();
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+    CKEDITOR.replace('HeaderTitle', {
+        filebrowserImageUploadUrl: '/UploadImage'
+    });
+
+    function ShowHideDiv(SameAsCompanyLogo) {
+        var dvPassport = document.getElementById("dvPassport");
+        dvPassport.style.display = SameAsCompanyLogo.checked ? "block" : "none";
+        
+    };
+    CKEDITOR.on('dialogDefinition', function (event) {
+        if ('placeholder' == event.data.name) {
+            var input = event.data.definition.getContents('info').get('name');
+            input.type = 'select';
+            input.items = [
+            @{      foreach (var colum in PlaceHolderDetail)
+                    {
+                        @:['@colum.Coloum'],
+                                }
+                }
+            ];
+            input.setup = function () {
+                this.setValue('@PlaceHolderDetail.FirstOrDefault().Coloum');
+            };
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $("#LetterHeader").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn();
+            var sameAsCompanyLogo = "False";
+            if ($('#SameAsCompanyLogo').prop('checked')) {
+                sameAsCompanyLogo = "True";
+            }
+
+            var formData = new FormData();
+            var totalFiles = document.getElementById("uploadImage").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("uploadImage").files[i];
+                formData.append("uploadImage" + i, file);
+            }
+
+            var desc = CKEDITOR.instances.HeaderTitle.document.getBody().getHtml();
+         
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/LetterHeader",
+                data: {
+                    HeaderName: $("#HeaderName").val(),
+                    SameAsCompanyLogo: sameAsCompanyLogo,
+                    HeaderTitle: desc,
+                    uploadImage: formdata,
+                },
+                datatype: "json",
+                traditional: true,
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Course has been Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            
+                        }
+                    });
+                }
+            })
+        }
+    });
+</script>

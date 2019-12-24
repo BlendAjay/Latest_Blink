@@ -1,0 +1,32 @@
+﻿
+<li class="nav-item">
+    <a class="nav-link" href="@Url.Action("Index", "Dashboard", new { Area = "CMS" })"><i class="icon-home2"></i>Home</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="fa fa-fw fa-rocket"></i>Hostel</a>
+    <div id="submenu-1" class="collapse submenu" style="">
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("Add", "User", new { Area = "CMS", Id = "TPU" })"><i class="icon-plus"></i>Add Candidate CheckIn</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("Clients", "User", new { Area = "CMS" })"><i class="icon-table"></i>Add Candidate CheckOut</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("CheckInCheckOutBulkUpload", "Candidate", new { Area = "CMS" })"><i class="icon-table"></i>Candidate checkIn CheckOut Upload</a></li>
+            @*<li class="nav-item"><a class="nav-link" href="@Url.Action("MyJobOrders", "JobOrder", new { Area = "CMS", IsClientView = false })"><i class="icon-table"></i>Candidate checkIn CheckOut Details</a></li>*@
+        </ul>
+    </div>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="icon-calendar-1"></i>Calendar</a>
+    <div id="submenu-1" class="collapse submenu" style="">
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Calendar", new { Area = "CMS" })"><i class="icon-calendar3"></i>My Calendar</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("TrainerPlanner", "TMS", new { Area = "TMS" })"><i class="icon-calendar-1"></i>Add Engagements </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("HolidayCalendar", "Calendar", new { Area = "CMS" })"><i class="icon-calendar-1"></i>My Holidays </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action("BioMetric", "Payroll", new { Area = "PMS" })"><i class="icon-clock"></i>My BioMetric </a></li>
+        </ul>
+    </div>
+</li>
+
+
+
+
+
+<li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()"><i class="icon-login"></i>Logout</a></li>

@@ -1,0 +1,140 @@
+﻿@using AJSolutions.Models
+@model AJSolutions.Models.AssetType
+@{
+    ViewBag.Title = "AddAssetType";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<AssetType> assets = ViewData["AssetTypeList"] as List<AssetType>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("AddAssetType", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "AddAssetType", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.Hidden("SaveStatus", ViewBag.Result as string)*@
+    <div class="form-process"></div>
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h3>Add Assets Type</h3>
+                </div>
+                <div class="col_half">
+                    @Html.Label("Asset Type Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.AssetTypeName, new { htmlAttributes = new { @class = "form-control required", id = "AssetTypeName", placeholder = "Enter Asset Type Name" } })
+                        @*@Html.DropDownList("AssetGroupId", null, "--- Select Asset Group ---", htmlAttributes: new { @class = "form-control required", id = "AssetGroupId" })*@
+                    </div>
+
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.AssetGroupId, "Asset Group")<small>*</small><a href="@Url.Action("AddAssetGroup", "Payroll", new { Area = "PMS"})" class="btn btn-default btn-xs" style="float:right" target="_blank">Add Assets Group</a>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.DropDownList("AssetGroupId", null, "--- Select Asset Group ---", htmlAttributes: new { @class = "form-control required", id = "AssetGroupId" })
+                    </div>
+                </div>
+
+                <input type="submit" id="AssetType" value="Add" class="button button-3d button-rounded button-teal" style="float:right" />
+                @Html.Hidden("AssetTypeId", ViewBag.AssetType as string)
+            </div>
+
+            @if (assets.Count != 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Asset Type Name</th>
+                                <th>ACTIONS</th>
+                            </tr>
+
+                            @foreach (var item in assets)
+                            {
+                                <tr>
+                                    <td>@item.AssetTypeName</td>
+                                    <td>
+                                        <a href="@Url.Action("AddAssetType", "Payroll", new { AssetTypeId = item.AssteTypeId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i>|</a>
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.AssteTypeId');" title="Remove"><i class="icon-remove"></i> </a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+    if (Model != null) { 
+    @Html.Hidden("AssteTypeId", Model.AssteTypeId)}
+    @Html.Hidden("RedirectTo", Url.Action("RemoveAssetType", "Payroll"))
+}
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding Asset type as per requirement.
+                            </p>
+
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/assettypeadd.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/assettypeadd.png" />
+                                    </a>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function ConfirmationDialog(AssteTypeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?AssteTypeId=" + AssteTypeId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

@@ -1,0 +1,139 @@
+﻿@model IEnumerable<AJSolutions.Areas.Admin.Models.AddUserRoleViewModel>
+
+@using (Html.BeginForm())
+{
+
+
+    @Html.AntiForgeryToken()
+
+    <!-- Page Title
+    ============================================= -->
+    @*<section id="page-title">
+
+        <div class="container clearfix">
+            <h1></h1>
+            <span>Add User Role</span>
+            <ol class="breadcrumb">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Add User Role</a></li>
+            </ol>
+        </div>
+
+    </section>*@<!-- #page-title end -->
+    <!-- Content
+    ============================================= -->
+    <section id="content">
+
+        <div class="content-wrap">
+            <div class="row">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="col-md-1"></div>
+
+                    <div class="col-md-4">
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-email2"> </i></span>
+
+                            @if (ViewBag.Action == "Add")
+                            {
+                                @Html.TextBox("RoleId", ViewBag.RoleId as string, new { @class = "form-control", @id = "RoleId", placeholder = "Role Id " })
+
+                            }
+                            else
+                            {
+                                @Html.TextBox("RoleId", ViewBag.RoleId as string, new { @readonly = true, @class = "form-control", @id = "RoleId", placeholder = "Role Id " })
+                            }
+
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-email2"> </i></span>
+
+                            @if (ViewBag.Action == "Add")
+                            {
+                                @Html.TextBox("Role", ViewBag.Role as string, new { @class = "form-control", @id = "Role", placeholder = "Role " })
+                            }
+                            else
+                            {
+                                @Html.TextBox("Role", ViewBag.Role as string, new { @class = "form-control", @id = "Role", placeholder = "Role " })
+                            }
+
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" value="Create" style="float: right;" class="button button-3d button-rounded button-teal" />
+                    </div>
+                    <div class="col-md-1"></div>
+            </div>
+        </div>
+        <br />
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="container">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.RoleId)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Role)
+                                </th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.RoleId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Role)
+                                    </td>
+                                    <td>
+                                        @*@Html.ActionLink("Edit", "Edit", new { id = item.RoleId }) |
+                                            @Html.ActionLink("Details", "Details", new { id = item.RoleId }) |
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.RoleId })*@
+
+
+                                        @Html.ActionLink("Edit", "Role", "Admin", new { RoleId = item.RoleId, Role = item.Role, useraction = "Edit" }, new { title = "Edit" }) /
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.RoleId');" title="Remove">Delete</a>
+
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+    </section><!-- #content end -->
+    @Html.Hidden("RedirectTo", Url.Action("RemoveRole", "Admin"));
+}
+
+<script type="text/javascript">
+
+    function ConfirmationDialog(RoleId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?RoleId=" + RoleId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

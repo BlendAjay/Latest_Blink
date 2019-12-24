@@ -1,0 +1,361 @@
+﻿@model AJSolutions.Models.CandidateLeadsView
+@{
+    ViewBag.Title = "Add Lead";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("LeadDetails", "Candidate", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", id = "LeadDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    if (Model != null)
+    {
+        @Html.Hidden("LeadId", Model.LeadId)
+    }
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Lead Details</h4>
+                </div>
+
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Name, " Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control required", id = "Name", placeholder = "Enter Your Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.PhoneNumber, "Phone Number")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control required", id = "PhoneNumber", placeholder = "Enter Your Phone Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.Label("Date of Birth")
+                    <div class="input-group travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        <input type="text" value="@ViewBag.DOB" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="DOB" name="DOB">
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.FatherName, "Father Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                        @Html.EditorFor(model => model.FatherName, new { htmlAttributes = new { @class = "form-control", id = "FatherName", placeholder = "Enter Your Father Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherName, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.IdName, "Identification Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list"> </i></span>
+                        @*@Html.EditorFor(model => model.IdName, new { htmlAttributes = new { @class = "form-control", id = "IdName", placeholder = "Enter Your Identification Name" } })*@
+                        @Html.DropDownList("AllIdentification", null, "--- Select Identification Type ---", htmlAttributes: new { @class = "form-control", @id = "AllIdentification" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.IdName, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Category, "Category")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("AllCategory", null, "--- Select Category ---", htmlAttributes: new { @class = "form-control", @id = "AllCategory" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.BelowPoverty, "Below Poverty Line")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-line-bar-graph"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("option", null, "--- Select BelowPoverty ---", htmlAttributes: new { @class = "form-control", @id = "option" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BelowPoverty, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.DifferentlyAbled, "Differently Abled")
+                    @Html.CheckBoxFor(model => model.DifferentlyAbled, new { htmlAttributes = new { @class = "form-control", id = "DifferentlyAbled" } })
+                    @Html.ValidationMessageFor(model => model.DifferentlyAbled, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.EmailId, " Email Id")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control", id = "EmailId", placeholder = "Enter Your Email Id" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Gender, "Gender")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                    <br />
+
+                    @Html.LabelFor(model => model.MaritalStatus, "Marital Status")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-glass"></i></span>
+                        @Html.DropDownList("MaritalStatus", null, "--- Select Marital Status ---", htmlAttributes: new { @class = "form-control", @id = "MaritalStatus" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaritalStatus, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.FatherOccupation, "Father Occupation")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-money"> </i></span>
+                        @Html.EditorFor(model => model.FatherOccupation, new { htmlAttributes = new { @class = "form-control", id = "FatherOccupation", placeholder = "Enter Your Father Occupation" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherOccupation, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.IdNumber, "Identification Number")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ol"> </i></span>
+                        @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control", id = "IdNumber", placeholder = "Enter Your Identification Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Qualification, "Highest Qualification")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-book"> </i></span>
+                        @Html.DropDownList("Qualifications", null, "--- Select Highest Qualifications ---", htmlAttributes: new { @class = "form-control", @id = "Qualifications" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Qualification, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.Religion, "Religion")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-list-ul"> </i></span>
+                        @Html.EditorFor(model => model.Religion, new { htmlAttributes = new { @class = "form-control", id = "Religion", placeholder = "Enter Your Religion" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Religion, "", new { @class = "text-danger" })
+                    <br>
+
+                    @Html.LabelFor(model => model.FamilyIncome, "Family Income / Gross Family Income")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-money"> </i></span>
+                        @Html.EditorFor(model => model.FamilyIncome, new { htmlAttributes = new { @class = "form-control", id = "FamilyIncome", placeholder = "Enter Your Family Income" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FamilyIncome, "", new { @class = "text-danger" })
+                    <br />
+                    @Html.LabelFor(model => model.Relocate, "Relocate")
+                    @Html.CheckBoxFor(model => model.Relocate, new { htmlAttributes = new { @class = "form-control", id = "Relocate" } })
+                    @Html.ValidationMessageFor(model => model.Relocate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                @Html.LabelFor(model => model.Comments, "Enter your Comments", htmlAttributes: new { @class = "control-label" })
+                @Html.TextAreaFor(model => model.Comments, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Comments", @placeholder = "Comments here.." })
+                <div id="textarea_feedback" class="text-danger"></div>
+            </div>
+            <input type="submit" id="generaldetails" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+        </div>
+        <br />
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("LeadDetails", "Candidate", new { area = "CMS" }));
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page has facility of adding candidate lead.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/candidatedashboard.png" target="_blank" data-lightbox="gallery-item">
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var text_max = 512;
+        if ($('#Comments').val() != undefined || $('#Comments').val() != '') {
+            text_max = text_max - $('#Comments').val().length;
+        }
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 512;
+        $('#Comments').keyup(function () {
+            var text_length = $('#Comments').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+    });
+
+
+    $(document).ready(function () {
+
+        $('#CountryId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='StateId'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#State').html(state);
+                }
+            });
+        });
+
+
+        $('#State').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='CityId'>";
+                    city = city + '<option value="">--- Select City ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#City').html(city);
+                }
+            });
+        });
+
+    });
+
+
+</script>
+<script type="text/javascript">
+    $("#LeadDetails").validate({
+        submitHandler: function (form) {
+            if ($('#DifferentlyAbled').is(":checked")) {
+
+                var differentlyAbled = "True";
+            }
+            else {
+                differentlyAbled = "False";
+            }
+
+            if ($('#Relocate').is(":checked")) {
+
+                var relocate = "True";
+            }
+            else {
+                relocate = "False";
+            }
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/Candidate/LeadDetails",
+                data: {
+                    LeadId: $('#LeadId').val(),
+                    Name: $('#Name').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    EmailId: $('#EmailId').val(),
+                    FatherName: $('#FatherName').val(),
+                    FatherOccupation: $('#FatherOccupation').val(),
+                    MotherName: $('#MotherName').val(),
+                    MotherOccupation: $('#MotherOccupation').val(),
+                    IdName: $('#AllIdentification').val(),
+                    IdNumber: $('#IdNumber').val(),
+                    Gender: $('#Gender').val(),
+                    DOBirth: $('#DOB').val(),
+                    Category: $('#AllCategory').val(),
+                    Religion: $('#Religion').val(),
+                    DifferentlyAbled: differentlyAbled,
+                    MaritalStatus: $('#MaritalStatus').val(),
+                    Qualification: $('#Qualifications').val(),
+                    MediumOfEducation: $('#MediumOfEducation').val(),
+                    Relocate: relocate,
+                    BelowPoverty: $('#option').val(),
+                    FamilyIncome: $('#FamilyIncome').val(),
+                    CityId: $('#CityId').val(),
+                    StateId: $('#StateId').val(),
+                    CountryId: $('#CountryId').val(),
+                    Status: $('#Status').val(),
+                    Comments: $('#Comments').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Lead has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+            });
+        }
+    });
+
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+<link href="~/css/jquery-confirm.css" rel="stylesheet" />
+<script type="text/javascript" src="~/js/jquery-confirm.js"></script>

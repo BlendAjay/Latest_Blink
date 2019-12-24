@@ -1,0 +1,304 @@
+﻿@using AJSolutions.DAL;
+@using System.Text.RegularExpressions;
+@model AJSolutions.Areas.CMS.Models.CorporateViewModel
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Areas.CMS.Models.AdminLogoFile content = ViewData["CompanyLogo"] as AJSolutions.Areas.CMS.Models.AdminLogoFile;
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+}
+<div id="contact-form-result" data-notify-type="success" data-notify-msg="Message Sent Successfully!"></div>
+@using (Html.BeginForm("MyProfile", "Dashboard", FormMethod.Post, new { @area = "CMS", @enctype = "multipart/form-data", id = "MyProfile", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Company Profile</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">My Profile</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="input-group divcenter">
+                                @Html.LabelFor(model => model.Name, "Full Name")<small>*</small>
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "Name", placeholder = "e.g. John Smith", required = "required" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                                @Html.LabelFor(model => model.AlternateContact, "Alternate Contact")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-phone"></i></span>
+                                    @Html.EditorFor(model => model.AlternateContact, new { htmlAttributes = new { @class = "form-control ", id = "AlternateContact", placeholder = "e.g. +910123456789", required = "required" } })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.AlternateContact, "", new { @class = "text-danger" })
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.AlternateEmail, "Alternate Email")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email3"> </i></span>
+                                @Html.EditorFor(model => model.AlternateEmail, new { htmlAttributes = new { @class = "form-control", id = "AlternateEmail", placeholder = "e.g. xyz@domain.com" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.AlternateEmail, "", new { @class = "text-danger" })
+
+                            @if (user.CorporateId == null || user.CorporateId == user.SubscriberId)
+                            {
+                                @Html.LabelFor(model => model.Nationality, "Nationality")<small>*</small>
+                                <div class="input-group divcenter">
+                                    @Html.DropDownList("Nationality", null, " --- Select Nationality ---", htmlAttributes: new { @class = "form-control required", @id = "Nationality" })
+                                </div>
+                                @Html.ValidationMessageFor(model => model.Nationality, "", new { @class = "text-danger" })
+                            }
+                        </div>
+
+                        @if (user.Role == "Admin" && user.DepartmentId.ToUpper() == "ADI")
+                        {<br />
+                         <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                             <br />
+                             <input id="input-11" name="input11[]" type="file" class="file-loading" accept="image/*">
+                             @if (content != null)
+                             {
+                                 <a href="~/File/CompanyLogo?id=@content.FileId" alt="CV" target="_blank" title="Click here to download the logo"><i class="icon-clip"></i> &nbsp;Download your current logo</a>
+                             }
+                         </div>
+                        }
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <input type="submit" id="Submit" value="Submit" class="btn btn-primary" style="float:right" />
+                            @Html.HiddenFor(model => model.CorporateId)
+                            @Html.HiddenFor(model => model.DepartmentId)
+                            @Html.HiddenFor(model => model.SubscriberId)
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("Myprofile", "Dashboard"));
+
+    @*<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Help</h4>
+                        </div>
+                        <div class="modal-body" id="moBody">
+
+                            <div class="container-fluid">
+                                <div class="col_half">
+                                    <p>
+                                        In this page users are able to give their genral details like name, email etc.
+                                    </p>
+
+                                </div>
+                                <div class="col_half col_last">
+                                    <div class="feature-box center media-box fbox-bg">
+                                        <div class="fbox-media">
+
+
+                                            @if (user.Role == "Admin" && user.DepartmentId.ToUpper() == "ADI")
+                                            {
+                                                <a href="~/images/HelpImages/profileadmin.png" target="_blank" data-lightbox="gallery-item">
+
+                                                    <img src="~/images/HelpImages/profileadmin.png" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="~/images/HelpImages/profileclient.png" target="_blank" data-lightbox="gallery-item">
+                                                    <img src="~/images/HelpImages/profileclient.png" />
+                                                </a>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+
+                <div class="modal-content ">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                <li><a href="#tabs-3">Video</a></li>
+                            </ul>
+                            <div class="tab-container">
+
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4>  Navigation to My Profile </h4>
+                                    <img src="~/images/gif/navigation to my profile.gif" alt="Save icon" />
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6>If you want Add/Edit your profile. You can do it through  "My Profile". </h6>
+                                    <h6>Navigation to Add profile</h6>
+                                    <p>•Click on Navigation bar "My Account"  Then click on  Menu Item "My Profile" .</p>
+
+                                    <img src="~/images/Images1/Picture1.png " width="300" height="350"><br>
+                                    </br>
+
+                                    <h6>Add Details in Your Profile.</h6>
+                                    <p>
+                                        <h6>Fill the Basic Details.</h6>
+                                        <b>Full Name</b> - Enter Your Name
+                                    </p>
+                                    <img src="~/images/Images1/11.png.png" />
+
+
+                                    <p>
+                                        •You can see Full Name is with asterisk Mark means it is a  Mandatory field.
+                                        if you not enter details on this field validation appears red.
+                                    </p>
+
+                                    <img src="~/images/Images1/22.png">
+                                    <p><b>	Alternate Email/Contact</b> - Both are optional Fields, you can fill another email/contact</p>
+                                    <img src="~/images/Images1/new1.png" />
+                                    <p>
+                                        <b>	Nationality </b>- You Can Select your Nationality.
+                                        Click on Nationality.
+                                        You can see many Nation Name Present in Drop Down. you can Select your Nation from this
+                                    </p>
+                                    <img src="~/images/Images1/Picture1.png " width="300" height="350">
+                                    <p>•In My Profile Page, you can see Nationality with asterisk Mark means that they are Mandatory field. if you not enter details on this field red color field Validation come on screen. </p>
+                                    <img src="~/images/Images1/33.png">
+
+                                    <p>•In My Profile Page, you can see Full Name and Nationality with asterisk Mark means that they are Mandatory fields. if you not enter details on this fields red color field Validation come on screen.</p>
+
+                                    <img src="~/images/Images1/55.png" width="450" height="350">
+
+                                    <h6> Enter all the details then Click on Submit button. </h6>
+                                    <img src="~/images/Images1/44.png" width="450" height="350">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+                                    <h6> After clicking on submit button a popup window  opens indicating that your data has been saved successfully .</h6>
+                                    <img src="~/images/Images1/screenshot(6).png" width="300" height="150">
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-3">
+
+                                    <h4>  Help video</h4>
+                                    <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/RgbsPI0_a9g" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).on('ready', function () {
+        $("#input-11").fileinput({
+            maxFileCount: 1,
+            allowedFileTypes: ["image"]
+        });
+    });
+
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).on("keydown", "#AlternateContact", function () {
+        if ($("#AlternateContact").val() != undefined || $('#AlternateContact').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $("#MyProfile").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+
+

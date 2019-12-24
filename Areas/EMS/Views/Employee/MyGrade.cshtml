@@ -1,0 +1,116 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.GradeMaster
+@{
+    ViewBag.Title = "Profile";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    IEnumerable<AJSolutions.Models.GradeMaster> gradeMaster = ViewData["mygrade"] as IEnumerable<AJSolutions.Models.GradeMaster>;
+    AJSolutions.Areas.EMS.Models.EmployeeViewModel reporting = ViewData["Reporting"] as AJSolutions.Areas.EMS.Models.EmployeeViewModel;
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Create Grade</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Create Grade</h5>
+                <div class="card-body">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.GradeName, "Grade Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-banknote"> </i></span>
+                            @Html.EditorFor(model => model.GradeName, new { htmlAttributes = new { @class = "form-control ", id = "GradeName", placeholder = "e.g. First Grade", required = "required" } })
+
+                        </div>
+                        @Html.ValidationMessageFor(model => model.GradeName, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <br />
+                        @if (user.Role == "Admin")
+                        {
+                            @Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+                            <input type="submit" id="bankdetails" value="Submit" style="float: right;" class="btn btn-primary" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            @if (gradeMaster != null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                <th>
+                                    Grade Name
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                            @foreach (var item in gradeMaster)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.GradeName)
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("MyGrade", "Employee", new { GradeId = item.GradeId, UserAction = "Edit" })" title="Edit" style="float:left"><i class="icon-pen"></i>|</a>
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.GradeId');" title="Remove" style="float:Left"><i class="icon-remove"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveGrade", "Employee"));
+}
+
+<script type="text/javascript">
+    function ConfirmationDialog(GradeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?GradeId=" + GradeId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

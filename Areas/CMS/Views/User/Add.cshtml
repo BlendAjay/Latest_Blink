@@ -1,0 +1,704 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Areas.Admin.Models.UserRegistrationViewModel
+
+@{
+    ViewBag.Title = "Add User";
+    if (ViewBag.UserAction == "Edit")
+    {
+        ViewBag.Title = "Edit User";
+    }
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    CandidateCourseDetails CandidateM = new CandidateCourseDetails();
+    CourseMaster CourseeM = new CourseMaster();
+    AJSolutions.Areas.CMS.Models.CorporateViewModel myprofile = ViewData["MyProfile"] as AJSolutions.Areas.CMS.Models.CorporateViewModel;
+    CompanyProfile companyprofile = ViewData["ComapanyProfile"] as CompanyProfile;
+    string BranchCategoryPlaceHolder = null;
+    string BranchStatePlaceHolder = null;
+    var IppbBranchValues = ViewData["IppbBranch"] as IEnumerable<AJSolutions.Models.BranchMaster>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm("Add", "User", FormMethod.Post, new { area = "CMS", id = "Add", @class = "needs-validation", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.status as string)
+    @Html.Hidden("ModuleId", ViewBag.Id as string)
+    @Html.Hidden("Uid", ViewBag.Uid as string)
+    @Html.Hidden("Batch", ViewBag.Batch as string)
+
+    var module = ViewBag.Id as string;
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Add User</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <div align="right">
+                    @if (module == "CND" && user.Role == "Admin")
+                    {
+                        <a href="@Url.Action("Candidates", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Candidates</a>
+                    }
+                    @if (module == "VND")
+                    {
+                        <a href="@Url.Action("ThirdParty", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Vendors</a>
+                    }
+                    @if (module == "TPU")
+                    {
+                        @*<a href="@Url.Action("MeetingMinutes", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" target="_blank" align="right">MOM</a>*@
+                        <a href="@Url.Action("Clients", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Clients</a>
+                    }
+                    @if (module == "EMP")
+                    {
+                        <a href="@Url.Action("Employees", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Employees</a>
+                    }
+                </div>
+                @if (Model != null)
+                {
+                    <h5 class="card-header">Edit User</h5>
+                }
+                else
+                {
+                    <h5 class="card-header">Add New User</h5>
+                }
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.Hidden("Mod", ViewBag.Id as string)
+                <div class="card-body">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @Html.LabelFor(model => model.Name, "Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "e.g. john smith", id = "FullName", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @Html.LabelFor(m => m.Email, "Email")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control email", placeholder = "e.g. xyz@domain.com", id = "Email", @type="email", required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @Html.LabelFor(m => m.PhoneNumber, "Phone Number")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-phone"> </i></span>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "1234567890", id = "PhoneNumber", maxlength = "10", required = "required", @type = "number" })
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @if (module != "CND" && module != "ADI")
+                        {
+                            @Html.LabelFor(m => m.DepartmentId, "Role")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-link"> </i></span>
+                                @Html.DropDownList("DepartmentId", null, "--- Select Role ---", htmlAttributes: new { @class = "form-control required", @id = "DepartmentId", placeholder = "Select Role", required = "required" })
+                            </div>
+                        }
+                        @if (module == "CND")
+                        {
+                            @Html.LabelFor(model => model.Gender, "Gender")<small></small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                                @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+                            </div>
+
+                            @*</div>*@
+                        }
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @if (module == "EMP")
+                        {
+                            <br />
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelFor(m => m.ManagerLevel, "Manager Level ?   ")</td>
+                                        <td>
+                                            @Html.CheckBoxFor(model => model.ManagerLevel, new { Id = "ManagerLevel" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        }
+                        @if (module == "CND")
+                        {
+                            @Html.LabelFor(m => m.RegistrationId, "Registration/Candidate/Employee ID")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user2"></i></span>
+                                @Html.TextBoxFor(m => m.RegistrationId, new { @class = "form-control", placeholder = "ID", id = "RegistrationId" })
+                            </div>
+                        }
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @if (module == "EMP")
+                        {
+                            @Html.LabelFor(m => m.ReportingAuthority, "Reporting Authority")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                                @Html.DropDownList("ReportingAuthority", null, "---Select Reporting Authority ---", htmlAttributes: new { id = "ReportingAuthority", @class = "form-control required", required = "required" })
+                            </div>
+                        }
+                        @if (module == "CND")
+                        {
+                            @Html.LabelFor(m => m.Designation, "Designation/Role")<small></small>
+                            if (Model == null)
+                            {
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-user2"></i></span>
+                                    @Html.TextBox("Designation", "Student", new { @class = "form-control required", placeholder = "", id = "Designation", required = "required" })
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-user2"></i></span>
+                                    @Html.TextBoxFor(m => m.Designation, new { @class = "form-control required", placeholder = "", id = "Designation", required = "required" })
+                                </div>
+                            }
+                        }
+                    </div>
+                    @if (module == "EMP")
+                    {
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+
+
+                                @Html.LabelFor(model => model.Designation, "Designation")<small>*</small>
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-line-paper-stack"> </i></span>
+                                    @Html.EditorFor(model => model.Designation, new { htmlAttributes = new { @class = "form-control", id = "Designation", @Placeholder = "Designation" } })
+                                </div>
+                                <br>
+
+                            </div>
+                        </div>
+                    }
+                    @if (module == "TPU")
+                    {
+                        <div class="row">
+                            <div class="fancy-title title-bottom-border">
+                                <h4>Client Profile</h4>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => myprofile.Nationality, "Nationality")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-flag"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.DropDownList("Nationality", null, " --- Select Nationality ---", htmlAttributes: new { @class = "form-control", @id = "Nationality", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("Nationality", null, " --- Select Nationality ---", htmlAttributes: new { @class = "form-control", @id = "Nationality" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("Nationality", null, " --- Select Nationality ---", htmlAttributes: new { @class = "form-control", @id = "Nationality" })
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => myprofile.AlternateContact, "Alternate Contact")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-phone"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.TextBoxFor(m => Model.AlternateContact, new { @class = "form-control", placeholder = "e.g. +917876543456", id = "PhoneNumber", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(m => Model.AlternateContact, new { @class = "form-control", placeholder = "e.g. +917876543456", id = "PhoneNumber" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => Model.AlternateContact, new { @class = "form-control", placeholder = "e.g. +917876543456", id = "PhoneNumber" })
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => myprofile.AlternateEmail, "Alternate Email")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-email3"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.TextBoxFor(m => Model.AlternateEmail, new { @type = "email", @class = "form-control ", placeholder = "Enter Client Email", id = "Email", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(m => Model.AlternateEmail, new { @type = "email", @class = "form-control email", placeholder = "Enter Client Email", id = "Email" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => Model.AlternateEmail, new { @class = "form-control email", placeholder = "Enter Client Email", id = "Email", @type = "email" })
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="fancy-title title-bottom-border">
+                                <h4>Company Profile</h4>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => companyprofile.CompanyName, "Company Name")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-line2-home"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.TextBoxFor(m => Model.CompanyName, new { @class = "form-control", placeholder = "e.g. Company Name", id = "CompanyName", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(m => Model.CompanyName, new { @class = "form-control", placeholder = "e.g. Company Name", id = "CompanyName" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => Model.CompanyName, new { @class = "form-control", placeholder = "e.g. Company Name", id = "CompanyName" })
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => companyprofile.CompanyType, "Company Type")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-cog"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.DropDownList("CompanyType", null, " --- Select Company Type ---", htmlAttributes: new { @class = "form-control", id = "CompanyType", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("CompanyType", null, " --- Select Company Type ---", htmlAttributes: new { @class = "form-control", id = "CompanyType" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("CompanyType", null, " --- Select Company Type ---", htmlAttributes: new { @class = "form-control", id = "CompanyType" })
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => companyprofile.CompanySize, "Company Size")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-bucket"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.DropDownList("CompanySize", null, " --- Select Company Size ---", htmlAttributes: new { @class = "form-control", id = "CompanySize", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("CompanySize", null, " --- Select Company Size ---", htmlAttributes: new { @class = "form-control", id = "CompanySize" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("CompanySize", null, " --- Select Company Size ---", htmlAttributes: new { @class = "form-control", id = "CompanySize" })
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                                @Html.LabelFor(m => companyprofile.Website, "Website")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                                    @if (Model != null)
+                                    {
+                                        if (Model.UpdatedBy == Model.UserId || Model.UpdatedB == Model.UserId)
+                                        {
+                                            @Html.TextBoxFor(m => Model.Website, new { @class = "form-control", placeholder = "Website", id = "Website", @readonly = "ReadOnly" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(m => Model.Website, new { @class = "form-control", placeholder = "Website", id = "Website" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => Model.Website, new { @class = "form-control", placeholder = "Website", id = "Website" })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (module == "CND")
+                    {
+                        <br />
+                        <label>Branch Details</label><small style="float:right">(for corporate trainings)</small><br /><br />
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                @Html.LabelFor(m => m.CorporateId, "Corporate")<small>*</small>
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                    @Html.DropDownList("CorporateId", null, "--- Select Corporate ---", htmlAttributes: new { @class = "form-control required", id = "CorporateId", required = "required" })
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                @Html.LabelFor(m => m.Region, "Region")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                    @Html.TextBoxFor(m => m.Region, new { @class = "form-control", placeholder = "East/West/North/South", id = "Region" })
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                @Html.LabelFor(m => m.Branch, "Branch Name")
+
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-road"> </i></span>
+                                    @Html.TextBoxFor(m => m.Branch, new { @class = "form-control", placeholder = "Branch Name", id = "Branch" })
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                @Html.LabelFor(m => m.BranchCategory, "Branch Category")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                    @Html.TextBoxFor(m => m.BranchCategory, new { @class = "form-control required", placeholder = "Rural/Urban/Semi-Urban", id = "BranchCategory", required = "required" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+
+                                @Html.LabelFor(m => m.BranchState, "Branch State")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                    @Html.TextBoxFor(m => m.BranchState, new { @class = "form-control required", placeholder = "Branch State", id = "BranchState", required = "required" })
+                                </div>
+                            </div>
+
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                @Html.LabelFor(m => m.BranchCode, "Branch Code")
+                                <div class="input-group divcenter">
+                                    <span class="input-group-addon"><i class="icon-line-anchor"> </i></span>
+                                    @Html.TextBoxFor(m => m.BranchCode, new { @class = "form-control", placeholder = "Branch Code", id = "BranchCode" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <br />
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 ">
+                        @if (Model != null)
+                        {
+                            <input type="submit" id="submitData" name="submitData" class="btn btn-primary" value="Update User" style="float:right" />
+                        }
+                        else
+                        {
+                            <input type="submit" id="submitData" name="submitData" class="btn btn-primary" value="Add User" style="float:right" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br /><center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JEResponsive -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Add", "User"));
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page has facility of adding users according to your requirement.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        @if (module == "CND")
+                                        {
+                                            <a href="~/images/HelpImages/addcandidate.png" target="_blank" data-lightbox="gallery-item">
+
+                                                <img src="~/images/HelpImages/addcandidate.png" />
+                                            </a>
+                                        }
+                                        else if (module == "VND")
+                                        {
+                                            <a href="~/images/HelpImages/addvendor.png" target="_blank" data-lightbox="gallery-item">
+
+                                                <img src="~/images/HelpImages/addvendor.png" />
+                                            </a>
+                                        }
+                                        else if (module == "TPU")
+                                        {
+                                            <a href="~/images/HelpImages/addclient.png" target="_blank" data-lightbox="gallery-item">
+
+                                                <img src="~/images/HelpImages/addclient.png" />
+                                            </a>
+                                        }
+
+                                        else if (module == "ADI")
+                                        {
+                                            <a href="~/images/HelpImages/addcoadmin.png" target="_blank" data-lightbox="gallery-item">
+                                                <img src="~/images/HelpImages/addcoadmin.png" />
+
+                                            </a>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $('#PhoneNumber').change(function () {
+        {
+            var phoneno = /^\d{10}$/;
+            var contact = $('#PhoneNumber').val()
+            if (contact.match(phoneno)) {
+                return true;
+            }
+            else {
+                $.alert({
+                    title: 'Oops',
+                    content: 'Invalid Contact Number',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+
+                    }
+                });
+                return false;
+            }
+        }
+    })
+
+
+    //function EmailExists() {
+    //    $.ajax({
+    //        type: "post",
+    //        url: "/User/EmailPhoneExist",
+    //        data: {
+    //            Email: $('#Email').val(),
+    //            PhoneNumber: "",
+    //            Uid: $('#Uid').val()
+    //        },
+    //        datatype: "json",
+    //        traditional: true,
+    //        success: function (data) {
+    //            if (data != null) {
+    //                $.alert({
+    //                    title: 'Cheers',
+    //                    content: data,
+    //                    confirmButton: 'OK',
+    //                    confirmButtonClass: 'btn btn-primary',
+    //                    icon: 'fa fa-thumbs-down fa-2x ',
+    //                    animation: 'zoom',
+    //                    confirm: function () {
+    //                        $('#Email').val("");
+    //                    }
+    //                });
+    //            }
+    //        }
+    //    });
+    //}
+
+    function PhoneNumberExists() {
+        $.ajax({
+            type: "post",
+            url: "/User/EmailPhoneExist",
+            data: {
+                Email: "",
+                PhoneNumber: $('#PhoneNumber').val(),
+                Uid: $('#Uid').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: data,
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            $('#PhoneNumber').val("");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        if ($("#SaveStatus").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'User Added <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+        else if ($("#SaveStatus").val() == "EditSucceeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'User Updated <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+<script type="text/javascript">
+
+    $("#Email").change(function () {
+        EmailExists();
+    });
+
+    $("#PhoneNumber").change(function () {
+        PhoneNumberExists();
+    });
+
+    $("#Add").validate({
+        submitHandler: function () {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/User/Add",
+                data: {
+                    Name: $('#FullName').val(),
+                    Email: $('#Email').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    DepartmentId: $('#DepartmentId').val(),
+                    //BatchId: $('#BatchId').val(),
+                    Name1: $('#Name1').val(),
+                    AlternateContact: $('#AlternateContact').val(),
+                    CompanyName: $('#CompanyName').val(),
+                    CompanySize: $('#CompanySize').val(),
+                    AlternateEmail: $('#AlternateEmail').val(),
+                    Nationality: $('#Nationality').val(),
+                    CompanyType: $('#CompanyType').val(),
+                    Website: $('#Website').val(),
+                    Mod: $('#ModuleId').val(),
+                    ReportingAuthority: $('#ReportingAuthority').val(),
+                    ManagerLevel: $('#ManagerLevel').prop,
+                    RegistrationId: $('#RegistrationId').val(),
+                    Uid: $('#Uid').val(),
+                    Designation: $('#Designation').val(),
+                    Branch: $('#Branch').val(),
+                    BranchCategory: $('#BranchCategory').val(),
+                    Region: $('#Region').val(),
+                    BranchCode: $('#BranchCode').val(),
+                    BranchState: $('#BranchState').val(),
+                    Source: $('#Source').val(),
+                    CorporateId: $('#CorporateId :selected').val(),
+                    Gender: $('#Gender :selected').val(),
+                    Batch: $('#Batch').val(),
+                    ProbationPeriod: $('#ProbationPeriod').val(),
+                    TrainingType: $('#TrainingType').val(),
+                    TrackerId: $('#TrackerId').val(),
+                    FacilityId: $('#FacilityId').val(),
+                    Accesspoint: $('#Accesspoint').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+
+                }
+            });
+        }
+    });
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+

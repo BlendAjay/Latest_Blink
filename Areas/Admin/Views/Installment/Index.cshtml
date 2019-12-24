@@ -1,0 +1,51 @@
+﻿@model IEnumerable<AJSolutions.Models.InstallmentMaster>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container">
+    <div class="row">
+        <button class="button button-3d button-rounded button-teal" style="float:right;">
+            <i class="icon-repeat"></i>
+            @Html.ActionLink("Create New", "Create")
+        </button>
+        <br />
+        <div class="fancy-title title-bottom-border">
+            <h3>All Installments</h3>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered nobottommargin">
+            <tr>
+                <th>INSTALLMENTS</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Installment)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.InstallmentId })
+
+                    </td>
+                    <td>
+
+                        @Html.ActionLink("Details", "Details", new { id = item.InstallmentId })
+
+                    </td>
+                    <td>
+
+                        @Html.ActionLink("Delete", "Delete", new { id = item.InstallmentId })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>

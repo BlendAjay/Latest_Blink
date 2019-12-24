@@ -1,0 +1,290 @@
+﻿@using AJSolutions.Models
+@model GenerateInvoiceView
+@{
+    ViewBag.Title = "Invoice Payment";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+
+}
+
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm("Payment", "Invoice", FormMethod.Post, new { @class = "form-horizontal", id = "Payment", role = "form" }))
+{
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h3>Payment</h3>
+
+                </div>
+                @if (ViewBag.Status != null)
+                {
+                    <div class="col_full">
+                        <span class="text-danger">@ViewBag.Status</span>
+                    </div>
+                }
+                <div class="col_one_third">
+                    <label> Invoice No :</label> @Model.InvoiceNumber
+                    @Html.HiddenFor(model => model.InvoiceNumber, new { htmlAttributes = new { @id = "InvoiceNumber", @class = "form-control" } })
+
+                </div>
+                <div class="col_one_third">
+                    <label>Invoice From :</label>@Model.Name
+
+                </div>
+                <div class="col_one_third col_last">
+                    <label>Net Amount :</label>@Model.NetAmount (@Model.Currency)
+                    @Html.HiddenFor(model => model.NetAmount, new { htmlAttributes = new { @id = "NetAmount", @class = "form-control" } })
+                </div>
+
+                <div class="col_half">
+                    <span><b>Payment Mode</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @Html.DropDownList("PaymentModeId", null, "--- Select Payment Mode ---", htmlAttributes: new { @id = "PaymentModeId", @class = "form-control", placeholder = "Payment Mode" })
+                    </div>
+                </div>
+                <div class="col_half  col_last" id="bankName">
+                    <span><b>Bank Name</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @Html.EditorFor(model => model.BankName, new { htmlAttributes = new { @id = "BankName", @class = "form-control", placeholder = "Bank Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BankName, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_half">
+                    <div id="paymentDate">
+                        <span><b>Payment Date</b></span><br />
+                        <div class="input-group divcenter travel-date-group">
+                            <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                            <input type="text" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="PaymentDate" name="PaymentDate">
+                            @*@Html.EditorFor(model => model.PaymentDate, new { htmlAttributes = new { @id = "PaymentDate", @class = "form-control", placeholder = "Payment Date" } })*@
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PaymentDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="col_half col_last" id="refno">
+                    <span><b>Reference No</b></span><br />
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @Html.EditorFor(model => model.ReferenceNumber, new { htmlAttributes = new { @id = "ReferenceNumber", @class = "form-control", placeholder = "Reference Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ReferenceNumber, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_full">
+                    <span><b>Comments</b></span><br />
+                    <div class="input-group divcenter">
+                        @Html.TextAreaFor(model => model.PayerRemarks, 5, 124, htmlAttributes: new { @class = "form-control ", @id = "PayerRemarks", placeholder = "Payer Remarks" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.PayerRemarks, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_full">
+                    <input type="button" value="Submit" id="SubmitData" name="SubmitData" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>
+            </div>
+        </div>
+        <br /><br />
+
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+    </div>
+
+
+    //.......help page.....//
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel20" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel20"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                <li><a href="#tabs-3">Video</a></li>
+                            </ul>
+                            <div class="tab-container">
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4> Navigation to Pay Invoice  </h4>
+
+                                    <img src="~/images/gif/Navigation to pay invoice.gif" alt="Save icon" />
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6> How to pay invoice  </h6>
+                                    <img src="~/images/Images1/195.png" width="418" height="559">
+
+                                    <h6> Click on pay now to pay invoice  </h6>
+                                    <img src="~/images/Images1/196.png" width="418" height="559">
+                                    <h6>After clicking on pay now fill the payment details .  </h6>
+                                    <img src="~/images/Images1/197.png" width="500" height="559">
+                                    <h6>
+                                        Select the Payment mode from the drop down.Its depending on client how they can Pay Invoice.
+                                        client can Pay through any payment mode Cash, Cheque ,
+                                        Online, Demand Draft, NEFT/RTGS
+                                    </h6>
+                                    <img src="~/images/Images1/198.png" width="455" height="347">
+                                    <h6>After filling all the details click on submit . </h6>
+                                    <img src="~/images/Images1/198.png" width="455" height="347">
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-3">
+
+                                    <h4> Training Video to pay Invoice   </h4>
+
+                                    <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/AZftEnqKOd0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                    
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#paymentDate').fadeOut();
+        $('#bankName').fadeOut();
+        $('#refno').fadeOut();
+
+
+        $('#PaymentModeId').change(function () {
+
+
+            if ($('#PaymentModeId :selected').text().toString().toUpperCase() != "ONLINE") {
+                $('#paymentDate').fadeIn();
+                if ($('#PaymentModeId :selected').text().toString().toUpperCase() != "CASH") {
+                    $('#bankName').fadeIn();
+                }
+                $('#refno').fadeIn();
+            }
+            else {
+                $('#paymentDate').fadeOut();
+                $('#bankName').fadeOut();
+                $('#refno').fadeOut();
+            }
+        });
+
+        $('#SubmitData').click(function () {
+
+            if ($("#PaymentModeId :selected").val() == undefined || $("#PaymentModeId :selected").val() == '' || $("#PaymentModeId :selected").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Payment Mode</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#CheckDate").focus();
+                return false;
+            }
+
+            if ($('#PaymentModeId :selected').text().toString().toUpperCase() == "CHEQUE" || $('#PaymentModeId :selected').text().toString().toUpperCase() == "DEMAND DRAFT") {
+                if ($("#PaymentDate").val() == undefined || $('#PaymentDate').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Payment Date</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#PaymentDate").focus();
+                    return false;
+                }
+
+                if ($("#BankName").val() == undefined || $('#BankName').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Bank Name</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#BankName").focus();
+                    return false;
+                }
+
+                if ($("#ReferenceNumber").val() == undefined || $('#ReferenceNumber').val() == '') {
+                    $.alert({
+                        title: 'Alert',
+                        content: '<b>Reference No</b> is required',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-red',
+                        icon: 'icon-thumbs-down2 icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                        }
+                    });
+                    $("#ReferenceNumber").focus();
+                    return false;
+                }
+            }
+
+
+            $("#Payment").submit();
+
+        });
+
+
+
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>
+

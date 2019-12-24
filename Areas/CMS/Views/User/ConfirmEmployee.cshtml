@@ -1,0 +1,137 @@
+﻿@using AJSolutions.Models;
+@model EmployeeView
+@{
+    ViewBag.Title = "ConfirmEmployee";
+    Layout = "~/Areas/CMS/Views/Shared/_LayoutNoHeaderNoFooter.cshtml";
+}
+@using (Html.BeginForm("ConfirmEmployee", "User", FormMethod.Post, new { area = "CMS", id = "Add", @class = "form-horizontal needs-validation", role = "form" }))
+{
+    <div class="container">
+        <input type="text" name="UserId" id="Uid" value="@Model.UserId" style = "display:none" />
+        <div class="row">
+            @if (ViewBag.isconfirm == true)
+            {
+                <div class="col_full alert-info">
+                    <i class="icon-thumbs-up"></i><span>Employee confirmation is already DONE!</span>
+                </div>
+            }
+            else
+            {
+                <div class="col_full">
+                    <div class="col_half">
+                        Name:
+                        <span>@Model.Name</span>
+                    </div>
+                    <div class="col_half col_last">
+                        Designation:
+                        <span>@Model.DesignationName</span>
+                    </div>
+                </div>
+                <div class="col_full">
+                    <div class="col_half">
+                        Joining Date:
+                        <span>@Model.EJoiningDate</span>
+                    </div>
+                    <div class="col_half col_last">
+                        Confirmation Date:
+                        <span>@Model.EConfirmationDate</span>
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.DropDownList("ConfirmationOperation", null, "----Select Options ----", htmlAttributes: new { @class = "form-control required", id = "Status", name = "Status" })
+                </div>
+                <div class="col_full">
+                    <input type="text" class="form-control" id="txtextend" name="Days" style="display:none" placeholder="Number of days to be extend" />
+                </div>
+                <div class="col_full">
+                    <textarea name="Remark" cols="63" rows="5" placeholder="Remark..." id="Remaks"></textarea>
+                </div>
+
+                <br />
+                <div class="col_full">
+                    <center>
+                        <button type="button" class="button button-3d button-small button-rounded button-teal" id="confirm" style="display:none" onclick="SubmitData()">Approve</button>
+                        <button type="button" class="button button-3d button-small button-rounded button-red" onclick="SubmitData()" id="reject" style="display:none">Reject</button>
+                        <button type="button" class="button button-3d button-small button-rounded button-blue" onclick="SubmitData()" id="Extend" style="display:none">Extend</button>
+                    </center>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    @Html.Hidden("RedirectTo", Url.Action("Notifications", "UserNotification", new { area = "" }))
+}
+<script>
+    $(function () {
+        $("#Status").change(function () {
+            var selectedText = $(this).find("option:selected").text();
+            var selectedValue = $(this).val();
+            if (selectedValue == 1) {
+                $('#confirm').show();
+                $('#reject').hide();
+                $('#Extend').hide();
+                $('#txtextend').hide();
+            }
+            else if (selectedValue == 2) {
+                $('#confirm').hide();
+                $('#reject').show();
+                $('#Extend').hide();
+                $('#txtextend').hide();
+            }
+            else if (selectedValue == 3) {
+                $('#confirm').hide();
+                $('#reject').hide();
+                $('#Extend').show();
+                $('#txtextend').show();
+            }
+        });
+    });
+    function SubmitData() {
+       
+        if ($('#Remaks').val() == "") {
+            $.alert({
+                title: 'Warning',
+                content: 'Remarks should be <b> required.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+
+            });
+            return false;
+        }
+       
+        else {
+            $.ajax({
+                type: "post",
+                url: "/CMS/User/ConfirmEmployee",
+                data: {
+                    Type: "Reject",
+                    Remark: $('#Remaks').val(),
+                    UserId: $('#Uid').val(),
+                    Days: $('#txtextend').val(),
+                    Status: $("#Status option:selected").val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Confirmation Rejected <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+
+                }
+            });
+        }
+    }
+</script>

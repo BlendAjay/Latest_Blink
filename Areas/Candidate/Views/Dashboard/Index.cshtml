@@ -1,0 +1,133 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model IEnumerable<AJSolutions.Models.CourseMaster>
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    IEnumerable<CourseBatchViewModel> CourseBatches = ViewData["CandidateCourse"] as IEnumerable<CourseBatchViewModel>;
+    List<CourseMasterViewModel> LMSCourseMasters = ViewData["LMSCourseMasters"] as List<CourseMasterViewModel>;
+    List<TrainingAssessmentView> candidateTrngAssmt = ViewData["CandidateTrngAssmt"] as List<TrainingAssessmentView>;
+
+}
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="page-header" id="top">
+            <h2 class="pageheader-title">Dashboard</h2>
+            <div class="page-breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Index</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-section" id="overview">
+                @if (CourseBatches.Count() > 0)
+                {
+                    foreach (var item in CourseBatches)
+                    {
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="row">
+                                    <div class="col-xl-7 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <h2>@item.CourseName (@item.CourseCode)</h2>
+                                    </div>
+                                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-12">
+
+                                    </div>
+                                    <div class="col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <a href="@Url.Action("UpdateLikes","Dashboard",new {area ="Candidate", BatchId = @item.BatchId} )" class="btn btn-primary btn-xs" id="SubmitData" style="float:right;"><i class="fa fa-thumbs-up"></i> Like</a>
+                                    </div>
+
+                                </div>
+
+                                <ul class="list-unstyled arrow">
+                                    <li><a href="#"><i class="icon-location"></i>Batch:  @item.BatchName</a></li>
+                                    <li><a href="#"><i class="icon-calendar"></i>Start Date:  @item.FromDate.ToString("dd-MMM-yyyy")</a></li>
+                                    <li><a href="#"><i class="icon-calendar"></i>End Date: @item.ToDate.ToString("dd-MMM-yyyy")</a></li>
+                                    <li><a href="@Url.Action("Discussion","Review", new {@area ="LMS", CourseCode = item.CourseCode})">Discussion Forum</a></li>
+                                    @if (!string.IsNullOrEmpty(@item.ContentLink))
+                                    {
+                                        <li><a href="@item.ContentLink" title="Click here to view content" target="_blank">Training Content</a></li>
+                                    }
+                                    @if (!string.IsNullOrEmpty(@item.FeedbackLink))
+                                    {
+                                        <li><a href="@item.FeedbackLink" title="Click here to view content" target="_blank">Give Feedback</a></li>
+                                    }
+                                    @if (candidateTrngAssmt != null)
+                                    {
+                                        int index = candidateTrngAssmt.FindIndex(rowData => rowData.BatchId == item.BatchId);
+                                        if (index >= 0)
+                                        {
+                                            // element exists, make visible My Assessment
+                                            <li><i class="icon-paper-clip"></i><a href="@Url.Action("MyAssessments", "TMS", new { @area = "TMS", Id = item.CourseCode, BatchId = item.BatchId })" target="_blank" title="Click here to view assessment details">My Assessments</a></li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col_full">
+                        <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                            <div class="fbox-icon">
+                                <i class="icon-user3"></i>
+                            </div>
+                            <h3>Welcome @user.Name</h3>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<br /><center>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- JEResponsive -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-6029014565691295"
+         data-ad-slot="6109277368"
+         data-ad-format="auto"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</center>
+
+</div>
+<input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+<script type="text/javascript">
+    $('[data-toggle=popover]').popover();
+</script>
+
+<script type="text/javascript">
+
+    function PaymentDetails(CourseCode, BatchId, CandidateId) {
+        var paramPub;
+
+        paramPub = "?CourseCode=" + CourseCode + "&BatchId=" + BatchId + "&CandidateId=" + CandidateId;
+        paramPub = $('#weburl').val() + "/CMS/Transactions/PaymentDetails" + paramPub;
+        //$('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

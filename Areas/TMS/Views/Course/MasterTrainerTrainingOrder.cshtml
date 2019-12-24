@@ -1,0 +1,123 @@
+﻿@model List<AJSolutions.Models.MTTrainingOrderTraineeDetailsView>
+@{
+    ViewBag.Title = "Master Training Trainee Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Candidate")
+    {
+        Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    List<AJSolutions.Models.MTTrainingOrderTraineeDetailsView> TrainingOrders = ViewData["MTTrainingOrders"] as List<AJSolutions.Models.MTTrainingOrderTraineeDetailsView>;
+
+    ViewBag.Title = "Master Training Order";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+
+}
+@using (Html.BeginForm("GetMasterTrainerTO", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "GetMasterTrainerTO", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Data as string)
+    @Html.Hidden("Result", ViewBag.Result as string)
+
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Training Order for Master Trainer</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>Training Order Id</th>
+                            <th>Training Week</th>
+                            <th>Circle</th>
+                            <th>Updated By</th>
+                            <th>Contact Number of Form Filled by</th>
+                            <th>UpdatedOn</th>
+                            <th>Trainees</th>
+                        </tr>
+                        @if (TrainingOrders != null)
+                        {
+                            foreach (var item in TrainingOrders)
+                            {
+                                var To = "TRO";
+                                var EUId = @item.TrainingOrderId;
+                                var year = DateTime.Now.Year;
+                                var type = "MT";
+                                var finalId = @To + @EUId + type + year;
+                                <tr>
+                                    <td>
+                                        <span>@finalId</span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TrainingWeek)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Circle)
+                                    </td>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.UpdatedByName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TOFilledByContactNumber)
+                                    </td>
+                                    <td>
+                                        <span>@item.UpdatedOn.ToString("dd-MMM-yyyy")</span>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TraineeCount) <a href="@Url.Action("GetMasterTrainerTOTrainees", "Course", new { area = "TMS", TrainingOrderId = item.TrainingOrderId })" class="btn btn-primary btn-xs" target="_blank">&nbsp; View Trainee's</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("GetMasterTrainerTO", "Course", new { area = "TMS" }))
+}
+<script>
+    function ConfirmationDialog(TrainingOrderId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + TrainingOrderId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Training Order has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>
+
+
+
+

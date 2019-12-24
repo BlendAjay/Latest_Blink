@@ -1,0 +1,199 @@
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\AJSolutions.dll.config
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\AJSolutions.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\AJSolutions.pdb
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Antlr3.Runtime.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\EntityFramework.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\EntityFramework.SqlServer.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Core.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Owin.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Host.SystemWeb.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Cookies.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Facebook.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Google.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.OAuth.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Twitter.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Web.Infrastructure.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Newtonsoft.Json.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Owin.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Net.Http.Formatting.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Helpers.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Http.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Http.WebHost.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Mvc.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Optimization.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Razor.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.WebPages.Deployment.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.WebPages.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.WebPages.Razor.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\WebGrease.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Helpers.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Mvc.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Optimization.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Razor.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.WebPages.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.WebPages.Deployment.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.WebPages.Razor.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Antlr3.Runtime.pdb
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Newtonsoft.Json.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Net.Http.Formatting.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Http.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\System.Web.Http.WebHost.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\EntityFramework.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\EntityFramework.SqlServer.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Core.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Owin.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Host.SystemWeb.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Facebook.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Cookies.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.OAuth.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Google.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Twitter.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\obj\Debug\AJSolutions.csprojResolveAssemblyReference.cache
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\obj\Debug\AJSolutions.dll
+c:\users\ajay\documents\visual studio 2013\Projects\AJSolutions\AJSolutions\obj\Debug\AJSolutions.pdb
+C:\Users\ajay\Documents\Visual Studio 2013\Projects\AJSolutions\AJSolutions\obj\Debug\AJSolutions.Migrations.InitialMigration.resources
+C:\Users\ajay\Documents\Visual Studio 2013\Projects\AJSolutions\AJSolutions\obj\Debug\AJSolutions.csproj.GenerateResource.Cache
+F:\Ajay\AJSolutions\AJSolutions\bin\AJSolutions.dll.config
+F:\Ajay\AJSolutions\AJSolutions\bin\AJSolutions.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\AJSolutions.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\Antlr3.Runtime.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\ClosedXML.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\DocumentFormat.OpenXml.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\DotNetIntegrationKit.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\EntityFramework.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\EntityFramework.SqlServer.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\HtmlRenderer.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\HtmlRenderer.PdfSharp.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\itextsharp.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\itextsharp.licensekey.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\itextsharp.xfaworker.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\itextsharp.xmlworker.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Core.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.EntityFramework.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Owin.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Azure.KeyVault.Core.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Host.SystemWeb.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Cookies.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Facebook.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Google.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.MicrosoftAccount.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.OAuth.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Twitter.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Web.Infrastructure.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.WindowsAzure.Configuration.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.WindowsAzure.Storage.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.WindowsAzure.StorageClient.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Newtonsoft.Json.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Owin.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\PagedList.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\PagedList.Mvc.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\PdfSharp.Charting.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\PdfSharp.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Quartz.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\ReportViewerForMvc.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\SendGrid.SmtpApi.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\SendGridMail.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Sendsms.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\SparkPost.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Net.Http.Formatting.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Helpers.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Http.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Http.WebHost.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Mvc.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Optimization.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Razor.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.WebPages.Deployment.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.WebPages.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.WebPages.Razor.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\WebGrease.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\WebMatrix.Data.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\WebMatrix.WebData.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\WindowsBase.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\TPSLAESSecurityCipher.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Jint.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\log4net.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Common.Logging.Core.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Common.Logging.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Threading.Tasks.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\ClosedXML.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\HtmlRenderer.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\HtmlRenderer.PdfSharp.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\itextsharp.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Azure.KeyVault.Core.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.WindowsAzure.Configuration.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.WindowsAzure.Storage.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.WindowsAzure.Storage.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Newtonsoft.Json.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\PagedList.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\PagedList.Mvc.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\PdfSharp.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\PdfSharp.Charting.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Quartz.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\Quartz.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\SparkPost.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Helpers.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Mvc.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Optimization.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Razor.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.WebPages.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.WebPages.Deployment.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.WebPages.Razor.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Antlr3.Runtime.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\WebMatrix.Data.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\WebMatrix.WebData.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Net.Http.Formatting.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Http.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\System.Web.Http.WebHost.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\EntityFramework.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\EntityFramework.SqlServer.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Core.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.Owin.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.AspNet.Identity.EntityFramework.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Host.SystemWeb.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Facebook.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Cookies.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.OAuth.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Google.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.Twitter.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\log4net.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Common.Logging.Core.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\Common.Logging.Core.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Common.Logging.pdb
+F:\Ajay\AJSolutions\AJSolutions\bin\Common.Logging.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.Threading.Tasks.xml
+F:\Ajay\AJSolutions\AJSolutions\bin\de\PdfSharp.resources.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\de\PdfSharp.Charting.resources.dll
+F:\Ajay\AJSolutions\AJSolutions\obj\Debug\AJSolutions.dll
+F:\Ajay\AJSolutions\AJSolutions\obj\Debug\AJSolutions.pdb
+F:\Ajay\AJSolutions\AJSolutions\obj\Debug\AJSolutions.Migrations.First.resources
+F:\Ajay\AJSolutions\AJSolutions\obj\Debug\AJSolutions.csproj.GenerateResource.Cache
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.ReportViewer.Common.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.ReportViewer.DataVisualization.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.ReportViewer.Design.DLL
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.ReportViewer.ProcessingObjectModel.DLL
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.ReportViewer.WebForms.DLL
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.ReportViewer.WinForms.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\EnvDTE.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.VisualStudio.Shell.Interop.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.VisualStudio.Shell.Interop.8.0.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\EnvDTE80.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\stdole.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.VisualStudio.OLE.Interop.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.VisualStudio.TextManager.Interop.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.VisualStudio.TextManager.Interop.8.0.dll
+F:\Ajay\AJSolutions\AJSolutions\bin\Microsoft.MSXML.dll
+F:\Ajay\AJSolutions\AJSolutions\obj\Debug\AJSolutions.csprojAssemblyReference.cache
+F:\Ajay\AJSolutions\AJSolutions\obj\Debug\AJSolutions.csproj.CopyComplete

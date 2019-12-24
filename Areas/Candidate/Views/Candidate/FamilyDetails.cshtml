@@ -1,0 +1,220 @@
+﻿@model AJSolutions.Models.UserFamilyDetails
+@{
+    ViewBag.Title = "Family Details";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("FamilyDetails", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "FamilyDetails", role = "form" }))
+//@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+
+    <div class="container">
+
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+
+        <div id="contact-form-overlay" class="clearfix">
+
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Family Details</h4>
+                </div>
+
+                <div class="col_one_third">
+                    @Html.LabelFor(model => model.FatherName, "Father Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.FatherName, new { htmlAttributes = new { @class = "sm-form-control", id = "FatherName", placeholder = "Enter Father Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherName, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.FatherContact, "Father Contact")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                        @Html.EditorFor(model => model.FatherContact, new { htmlAttributes = new { @class = "sm-form-control", id = "FatherContact", placeholder = "Enter Father Contact" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherContact, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.FatherOccupation, "Father Occupation")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cogs"> </i></span>
+                        @Html.EditorFor(model => model.FatherOccupation, new { htmlAttributes = new { @class = "sm-form-control", id = "FatherOccupation", placeholder = "Enter Father Occupation" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FatherOccupation, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.BloodGroup, "Blood Group")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-pill"> </i></span>
+                        @Html.DropDownList("BloodGroup", null, "--- Select Blood Group ---", htmlAttributes: new { @class = "form-control"})
+                        @*@Html.EditorFor(model => model.BloodGroup, new { htmlAttributes = new { @class = "sm-form-control", id = "BloodGroup", placeholder = "Enter Blood Group" } })*@
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BloodGroup, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <div class="col_one_third">
+                    @Html.LabelFor(model => model.MotherName, "Mother Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.MotherName, new { htmlAttributes = new { @class = "sm-form-control", id = "MotherName", placeholder = "Enter Mother Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MotherName, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.MotherContact, "Mother Contact")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                        @Html.EditorFor(model => model.MotherContact, new { htmlAttributes = new { @class = "sm-form-control", id = "MotherContact", placeholder = "Enter Mother Contact" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MotherContact, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.MotherOccupation, "Mother Occupation")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cogs"> </i></span>
+                        @Html.EditorFor(model => model.MotherOccupation, new { htmlAttributes = new { @class = "sm-form-control", id = "MotherOccupation", placeholder = "Enter Mother Occupation " } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MotherOccupation, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.FamilyIncome, "Family Income")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-money"> </i></span>
+                        @Html.EditorFor(model => model.FamilyIncome, new { htmlAttributes = new { @class = "sm-form-control", id = "FamilyIncome", placeholder = "Enter Family Income" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FamilyIncome, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <div class="col_one_third col_last">
+                    @Html.LabelFor(model => model.SpouseName, "Spouse Name")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.SpouseName, new { htmlAttributes = new { @class = "sm-form-control", id = "SpouseName", placeholder = "Enter Spouse Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SpouseName, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.SpouseOccupation, "Spouse Occupation")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-cogs"> </i></span>
+                        @Html.EditorFor(model => model.SpouseOccupation, new { htmlAttributes = new { @class = "sm-form-control", id = "SpouseOccupation", placeholder = "Spouse Occupation" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SpouseOccupation, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.SpouseContact, "Spouse Contact")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                        @Html.EditorFor(model => model.SpouseContact, new { htmlAttributes = new { @class = "sm-form-control", id = "SpouseContact", placeholder = "Spouse Contact" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SpouseContact, "", new { @class = "text-danger" })
+                    <br>
+                    <input type="submit" id="familydetails" value="Save" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>
+            </div>
+
+        </div>
+        <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <!-- JEResponsive -->
+                  <ins class="adsbygoogle"
+                       style="display:block"
+                       data-ad-client="ca-pub-6029014565691295"
+                       data-ad-slot="6109277368"
+                       data-ad-format="auto"></ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+        </center>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("FamilyDetails", "Candidate"));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page gives the facility of adding family details to the candidates.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/familycandidate.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/familycandidate.png" />
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $("#FamilyDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+    //$(document).ready(function () {
+
+    //    if ($('#SaveStatus').val() == "Succeeded") {
+    //        $.alert({
+    //            title: 'Cheers',
+    //            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'btn btn-primary',
+    //            icon: 'fa fa-thumbs-up fa-2x',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //    }
+
+    //});
+
+</script>

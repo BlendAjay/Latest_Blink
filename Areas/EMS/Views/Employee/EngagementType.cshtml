@@ -1,0 +1,469 @@
+﻿@using AJSolutions.DAL
+@using AJSolutions.Models
+@model AJSolutions.Models.EngagementTypeMaster
+@{
+    ViewBag.Title = "Leave Type";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<EngagementTypeMasterView> engagementtype = ViewData["EngagementType"] as List<EngagementTypeMasterView>;
+    List<LeaveSchemeMaster> scheme = ViewData["Scheme"] as List<LeaveSchemeMaster>;
+    // List<LeaveType> leavetype = ViewData["LeaveType"] as List<LeaveType>;
+
+    List<Global.LeaveLimit> Limit = Global.LeaveLimitL();
+    List<Global.YearendActions> yearandaction = Global.GetYearEndAction();
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("EngagementType", "Employee", FormMethod.Post, new { @area = "EMS", @class = "form-horizontal needs-validation", id = "EngagementType", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Result", @ViewBag.Result as string)
+    <div class="container">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h4> Leave Settings</h4>
+              
+            </div>
+            @if (engagementtype != null)
+            {
+                foreach (var item in scheme)
+                {
+                    <div class="fancy-title title-border-color">
+                        <h6> @item.SchemeName Scheme</h6><br />
+                        <a href="#" onclick="UpdateEngagement('@item.SchemeId', '0', 'Add');" title="Click here to add Leave Type" class="btn btn-default btn-xs fright">Add Leave Type</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>Leave</th>
+                                <th>Short Name</th>
+                                <th>Limit</th>
+                                @*<th>Year End Action</th>
+                                <th>Max Limit For Year End Action</th>*@
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+
+                            @foreach (var engagement in engagementtype.Where(p => p.SchemeId == item.SchemeId))
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => engagement.EngagementType)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => engagement.ShortName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => engagement.LeaveLimit)
+                                    </td>
+                                    @*<td>
+                                        @if (engagement.YearEndAction == "E")
+                                        {
+                                            <span>Encash</span>
+                                             
+                                        }
+                                        else if (engagement.YearEndAction == "L")
+                                        {
+                                            <span>Lapse</span>
+                                        }
+                                        else if (engagement.YearEndAction == "F")
+                                        {
+                                            <span>Forward</span>
+                                        }
+                                      
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => engagement.MaxLimit)
+                                    </td>*@
+                                    <td>
+                                        @if (engagement.LeaveTypeCategory == "D")
+                                        {
+                                            <span>Deductible</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Non Deductible</span>
+                                        }
+                                        @*@Html.DisplayFor(modelItem => engagement.LeaveTypeCategory)*@
+                                    </td>
+                                    <td>
+                                        @if (engagement.ShortName != "BT" && engagement.ShortName != "LW")
+                                        {
+                                            <a href="#" onclick="UpdateEngagement('@item.SchemeId', '@engagement.EngagementTypeId', 'Edit');" title="Click here to Edit EngagementType">Edit</a>
+                                            if (engagement.LeaveTypeId != "EL" && engagement.LeaveTypeId != "CL")
+                                            {
+                                                <span>/</span> <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@engagement.EngagementTypeId');" title="Remove">Delete</a>
+                                            }
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <br />
+                }
+            }
+        </div>
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Add/Edit Leave Type
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <br />
+
+                        </div>
+                        <div class="modal-body" id="cndBody">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("EngagementType", "Employee"))
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+}
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Help</h4>
+                </div>
+                <div class="modal-body" id="moBody">
+                    <div class="container-fluid">
+                        <div class="col_half">
+                            <p>
+                                This page has facility of adding employee leave type as per requirement.
+                            </p>
+                        </div>
+                        <div class="col_half col_last">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+                                    <a href="~/images/HelpImages/engagementtypeadd.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/engagementtypeadd.png" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half">
+                            <div class="feature-box center media-box fbox-bg">
+                                <div class="fbox-media">
+
+                                    <a href="~/images/HelpImages/engagementtypelist.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/engagementtypelist.png" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col_half col_last">
+                            <p>
+                                Here you are able to edit and delete your added leave types.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#Result").val() != null && $("#Result").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Leave Type has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+</script>
+<script type="text/javascript">
+    function UpdateEngagement(SchemeId, EngagementTypeId, UserAction) {
+        var paramPub;
+        paramPub = "SchemeId=" + SchemeId + "&EngagementTypeId=" + EngagementTypeId + "&UserAction=" + UserAction;
+        paramPub = $('#weburl').val() + "/EMS/Employee/AddEngagementType?" + paramPub;
+        //$('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    function ConfirmationDialog(EngagementTypeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectToHome").val() + "?EngagementTypeId=" + EngagementTypeId + "&UserAction=" + "Delete";
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+
+    //function Sortengagement() {
+    //    var SchemeId = $('#LeaveScheme :selected').val();
+    //    var url = $("#RedirectToHome").val() + "?SchemeId=" + SchemeId;
+    //    location.href = url;
+    //}
+    //$("#EngagementType").validate({
+    //    submitHandler: function (form) {
+    //        var leavetypeid = new Array();
+    //        var leavetypename = new Array();
+    //        var leavetypecategory = new Array();
+    //        var leavetypename = new Array();
+    //        var leavelimit = new Array();
+    //        var shortname = new Array();
+    //        var engagementrypeid = new Array();
+    //        var yearendaction=new Array();
+    //        var maxlimit = new Array();
+
+    //        var checkleavetypelen = new Array();
+    //        var checkselectlen = new Array();
+    //        //each for all fields
+    //        $.each($("input[name='txtEngagementType[]']"), function () {
+    //            leavetypename.push($(this).val());
+    //        });
+
+    //        $.each($("input[id='chekselect[]']"), function () {
+    //            leavetypeid.push($(this).prop('checked'));
+    //        });
+    //        $.each($("input[name='LeaveTypeCategory[]']"), function () {
+    //            leavetypecategory.push($(this).prop('checked'));
+    //        });
+    //        $.each($("select[name='limit[]']"), function () {
+
+    //            leavelimit.push($(this).val());
+
+    //        });
+    //        $.each($("input[name='txtLeaveTypeId[]']"), function () {
+    //            shortname.push($(this).val());
+    //        });
+    //        $.each($("input[name='txtEngagementId[]']"), function () {
+    //            engagementrypeid.push($(this).val());
+    //        });
+    //        $.each($("select[id='Yearshortname[]']"), function () {
+
+    //            yearendaction.push($(this).val());
+
+    //        });
+    //        $.each($("select[name='maxlimit[]']"), function () {
+    //            maxlimit.push($(this).val());
+    //        });
+
+    //        $.each($("input[id='chekselect[]']"), function () {
+    //            if($(this).prop('checked')==true)
+    //            {
+    //                checkleavetypelen.push($(this).val())
+    //            }
+    //        });
+    //        $.each($("select[id='Yearshortname[]']"), function ()
+    //        {
+    //            if($(this).val() != "")
+    //            {
+    //                checkselectlen.push($(this).val());
+
+    //            }
+    //        });
+
+    //        if(checkselectlen.length < checkleavetypelen.length)
+    //        {
+    //            $.alert({
+    //                title: 'Warning',
+    //                content: 'Please Select all field for selected engagement type.</b>',
+    //                confirmButton: 'OK',
+    //                confirmButtonClass: 'btn btn-primary',
+    //                icon: 'icon-warning-up icon-2x ',
+    //                animation: 'zoom',
+    //                confirm: function () {
+
+    //                }
+    //            });
+
+    //        }
+    //        else
+    //        {
+    //            $('.form-process').fadeIn();
+    //            $.ajax({
+    //                type: "post",
+    //                url: "/EMS/Employee/EngagementType",
+    //                data: {
+    //                    EngagementTypeId:engagementrypeid,
+    //                    SchemeId: $('#LeaveScheme :selected').val(),
+    //                    LeaveTypeName: leavetypename,
+    //                    LeaveTypeId: leavetypeid,
+    //                    ShortName: shortname,
+    //                    LeaveTypeCategory: leavetypecategory,
+    //                    LeaveLimit: leavelimit,
+    //                    EffectiveFrom: $('#Effectedfrom').val(),
+    //                    YearEndAction:yearendaction,
+    //                    MaxLimit:maxlimit
+    //                },
+    //                datatype: "json",
+    //                traditional: true,
+    //                success: function (data) {
+    //                    $('.form-process').fadeOut();
+    //                    $.alert({
+    //                        title: 'Cheers',
+    //                        content: 'Engagement Type has been added <b> SUCCESSFULLY.</b>',
+    //                        confirmButton: 'OK',
+    //                        confirmButtonClass: 'btn btn-primary',
+    //                        icon: 'fa fa-thumbs-up fa-2x',
+    //                        animation: 'zoom',
+    //                        confirm: function () {
+    //                            var url = $("#RedirectToHome").val();
+    //                            location.href = url;
+    //                        }
+    //                    });
+    //                }
+    //            })
+    //        }
+    //    }
+    //});
+</script>
+@*<script type="text/javascript">
+
+    function ConfirmationDialog(EngagementTypeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + EngagementTypeId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    $("#addCF").on('click', function () {
+        var newRow = "";
+        var LeaveLimit = [
+            @foreach (var i in Limit)
+            {
+                @:{ lim: @i.limit },
+            }
+        ];
+        var count = 0;
+        $(".Leavelimitclass").each( function (i) {
+            var limID = this.children[0].id;
+            if(limID.length > 3)
+            {
+                var Lcount = parseInt(limID.substr(3, limID.length));
+                if(Lcount > count)
+                {
+                    count = Lcount;
+                }
+
+            }
+        });
+
+        count = count + 1;
+
+        var yearactionenddrp = '<select class="form-control" id="Yearshortname[]" name="Yearshortname[]"><option value="">--Select Action--</option>';
+        var yearend =[
+           @foreach(var j in yearandaction)
+        {
+            @:{ yend:"@j.Yearshortname", yendn:"@j.Yearaction" },
+        }
+        ];
+
+        for(var k=0;k<yearend.length;k++)
+        {
+            yearactionenddrp = yearactionenddrp +' <option value="'+yearend[k].yend+'">'+yearend[k].yendn+'</option>';
+        }
+
+        newRow = newRow + '<tr>' + '<td> <input type="text" id="txtEngagementId[]" name="txtEngagementId[]" value="0" style = "display:none" /><input type="checkbox" id="chekselect[]"  name="LeaveTypeId[]" style = "display:none" checked="checked"/></td>' +
+        '<td><input type="text" id="txtEngagementType[]" name="txtEngagementType[]" value="" class="form-control"/></td>' +
+        '<td><input type="text" id="txtLeaveTypeId[]" name="txtLeaveTypeId[]" value="" class="form-control"/></td>';
+        newRow = newRow +'<td class="Leavelimitclass">';
+        var selectlimit = '<select class="form-control" id="LL_'+ count +'" name="limit[]" onchange="Maxlimit('+count+')"><option selected="selected" value=""></option>';
+        for(i=0;i<LeaveLimit.length;i++)
+        {
+            if(LeaveLimit[i].lim==0)
+            {
+                selectlimit = selectlimit + '<option selected="selected" value="' + LeaveLimit[i].lim +'">' + LeaveLimit[i].lim +'</option>';
+            }
+            else{
+                selectlimit = selectlimit + '<option value="' + LeaveLimit[i].lim +'">' + LeaveLimit[i].lim +'</option>';
+            }
+
+        }
+        selectlimit = selectlimit + '</select>';
+        newRow = newRow + selectlimit +' </td>';
+        newRow = newRow + '<td>'+yearactionenddrp+'</td>'+ '<td class="maxlimitclass">'+
+                                '<select class="form-control" id="LLL_'+ count +'" name="maxlimit[]">'+
+                                    '<option selected="selected" value="0">0</option>'+
+                                '</select>'+
+                            '</td>'+
+        '<td><input type="checkbox" id="chekselectDorND" name="LeaveTypeCategory[]" value="ND"><a href="javascript:void(0);" id="remCF1">Remove</a></td>' +
+         '</tr>';
+        $('#addnewengagement').append(newRow);
+    });
+    $("#addnewengagement").on('click', '#remCF1', function () {
+        $(this).parent().parent().remove();
+    });
+
+    function Maxlimit(Id)
+    {
+
+        var id= "LL_"+Id;
+        var value=$('#'+id+'').val();
+        var drpid= "L"+id;
+
+        $.ajax({
+            type: "post",
+            url: "/EMS/Employee/Maxlimit",
+            data: {Limit:value},
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                var maxlimit = "<select class='form-control required' id='maxlimit_"+Id+"' name='maxlimit[]'>";
+                for (var i = 0; i < data.length; i++) {
+                    maxlimit = maxlimit + '<option value='+ data[i].Value +'>' + data[i].Text + '</option>';
+                }
+                maxlimit = maxlimit + '</select>';
+                $('#'+drpid+'').html(maxlimit);
+            }
+        });
+
+    }
+    </script>*@

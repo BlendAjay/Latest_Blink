@@ -1,0 +1,151 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@{
+    ViewBag.Title = "CandidateLeadUpload";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("CandidateLeadUpload", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "CandidateLeadUpload", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.Hidden("Success", ViewBag.result as string)
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Candidate Lead Bulk Upload</h4>
+                </div>
+                <br />
+                <div class="col_full">
+                    <center>
+                        <ul class="process-steps process-3 bottommargin clearfix">
+                            <li class="active">
+
+                                <a href="@Url.Action("DownloadCandidateLeads", "Candidate")" class=" i-bordered i-circled divcenter icon-download-alt"></a>
+                                <h5>Download Template</h5>
+                            </li>
+                            <li>
+                                <span class="i-bordered i-circled divcenter icon-table"></span>
+                                <h5>Fill Excel sheet</h5>
+                            </li>
+                            <li>
+
+                                <input type="file" name="FileUpload" id="csvFile" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewImage(@Global.MaxSize("CSV"), this, 'CSV')" />
+                                <h5>Select File to Upload</h5>
+                                <label id="lblgetfilename"></label>
+                            </li>
+                        </ul>
+                        <input type="submit" name="Submit" id="Submit" value="Upload" class="button button-3d button-rounded button-teal" />
+
+                        <p>@Html.Encode(ViewData["Feedback"])</p>
+
+                        @if (ViewBag.result == "Success")
+                        {
+                            @ViewBag.SuccessCount <span>uploaded Successfully</span><br />
+                            @ViewBag.FailureCount <span>Failed</span><br />
+                            if (ViewBag.Download == "Yes")
+                            {
+                                <a href="~/CMS/Candidate/CandidateLeadResultDownload">Download Result</a>
+                            }
+                        }
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page has the facility of adding candidate leads in the bulk way when we have more number of enteries then bulk upload is used.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/candidateleadbulkupload.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/candidateleadbulkupload.png" />
+
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script src="~/Scripts/CustomValidation.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if($('#Success').val() == "Success")
+        {
+            $('.form-process').fadeOut();
+        }
+
+        $('#csvFile').change(function () {
+            var path = $(this).val();
+            if (path != '' && path != null) {
+                var q = path.substring(path.lastIndexOf('\\') + 1);
+                $('#lblgetfilename').html(q);
+            }
+        })
+
+        $('#Submit').click(function ()
+        {           
+            var fileInput = document.getElementById('csvFile');
+            if(fileInput.files.length == 0)
+            {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select <b>file</b> to upload',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+            $('.form-process').fadeIn();
+        });
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

@@ -1,0 +1,246 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.Areas.LMS.Models
+@model IEnumerable<AJSolutions.Areas.LMS.Models.DiscussionForumView>
+@{
+    ViewBag.Title = "Discussion Forum";
+    UserViewModel pro = ViewData["UserProfile"] as UserViewModel;
+    if (pro.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else if (pro.Role == "Employee")
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    }
+    CourseMasterView review = ViewData["CourseDetail"] as CourseMasterView;
+    List<ReviewReplyView> reply = ViewData["Reply"] as List<ReviewReplyView>;
+    Int16 ReplyCount = 0;
+}
+@using (Html.BeginForm())
+{
+    <div class="container">
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h4>@review.CourseName Discussion Forum</h4>
+                @Html.Hidden("CourseCode", review.CourseCode)
+            </div>
+            <div class="col_full">
+                <p align="justify">Details @review.CourseDescription</p>
+            </div>
+        </div>
+
+        <div id="comments" class="clearfix">
+            <div class="row">
+                <h3>Leave a <span>Comment</span></h3>
+                @Html.TextArea("Comments", "", 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 2048, id = "Comments", @placeholder = "Comment here...." })
+                <div id="textarea_feedback" class="text-danger"></div>
+            </div>
+            <div class="row">
+                <br />  <input type="submit" id="create" value="Post" class="button button-3d button-rounded button-teal" style="float: right;" />
+            </div>
+
+            <h4 id="comments-title"><span>@ViewBag.CommentsCount</span> Comments</h4>
+
+            <ol class="commentlist clearfix">
+                <li class="comment even thread-even depth-1" id="li-comment-1">
+                    @foreach (var item in Model)
+                    {
+                        <div id="comment-1" class="col_full comment-wrap clearfix">
+                            <div class="comment-meta">
+                                <div class="comment-author vcard">
+                                    <span class="comment-avatar clearfix">
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="comment-content clearfix">
+
+                                <div class="comment-author"><span><b>@item.UserName</b>(@item.CommentedOn)</span></div>
+                                <p>@item.Comments</p>
+                                <a class="comment-reply-link" id="yourreply" onclick="javascript: ShowHideDivOnButtonClick(@item.CommentId)" style="padding-right:5em" title="Reply"><i class="icon-reply"></i></a>
+                                @if (pro.Role == "Admin")
+                                {
+                                    <a id="CommentRemove" onclick="javascript: ConfirmationDialogComment('@review.CourseCode','@item.CommentId');" class="comment-reply-link" title="Remove"><i class="icon-line-cross"></i></a>
+                                }
+                            </div>
+                            <div class="row comment-content clearfix" id="@item.CommentId" style="display:none">
+                                <div class="col_full" id="reply">
+                                    <h3><span>Reply</span> here</h3>
+                                    @Html.TextArea("Reply", "", 5, 124, htmlAttributes: new { @class = "form-control", @id = "userReply", @Maxlength = 2048, @placeholder = "Reply here...." })
+                                    <br />  <input type="button" id="reply" value="Reply" class="button button-3d button-rounded button-teal" style="float: left;" onclick="SubmitData(@item.CommentId)" />
+                                </div>
+                            </div>
+                            <br />
+                            @foreach (var ritem in reply.Where(r => r.CommentId == item.CommentId))
+                            {
+                                ReplyCount++;
+                                <ul class='children'>
+                                    <li>
+                                        <div id="comment-3" class="comment-wrap clearfix">
+                                            <div class="comment-meta">
+                                                <div class="comment-author">
+                                                    <span><b>@ritem.UserName</b>(@ritem.RepliedOn)</span>
+                                                </div>
+                                                @if (ritem.Reply != null)
+                                                {
+                                                    <span>@ritem.Reply </span>
+                                                }
+                                                @if (pro.Role == "Admin")
+                                                {
+                                                    <a id="ReplyRemove" onclick="javascript: ConfirmationDialog('@review.CourseCode','@ritem.ReplyId');" class="comment-reply-link" style="padding-top:8px;padding-right:2em" title="Remove"><i class="icon-line-cross"></i></a>
+                                                }
+                                            </div>
+
+                                        </div>
+                                    </li>
+                                </ul>
+                            }
+                            @if (ReplyCount > 1)
+                            {
+                                <span><b>@ReplyCount Replies</b></span>
+                                ReplyCount = 0;
+                            }
+                            else
+                            {
+                                <span><b>@ReplyCount Reply</b></span>
+                                ReplyCount = 0;
+                            }
+                        </div>
+                        <div class="clear"></div>
+                    }
+            </ol>
+
+            @Html.Hidden("RedirectTo", Url.Action("Discussion", "Review"))
+            @Html.Hidden("RedirectToReplies", Url.Action("RemoveReplies", "Review"))
+            @Html.Hidden("RedirectToRemove", Url.Action("RemoveComment", "Review"))
+            <div class="clear"></div>
+        </div>
+    </div>
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page contain details of discussion regarding any courses.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/disscussionforum.png" target="_blank" data-lightbox="gallery-item">
+                                        <img src="~/images/HelpImages/disscussionforum.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script language="javascript">
+
+    function ShowHideDivOnButtonClick(commentid) {
+        $('#' + commentid).toggle("fast");
+        return true;
+    }
+
+
+    function SubmitData(commentId) {
+        $.ajax({
+            type: "post",
+            url: "/LMS/Review/Discussion",
+            data: {
+                CourseCode: $('#CourseCode').val(),
+                CommentId: commentId,
+                Reply: $('#userReply').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+
+                var url = $("#RedirectTo").val() + "?CourseCode=" + $('#CourseCode').val();
+                location.href = url;
+            }
+        });
+    }
+
+    function ConfirmationDialog(CourseCode, RId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete review?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectToReplies").val() + "?CC=" + CourseCode + "&RId=" + RId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+    function ConfirmationDialogComment(CourseCode, CId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete comment?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectToRemove").val() + "?CC=" + CourseCode + "&CId=" + CId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>
+
+
+
+

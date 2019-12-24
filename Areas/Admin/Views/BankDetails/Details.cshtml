@@ -1,0 +1,104 @@
+﻿@model AJSolutions.Models.BankDetails
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+<section id="page-title">
+
+    <div class="container clearfix">
+        <h1></h1>
+        <span>Bank Details</span>
+        <ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Bank Details</a></li>
+        </ol>
+    </div>
+
+</section><!-- #page-title end -->
+
+<section id="content">
+
+    <div class="content-wrap">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-5">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.UserProfile.Name)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.UserProfile.Name)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BankName)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.BankName)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.AccountNumber)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.AccountNumber)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.AccountOwner)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.AccountOwner)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.IfscCode)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.IfscCode)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BranchCode)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.BranchCode)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.BranchAddress)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.BranchAddress)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ContactNumber)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ContactNumber)
+                        </dd>
+
+                    </dl>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.UserId }) |
+                @Html.ActionLink("Back to List", "Index")
+            </p>
+        </div>
+    </div>
+</section>

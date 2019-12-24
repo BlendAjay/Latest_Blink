@@ -1,0 +1,43 @@
+﻿@model AJSolutions.Models.ProgrammeMaster
+
+@{
+    ViewBag.Title = "Edit";
+}
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <br />
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h3>Edit Programme</h3>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ProgrammeId)              
+                <div class="col_half">
+                    <div class="input-group divcenter">
+                        @*@Html.LabelFor(model => model.ProgrammeName, htmlAttributes: new { @class = "input-group-addon" })*@
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @Html.EditorFor(model => model.ProgrammeName, new { htmlAttributes = new { @class = "form-control", Placeholder = "Programme Name" } })
+                        @Html.ValidationMessageFor(model => model.ProgrammeName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    <div class="input-group divcenter">
+                        @*@Html.LabelFor(model => model.ProgrammeName, htmlAttributes: new { @class = "input-group-addon" })*@
+                        <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                        @Html.DropDownList("ModuleId", null,  "---  Select Module Id ---", htmlAttributes: new { @class = "form-control", @id = "ModuleId", placeholder = "Module" })
+                        @Html.ValidationMessageFor(model => model.ModuleId, "", new { @class = "text-danger" })
+                    </div><br />
+                </div>
+                <div class="col_full">
+                    <input type="submit" value="Save" class="button button-3d button-rounded button-teal" style="float: right;" />
+                </div>
+            </div>
+        }
+        <div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    </div>
+</div>

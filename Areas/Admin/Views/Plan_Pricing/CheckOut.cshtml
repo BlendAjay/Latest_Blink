@@ -1,0 +1,149 @@
+﻿@using AJSolutions.Models
+@{
+    ViewBag.Title = "CheckOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+}
+
+@using (Html.BeginForm("CheckOut", "Plan_Pricing", FormMethod.Post, new { area = "Admin", @class = "form-horizontal needs-validation", id = "CheckOut", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("PlanType", ViewBag.Message as string)
+    @Html.Hidden("CorporateId", @user.UserId)
+    <div class="container clearfix">
+        <div class="form-process"></div>
+        <br />
+        <div class=" fancy-title title-dotted-border title-center">
+            <h3>Check Out</h3>
+        </div>
+
+        <div class="table-responsive bottommargin">
+
+            <table class="table cart">
+                <thead>
+                    <tr>
+                        <th class="cart-product-remove">&nbsp;</th>
+                        <th class="cart-product-name">Product</th>
+                        <th class="cart-product-subtotal">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="cart_item">
+                        <td class="cart-product-remove">
+                            <input type="checkbox" id="Reckonn" name="Reckonn" value="12000" checked="checked" onclick="return false;" style="height: 20px; width:20px" />
+                        </td>
+                        <td class="cart-product-name">
+                            <a href="#">Reckonn</a>
+                        </td>
+
+                        <td class="cart-product-subtotal">
+                            <span class="amount">12,000 inr</span>
+                        </td>
+                    </tr>
+
+                    <tr class="cart_item">
+                        <td class="cart-product-remove"></td>
+
+                        <td class="cart-product-name" align="right">
+                            <a href="#" style="font-size:20px">Total</a>
+                        </td>
+
+
+                        <td class="cart-product-subtotal">
+                            @*<span class="amount" style="font-size:20px" id="TotalAmount">@ViewBag.Amount</span>*@
+                            <span class="amount" style="font-size:20px" id="TotalAmount">12,000</span>
+                        </td>
+                    </tr>
+                    <tr class="cart_item">
+                        <td colspan="6">
+                            <div class="row clearfix">
+                                <div class="col-md-4 col-xs-4 nopadding">
+
+                                </div>
+                                <div class="col-md-8 col-xs-8 nopadding">
+                                    <input type="submit" value="Proceed to Checkout" style="float: right;" class="button button-3d button-rounded button-teal" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+        <br />
+
+    </div>
+    @Html.Hidden("TotalAmount", @ViewBag.Amount as string);
+    @Html.Hidden("RedirectTo", Url.Action("CheckOut", "Plan_Pricing", new { area = "Admin" }))
+    @Html.Hidden("RedirectToHome", Url.Action("Index", "DashBoard", new { area = "CMS" }))
+}
+<script type="text/javascript">
+    $(function () {
+        var total;
+        var checked = $('input:checkbox').click(function (e) {
+            calculateSum();
+        });
+
+        function calculateSum() {
+            var $checked = $(':checkbox:checked');
+            total = 0.0;
+            $checked.each(function () {
+                total += parseFloat($(this).val());
+            });
+            $('#TotalAmount').text(total);
+        }
+    });
+</script>
+
+<script>
+    $("#CheckOut").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+
+            $.ajax({
+                type: "post",
+                url: "/Admin/Plan_Pricing/CheckOut",
+                data: {
+                    CorporateId: $('#CorporateId').val(),
+                    PlanType: $('#PlanType').val(),
+                    //TMS: tMS
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if (data != null) {
+                        $('.form-process').fadeOut()
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'To make Payment click <b> OK</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {                               
+                                location.href = data;
+                            }
+                        });
+                    }
+                    else {
+                        $('.form-process').fadeOut()
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'You have successfully subscribed to Trail Plan',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+</script>

@@ -1,0 +1,347 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="SemiColonWeb" />
+    <link rel="stylesheet" href="~/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link href="~/assets/vendor/fonts/circular-std/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/libs/css/style.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/fontawesome/css/fontawesome-all.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/chartist-bundle/chartist.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/morris-bundle/morris.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/material-design-iconic-font/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/assets/vendor/charts/c3charts/c3.css">
+    <link rel="stylesheet" href="~/assets/vendor/fonts/flag-icon-css/flag-icon.min.css">
+    <title>@ViewBag.Title</title>
+    @using Microsoft.AspNet.Identity
+    @{
+        AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+        AJSolutions.Models.EmployeeBasicDetails details = ViewData["EmpDetails"] as AJSolutions.Models.EmployeeBasicDetails;
+    }
+</head>
+<body>
+    @if (Request.IsAuthenticated)
+    {
+        using (Html.BeginForm("LogOff", "Dashboard", new { area = "CMS" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+
+    <!-- navbar -->
+    <!-- ============================================================== -->
+            <div class="dashboard-header">
+                <nav class="navbar navbar-expand-lg bg-white fixed-top">
+                    <a class="navbar-brand" href="index.html">BLINK</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto navbar-right-top">
+                            <li class="nav-item dropdown nav-user"></li>
+                            <li class="nav-item dropdown nav-user">
+                                <a class="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user fa-2x"></i></a>
+                                <div class="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
+                                    <div class="nav-user-info">
+                                        <h5 class="mb-0 text-white nav-user-name">@user.Name</h5>
+                                        <span class="status"></span><span class="ml-2">Available</span>
+                                    </div>
+                                    <a href="@Url.Action("ChangePassword", "Manage", new { Area = "" })" class="dropdown-item"><i class="fa fa-lock"></i> Change Password</a>
+                                    <a href="javascript:document.getElementById('logoutForm').submit()" class="dropdown-item"><i class="fa fa-sign-out-alt"></i> Logout</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+    <!-- ============================================================== -->
+    <!-- end navbar -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- left sidebar -->
+    <!-- ============================================================== -->
+            <div class="nav-left-sidebar sidebar-dark">
+                <div class="menu-list">
+                    <nav class="navbar navbar-expand-lg navbar-light">
+                        <a class="d-xl-none d-lg-none" href="#">Dashboard</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav flex-column">
+                                <li class="nav-divider">
+                                    <a href="@Url.Action("Index", "Dashboard", new { Area = "EMS" })"><i class="icon-home2"></i>Home </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="icon-bolt2"></i>My Account</a>
+                                    <div id="submenu-1" class="collapse submenu" style="">
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("QuestionMasters", "RMS", new { area = "RMS" })"><i class="icon-code-fork"></i>Add Questions </a></li>
+                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Branch Details", "RMS", new { area = "RMS" })"><i class="icon-line2-social-twitter"></i>Add Branch </a></li>
+                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "RMS", new { Area = "RMS" })"><i class="icon-lock3"></i>Feedback</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="icon-bolt2"></i>My Stuff</a>
+                                    <div id="submenu-2" class="collapse submenu" style="">
+                                        <ul class="nav flex-column">
+                                            @if (details.ManagerLevel == true)
+                                            {
+                                                <li class="nav-item"><a class="nav-link" href="@Url.Action("Task", "Task", new { area = "CMS" })"><i class="icon-plus"></i>Create Task</a></li>
+                                            }
+                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("MyTasks", "Task", new { Area = "CMS" })"><i class="icon-tasks"></i>Tasks</a></li>
+                                            <li class="nav-item"><a class="nav-link" href="@Url.Action("MyInvoices", "Invoice", new { Area = "CMS", IsClientView =false, Tag = "Incoming" })"><i class="icon-list2"></i>Invoices</a></li>
+                                            @if (user.DepartmentId == "FAC")
+                                            {
+                                                <li class="nav-item"><a class="nav-link" href="@Url.Action("MyTraining", "TMS", new { Area = "TMS" })"><i class="icon-table"></i>Trainings</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </li>
+                                @if (user.DepartmentId == "WAR")
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3"><i class="icon-bolt2"></i>HMS</a>
+                                        <div id="submenu-3" class="collapse submenu" style="">
+                                            <ul class="nav flex-column">
+                                                <li class="nav-item"><a class="nav-link" href="@Url.Action("CandidateCheckIn", "Accommodation", new { Area = "CMS" })"><i class="icon-table"></i>Candidate CheckIn</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="@Url.Action("CandidateCheckOut", "Accommodation", new { Area = "CMS" })"><i class="icon-table"></i>Candidate CheckOut</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="@Url.Action("CheckInCheckOutBulkUpload", "Candidate", new { Area = "CMS" })"><i class="icon-table"></i>Candidate CIn/Out Bulk</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="@Url.Action("AccomodationHistory", "Accommodation", new { Area = "CMS" })"><i class="icon-table"></i>Accomodation history</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+    <!-- ============================================================== -->
+        }
+    }
+    <div class="dashboard-wrapper">
+        <div class="dashboard-ecommerce">
+            <div class="container-fluid dashboard-content ">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- footer -->
+        <!-- ============================================================== -->
+        <div class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        Copyright © 2019 BLINK. All rights reserved. Dashboard by <a href="http://blendglobal.in/">Blend Global</a>.
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="text-md-right footer-links d-none d-sm-block">
+                            <a href="#">About</a>
+                            <a href="#">Support</a>
+                            <a href="#">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end footer -->
+    </div>
+    @RenderSection("scripts", required: false)
+    <!-- Optional JavaScript -->
+    <!-- jquery 3.3.1 -->
+    <script src="~/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <!-- bootstap bundle js -->
+    <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+    <!-- slimscroll js -->
+    <script src="~/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+    <!-- main js -->
+    <script src="~/assets/libs/js/main-js.js"></script>
+    <!-- chart chartist js -->
+    <script src="~/assets/vendor/charts/chartist-bundle/chartist.min.js"></script>
+    <!-- sparkline js -->
+    <script src="~/assets/vendor/charts/sparkline/jquery.sparkline.js"></script>
+    <!-- morris js -->
+    <script src="~/assets/vendor/charts/morris-bundle/raphael.min.js"></script>
+    <script src="~/assets/vendor/charts/morris-bundle/morris.js"></script>
+    <!-- chart c3 js -->
+    <script src="~/assets/vendor/charts/c3charts/c3.min.js"></script>
+    <script src="~/assets/vendor/charts/c3charts/d3-5.4.0.min.js"></script>
+    <script src="~/assets/vendor/charts/c3charts/C3chartjs.js"></script>
+    <script src="~/assets/libs/js/dashboard-ecommerce.js"></script>
+    <!--Start of Tawk.to Script-->
+    @*<script type="text/javascript">
+            var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+            (function () {
+                var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+                s1.async = true;
+                s1.src = 'https://embed.tawk.to/55d1cdf25e84eff233495726/1c5042oju';
+                s1.charset = 'UTF-8';
+                s1.setAttribute('crossorigin', '*');
+                s0.parentNode.insertBefore(s1, s0);
+            })();
+        </script>*@
+    <!--End of Tawk.to Script-->
+    <!--Start of Google Analytic Script-->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-92087944-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+    <!--End of Google Analytyic Script-->
+    <!-- Date & Time Picker Script Start-->
+    <script type="text/javascript">
+        $(function () {
+            $('.travel-date-group .default').datepicker({
+                autoclose: true,
+                startDate: "today",
+            });
+
+            $('.travel-date-group .today').datepicker({
+                autoclose: true,
+                startDate: "today",
+                todayHighlight: true
+            });
+
+            $('.travel-date-group .past-enabled').datepicker({
+                format: "dd-mm-yyyy",
+                autoclose: true,
+            });
+            $('.travel-date-group .format').datepicker({
+                autoclose: true,
+                format: "dd-mm-yyyy",
+            });
+
+            $('.travel-date-group .autoclose').datepicker();
+
+            $('.travel-date-group .disabled-week').datepicker({
+                autoclose: true,
+                daysOfWeekDisabled: "0"
+            });
+
+            $('.travel-date-group .highlighted-week').datepicker({
+                autoclose: true,
+                daysOfWeekHighlighted: "0"
+            });
+
+            $('.travel-date-group .mnth').datepicker({
+                autoclose: true,
+                minViewMode: 1,
+                format: "mm/yy"
+            });
+
+            $('.travel-date-group .multidate').datepicker({
+                multidate: true,
+                multidateSeparator: " , "
+            });
+
+            $('.travel-date-group .input-daterange').datepicker({
+                autoclose: true
+            });
+
+            $('.travel-date-group .inline-calendar').datepicker();
+
+            $('.datetimepicker').datetimepicker({
+                format: 'DD/MM/YYYY h:mm A',
+                showClose: true
+            });
+
+            $('.datetimepicker1').datetimepicker({
+                //format: 'LT',
+                format: 'DD/MM/YYYY h:mm A',
+                showClose: true
+            });
+
+            $('.datetimepicker2').datetimepicker({
+                format: 'DD/MM/YYYY h:mm A',
+                inline: true,
+                sideBySide: true
+            });
+
+        });
+
+        $(function () {
+            // .daterange1
+            $(".daterange1").daterangepicker({
+                locale: {
+                    format: 'DD/MM/YYYY h:mm A'
+                },
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light"
+            });
+
+            // .daterange2
+            $(".daterange2").daterangepicker({
+                "opens": "center",
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD/MM/YYYY h:mm A'
+                },
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light"
+            });
+
+            // .daterange3
+            $(".daterange3").daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true
+            },
+            function (start, end, label) {
+                var years = moment().diff(start, 'years');
+                alert("You are " + years + " years old.");
+            });
+
+            // reportrange
+            function cb(start, end) {
+                $(".reportrange span").html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+            }
+            cb(moment().subtract(29, 'days'), moment());
+
+            $(".reportrange").daterangepicker({
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light",
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            // .daterange4
+            $(".daterange4").daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                },
+                "buttonClasses": "button button-rounded button-mini nomargin",
+                "applyClass": "button-color",
+                "cancelClass": "button-light"
+            });
+
+            $(".daterange4").on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            });
+
+            $(".daterange4").on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
+
+        });
+
+    </script>
+</body>
+</html>

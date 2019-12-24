@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+
+            <div class="col_full">
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-user3"></i>
+                    </div>
+                    <h3>Welcome User<span class="subtitle">You do not have any Course yet. <a href="@Url.Action("LectureMaster", "Course", new { area = "CMS" })">CLICK HERE to Create one now.</a></span></h3>
+                    <a href="@Url.Action("LectureMaster", "Course", new { area = "LMS"})" class="button button-3d button-rounded button-brown">Create Lecture Master</a>
+                    <a href="@Url.Action("TopicMaster", "Course", new { area = "LMS"})" class="button button-3d button-rounded button-teal">Create Topic Master</a>
+                    
+                </div>
+            </div>
+
+    </div>
+</div>

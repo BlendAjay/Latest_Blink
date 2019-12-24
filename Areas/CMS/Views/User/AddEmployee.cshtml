@@ -1,0 +1,1274 @@
+﻿@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model EmployeeView
+@{
+    ViewBag.Title = "AddEmployee";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    List<EmployeeLeaveSummariesViewModel> empLeaveLimits = ViewData["EmpEngagement"] as List<EmployeeLeaveSummariesViewModel>;
+
+}
+@using (Html.BeginForm("AddEmployee", "User", FormMethod.Post, new { @area = "CMS", @class = "needs-validation", id = "AddEmployee", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Uid", ViewBag.Uid as string)
+    @Html.Hidden("UserAction", ViewBag.UserAction as string)
+    @Html.Hidden("SubscriberId", user.SubscriberId as string)
+    if (Model != null)
+    {
+        @Html.HiddenFor(m => m.ESID, new { id = "ESID" })
+        @Html.HiddenFor(m => m.JoiningId, new { id = "JoiningId" })
+    }
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Add Employee</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Add Employee</h5>
+                <div align="right">
+                    <a href="@Url.Action("Employees", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Employees</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.Name, "Name")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", id = "Name", placeholder = "Enter Name", required = "required" } })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.Email, "Email")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email"> </i></span>
+                                @if (Model.Email != null)
+                                {
+                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control email", id = "Email", placeholder = "ex:xyz@gmail.com", @readonly = "readonly", required = "required" } })
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control email", id = "Email", placeholder = "ex:xyz@gmail.com", required = "required" } })
+                                }
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.PhoneNumber, "Contact Number")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                                @if (Model.PhoneNumber != null)
+                                {
+                                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @maxlength = 12, @class = "form-control", id = "PhoneNumber", placeholder = "ex:8856230145", @readonly = "readonly", required = "required" } })
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @maxlength = 12, @class = "form-control required", id = "PhoneNumber", placeholder = "ex:8856230145", required = "required" } })
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br />@Html.LabelFor(model => model.AlternateEmail, "Alternate Email")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email"> </i></span>
+                                @Html.EditorFor(model => model.AlternateEmail, new { htmlAttributes = new { @class = "form-control email", id = "AlternateEmail", placeholder = "ex:xyz@gmail.com", } })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br />@Html.LabelFor(model => model.AlternateContact, "Alternate Contact Number")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                                @Html.EditorFor(model => model.AlternateContact, new { htmlAttributes = new { @maxlength = 12, @class = "form-control", id = "AlternateContact", placeholder = "ex:8856230145" } })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /><label> Date Of Birth</label>
+                            <div class="input-group divcenter travel-date-group">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                <input type="text" value="@ViewBag.DOB" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="DOB" name="DOB">
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /> @Html.LabelFor(model => model.Gender, "Gender")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                                @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /> @Html.LabelFor(model => model.MaritalStatus, "Marital Status")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                @Html.DropDownList("MaritalStatus", null, "--- Select Marital Status ---", htmlAttributes: new { @class = "form-control", @id = "MaritalStatus" })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /> @Html.LabelFor(model => model.Nationality, "Nationality")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                                @Html.DropDownList("Nationality", null, "--- Select Nationality ---", htmlAttributes: new { @class = "form-control", @id = "Nationality" })
+                            </div>
+                        </div>
+                       
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12" style="margin-top:30px">
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td><p class="nomargin">PhysicallyChallenged ? </p></td>
+                                        <td>
+                                            @if (ViewBag.PhysicallyChallenged == null)
+                                            {
+                                                ViewBag.PhysicallyChallenged = false;
+                                            }
+                                            @Html.CheckBox("PhysicallyChallenged", (bool)ViewBag.PhysicallyChallenged, new { htmlAttributes = new { @class = "form-control" } })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
+                            <br />@Html.LabelFor(model => model.Location, "Location")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", id = "Location", placeholder = "Enter Location" } })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br />@Html.LabelFor(model => model.EmployeeId, "Employee Code")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                @Html.EditorFor(model => model.EmployeeId, new { htmlAttributes = new { @class = "form-control", id = "EmployeeId", placeholder = "Enter Employee Code", required = "required" } })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /> @Html.LabelFor(model => model.DepartmentId, "Department")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-type"> </i></span>
+                                @Html.DropDownList("DepartmentId", null, "---Select Department ---", htmlAttributes: new { id = "DepartmentId", @class = "form-control required", required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /> @Html.LabelFor(model => model.DesignationId, "Designation")<small>*</small>
+                            <a href="@Url.Action("Designation", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Designation</a>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-type"> </i></span>
+                                @Html.DropDownList("DesignationId", null, "--- Select Designation ---", htmlAttributes: new { @class = "form-control required", @id = "DesignationId", required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br /> @Html.LabelFor(model => model.ReportingAuthority, "Reporting Authority")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                @Html.DropDownList("ReportingAuthority", null, "---Select Reporting Authority ---", htmlAttributes: new { id = "ReportingAuthority", @class = "form-control required", required = "required" })
+                            </div>
+                        </div>
+                        @*<div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
+                            <br /> @Html.Label("Current Status")<small>*</small>
+                            <a href="@Url.Action("StatusMaster", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Status</a>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                                @Html.DropDownList("StatusId", null, "---Select Status ---", htmlAttributes: new { id = "StatusId", @class = "form-control required", required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br />@Html.Label("Shift")<small>*</small>
+                            <a href="@Url.Action("AddShift", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Shift</a>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("ShiftId", null, "---Select Shift---", htmlAttributes: new { id = "ShiftId", @class = "form-control required", required = "required" })
+                            </div>
+                        </div>*@
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
+                            <br /><label>Joining Date</label><small>*</small>
+                            <div class="input-group" id="datetimepicker4" data-target-input="nearest">
+                                <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                <input type="text" value="@ViewBag.JoiningDate" class="form-control datetimepicker-input" placeholder="DD/MM/YYYY" id="JoiningDate" name="JoiningDate" required="required">
+                                <div class="input-group-append" data-target="#datetimepicker4" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <br />  @Html.Label("Grade")<small>*</small>
+                            <a href="@Url.Action("MyGrade", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Grade</a>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-align-right"> </i></span>
+                                @Html.DropDownList("GradeId", null, "---Select Grade ---", htmlAttributes: new { id = "GradeId", @class = "form-control required", required = "required" })
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 ">
+                            <br /> @Html.Label("Work Location")<small>*</small>
+                            <a href="@Url.Action("Branches", "Dashboard")" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Work Location</a>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("BranchId", null, "---Select Work Location ---", htmlAttributes: new { id = "BranchId", @class = "form-control required", required = "required" })
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12" style="margin-top:30px">
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td><p class="nomargin">ManagerLevel ? </p></td>
+                                        <td>
+                                            @if (ViewBag.ManagerLevel == null)
+                                            {
+                                                ViewBag.ManagerLevel = false;
+                                            }
+                                            @Html.CheckBox("ManagerLevel", (bool)ViewBag.ManagerLevel, new { htmlAttributes = new { @class = "form-control" } })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12" style="margin-top:30px">
+                            <table class="table table-striped table-responsive">
+                                <tbody>
+                                    <tr>
+                                        <td><p class="nomargin">Emplanelled ? </p></td>
+                                        <td>
+                                            @if (ViewBag.Emplanelled == null)
+                                            {
+                                                ViewBag.Emplanelled = false;
+                                            }
+                                            @Html.CheckBox("Emplanelled", (bool)ViewBag.Emplanelled, new { htmlAttributes = new { @class = "form-control" } })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" align="right">
+                            <br /><br />
+                            <input type="submit" value="Submit" id="AddEmp" name="AddEmp" style="float: right;" class="btn btn-primary" />
+                            @*<input type="button" id="AddEmp" value="Submit" class="btn btn-primary" />*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @*<section id="content">
+            <div class="container clearfix">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <div align="right">
+                        <a href="@Url.Action("Employees", "User", new { Area = "CMS" })" class="btn btn-default btn-xs" align="right">My Employees</a>
+                    </div>
+                </div>
+
+                <div class="tabs clearfix" id="tab-2">
+                    <ul class="tab-nav clearfix" style="pointer-events: none;">
+                        <li class="active"><a href=" #tabs-4" data-toggle="tab">Employee</a></li>
+                        <li><a href=" #tabs-5" data-toggle="tab">Personal</a></li>
+                        <li><a href="#tabs-6" data-toggle="tab">Joining</a></li>
+                        <li><a href="#tabs-7" data-toggle="tab">Leave</a></li>
+                        <li><a href="#tabs-8" data-toggle="tab">Salary</a></li>
+                    </ul>
+                    <div class="tab-container">
+                        <div class="tab-content clearfix" id="tabs-4">
+                            <div class="col_full">
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.Name, "Name")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control required", id = "Name", placeholder = "Enter Name" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.Email, "Email")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-email"> </i></span>
+                                        @if (Model.Email != null)
+                                        {
+                                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control required email", id = "Email", placeholder = "ex:xyz@gmail.com", @readonly = "readonly" } })
+                                        }
+                                        else
+                                        {
+                                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control required email", id = "Email", placeholder = "ex:xyz@gmail.com", } })
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    @Html.LabelFor(model => model.PhoneNumber, "Contact Number")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                                        @if (Model.PhoneNumber != null)
+                                        {
+                                            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @maxlength = 12, @class = "form-control required", id = "PhoneNumber", placeholder = "ex:8856230145", @readonly = "readonly" } })
+                                        }
+                                        else
+                                        {
+                                            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @maxlength = 12, @class = "form-control required", id = "PhoneNumber", placeholder = "ex:8856230145" } })
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.AlternateEmail, "Alternate Email")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-email"> </i></span>
+                                        @Html.EditorFor(model => model.AlternateEmail, new { htmlAttributes = new { @class = "form-control email", id = "AlternateEmail", placeholder = "ex:xyz@gmail.com", } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.AlternateContact, "Alternate Contact Number")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                                        @Html.EditorFor(model => model.AlternateContact, new { htmlAttributes = new { @maxlength = 12, @class = "form-control", id = "AlternateContact", placeholder = "ex:8856230145" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    <label> Date Of Birth</label>
+                                    <div class="input-group divcenter travel-date-group">
+                                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                        <input type="text" value="@ViewBag.DOB" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="DOB" name="DOB">
+                                    </div>
+                                </div>
+
+                                <div class="col_one_third ">
+                                    @Html.LabelFor(model => model.Gender, "Gender")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                                        @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.MaritalStatus, "Marital Status")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.DropDownList("MaritalStatus", null, "--- Select Marital Status ---", htmlAttributes: new { @class = "form-control", @id = "MaritalStatus" })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    @Html.LabelFor(model => model.Nationality, "Nationality")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-globe"> </i></span>
+                                        @Html.DropDownList("Nationality", null, "--- Select Nationality ---", htmlAttributes: new { @class = "form-control", @id = "Nationality" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="fright">
+                                <input type="button" id="btnNext1" name="btnNext1" class="btn btn-success" value="Next" />
+                            </div>
+                        </div>
+                        <div class="tab-content clearfix" id="tabs-5">
+                            <div class="col_full">
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.FatherName, "Father Name")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.EditorFor(model => model.FatherName, new { htmlAttributes = new { @class = "form-control", id = "FatherName", placeholder = "Enter Father Name" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.SpouseName, "Spouse Name")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.EditorFor(model => model.SpouseName, new { htmlAttributes = new { @class = "form-control", id = "SpouseName", placeholder = "Enter Spouse Name" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    <label>Marriage Date</label>
+                                    <div class="input-group divcenter travel-date-group">
+                                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                        <input type="text" value="@ViewBag.MarriageDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="MarriageDate" name="MarriageDate">
+                                    </div>
+                                </div>
+
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.EmergencyContactName, "Emergency Contact Name")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.EditorFor(model => model.EmergencyContactName, new { htmlAttributes = new { @class = "form-control", id = "EmergencyContactName", placeholder = "Enter Emergency Contact Name" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.EmergencyContactNumber, "Emergency Contact Number")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                                        @Html.EditorFor(model => model.EmergencyContactNumber, new { htmlAttributes = new { @class = "form-control", id = "EmergencyContactNumber", placeholder = "Enter Emergency Contact Number" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    @Html.LabelFor(model => model.BloodGroup, "Blood Group")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                                        @Html.EditorFor(model => model.BloodGroup, new { htmlAttributes = new { @class = "form-control", id = "BloodGroup", placeholder = "Enter Blood Group" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third" style="margin-top:30px">
+                                    <table class="table table-striped table-responsive">
+                                        <tbody>
+                                            <tr>
+                                                <td><p class="nomargin">PhysicallyChallenged ? </p></td>
+                                                <td>
+                                                    @if (ViewBag.PhysicallyChallenged == null)
+                                                    {
+                                                        ViewBag.PhysicallyChallenged = false;
+                                                    }
+                                                    @Html.CheckBox("PhysicallyChallenged", (bool)ViewBag.PhysicallyChallenged, new { htmlAttributes = new { @class = "form-control" } })
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="col_one_third ">
+                                    @Html.LabelFor(model => model.Location, "Location")
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control", id = "Location", placeholder = "Enter Location" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+
+                                </div>
+
+                            </div>
+                            <div class="col_full">
+                                <div class="col_half" align="left">
+                                    <input type="button" id="btnBack1" name="btnBack1" class="btn btn-success" value="Previous" />
+                                </div>
+                                <div class="col_half col_last" align="right">
+                                    <input type="button" id="btnNext2" name="btnNext2" class="btn btn-success" value="Next" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-content clearfix" id="tabs-6">
+                            <div class="col_full">
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.EmployeeId, "Employee Code")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.EditorFor(model => model.EmployeeId, new { htmlAttributes = new { @class = "form-control required", id = "EmployeeId", placeholder = "Enter Employee Code" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.DepartmentId, "Department")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-type"> </i></span>
+                                        @Html.DropDownList("DepartmentId", null, "---Select Department ---", htmlAttributes: new { id = "DepartmentId", @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    @Html.LabelFor(model => model.DesignationId, "Designation")<small>*</small>
+                                    <a href="@Url.Action("Designation", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Designation</a>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-type"> </i></span>
+                                        @Html.DropDownList("DesignationId", null, "--- Select Designation ---", htmlAttributes: new { @class = "form-control required", @id = "DesignationId" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col_full">
+                                <div class="col_one_third">
+                                    @Html.LabelFor(model => model.ReportingAuthority, "Reporting Authority")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-user"> </i></span>
+                                        @Html.DropDownList("ReportingAuthority", null, "---Select Reporting Authority ---", htmlAttributes: new { id = "ReportingAuthority", @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col_one_third ">
+                                    @Html.Label("Current Status")<small>*</small>
+                                    <a href="@Url.Action("StatusMaster", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Status</a>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-pen"> </i></span>
+                                        @Html.DropDownList("StatusId", null, "---Select Status ---", htmlAttributes: new { id = "StatusId", @class = "form-control required" })
+                                    </div>
+                                </div>
+
+                                <div class="col_one_third col_last">
+                                    @Html.Label("Shift")<small>*</small>
+                                    <a href="@Url.Action("AddShift", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Shift</a>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                        @Html.DropDownList("ShiftId", null, "---Select Shift---", htmlAttributes: new { id = "ShiftId", @class = "form-control required" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col_full">
+                                <div class="col_one_third ">
+                                    <label>Joining Date</label><small>*</small>
+                                    <div class="input-group divcenter travel-date-group">
+                                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                        <input type="text" value="@ViewBag.JoiningDate" class="form-control past-enabled required" placeholder="DD/MM/YYYY" id="JoiningDate" name="JoiningDate">
+                                    </div>
+                                </div>
+                                <div class="col_one_third">
+                                    <label>Probation Period</label><small style="float:right">In days</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                                        @Html.EditorFor(model => model.ProbationPeriod, new { htmlAttributes = new { @class = "form-control", id = "ProbationPeriod", placeholder = "Enter Probation Period" } })
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    @Html.Label("Confirmation Date")
+                                    <div class="input-group divcenter travel-date-group">
+                                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                                        <input type="text" value="@ViewBag.ConfirmationDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="ConfirmationDate" name="ConfirmationDate">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col_full">
+                                <div class="col_one_third ">
+                                    <label>Notice Period</label><small style="float:right">In days</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-clock"> </i></span>
+                                        @Html.EditorFor(model => model.NoticePeriod, new { htmlAttributes = new { @class = "form-control", id = "NoticePeriod", placeholder = "Enter Notice Period" } })
+                                    </div>
+                                </div>
+
+                                <div class="col_one_third col_last">
+                                    @Html.Label("Grade")<small>*</small>
+                                    <a href="@Url.Action("MyGrade", "Payroll", new { area = "PMS" })" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Grade</a>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-align-right"> </i></span>
+                                        @Html.DropDownList("GradeId", null, "---Select Grade ---", htmlAttributes: new { id = "GradeId", @class = "form-control required" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col_full">
+                                <div class="col_one_third ">
+                                    @Html.Label("Work Location")<small>*</small>
+                                    <a href="@Url.Action("Branches", "Dashboard")" title="List" target="_blank" class="btn btn-default btn-xs fright">Add Work Location</a>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                       @Html.DropDownList("BranchId", null, "---Select Work Location ---", htmlAttributes: new { id = "BranchId", @class = "form-control required" })
+                                    </div>
+                                </div>
+                                <div class="col_one_third" style="margin-top:30px">
+                                    <table class="table table-striped table-responsive">
+                                        <tbody>
+                                            <tr>
+                                                <td><p class="nomargin">ManagerLevel ? </p></td>
+                                                <td>
+                                                    @if (ViewBag.ManagerLevel == null)
+                                                    {
+                                                        ViewBag.ManagerLevel = false;
+                                                    }
+                                                    @Html.CheckBox("ManagerLevel", (bool)ViewBag.ManagerLevel, new { htmlAttributes = new { @class = "form-control" } })
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col_one_third col_last" style="margin-top:30px">
+                                    <table class="table table-striped table-responsive">
+                                        <tbody>
+                                            <tr>
+                                                <td><p class="nomargin">Emplanelled ? </p></td>
+                                                <td>
+                                                    @if (ViewBag.Emplanelled == null)
+                                                    {
+                                                        ViewBag.Emplanelled = false;
+                                                    }
+                                                    @Html.CheckBox("Emplanelled", (bool)ViewBag.Emplanelled, new { htmlAttributes = new { @class = "form-control" } })
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <div class="col_full">
+                                <div class="col_half" align="left">
+                                    <input type="button" id="btnBack2" name="btnBack2" class="btn btn-success" value="Previous" />
+                                </div>
+                                <div class="col_half col_last" align="right">
+                                    <input type="button" id="btnNext3" name="btnNext3" class="btn btn-success" value="Next" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-content clearfix" id="tabs-7">
+                            <div class="col_full">
+                                <div class="col_half">
+                                    @Html.Label("Scheme")<small>*</small>
+                                    <div class="input-group divcenter">
+                                        <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                        @Html.DropDownList("SchemeId", null, "---Select Scheme ---", htmlAttributes: new { id = "SchemeId", @class = "form-control required" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive col_full">
+                                <table class="table table-striped" id="SchemeEngagementWise"></table>
+                            </div>
+                            <div class="col_full" id="NoSchemeEngagementWise">
+                                <div class="table-responsive col_full">
+                                    <table class="table table-striped" id="SchemeEngagementWise">
+                                        @if (empLeaveLimits != null && empLeaveLimits.Count > 0)
+                                        {
+                                            foreach (var leavelimits in empLeaveLimits)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @leavelimits.EngagementType
+                                                    </td>
+                                                    <td>
+                                                        @leavelimits.LeaveLimit
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+                                </div>
+
+                            </div>
+                            <div class="col_full">
+                                <div class="col_half" align="left">
+                                    <input type="button" id="btnBack3" name="btnBack3" class="btn btn-success" value="Previous" />
+                                </div>
+
+                                <div class="col_half col_last" align="right">
+                                    <input type="button" id="AddEmp" value="Submit" class="button button-3d button-rounded button-blue" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>*@
+    @Html.Hidden("RedirectTo", Url.Action("AddEmployee", "User"))
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+}
+<script>
+    $(document).on("keydown", "#AlternateContact", function () {
+        if ($("#AlternateContact").val() != undefined || $('#AlternateContact').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $(document).ready(function () {
+
+
+
+
+    });
+
+
+    $('#MonthlyCTC').change(function () {
+        $.ajax({
+            type: "post",
+            url: "/CMS/User/GetPayrollHeads",
+            data: { SubscriberId: $('#SubscriberId').val(),
+                MonthlyCTC: $('#MonthlyCTC').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+
+
+                var amt = 0;
+                var heads = "";
+                var annualctc = "";
+                var annualamount = 0;
+                var MonthlyCTC = $('#MonthlyCTC').val();
+                for (var i = 0; i < data.length; i++) {
+                    //alert($('#CorporateBasicId').val());
+                    //alert(data[i].CorporatePayrollHeadID);
+
+                    if($('#CorporateBasicId').val() == data[i].CorporatePayrollHeadID )
+                    {
+
+                        heads = heads + "<tr><td>" + data[i].PayrollHeadName + "</td>" +
+                                        "<td>" +
+                                        "<input type='text' value='" + data[i].Amount + "' class='form-control heads' id='" + data[i].CorporatePayrollHeadID + "' name='" + data[i].CorporatePayrollHeadID  +  "' onchange=ChangeHeads(); /></td> </tr>";
+                    }
+                    else{
+                        heads = heads + "<tr><td>" + data[i].PayrollHeadName + "</td>" +
+                                       "<td>" +
+                                       "<input type='text' value='" + data[i].Amount + "' class='form-control heads' id='" + data[i].CorporatePayrollHeadID + "' name='" + data[i].CorporatePayrollHeadID  +  "'  />" +
+                                       "</td> </tr>";
+                    }
+                }
+
+                annualamount = (MonthlyCTC * 12);
+
+
+                annualctc = annualctc + "<tr><td> Annual CTC </td>" +
+                                    "<td>" +
+                                    "<input type='text' value='" + annualamount + "' id='AnnualCTC' name='AnnualCTC' class='form-control' readonly = 'readonly'/></td> </tr>";
+                annualctc = annualctc + heads;
+
+
+                var selectlimit = '<select class="form-control required" id="MonthList" name="MonthList" "><option selected="selected" value="">---Select Month ---</option>';
+
+                selectlimit = selectlimit + '<option value=1>January</option>';
+                selectlimit = selectlimit + '<option value=2>February</option>';
+                selectlimit = selectlimit + '<option value=3>March</option>';
+                selectlimit = selectlimit + '<option value=4>April</option>';
+                selectlimit = selectlimit + '<option value=5>May</option>';
+                selectlimit = selectlimit + '<option value=6>June</option>';
+                selectlimit = selectlimit + '<option value=7>July</option>';
+                selectlimit = selectlimit + '<option value=8>August</option>';
+                selectlimit = selectlimit + '<option value=9>September</option>';
+                selectlimit = selectlimit + '<option value=10>October</option>';
+                selectlimit = selectlimit + '<option value=11>November</option>';
+                selectlimit = selectlimit + '<option value=12>December</option>';
+                selectlimit = selectlimit + '</select>';
+
+                annualctc  = annualctc +  "<tr> <td>Pay Out Month<small>*</small></td>" +
+                                 " <td>" + selectlimit + "</td> </tr>";
+
+                $('#heads').html(annualctc);
+
+
+            }
+        });
+
+    });
+
+    function ChangeHeads() {
+        var basicval = $('#CorporateBasicId').val();
+        var specialval = $('#SpecialAllowanceId').val();
+        $.ajax({
+            type: "post",
+            url: "/CMS/User/GetPayrollHeadsBasedOnBasic",
+            data: {
+                SubscriberId: $('#SubscriberId').val(),
+                Basic: $('#' + basicval).val(),
+                SpecialAmt: $('#' + specialval).val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+
+                var amt = 0;
+                var heads = "";
+                var annualctc = "";
+                var annualamount = 0;
+                var MonthlyCTC = 0;
+                for (var i = 0; i < data.length; i++) {
+
+                    if(i < data.length - 1)
+                    {
+                        if($('#CorporateBasicId').val() == data[i].CorporatePayrollHeadID )
+                        {
+                            heads = heads + "<tr><td>" + data[i].PayrollHeadName + "</td>" +
+                                            "<td>" +
+                                            "<input type='text' value='" + data[i].Amount + "' class='form-control heads' id='" + data[i].CorporatePayrollHeadID + "' name='" + data[i].CorporatePayrollHeadID  +  "' onchange = ChangeHeads(); />" +
+                                            "</td> </tr>";
+                        }
+                        else{
+                            heads = heads + "<tr><td>" + data[i].PayrollHeadName + "</td>" +
+                                           "<td>" +
+                                           "<input type='text' value='" + data[i].Amount + "' class='form-control heads' id='" + data[i].CorporatePayrollHeadID + "' name='" + data[i].CorporatePayrollHeadID  +  "' />" +
+                                           "</td> </tr>";
+                        }
+
+                    }
+                    else{
+                        $('#MonthlyCTC').val(data[i].Amount);
+                        MonthlyCTC = data[i].Amount;
+                    }
+                }
+
+                annualamount = (MonthlyCTC * 12);
+
+
+                annualctc = annualctc + "<tr><td> Annual CTC </td>" +
+                                    "<td>" +
+                                    "<input type='text' value='" + annualamount + "' id='AnnualCTC' name='AnnualCTC' class='form-control' readonly = 'readonly'/></td> </tr>";
+                annualctc = annualctc + heads;
+
+
+                var selectlimit = '<select class="form-control required" id="MonthList" name="MonthList" "><option selected="selected" value="">---Select Month ---</option>';
+
+                selectlimit = selectlimit + '<option value=1>January</option>';
+                selectlimit = selectlimit + '<option value=2>February</option>';
+                selectlimit = selectlimit + '<option value=3>March</option>';
+                selectlimit = selectlimit + '<option value=4>April</option>';
+                selectlimit = selectlimit + '<option value=5>May</option>';
+                selectlimit = selectlimit + '<option value=6>June</option>';
+                selectlimit = selectlimit + '<option value=7>July</option>';
+                selectlimit = selectlimit + '<option value=8>August</option>';
+                selectlimit = selectlimit + '<option value=9>September</option>';
+                selectlimit = selectlimit + '<option value=10>October</option>';
+                selectlimit = selectlimit + '<option value=11>November</option>';
+                selectlimit = selectlimit + '<option value=12>December</option>';
+                selectlimit = selectlimit + '</select>';
+
+                annualctc  = annualctc +  "<tr> <td>Pay Out Month<small>*</small></td>" +
+                                 " <td>" + selectlimit + "</td> </tr>";
+
+                $('#heads').html(annualctc);
+            }
+        });
+    }
+
+    function ShowHideDivOnButtonClick(EngagementTypeId) {
+        document.getElementById('Text'+EngagementTypeId).readOnly = false;
+    }
+
+    function ShowHide(EngagementTypeId,Maxlimit) {
+        var maxlimitval = Maxlimit;
+        var inputmaxvalue = $('#Text'+EngagementTypeId).val();
+        if(maxlimitval <= inputmaxvalue){
+            $.alert({
+                title: 'Warning',
+                content: 'Max Leaves Should not be greater than current value ',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    $('.form-process').fadeOut();
+                }
+            });
+            return false;
+        }
+    }
+
+    $('#SchemeId').change(function () {
+        var CheckSchemeId = @Html.Raw(Json.Encode(ViewBag.Scheme));
+        var EngagementNotAdded = @Html.Raw(Json.Encode(ViewBag.EngagementData));
+        var year = @Html.Raw(Json.Encode(ViewBag.Year));
+        var UId = @Html.Raw(Json.Encode(ViewBag.Uid));
+        if(CheckSchemeId != $('#SchemeId').val()){
+            $.ajax({
+                type: "post",
+                url: "/CMS/User/GetEngagement",
+                data: { SchemeId: $('#SchemeId').val(),
+                    Gender:  $('#Gender').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var tr;
+                    $('#SchemeEngagementWise').empty();
+                    $('#NoSchemeEngagementWise').empty();
+                    if (data != "No Engagement Data Found") {
+                        var EmpEngagement = '';
+                        $('#SchemeEngagementWise').empty();
+                        for(var i =0;i < data.length;i++)
+                        {
+                            tr = $('<tr>');
+                            tr.append("<td>" + data[i].EngagementType + "</td>");
+                            tr.append("<td><input type='text' class='form-control' name='ItemId[]' id='Text"+data[i].EngagementTypeId+"' value="+data[i].LeaveLimit+" onchange='ShowHide("+data[i].EngagementTypeId+","+data[i].LeaveLimit+")' readonly='true'/></td>");
+                            tr.append("<td><button class='btn btn-xs btn-warning' onclick='javascript:ShowHideDivOnButtonClick("+data[i].EngagementTypeId+")' type='button'>Edit</button><input type='hidden' class='form-control' name='ItemId1[]' value='"+data[i].EngagementTypeId+"'/></td>");
+                            $('#SchemeEngagementWise').append(tr);
+                        }
+
+
+                    }else{
+                        $('#NoSchemeEngagementWise').empty();
+                        $('#NoSchemeEngagementWise').append('' +
+                             '<br />'+
+                             '<a href=' + $('#weburl').val() + '/EMS/Employee/EngagementType target="_blank">Add Engagement</a>'+
+                             '<div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">'+
+                              '<div class="fbox-icon">'+
+                                '<i class="icon-thumbs-down2"></i>'+
+                                '</div>'+
+                                '<h3>No Leave Setting Added<span class="subtitle"></span></h3>'+
+                          '</div>');
+                    }
+                }
+            });
+        }else{
+            $.ajax({
+                type: "post",
+                url: "/CMS/User/GetEmployeeEngagementLimit",
+                data: { SchemeId: $('#SchemeId').val(),
+                    Year: year,
+                    UId: UId
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var tr;
+                    $('#SchemeEngagementWise').empty();
+                    $('#NoSchemeEngagementWise').empty();
+                    if (data != "No Engagement Data Found") {
+                        var EmpEngagement = '';
+                        $('#SchemeEngagementWise').empty();
+                        for(var i =0;i < data.length;i++)
+                        {
+                            tr = $('<tr>');
+                            tr.append("<td>" + data[i].EngagementType + "</td>");
+                            tr.append("<td>" + data[i].LeaveLimit + "</td></tr>");
+
+                            $('#SchemeEngagementWise').append(tr);
+                        }
+                    }
+                }
+            });
+        }
+
+    });
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.form-process').fadeOut()
+
+    });
+    $("#Email").change(function () {
+        EmailExists();
+    });
+
+    //$("#AlternateContact").change(function () {
+    //    PhoneNumberExists();
+    //});
+    $("#AddEmp").click(function () {
+
+        if ($("#AddEmployee").valid()) {
+            $('.form-process').fadeIn()
+            if ($('#ManagerLevel').is(":checked")) {
+                var managerLevel = "True";
+            }
+            else {
+                managerLevel = "False";
+            }
+
+            var itemId = new Array();
+            var item1Id = new Array();
+            $.each($("input[name = 'ItemId[]']"), function () {
+                itemId.push($(this).val());
+            });
+            $.each($("input[name = 'ItemId1[]']"), function () {
+                item1Id.push($(this).val());
+            });
+
+            var salaryHeads = new Array();
+
+            $.each($(".heads"), function (index) {
+                salaryHeads.push($(this).attr("id") + "-" + $(this).val());
+                // salaryHeads[$(this).attr("id")] =  $(this).val();
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/CMS/User/AddEmployee",
+                data: {
+                    Name: $('#Name').val(),
+                    Email: $('#Email').val(),
+                    PhoneNumber: $('#PhoneNumber').val(),
+                    AlternateEmail: $('#AlternateEmail').val(),
+                    AlternateContact: $('#AlternateContact').val(),
+                    DOB: $('#DOB').val(),
+                    Gender: $('#Gender').val(),
+                    MaritalStatus: $('#MaritalStatus').val(),
+                    Nationality: $('#Nationality').val(),
+                    FatherName: $('#FatherName').val(),
+                    SpouseName: $('#SpouseName').val(),
+                    MarriageDate: $('#MarriageDate').val(),
+                    EmergencyContactName: $('#EmergencyContactName').val(),
+                    EmergencyContactNumber: $('#EmergencyContactNumber').val(),
+                    BloodGroup: $('#BloodGroup').val(),
+                    PhysicallyChallenged: $('#PhysicallyChallenged').prop('checked'),
+                    Location: $('#Location').val(),
+                    EmployeeId: $('#EmployeeId').val(),
+                    DepartmentId: $('#DepartmentId :selected').val(),
+                    DesignationId: $('#DesignationId :selected').val(),
+                    ReportingAuthority: $('#ReportingAuthority :selected').val(),
+                    StatusId: $('#StatusId :selected').val(),
+                    ShiftId: $('#ShiftId').val(),
+                    JoiningDate: $('#JoiningDate').val(),
+                    ProbationPeriod: $('#ProbationPeriod').val(),
+                    ConfirmationDate: $('#ConfirmationDate').val(),
+                    NoticePeriod: $('#NoticePeriod').val(),
+                    SchemeId: $('#SchemeId').val(),
+                    GradeId: $('#GradeId :selected').val(),
+                    BranchId: $('#BranchId :selected').val(),
+                    ManagerLevel: $('#ManagerLevel').prop('checked'),
+                    Emplanelled: $('#Emplanelled').prop('checked'),
+                    MonthlyCTC: $('#MonthlyCTC').val(),
+                    AnnualCTC: $('#AnnualCTC').val(),
+                    PayoutMonth: $('#MonthList').val(),
+                    Remarks: $('#Remarks').val(),
+                    Uid: $('#Uid').val(),
+                    ESID: $('#ESID').val(),
+                    JoiningId: $('#JoiningId').val(),
+                    UserAction: $('#UserAction').val(),
+                    EngagementMaxLimit: itemId,
+                    EngagementTypeId: item1Id,
+                    SalaryHeadItems: salaryHeads
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if (data == "UserExists") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Contact Number is already<b> EXISTS.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                            }
+                        });
+                    }
+
+                    if (data == "Succeeded") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Data  Saved <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectTo").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                    if (data == "Unsucceeded") {
+                        $.alert({
+                            title: 'Sorry',
+                            content: 'Something went<b> WRONG.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-down fa-2x ',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectTo").val();
+                                location.href = url;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    //$("#AddEmployee").validate({
+    //    submitHandler: function (form) {
+
+    //    }
+    //});
+</script>
+<script>
+    $('#btnBack1').click(function () {
+        $('.tab-nav  > .active').prev('li').find('a').trigger('click');
+    });
+    $('#btnBack2').click(function () {
+        $('.tab-nav  > .active').prev('li').find('a').trigger('click');
+    });
+    $('#btnBack3').click(function () {
+        $('.tab-nav  > .active').prev('li').find('a').trigger('click');
+    });
+    $('#btnBack4').click(function () {
+        $('.tab-nav  > .active').prev('li').find('a').trigger('click');
+    });
+    $('#btnNext1').on('click', function () {
+        if ($("#AddEmployee").valid()) {
+            $('.tab-nav > .active').next('li').find('a').trigger('click');
+        }
+    });
+
+    $('#btnNext2').on('click', function () {
+        if ($("#AddEmployee").valid()) {
+            $('.tab-nav > .active').next('li').find('a').trigger('click');
+        }
+    });
+    $('#btnNext3').on('click', function () {
+        if ($("#AddEmployee").valid()) {
+            $('.tab-nav > .active').next('li').find('a').trigger('click');
+        }
+    });
+    $('#btnNext4').on('click', function () {
+        if ($("#AddEmployee").valid()) {
+            $('.tab-nav > .active').next('li').find('a').trigger('click');
+        }
+    });
+
+    $(document).on("keydown", "#AlternateContact", function () {
+        if ($("#AlternateContact").val() != undefined || $('#AlternateContact').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $(document).on("keydown", "#PhoneNumber", function () {
+        if ($("#PhoneNumber").val() != undefined || $('#PhoneNumber').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+    $(document).on("keydown", "#EmergencyContactNumber", function () {
+        if ($("#EmergencyContactNumber").val() != undefined || $('#EmergencyContactNumber').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+
+    function EmailExists() {
+        $.ajax({
+            type: "post",
+            url: "/User/EmailPhoneExist",
+            data: {
+                Email: $('#Email').val(),
+                PhoneNumber: "",
+                Uid: $('#Uid').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: data,
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            $('#Email').val("");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    function PhoneNumberExists() {
+        $.ajax({
+            type: "post",
+            url: "/User/EmailPhoneExist",
+            data: {
+                Email: "",
+                PhoneNumber: $('#AlternateContact').val(),
+                Uid: $('#Uid').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: data,
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            $('#PhoneNumber').val("");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        var text_max = 256;
+        if ($('#Remarks').val() != undefined || $('#Remarks').val() != '') {
+            text_max = text_max - $('#Remarks').val().length;
+        }
+        $('#textarea_feedback').html(text_max + ' characters remaining');
+        text_max = 256;
+        $('#Remarks').keyup(function () {
+            var text_length = $('#Remarks').val().length;
+            var text_remaining = text_max - text_length;
+
+            $('#textarea_feedback').html(text_remaining + ' characters remaining');
+            if (text_length >= text_max)
+                return false;
+        });
+    });
+
+</script>

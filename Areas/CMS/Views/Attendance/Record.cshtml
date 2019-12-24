@@ -1,0 +1,378 @@
+﻿@using AJSolutions.Models;
+
+@{
+    ViewBag.Title = "Attendance Record";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    AJSolutions.Areas.EMS.Models.EmployeeViewModel faculty = ViewData["TrainerDetail"] as AJSolutions.Areas.EMS.Models.EmployeeViewModel;
+    List<AJSolutions.Areas.Candidate.Models.CandidateViewModel> stu = ViewData["Candidate"] as List<AJSolutions.Areas.Candidate.Models.CandidateViewModel>;
+    CourseBatchViewModel attendence = ViewData["CourseBatch"] as CourseBatchViewModel;
+    List<CandidateAttendance> recordatt = ViewData["attendancerecord"] as List<CandidateAttendance>;
+
+    int c = 1;
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm("Record", "Attendance", FormMethod.Post, new { @class = "form-horizontal", id = "AttendanceRecord", role = "form" }))
+{
+    @Html.AntiForgeryToken();
+    @*@Html.HiddenFor(a => stu.FirstOrDefault().CourseStartDate, new { id = "hdnFdate" });
+        @Html.HiddenFor(a => stu.FirstOrDefault().CourseEndDate, new { id = "hdnTdate" });*@
+
+    @Html.Hidden("hdnFdate", ViewBag.StartDate as string)
+    @Html.Hidden("hdnTdate", ViewBag.Enddate as string)
+    @Html.Hidden("Status", ViewBag.Status as string)
+    @Html.Hidden("BatchId", ViewBag.BatchId as string)
+    <div class="container">
+        <div class="form-process"></div>
+        <div class="col_one_fourth">
+            <label>Trainer Name: @faculty.Name</label>
+            <br />
+            <label>Training From: @ViewBag.StartDate.ToString("dd-MMM-yyyy")</label>
+
+        </div>
+        <div class="col_one_fourth">
+            <label>Total Trainee: @ViewBag.CandidateCount</label>
+            <br />
+            <label>Training To: @ViewBag.Enddate.ToString("dd-MMM-yyyy")</label>
+        </div>
+        <div class="col_one_fourth">
+            @Html.Label("Attendance", "Attendance Date")
+            @if (recordatt != null && recordatt.Count > 0)
+            {
+                <div class="input-group divcenter travel-date-group">
+                    <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                    @*<input type="date" class="form-control  required" placeholder="Attendance Date" id="AttendenceDate" name="AttendenceDate" />*@
+                    <input type="text" value="@ViewBag.date" class="form-control past-enabled" placeholder="@DateTime.Today.ToString("dd-MM-yyyy")" id="AttendenceDate" name="AttendenceDate">
+                </div>
+            }
+            else
+            {
+                <div class="input-group divcenter travel-date-group">
+                    <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                    @*<input type="date" class="form-control  required" placeholder="Attendance Date" id="AttendenceDate" name="AttendenceDate" />*@
+                    <input type="text" value="" class="form-control past-enabled" placeholder="@DateTime.Today.ToString("dd-MM-yyyy")" id="AttendenceDate" name="AttendenceDate">
+                </div>
+            }
+        </div>
+
+        <div class="col_one_fourth col_last">
+            <label>Session</label>
+            <div class="input-group divcenter travel-date-group">
+                <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                @Html.DropDownList("Sessions", null, "--- Select  Sessions ---", htmlAttributes: new { @class = "form-control required", id = "Sessions", placeholder = "Select Sessions" })
+            </div>
+        </div>
+
+        @if (recordatt != null && recordatt.Count > 0)
+        {
+
+            <div class="col_full">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-responsive  nobottommargin">
+                        <thead>
+                            <tr>
+                                <th>S.No.</th>
+                                <th><input type='checkbox' id='UserChkAll' name='UserChkAll' value='checkAll' onclick="CheckUncheckAllToAttendance();" /></th>
+                                <th>Candidate Name (Blink Id)</th>
+                                @*@if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+                                    {
+                                        <th>SI UserId</th>
+                                        <th>Phone Number</th>
+                                    }*@
+
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var qitem in recordatt)
+                            {
+                                var reord = stu.Where(d => d.UserId == qitem.UserId).FirstOrDefault();
+                                <tr>
+                                    <td>@(c++)</td>
+
+                                    @if (qitem.IsPresent == "P")
+                                    {
+                                        <td><input type="checkbox" checked="checked" name="UserId[]" id="UserId" value="@qitem.UserId" /></td>
+                                    }
+                                    else
+                                    {
+                                        <td><input type="checkbox" name="UserId[]" id="UserId" value="@qitem.UserId" /></td>
+                                    }
+                                    <td>@reord.Name (@reord.UserName)</td>
+                                    @*@if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+                                        {
+                                            <td>@reord.RegistrationId</td>
+                                            <td>@reord.PhoneNumber</td>
+                                        }*@
+
+                                    <td><input type="text" class="form-control" id="Remarks" name="Remarks[]" placeholder="Enter Remarks" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col_full">
+                @Html.Label("Comment", "Comment", htmlAttributes: new { @class = "control-label" })
+                @Html.TextArea("Comment", null, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 1024, id = "Comment", @placeholder = "Enter your Comment here.." })
+                <div id="textarea_feedback" class="text-danger"></div>
+                <br>
+            </div>
+            <div class="col_full">
+                @Html.Hidden("TrainingId", ViewBag.TrainingId as string)
+                @Html.Hidden("UId")
+                @Html.Hidden("URemark")
+                @Html.Hidden("UAttendance")
+
+                <input type="submit" id="btnRecord" value="Submit" style="float: right;" class="btn btn-primary" />
+            </div>
+            <br /><br /><hr />
+            <div class="col_full" id="TrainingAttendance">
+
+            </div>
+        }
+        else
+        {
+            if (stu.Count > 0)
+            {
+                <button type="button" id="btnSearch" class="btn btn-primary btn-xs" onclick="GetAttendance()" title="Get full attendance" style=" float: right">Get Attendance</button>
+                <div class="col_full">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-responsive  nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>S.No.</th>
+                                    <th><input type='checkbox' id='UserChkAll' name='UserChkAll' value='checkAll' onclick="CheckUncheckAllToAttendance();" /></th>
+                                    <th>Candidate Name (Reckonn Id)</th>
+                                    @*@if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+                                        {
+                                            <th>SI UserId</th>
+                                            <th>Phone Number</th>
+                                        }*@
+
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var item in stu)
+                                {
+                                    <tr>
+                                        <td>@(c++)</td>
+                                        <td><input type="checkbox" name="UserId[]" id="UserId" value="@item.UserId" /></td>
+                                        <td>@item.Name (@item.UserName)</td>
+                                        @*@if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+                                            {
+                                                <td>@item.RegistrationId</td>
+                                                <td>@item.PhoneNumber</td>
+                                            }*@
+
+                                        <td><input type="text" class="form-control" id="Remarks" name="Remarks[]" placeholder="Enter Remarks" /></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col_full">
+                    @Html.Label("Comment", "Comment", htmlAttributes: new { @class = "control-label" })
+                    @Html.TextArea("Comment", null, 5, 124, htmlAttributes: new { @class = "form-control", @Maxlength = 1024, id = "Comment", @placeholder = "Enter your Comment here.." })
+                    <div id="textarea_feedback" class="text-danger"></div>
+                    <br>
+                </div>
+                <div class="col_full">
+                    @Html.Hidden("TrainingId", ViewBag.TrainingId as string)
+                    @Html.Hidden("UId")
+                    @Html.Hidden("URemark")
+                    @Html.Hidden("UAttendance")
+
+                    <input type="submit" id="btnRecord" value="Submit" style="float: right;" class="btn btn-primary" />
+                </div>
+                <br /><br /><hr />
+                <div class="col_full" id="TrainingAttendance">
+
+                </div>
+            }
+            else
+            {
+                <br /><br /><hr />
+                <div class="fancy-title title-bottom-border title-right">
+                    <h3></h3>
+                </div>
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-thumbs-down2"></i>
+                    </div>
+                    <h3>No Trainee Assign<span class="subtitle"></span></h3>
+                </div>
+            }
+        }
+        <br /><center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JEResponsive -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = @ViewBag.TrainingId }))
+    @Html.Hidden("RedirectToattendance", Url.Action("Record", "Attendance", new { area = "CMS" }))
+}
+
+<script type="text/javascript">
+    $('#AttendenceDate').change(function () {
+
+        $('#spinner').show();
+        var url = $("#RedirectToattendance").val() + "?AtendenceDate=" + $("#AttendenceDate").val();
+        location.href = url;
+    });
+
+
+    $("#btnRecord").click(function () {
+
+        if ($("#AttendenceDate").val() == null || $("#AttendenceDate").val() == '') {
+            $.alert({
+                title: 'Info',
+                content: 'Attendance date is required',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            return false;
+        }
+        //if ($("#Sessions").val() == null || $("#Sessions").val() == '') {
+        //    $.alert({
+        //        title: 'Info',
+        //        content: 'Sessions is required',
+        //        confirmButton: 'OK',
+        //        confirmButtonClass: 'button button-3d button-rounded button-green',
+        //        icon: 'icon-thumbs-down2 icon-2x ',
+        //        animation: 'zoom',
+        //        confirm: function () {
+        //        }
+        //    });
+        //    return false;
+        //}
+
+        $('.form-process').fadeIn();
+        var userid = "";
+        var remarks = "";
+        var present = "";
+        $.each($("input[name='UserId[]']"), function () {
+            userid = userid + $(this).val() + ",";
+
+            if ($(this).prop('checked')) {
+                present = present + "P" + ",";
+            }
+            else {
+                present = present + "A" + ",";
+            }
+
+        });
+
+        $.each($("input[name='Remarks[]']"), function () {
+            remarks = remarks + $(this).val() + ",";
+        });
+
+        $("#UId").val(userid);
+        $("#URemark").val(remarks);
+        $("#UAttendance").val(present);
+        this.form.submit(); $("#RedirectTo").val()
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+
+        $('.form-process').fadeOut();
+
+        if ($('#Status').val() == "True") {
+            $.alert({
+                title: 'Info',
+                content: 'Candidate Attendance saved successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-up2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    function CheckUncheckAllToAttendance() {
+
+        if ($("input[name='UserChkAll']").prop('checked') == true) {
+            $.each($("input[name='UserId[]']"), function () {
+                $(this).prop('checked', true);
+            });
+        }
+        else {
+            $.each($("input[name='UserId[]']"), function () {
+                $(this).prop('checked', false);
+            });
+        }
+
+    };
+
+
+
+
+
+
+    function GetAttendance() {
+
+        $.ajax({
+            type: "post",
+            url: "/TMS/TMS/GetsCourseDetail",
+            data: {
+                ABatchId: $("#BatchId").val(),
+                TrainingId: $("#TrainingId").val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null && data.length > 0) {
+                    $('#TrainingAttendance').html(data);
+                }
+            }
+        })
+    }
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>

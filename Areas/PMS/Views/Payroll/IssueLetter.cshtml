@@ -1,0 +1,54 @@
+﻿@using AJSolutions.Models;
+@model List<SendLetter>
+@{
+    ViewBag.Title = "IssueLetter";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<SendLetterView> issueletterlist = ViewData["Issueletterlist"] as List<SendLetterView>;
+}
+
+@using (Html.BeginForm("IssueLetter", "Payroll", FormMethod.Post, new { @class = "form-horizontal", id = "IssueLetter", role = "form" }))
+{
+    <div class="container">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h4>All Issue Letter</h4>
+            </div>
+            @if (issueletterlist.Count > 0)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <thead>
+                                <tr>
+                                    <th>Employee Name</th>
+                                    <th>Letter Type Name</th>
+                                    <th>Issuing Date</th>
+                                    <th>Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               @foreach (var item in issueletterlist)
+                               {
+                                   <tr>
+                                       <td>@item.Name</td>
+                                       <td>@item.LetterTypename</td>
+                                       <td>@item.IssuingDate.ToString("dd-MMM-yyyy")</td>
+                                       <td><a href="~/File/SendLetter?Id=@item.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Admin</a></td>
+                                   </tr>
+                               }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        </div>
+        @*<div class="col_full fright">
+            <a href="@Url.Action("GenreateCorporateLetter", "Payroll", new { area = "PMS" })" title="List"><i class="icon-backward"></i>Go Back Genreate Letter</a>
+        </div>*@
+    </div>    
+    
+}
+

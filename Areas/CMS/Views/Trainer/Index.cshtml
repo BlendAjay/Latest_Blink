@@ -1,0 +1,345 @@
+﻿@*@model IEnumerable<AJSolutions.Areas.EMS.Models.EmployeeViewModel>*@
+@using PagedList.Mvc;
+@using AJSolutions.Helpers;
+@model  PagedList.IPagedList<AJSolutions.Models.InstructorLeadProfileView>
+@{
+    ViewBag.Title = "My Trainer";
+    if (User.IsInRole("Employee"))
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    var currPage = ViewBag.page ?? 1;
+    var currPageSize = ViewBag.Paging;
+
+    string UName = "";
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+
+            <a href="@Url.Action("Add", "Trainer", new { Area = "CMS"})" class="btn btn-default btn-xs">Add Trainer Lead</a>
+        </div>
+        <div class="row">
+            <div class="fancy-title title-bottom-border title-right">
+                <h4>Trainer Leads (@ViewBag.EmCount)</h4>
+            </div>
+            <div class="col_one_fourth">
+                <span>Name</span>
+                @Html.TextBox("Name", null, htmlAttributes: new { @class = "form-control", @id = "Name", placeholder = "Trainer Name" })
+
+            </div>
+            <div class="col_one_fourth">
+                <span>Location</span>
+                @Html.TextBox("City", null, htmlAttributes: new { @class = "form-control", @id = "City", placeholder = "Location" })
+
+            </div>
+            <div class="col_one_fourth">
+                @*@Html.TextBox("Zone", null, htmlAttributes: new { @class = "form-control", @id = "Zone", placeholder = "Zone" })*@
+                <span>Zone</span>
+                @Html.DropDownList("Zone", null, "---  Select Zone ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Zone", id = "Zone" })
+            </div>
+            <div class="col_one_fourth col_last ">
+                <span>Qualification</span>
+                @Html.DropDownList("Qualification", null, "---Select Qualification---", htmlAttributes: new { id = "Qualification", @class = "form-control" })
+            </div>
+
+            <div class="col_full">
+                <div class="col_one_fourth ">
+                    <span>Domain</span>
+                    @Html.DropDownList("Domain", null, "---Select Domain---", htmlAttributes: new { id = "Domain", placeholder = "Select Domain", @class = "form-control" })
+                </div>
+                <div class="col_one_fourth ">
+                    <sapn>Organization</sapn>
+                    @Html.DropDownList("Organization", null, "---Select Organization---", htmlAttributes: new { id = "TrainerMentor", placeholder = "Select Organization", @class = "form-control" })
+                </div>
+                <div class="col_one_fourth ">
+                    <span>LanguageKnown</span>
+                    @Html.DropDownList("LanguageKnown", null, "---Select Language---", htmlAttributes: new { id = "LanguageKnown", placeholder = "Select LanguageKnown", @class = "form-control" })
+                </div>
+                <div class="col_one_fourth  col_last">
+                    <br /><button type="submit" id="search" class="button_apply" title="click here to Search">Search</button>&nbsp;
+                    <button class="button_apply" id="buttonclear" title="click here to Clear Search">Clear</button>
+                </div>
+            </div>
+            <br />
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="col_full">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    <th>S.No.</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>PhoneNumber</th>
+                                    <th>Empanelled</th>
+                                    <th>Action</th>
+                                    @*<th>Gender</th>
+                                        <th><nobr>Date Of Birth</nobr></th>
+                                        <th>Country</th>
+                                        <th>State</th>
+                                        <th>City</th>
+                                        <th>Zone</th>
+                                        <th>Qualification</th>
+                                        <th>DomainExpertize</th>
+                                        <th>Experience</th>
+                                        <th>Organization</th>
+                                        <th>LanguageKnown</th>
+                                        <th>Specialization</th>
+                                        <th>NibfProject</th>
+                                        <th><nobr>Willing To Relocate</nobr></th>
+                                        <th><nobr>Preferred Location</nobr></th>
+                                        <th>Remarks</th>*@
+                                    @*<th>Empanelled</th>*@
+                                    @*<th>Edit</th>
+                                        <th>CV</th>*@
+                                </tr>
+
+                                @{
+                    int count = (currPageSize * (currPage - 1)) + 1;
+                    foreach (var item in Model)
+                    {
+                        if (UName != item.Name)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    @count
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("InstructorLeadsDetails", "Trainer", new { area = "CMS", InstructorId = item.InstructorId })">@item.Name </a>
+                                </td>
+                                <td>
+                                    @*<i class="icon-mail"></i>*@  @item.Email
+                                </td>
+                                <td>
+                                    @*<i class="icon-call"></i>*@  @item.PhoneNumber
+                                </td>
+                                @*<td>
+                                        <small><a href="@Url.Action("Add", "Trainer", new { area = "CMS",  InstructorId = item.InstructorId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a></small>
+                                        <small><a href="~/File/DownloadCV?Id=@item.FileId" alt="CV" target="_blank" title="Click here to download the CV"><i class="icon-clip"></i></a></small>
+                                    </td>*@
+                                <td>
+                                    @if (item.Empanelled == false)
+                                    {
+                                        <center>
+                                            <small> <a href="#" class="btn btn-default btn-xs" onclick="Empanelled('@item.InstructorId','@item.Email','@item.PhoneNumber','@item.Name','@item.City')">Empanel</a></small>
+                                        </center>
+                                    }
+                                    else
+                                    {
+                                        <center><input type="checkbox" id="checkempanelled" checked="checked" disabled="disabled" /></center>
+                                    }
+                                </td>
+                                <td>
+                                    <small><a href="@Url.Action("Add", "Trainer", new { area = "CMS",  InstructorId = item.InstructorId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a></small>
+
+                                    @if (item.FileId > 0)
+                                    {
+                                        <small>|  <a href="~/File/DownloadCV?Id=@item.FileId" alt="CV" target="_blank" title="Click here to download the CV"><i class="icon-clip"></i></a></small>
+
+                                    }
+                                </td>
+                                @*<td>@item.Email</td>
+                                    <td>@item.PhoneNumber</td>*@
+                                @*<td>
+                                        @if (item.Gender == "MA")
+                                        {
+                                            <small>Male</small>
+                                        }
+                                        else if (item.Gender == "FE")
+                                        {
+                                            <small>Female</small>
+                                        }
+                                        else if (item.Gender == "TR")
+                                        {
+                                            <small>Transgender</small>
+                                        }
+                                        else
+                                        {
+                                            <small></small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.DOB == null)
+                                        {
+                                            <span>---</span>
+                                        }
+                                        else
+                                        {
+                                            @item.DOB.Value.ToString("dd-MMM-yyyy")
+                                        }
+                                    </td>
+                                    <td>@item.Country</td>
+                                    <td>@item.State</td>
+                                    <td>@item.City</td>
+                                    <td>@item.Zone</td>
+                                    <td>@item.Qualification</td>
+                                    <td>@item.DomainExpertize</td>
+                                    <td>@item.Experience</td>
+                                    <td>@item.Organization</td>
+                                    <td>@item.LanguageKnown</td>
+                                    <td>@item.Specialization</td>
+                                    <td>@item.NibfProject</td>
+                                    <td>
+                                        @if (item.ReadyToReallocate == true)
+                                        {
+                                            <label>yes</label>
+
+                                        }
+                                        else
+                                        {
+                                            <label>no</label>
+                                        }
+                                    </td>
+                                    <td>@item.TrainingLocation</td>
+                                    <td>@item.Remarks</td>*@
+                                @*<td>@item.Empanelled</td>*@
+                                @*<td>
+                                        <a href="@Url.Action("Add", "Trainer", new { area = "CMS",  InstructorId = item.InstructorId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                    </td>*@
+                                @*<td><a href="~/File/DownloadCV?Id=@item.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i></a></td>*@
+                            </tr>
+                                    count++;
+                        }
+                    }
+                                }
+                            </table>
+                        </div>
+                        <input type="button" class="btn-link" id="download" title="click here to download lead report" onclick="DownloadLeads()" value="Download"/>
+                    </div>
+
+                }
+                else
+                {
+                    <br /><br />
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Trainer Lead<span class="subtitle"></span></h3>
+                    </div>
+                }
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Index", new { page, PageSize = ViewBag.Paging, Qualification = ViewBag.Qualifications, Organization = ViewBag.Organizations, City = ViewBag.Cites, Domain = ViewBag.Domains, Zone = ViewBag.Zones, LanguageKnown = ViewBag.LanguageKnowns }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Index", "Trainer"), new { area = "CMS" });
+    @Html.Hidden("RedirectToDownload", Url.Action("DownloadLeads", "Trainer"), new { area = "CMS" });
+    <input type="hidden" id="weburl" value="@AJSolutions.DAL.Global.WebsiteUrl()" />
+   
+}
+
+<script>
+    function DownloadLeads() {
+  
+        var Searchkey = null;
+        if ($("#City").val() != "") {
+            Searchkey = $("#City").val();
+        }
+        if ($("#Qualification").val() != "") {
+            Searchkey = $("#Qualification").val();
+        }
+        else if ($("#City").val() != "") {
+            Searchkey = $("#City").val();
+        }
+        else if ($("#Zone").val() != "") {
+            Searchkey = $("#Zone").val();
+        }
+        else if ($("#Domain").val() != "") {
+            Searchkey = $("#Domain").val();
+        }
+        else if ($("#Organization").val() != "") {
+            Searchkey = $("#Organization").val();
+        }
+        else if ($("#LanguageKnown").val() != "") {
+            Searchkey = $("#LanguageKnown").val();
+        }
+         
+            var url = $('#weburl').val() + "/CMS/Trainer/DownloadLeads?Searchkey=" + Searchkey;
+            location.href = url;
+       
+        //$.ajax({
+        //    type: "post",
+        //    url: "/CMS/Trainer/DownloadLeads",
+        //    data: {
+        //        Searchkey: Searchkey,
+        //    },
+        //    datatype: "json",
+        //    traditional: true,
+        //    success: function (data) { 
+        //    }
+
+        //});
+    }
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var url = $("#RedirectTo").val();
+        location.href = url;
+
+    });
+    function Filterdata() {
+        var Searchkey = $("#Qualification").val();
+        var url = "/CMS/Trainer/Index?SearchKey=" + Searchkey;
+        location.href = url;
+
+    }
+    function Empanelled(userid, emailid, phonenumber, name, location) {
+        $.ajax({
+            type: "post",
+            url: "/CMS/Trainer/Empanelled",
+            data: {
+                UserId: userid,
+                EmailId: emailid,
+                PhoneNumber: phonenumber,
+                Name: name,
+                Location: location
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Data Saved <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                        var url = $('#RedirectTo').val();
+                        window.location = url;
+                    }
+                });
+            }
+
+        });
+    }
+</script>

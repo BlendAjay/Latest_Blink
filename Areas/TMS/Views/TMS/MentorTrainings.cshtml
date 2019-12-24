@@ -1,0 +1,370 @@
+﻿@using PagedList.Mvc;
+@using AJSolutions.DAL
+@model  PagedList.IPagedList<AJSolutions.Models.TrainingScheduleView>
+@{
+    ViewBag.Title = "MentorTrainings";
+    //Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    List<AJSolutions.Models.TrainingScheduleAttachment> attachments = ViewData["Attachment"] as List<AJSolutions.Models.TrainingScheduleAttachment>;
+    List<AJSolutions.Models.TrainingScheduleFinalAttachment> finalattachments = ViewData["FinalAttach"] as List<AJSolutions.Models.TrainingScheduleFinalAttachment>;
+    //var userId = ViewBag.UserId as string;
+    int RCount = 0;
+}
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="page-header">
+            <div class="page-breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Bank Details</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <div class="form-process"></div>
+            <h5 class="card-header">Bank Account</h5>
+            <div class="card-body">
+                <div class="row ">
+                    <div class="col_one_fifth nobottommargin">
+                        @Html.Label("Select Course")
+                        <div class="input-group divcenter">
+                            @Html.DropDownList("CourseCode", null, "--- Select Course ---", htmlAttributes: new { @class = "form-control", id = "CourseCode" })
+                        </div>
+                    </div>
+                    <div class="col_one_fifth nobottommargin ">
+                        <label>Select Batch</label>
+                        <div class="input-group divcenter" id="Batch">
+                            @Html.DropDownList("BatchId", null, "--- Select Batch ---", htmlAttributes: new { @class = "form-control  ", id = "BatchId" })
+                        </div>
+                    </div>
+                    <div class="col_one_fifth  nobottommargin">
+                        <label>Select Status</label>
+                        <select class="select-filter form-control" role="group" data-filter-group="type" id="Status">
+                            <option value="">--- Select ---</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Inprogress">Inprogress</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="col_one_fifth col_last">
+                        @Html.Label("")
+                        <div class="input-group divcenter">
+                            <br /><br />
+                            <button type="button" id="btnSearch" class="btn btn-green btnalignleft" onclick='SendValue()'>Filter</button>&nbsp;
+                            <button type="button" class="btn btn-green btnalignleft" onclick="location.href='@Url.Action("MentorTrainings", "TMS", new { Area = "TMS" })'">Clear</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="fancy-title title-bottom-border title-right">
+                        <br /> <h5>Total Result: @ViewBag.TotalCount</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="Main">
+    <div class="row">
+        <div class="postcontent nobottommargin">
+            <div class="post-timeline events">
+                <div class="timeline-border"></div>
+                @foreach (var item in Model)
+                {
+                    RCount = RCount + 1;
+                    <div class="entry clearfix">
+                        <div class="entry-timeline">
+                            @if (item.CreatedOn != null)
+                            {
+                                @item.CreatedOn.Value.Day<span>@item.CreatedOn.Value.ToString("MMM") @item.CreatedOn.Value.Year.ToString().Substring(2)</span>
+                            }
+                            <div class="timeline-divider"></div>
+                        </div>
+                        <div class="entry-title">
+                            <div class="col_two_third nobottommargin">
+                                @if (item.SubjectLine.Length < 55)
+                                {
+                                    <h4 class="nobottommargin">@Html.ActionLink(item.SubjectLine, "TrainingDetails", "TMS", new { Id = item.TrainingId }, new AllowHtmlAttribute { })</h4>
+                                }
+                                else
+                                {
+                                    <h4 class="nobottommargin">@Html.ActionLink(item.SubjectLine.Substring(0, 55), "TrainingDetails", "TMS", new { Id = item.TrainingId }, new AllowHtmlAttribute { })</h4>
+                                }
+
+                                @if (item.Description != null)
+                                {
+                                    if (item.Description.Length < 140)
+                                    {
+                                        <p align="justify" class="nobottommargin">@item.Description</p>
+                                    }
+                                    else
+                                    {
+                                        <p align="justify" class="nobottommargin">@item.Description.Substring(0, 140) ...</p>
+                                    }
+                                }
+
+                            </div>
+                            <div class="col_one_third col_last nobottommargin">
+                                <center>
+                                    @if (item.Status == "Assigned" && user.UserId == item.TrainerId)
+                                    {
+                                        <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyTraining", "TMS", new { area = "TMS", Id = item.TrainingId, TId = user.UserId, StatusforUpdate = "Inprogress" })'">Accept</button>
+                                    }
+                                    else if (item.Status == "Inprogress" && user.UserId == item.TrainerId)
+                                    {
+                                        <button type="button" class="btn btn-warning" onclick="CompleteConfirmation('@item.TrainingId', 'Completed');">Complete</button>
+                                        @*<button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyTraining", "TMS", new { area = "TMS", Id = item.TrainingId, Status = "Completed" })'">Complete</button>*@
+                                    }
+                                    else if (item.Status == "Assigned" && user.UserId == item.TrainerId)
+                                    {
+                                        <button type="button" class="btn btn-warning" onclick="location.href='@Url.Action("MyTraining", "TMS", new { area = "TMS", Id = item.TrainingId, TId = user.UserId, StatusforUpdate = "Cancelled" })'">Cancel Training</button>
+                                    }
+                                    else
+                                    {
+                                        <label style="color:red">@item.Status</label>
+                                    }
+                                    @if (item.Status == "Assigned" && user.UserId == item.TrainerId)
+                                    {
+                                        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("MyTraining", "TMS", new { area = "TMS", Id = item.TrainingId, TId = user.UserId, StatusforUpdate = "Rejected" })'">Reject</button>
+                                    }
+                                </center>
+                                <br />
+                            </div>
+                            <div class="col_full entry-content nobottommargin">
+                                <ul class="entry-meta clearfix">
+                                    @if (item.DepartmentId == "FAC")
+                                    {
+                                        <li><a href="@Url.Action("EmployeeProfile", "Employee", new { area = "EMS", UserId = item.TrainerId })" target="_blank"><i class="icon-user"></i><span>Trainer: </span>@item.Name </a></li>
+                                        if (item.TrainerMentor != "NA")
+                                        {
+                                            <li><i class="icon-user-md"></i><span>Mentor Trainer: </span>@item.TrainerMentor</li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li><a href="@Url.Action("AdminProfile", "Admin", new { area = "Admin", SubscriberId = item.TrainerId })" target="_blank"><i class="icon-user"></i><span>Trainer: </span>@item.Name </a></li>
+                                        if (item.TrainerMentor != "NA")
+                                        {
+                                            <li><i class="icon-user-md"></i><span>Mentor Trainer: </span>@item.TrainerMentor</li>
+                                        }
+                                    }
+                                    <li><a href="#"><i class="icon-folder-open"></i>@item.BatchName</a></li>
+
+                                    @if (attachments != null)
+                                    {
+                                        foreach (var attach in attachments)
+                                        {
+                                            if (attach.TrainingId == item.TrainingId)
+                                            {
+                                                <li><a href="~/File/TrainingScheduleAttachment?id=@attach.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Admin</a></li>
+                                            }
+                                        }
+                                    }
+                                    @if (finalattachments != null)
+                                    {
+                                        foreach (var final in finalattachments)
+                                        {
+                                            if (final.TrainingId == item.TrainingId)
+                                            {
+                                                <li><a href="~/File/TrainingFinalAttachment?id=@final.FileId" alt="CV" target="_blank" title="Click here to download the attachment"><i class="icon-clip"></i>By Employee</a></li>
+                                            }
+                                        }
+                                    }
+                                    @if (item.Status == "Completed")
+                                    {
+                                        <li><a href="#" id="Report" onclick="javascript: TrainingSummReport('@item.BatchId','@item.TrainingId');" title="Download Training Summary"><i class="icon-download"></i></a></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    @*For Upload Attachment*@
+                    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+                        <div class="form-process"></div>
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-body">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title" id="myModalLabel">Attach File</h4>
+                                    </div>
+                                    <div class="modal-body" id="cndBody">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (RCount == 0)
+                {
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Mentor Trainings available<span class="subtitle"></span></h3>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <ul class="pagination">
+        <li>@Html.PagedListPager(Model, page => Url.Action("MentorTrainings", new { page, PageSize = ViewBag.Paging, TrainerId = ViewBag.Trainer, CourseCode = ViewBag.Course, BatchId = ViewBag.Batch, Status = ViewBag.TrainingStatus, ClientId = ViewBag.TrainingClientId, CityId = ViewBag.TrainingCityId }))</li>
+        <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+    </ul>
+    @Html.Hidden("RedirectTo", Url.Action("MentorTrainings", "TMS", new { area = "TMS" }))
+    @Html.Hidden("RedirectToReport", Url.Action("DownloadTrainingAssessmentSummary", "TMS", new { area = "TMS" }))
+</div>
+
+<script>
+    function SendValue() {
+        var courscode = $("#CourseCode").find(":selected").val();
+        var batchId = $("#BatchId").find(":selected").val();
+        var status = $("#Status").find(":selected").val();
+        var PageSize = $("#PageSize :selected").val();
+        var url = "MentorTrainings?CourseCode=" + courscode + "&BatchId=" + batchId + "&Status=" + status + "&PageSize=" + PageSize;
+        window.location.href = url;
+    }
+
+</script>
+<script>
+    function ConfirmationDialogs(TrainingId, UserAction) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Delete this Training?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-success',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-danger',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'Zoom',
+            confirm: function () {
+
+                var url = $("#RedirectTo").val() + "?TrainingId=" + TrainingId + "&UserAction=" + UserAction;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#CourseCode').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/TMS/TMS/GetBatch",
+                data: { CourseCode: $('#CourseCode :selected').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var batch = " <select class='form-control' id='BatchId'>";
+                    batch = batch + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        batch = batch + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    batch = batch + '</select>';
+                    $('#Batch').html(batch);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+
+        $('#CountryId').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='StateId'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#State').html(state);
+                }
+            });
+        });
+
+
+        $('#State').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='CityId'>";
+                    city = city + '<option value="">--- Select City ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#City').html(city);
+                }
+            });
+        });
+
+    });
+
+    function TrainingSummReport(BatchId, TrainingId) {
+        var url = $("#RedirectToReport").val() + "?BatchId=" + BatchId + "&TrainingId=" + TrainingId;
+        window.location.href = url;
+    }
+
+    function Final() {
+        $('#cndBody').load();
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var corporateId = $("#CorporateId").find(":selected").val();
+            var courscode = $("#CourseCode").find(":selected").val();
+            var batchId = $("#BatchId").find(":selected").val();
+            var trainerId = $("#TrainerId").find(":selected").val();
+            var status = $("#Status").find(":selected").val();
+            var cityId = $("#CityId").find(":selected").val();
+            if (cityId == "undefined") { cityId = ""; }
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize + "&TrainerId=" + trainerId + "&CourseCode=" + courscode + "&BatchId=" + batchId + "&Status=" + status + "&ClientId=" + corporateId + "&CityId=" + cityId;
+            location.href = url;
+        }
+    }
+</script>

@@ -1,0 +1,100 @@
+﻿@using MIS.Models;
+@model MIS.Models.ClientTeamRoles
+@{
+    ViewBag.Title = "TeamRoles";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<ClientTeamRoles> roles = ViewData["Roles"] as IEnumerable<ClientTeamRoles>;
+}
+
+@using (Html.BeginForm("TeamRoles", "TeamMember", FormMethod.Post, new { @class = "form-horizontal", id = "TeamRoles", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Team Roles</h4>
+                </div>
+                <div class="col_full">
+                    @Html.LabelFor(model => model.EmpRole, "Role Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-file-text"> </i></span>
+                        @Html.EditorFor(model => model.EmpRole, new { htmlAttributes = new { @class = "sm-form-control required", id = "EmpRole", placeholder = "Enter Role Name", name = "EmpRole" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.EmpRole, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.Visibility, "Visibility")<small>*</small>
+                    <div class="input-group divcenter travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        @Html.CheckBoxFor(model => model.Visibility, new { htmlAttributes = new { @class = "sm-form-control", id = "Visibility", name = "Visibility" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Visibility, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <br>
+                <input type="submit" id="TeamRoles" value="Save" style="float: right;" class="button button-3d button-rounded button-teal" />
+            </div>
+        </div>
+        <br /><br />
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Roles</th>
+                        <th>Visibility</th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (roles != null)
+                    {
+                        foreach (var item in roles)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmpRole)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Visibility)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "TeamRoles", "TeamMember", new { Id = item.EmpRoleId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "TeamRoles", "TeamMember", new { Id = item.EmpRoleId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+        @Html.Hidden("RedirectToHome", Url.Action("TeamRoles", "TeamMember"))
+    </div>
+}
+<script>
+    $("#TeamRoles").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'button button-3d button-rounded button-amber',
+
+                        icon: 'icon-thumbs-up icon-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+

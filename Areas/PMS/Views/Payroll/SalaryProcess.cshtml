@@ -1,0 +1,304 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.Areas.PMS.Models;
+@using AJSolutions.DAL;
+@{
+    ViewBag.Title = "SalaryProcess";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<EmployeeMonthlySalary> EmpPayroll = ViewData["EmployeeMonthlySalary"] as List<EmployeeMonthlySalary>;
+    List<EmployeeMonthlySalaryDetail> EmpPayrollHeads = ViewData["EmpMonthlySalaryHeads"] as List<EmployeeMonthlySalaryDetail>;
+    // CompanyDetailsView companydetails = ViewData["Companydetails"] as CompanyDetailsView;
+    List<CorporatePayrollHead> PayrollHeads = ViewData["PayrollHead"] as List<CorporatePayrollHead>;
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("SalaryProcess", "Payroll", FormMethod.Post, new { @area = "PMS", @class = "form-horizontal needs-validation", id = "SalaryProcess", role = "form" }))
+{
+
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="form-process"></div>
+        <div class="fancy-title title-bottom-border">
+            <h4>Salary Process</h4>
+        </div>
+        <div class="row">
+            <div class="col_one_fifth">
+                <small>Department</small>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-link"> </i></span>
+                    @Html.DropDownList("DepartmentId", null, "--- Select Department ---", htmlAttributes: new { @class = "form-control", @id = "DepartmentId", placeholder = "Select Role" })
+                </div>
+            </div>
+            <div class="col_one_fifth">
+                <small>Active Employees</small>
+                @Html.DropDownList("UserId", null, "Select Employee", htmlAttributes: new { @class = "form-control", id = "UserId" })
+            </div>
+            <div class="col_one_fifth">
+                <small>Deactivated Employees</small>
+                @Html.DropDownList("DeactivatedUserId", null, "Select Employee", htmlAttributes: new { @class = "form-control", id = "DeactivatedUserId" })
+            </div>
+            <div class="col_one_fifth ">
+                <small>Select Month</small>
+                @Html.DropDownList("Month", null, "Select Month", htmlAttributes: new { @class = "form-control", id = "Month" })
+            </div>
+            <div class="col_one_fifth col_last">
+               <small> &nbsp; &nbsp; &nbsp;</small>
+                    <input type="submit" id="SalaryProcess" value="Submit" class="button button-rounded button-teal" />              
+            </div>
+        </div>
+
+        <div class="row">
+            <div class=" table-responsive">
+                @if (EmpPayroll != null)
+                {
+                    int i = 1;
+                    <table class="table table-bordered table-striped  nobottommargin">
+                        <thead>
+                            <tr>
+                                <th>S. No.</th>
+                                <th>Name</th>
+                                <th>Employee Id</th>
+                                <th>
+                                    Department
+                                </th>
+                                <th>
+                                    Designation
+                                </th>
+                                <th>
+                                    Working Days
+                                </th>
+                                <th>Leave without Pay</th>
+                                <th>Total Leaves</th>
+                                <th>
+                                    Gross Salary
+                                </th>
+                                @foreach (var head in PayrollHeads)
+                            {
+                                    <th>
+                                        @head.PayrollHeadName
+                                    </th>
+                            }
+                                <th>
+                                    Net Salary
+                                </th>
+                                <th>Edit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var emp in EmpPayroll)
+                        {
+                                @Html.Hidden("PayoutId",emp.EmployeeMonthlySalaryPayoutId)
+                                <tr>
+                                    <td>@i </td>
+                                    <td>@emp.Name</td>
+                                    <td>@emp.EmployeeId</td>
+                                    <td>@emp.Department</td>
+                                    <td>@emp.DesignationName</td>
+                                    <td>@emp.WorkingDays</td>
+                                    <td>@emp.LWP</td>
+                                    <td>@emp.TotalLeaves</td>
+                                    <td> @emp.GrossCTC</td>
+                                    @foreach (var head in PayrollHeads)
+                                {
+                                        <td>
+                                            @foreach (var empHead in EmpPayrollHeads.Where(e => e.UserId == emp.UserId && e.CorporatePayrollHeadId == head.CorporatePayrollHeadID))
+                                        {
+                                                <span>@empHead.Amount</span>
+                                        }
+                                        </td>
+                                }
+                                    <td>@emp.NetCTC</td>
+                                    <td>
+                                        @if (!emp.Freeze)
+                                        {
+                                            <a href="#" onclick="EditSalary(@emp.EmployeeMonthlySalaryPayoutId)"><i class=" icon-pen"></i></a>
+                                        }
+                                    </td>     @*<td> <a href="#" onclick="EditSalary(@emp.EmployeeMonthlySalaryPayoutId)" ;><i class=" icon-download"></i></a></td>*@
+                                </tr>
+                                i = i + 1;
+                        }
+
+                        </tbody>
+                    </table>
+                }
+
+            </div>
+        </div>
+        @if(EmpPayroll != null)
+        { 
+        if(EmpPayroll.Count > 0)
+        { 
+        <div class="row">
+            <div class="col_full">
+                <input type="button" id="FreezeSalary" value="Freeze Salary" onclick="FreezeProcessedSalary()" name="FreezeSalary" class="button button-rounded button-teal"></div>
+            </div>
+        }
+        }
+
+            <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-body">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                Edit Salary
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <br />
+
+                            </div>
+                            <div class="modal-body" id="cndBody">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @Html.Hidden("RedirectToHome", Url.Action("SalaryProcess", "Payroll"))
+    @Html.Hidden("RedirectToReport", Url.Action("Payslip", "Payroll"))
+    @Html.Hidden("RedirectToStatement", Url.Action("SalaryStatement", "Payroll"))
+
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+}
+<script type="text/javascript">
+    $("#SalaryProcess").validate({
+        submitHandler: function (form) {
+
+            if ($('#Month').val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select a month for process salary',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn-primary',
+                    icon: 'icon-thumbs-down2 icon-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+
+            var payoutdate = JSON.parse('@Html.Raw(Json.Encode(ViewBag.PayoutDate))');
+            var pdate = payoutdate + '-' + $('#Month :selected').text();
+            var d = new Date(pdate);
+
+            var currentDate = new Date();
+
+            if (+d > +currentDate) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Salary can not be process for future month',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn-primary',
+                    icon: 'icon-thumbs-down2 icon-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+
+            $.ajax({
+                type: "post",
+                url: "/PMS/Payroll/SalaryProcess",
+                data: {
+                    DepartmentId: $('#DepartmentId').val(),
+                    UserId: $('#UserId').val(),
+                    DeactivatedUserId: $('#DeactivatedUserId').val(),
+                    Month: $('#Month').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    if (data == "Success") {
+                        $.alert({
+                            title: 'Cheers',
+                            content: 'Salary Processed <b> SUCCESSFULLY.</b>',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn btn-primary',
+                            icon: 'fa fa-thumbs-up fa-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                                var url = $("#RedirectToHome").val() + "?DepartmentId=" + $('#DepartmentId').val() + "&UserId=" + $('#UserId').val() + "&DeactivatedUserId=" + $('#DeactivatedUserId').val() + "&Month=" + $('#Month').val() + "&proess=Processed";
+                                location.href = url;
+                            }
+                        });
+                    }
+                    else {
+                        $.alert({
+                            title: 'Alert',
+                            content: 'Salary can not be process for future month',
+                            confirmButton: 'OK',
+                            confirmButtonClass: 'btn-primary',
+                            icon: 'icon-thumbs-down2 icon-2x',
+                            animation: 'zoom',
+                            confirm: function () {
+                            }
+                        });
+
+                        return false;
+
+                    }
+                }
+            });
+        }
+
+    });
+
+
+    function FreezeProcessedSalary()
+    {
+        $.ajax({
+            type: "post",
+            url: "/PMS/Payroll/FreezeSalary",
+            data: {
+                DepartmentId: $('#DepartmentId').val(),
+                UserId: $('#UserId').val(),
+                DeactivatedUserId: $('#DeactivatedUserId').val(),
+                Month: $('#Month').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Salary Freezed <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                        var url = $("#RedirectToStatement").val() + "?Month=" + $('#Month').val() + "&flag=false";
+                        location.href = url;
+                    }
+                });
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    function EditSalary(PayoutId) {
+        var paramPub;
+        paramPub = "PId=" + PayoutId ;
+        paramPub = $('#weburl').val() + "/PMS/Payroll/Edit?" + paramPub;
+        $('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+       // window.location.href = paramPub;
+    };
+
+    function DownloadPayslip(PayoutMonth, Year,DepartmentId,EmployeeId) {
+        var url = $("#RedirectToReport").val() + "?PM=" + PayoutMonth + "&Y=" + Year + "&DPId=" + DepartmentId + "&E=" + EmployeeId;
+        window.location.href = url;
+    }
+</script>
+
+
+
+

@@ -1,0 +1,270 @@
+﻿@model PagedList.IPagedList<AJSolutions.Models.CandidateLeadsListView>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "CandidateLeads";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm())
+{
+    @Html.Hidden("Data", @ViewBag.Data as string)
+    <div class="container">
+        <div class="row">
+            <div class="fancy-title title-bottom-border title-right">
+                <h4>Candidate Leads</h4>
+            </div>
+            <div class="col_one_fourth">
+                Search By Name
+                @Html.TextBox("Name", ViewBag.Name as string, new { @class = "form-control", @id = "Name", placeholder = "Name" })
+            </div>
+            <div class="col_one_fourth">
+                Search By Gender
+                @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "form-control", @id = "Gender" })
+            </div>
+            <div class="col_one_fourth">
+                Search By  Category
+                @Html.DropDownList("AllCategory", null, "--- Select Category ---", htmlAttributes: new { @class = "form-control", @id = "AllCategory" })
+            </div>
+            <div class="col_one_fourth col_last">
+                <br /><button type="submit" id="search" class="button button-3d button-mini button-rounded button-teal" title="click here to Search">Search</button>&nbsp;
+                <button class="button button-3d button-mini button-rounded button-teal" id="buttonclear" title="click here to Clear Search">Clear</button>
+            </div>
+        </div>
+        <div class="row">
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                @*<th>S.No</th>*@
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.NameSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Name&nbsp;<span class="icon-sort"></span></a></th>
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.EmailSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Email&nbsp;<span class="icon-sort"></span></a></th>
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.PhoneNumberSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Phone Number&nbsp;<span class="icon-sort"></span></a></th>
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.UserNameSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Candidate Id&nbsp;<span class="icon-sort"></span></a></th>
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.StatusSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Status&nbsp;<span class="icon-sort"></span></a></th>
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.SubmittedOnSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Submitted On&nbsp;<span class="icon-sort"></span></a></th>
+                                <th><a href="@Url.Action("CandidateLeads", "Candidate", new { sortOrder = ViewBag.SourceSortParam, UserName = ViewBag.UserName, Name = ViewBag.Name, EmailId = ViewBag.EmailId, PhoneNumber = ViewBag.PhoneNumber, Status = ViewBag.Status, SubmittedOn = ViewBag.SubmittedOn, Source = ViewBag.Source, page = ViewBag.Page, PageSize = ViewBag.Paging })">Source&nbsp;<span class="icon-sort"></span></a></th>
+                                @if (user.DepartmentId != "ADI")
+                                {
+                                    <th>Edit</th>
+                                }
+                                @if (user.DepartmentId == "ADI")
+                                {                                    
+                                    <th>Actions</th>
+                                }
+                            </tr>
+                            @{
+                                var count = 1;
+                                foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        @*<td>@item.LeadId</td>*@
+                                        <td><a href="@Url.Action("CandidateLeadDetails", "Candidate", new { area = "CMS", LeadId = @item.LeadId })" target="_blank">@item.Name</a></td>
+                                        <td>@item.EmailId</td>
+                                        <td>@item.PhoneNumber</td>
+                                        <td>@item.UserName</td>
+                                        <td>
+                                            @if (item.Status == 0)
+                                            {
+                                                <span>Waiting</span>
+                                            }
+                                            else if (item.Status == 1)
+                                            {
+                                                <span>Approved</span>
+                                            }
+                                            else if (item.Status == 2)
+                                            {
+                                                <span>Rejected</span>
+                                            }
+                                        </td>
+                                        <td>@item.SubmittedOn.ToString("dd-MMM-yyyy")</td>
+                                        <td>@Html.ActionLink(item.SubmittedByName, "ThirdPatyDetails", "DashBoard", new { area = "CMS", CorporateId = item.SubmittedBy }, htmlAttributes: new { target = "_blank" })</td>
+                                        @if (user.DepartmentId != "ADI")
+                                        {
+                                            <td>
+                                                <a href="@Url.Action("LeadDetails", "Candidate", new { area = "CMS", LeadId = @item.LeadId})">Edit</a>/
+                                                <a href="@Url.Action("LeadDetails", "Candidate", new { area = "CMS", LeadId = @item.LeadId, UserAction = "Delete"})">Delete</a>
+                                            </td>
+
+                                        }@if (user.DepartmentId == "ADI")
+                                        {
+                                            
+                                            if (item.Status == 0)
+                                            {
+                                                <td>
+                                                    <nobr>
+                                                        <a href="@Url.Action("ApproveCandidate", "Candidate", new { Area = "CMS", Id = "CND", Lead = item.LeadId })" class="btn btn-default btn-xs" target="_blank">Accept</a>&nbsp;
+                                                        <button type="button" id="Deactivated" class="btn btn-default btn-xs" onclick="RejectCandidate('@item.Name', '@item.LeadId')">Reject</button>
+                                                    </nobr>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                        }
+                                    </tr>
+                                        count++;
+                                }
+                            }
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Candidate Lead(S)<span class="subtitle"></span></h3>
+                    </div>
+                }
+                <ul class="pagination">
+                    <li>@Html.PagedListPager(Model, page => Url.Action("CandidateLeads", new { page, PageSize = ViewBag.Paging }))</li>
+                    <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+                </ul>
+
+            }
+        </div>
+
+
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("CandidateLeads", "Candidate"));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page contain details candidate leads added by you. Herer you can also see the profile of candidate and their status.
+                                                             </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/candidateleadlist.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/candidateleadlist.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script>
+    $(document).ready(function () {
+        if ($("#Data").val() != null && $("#Data").val() != "") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Lead has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var url = $("#RedirectTo").val();
+        location.href = url;
+
+    });
+
+    function RejectCandidate(Name, LeadId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Reject user ' + Name + '?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                //Ajax call to deactivate user
+                $.ajax({
+                    type: "post",
+                    url: "/CMS/Candidate/RejectCandidate",
+                    data: {
+                        LeadId: LeadId
+                    },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+                        if (data == "Succeed:Data saved successfully") {
+                            $.alert({
+                                title: 'Cheers',
+                                content: "Candidate Rejected " + Name + ".",
+                                confirmButton: 'OK',
+                                confirmButtonClass: 'btn btn-primary',
+                                icon: 'fa fa-thumbs-up fa-2x',
+                                animation: 'zoom',
+                                confirm: function () {
+                                    var PageSize = $("#PageSize :selected").val();
+                                    var url = $("#RedirectTo").val();
+                                    location.href = url;
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

@@ -1,0 +1,150 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+
+@{
+    ViewBag.Title = "Candidate Bulk Upload";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Admin")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("BulkUpload", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "CandidateBulkUpload", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.Hidden("Success", ViewBag.result as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Candidate Bulk Upload</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Candidate Bulk Upload</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <label>Select Corporate</label>
+                            @Html.DropDownList("CorporateId", null, "---  Select Corporate ---", htmlAttributes: new { @class = "form-control", id = "CorporateId", placeholder = "Select Client" })
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <center>
+                                <br />
+                                <ul class="process-steps process-3 bottommargin clearfix">
+                                    <li class="active">
+                                        <a href="@Url.Action("DownoladSample", "Candidate")"> <h5>Download Template</h5></a>
+                                        @*<h5>Download Template</h5>*@
+                                    </li>
+                                    <li>
+                                        <span class="i-bordered i-circled divcenter icon-table"></span>
+                                        <h5>Fill Excel sheet</h5>
+                                    </li>
+                                    <li>
+
+                                        <input type="file" name="FileUpload" id="csvFile" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewImage(@Global.MaxSize("CSV"), this, 'CSV')" />
+                                        <h5>Select File to Upload</h5>
+                                        <label id="lblgetfilename"></label>
+                                    </li>
+                                </ul>
+                                <input type="submit" name="Submit" id="Submit" value="Upload" class="btn btn-primary" />
+
+                                <p>@Html.Encode(ViewData["Feedback"])</p>
+
+                                @if (ViewBag.result == "Success")
+                                {
+                                    @ViewBag.SuccessCount <span>uploaded Successfully</span><br />
+                                    @ViewBag.FailureCount <span>Failed</span><br />
+                                    if (@ViewBag.Download == "Yes")
+                                    {
+                                        <a href="~/CMS/Candidate/Download">Download Result</a>
+                                    }
+                                }
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script src="~/Scripts/CustomValidation.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ($('#Success').val() == "Success") {
+            $('.form-process').fadeOut();
+        }
+
+        $('#csvFile').change(function () {
+            var path = $(this).val();
+            if (path != '' && path != null) {
+                var q = path.substring(path.lastIndexOf('\\') + 1);
+                $('#lblgetfilename').html(q);
+            }
+        })
+
+        $('#Submit').click(function () {
+            if ($("#CorporateId").val() == undefined || $('#CorporateId').val() == '') {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select <b>Corporate</b> for upload candidate',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+
+            var fileInput = document.getElementById('csvFile');
+            if (fileInput.files.length == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select <b>file</b> to upload',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+            $('.form-process').fadeIn();
+        });
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

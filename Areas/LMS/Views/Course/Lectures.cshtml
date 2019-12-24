@@ -1,0 +1,106 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@using AJSolutions.DAL;
+@{
+    ViewBag.Title = "Lectures";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<LectureMaster> lecture = ViewData["LectureMaster"] as List<LectureMaster>;
+    int Count = 0;
+    var CountStr = "countdown-ex";
+}
+
+@using (Html.BeginForm("Lectures", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "Lectures", role = "form" }))
+{
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <a href="@Url.Action("LectureMaster", "Course", new { Area = "LMS" })" class="btn btn-default btn-xs" style="float:right" target="_blank">Add Lecture</a><br /><br />
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th>
+                                Lecture Id
+                            </th>
+                            <th>
+                                Lecture Name
+                            </th>
+
+                            <th>
+                                Weightage
+                            </th>
+                            <th>
+                                Read Only
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                        @foreach (var item in lecture)
+                        {
+                            Count = Count + 1;
+                            CountStr = "countdown-ex" + Count;
+                            if (item.IsDelete == false)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.ActionLink(item.LectureId, "LectureDetails", "Course", new { LectureId = item.LectureId }, htmlAttributes: new { target = "_blank" })
+                                        @*@Html.DisplayFor(modelItem => item.LectureId)*@
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LectureName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Weightage)
+                                    </td>
+                                    <td>
+                                        @if (item.Permission == true)
+                                        {
+                                            <span> Yes</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("LectureMaster", "Course", new { LectureId = item.LectureId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a>
+                                        |
+
+                                        @*<a href="@Url.Action("Lectures", "Course", new { LectureId = item.LectureId, UserAction = "Delete" })" title="Delete" id="Remove" onclick="javascript: ConfirmationDialog('@item.LectureId');"><i class="icon-trash"></i></a>*@
+
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.LectureId', 'Delete');" title="Remove"><i class="icon-trash"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        @if (Count == 0)
+                        {
+                            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                                <div class="fbox-icon">
+                                    <i class="icon-thumbs-down2"></i>
+                                </div>
+                                <h3>No Lecture Added<span class="subtitle"></span></h3>
+                            </div>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Lectures", "Course"));
+}
+<script type="text/javascript">  
+
+    function ConfirmationDialogs(LectureId, UserAction) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Remove this Lecture?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-success',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-danger',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'Zoom',
+            confirm: function () {
+
+                var url = $("#RedirectTo").val() + "?LectureId=" + LectureId + "&UserAction=" + UserAction;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+   
+</script>

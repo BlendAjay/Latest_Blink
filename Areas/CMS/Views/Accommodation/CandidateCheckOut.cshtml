@@ -1,0 +1,366 @@
+﻿@model  PagedList.IPagedList<AJSolutions.Models.CheckInCheckOutView>
+@using PagedList.Mvc;
+@using AJSolutions.Models;
+@{
+    UserViewModel userDetails = ViewData["UserProfile"] as UserViewModel;
+    ViewBag.Title = "CheckIn";
+    ViewBag.Title = "CheckOut";
+    if (userDetails.DepartmentId == "ADI")
+    {
+        Layout = " ~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = " ~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm("CandidateCheckOut", "Accommodation", FormMethod.Post, new { @class = "form-horizontal", id = "CandidateCheckOut", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("Status", ViewBag.status as string)
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="page-header">
+                    <div class="page-breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Candidate CheckOut</a></li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="form-process"></div>
+            <h5 class="card-header">Candidate CheckOut</h5>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        <label>Course<small>*</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                            @Html.DropDownList("CourseCode", null, "---  Select Course ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Course", id = "CourseCode" })
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                        <label>Batch<small>*</small></label>
+                        <div class="input-group divcenter" id="Batch">
+                            <span class="input-group-addon"><i class="icon-book3"> </i></span>
+                            @Html.DropDownList("BatchId", null, "---  Select Batch ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Batch", id = "BatchId" })
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 filter-group" style="padding-top:2.4em">
+                        <button type="button" id="btnSearch" class="btn btn-success btn-xs" onclick="SendValue()" title="Search">Submit</button>
+                        <button type="button" class="btn btn-danger btn-xs" onclick="location.href='@Url.Action("CandidateCheckOut", "Accommodation", new { Area = "CMS"})'" title="Clear">Clear</button>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                Search By Name
+                                @Html.TextBox("FilterName", ViewBag.Name as string, new { @class = "form-control", @id = "FilterName", placeholder = "Candidate Name Here.." })
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <br /><a href='#' onclick='javascript:submit();' class="btn btn-success btn-xs">Search</a>&nbsp;
+                                <button class="btn btn-danger btn-xs" id="buttonclear" title="click here to Clear Search">Clear</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped nobottommargin" id="myTable">
+                                    <tr>
+                                        <th><input type='checkbox' id='UserChkAll' name='UserChkAll' value='checkAll' onclick="CheckUncheckAll();" /></th>
+                                        <th><a href="@Url.Action("CandidateCheckOut", "Accommodation", new { CourseCode = ViewBag.Course, BatchId = ViewBag.Batch, sortOrder = ViewBag.NameSortParam, FilterName = ViewBag.Name, page = ViewBag.Page, PageSize = ViewBag.Paging })">Student Name&nbsp;<span class="icon-sort"></span></a></th>
+                                        <th>CheckInDate</th>
+                                        <th>Select Date & Time</th>
+                                    </tr>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td data-title="Parameter">
+                                                <input type="checkbox" id="UserId" name="UserId[]" value="@item.UserId" />
+                                                <input type="hidden" id="Users" name="Users[]" value="@item.UserId" />
+                                            </td>
+                                            <td>@item.Name</td>
+                                            <td>@item.CheckInDate</td>
+                                            <td>
+                                                <input type="text" class=" tleft form-control datetimepicker" placeholder="DD/MM/YYYY" id="CheckOutDate" name="CheckOutDate[]">
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+
+                                <br />
+                                <input type="submit" id="candidateCheckOut" class="btn btn-brand" />
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <ul class="pagination">
+                        <li>@Html.PagedListPager(Model, page => Url.Action("CandidateCheckOut", new { page, PageSize = ViewBag.Paging }))</li>
+                        <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+                    </ul>
+                }
+                else
+                {
+
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h3 class="text-center">No Candidates<span class="subtitle"> Select Course & Batch</span></h3>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    @Html.Hidden("TBatchId", ViewBag.TBatchId as string)
+    @Html.Hidden("RedirectToHome", Url.Action("CandidateCheckOut", "Accommodation"));
+
+
+}
+<br />
+<br />
+<script>
+    $(document).ready(function () {
+        if (($("#Status").val() == "True" || $("#Status").val() == true) && ($("#Status").val() != null && $("#Status").val() != "")) {
+            $.alert({
+                title: 'Cheers',
+                content: 'Candidates CheckIn <b> SUCCESSFUL.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+        else if (($("#Status").val() == "False" || $("#Status").val() == false) && ($("#Status").val() != null && $("#Status").val() != "")) {
+            $.alert({
+                title: 'Oops',
+                content: 'Candidates CheckIn <b> FAILED.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-down fa-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var course = $('#CourseCode :selected').val();
+            var batch = $('#BatchId :selected').val();
+            var url = $("#RedirectToHome").val() + "?CourseCode=" + course + "&BatchId=" + batch + "&PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    function submit() {
+        if ($("#FilterName").val() == null || $("#FilterName").val() == '') {
+            $.alert({
+                title: 'Info',
+                content: 'Enter candidate name',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            return false;
+        }
+        var name = $("#FilterName").val();
+        var course = $('#CourseCode :selected').val();
+        var batch = $('#BatchId :selected').val();
+        var url = $("#RedirectToHome").val() + "?CourseCode=" + course + "&BatchId=" + batch + "&FilterName=" + name;
+        location.href = url;
+    }
+    $('#buttonclear').click(function (e) {
+        e.preventDefault();
+        var course = $('#CourseCode :selected').val();
+        var batch = $('#BatchId :selected').val();
+        var url = $("#RedirectToHome").val() + "?CourseCode=" + course + "&BatchId=" + batch;
+        location.href = url;
+
+    });
+    $(document).ready(function () {
+        $('.form-process').fadeOut();
+        $('#CourseCode').change(function () {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/CMS/Accommodation/GetBatch",
+                data: { CourseCode: $('#CourseCode').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    var batch = "   <span class='input-group-addon'><i class='icon-book3'> </i></span><select class='form-control' id='BatchId'>";
+                    batch = batch + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        batch = batch + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    batch = batch + '</select>';
+                    $('#Batch').html(batch);
+                    if ($('#TBatchId').val() != "0") {
+                        $('#BatchId').val($('#TBatchId').val());
+                    }
+                }
+            });
+        });
+        $('#CourseCode').trigger('change');
+    });
+
+    $("#CandidateCheckOut").validate({
+        submitHandler: function (form) {
+            var userid = "";
+
+            var userid = new Array();
+            $.each($("input[name='UserId[]']"), function () {
+                if ($(this).prop('checked') == true) {
+                    userid.push((this).val());
+                }
+            });
+
+            if (userid == null || userid == "") {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Select & Enter Checkout Date Time',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-down fa-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                return false
+            }
+            var users = new Array();
+            $.each($("input[name='Users[]']"), function () {
+                users.push((this).val());
+            });
+
+            var checkOutDate = new Array();
+            $.each($("input[name='CheckOutDate[]']"), function () {
+                checkOutDate.push($(this).val());
+            });
+
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/CMS/Accommodation/CandidateCheckOut",
+                data: {
+                    UserId: userid,
+                    TBatchId: $('#TBatchId').val(),
+                    CheckOutDate: checkOutDate,
+                    Users: users
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Candidate(s) CheckOut <b> SUCCESSFUL.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val() + "?CourseCode=" + $("#CourseCode").find(":selected").val() + "&BatchId=" + $("#BatchId").find(":selected").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+    function SendValue() {
+        if ($("#CourseCode").val() == null || $("#CourseCode").val() == '') {
+            $.alert({
+                title: 'Info',
+                content: 'Please select Course',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            return false;
+        }
+        if ($("#BatchId").val() == null || $("#BatchId").val() == '') {
+            $.alert({
+                title: 'Info',
+                content: 'Please select Batch',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            return false;
+        }
+        $('.form-process').fadeIn();
+        var batchid = $("#BatchId").find(":selected").val();
+        var coursecode = $("#CourseCode").find(":selected").val();
+
+        var url = "CandidateCheckOut?CourseCode=" + coursecode + "&BatchId=" + batchid;
+        window.location.href = url;
+    }
+
+</script>
+
+<script type="text/javascript">
+    function CheckUncheckAll() {
+
+        if ($("input[name='UserChkAll']").prop('checked') == true) {
+            $.each($("input[name='UserId[]']"), function () {
+                $(this).prop('checked', true);
+            });
+        }
+        else {
+            $.each($("input[name='UserId[]']"), function () {
+                $(this).prop('checked', false);
+            });
+        }
+
+    };
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>

@@ -1,0 +1,45 @@
+﻿
+@{
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+ 
+}
+<style>
+    
+.centeredIIFL {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    font-family: "Times New Roman", Times, serif;
+    font-weight:bold;
+}
+  .centeredNibf {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 25px;
+    font-family: "Times New Roman", Times, serif;
+    font-weight:bold;
+}
+  
+</style>
+
+<div class="container clearfix">
+ @if (ViewBag.CourseCode == "CC201805040001")
+ { 
+
+    <img src="~/images/certi.jpg" />
+    <p class="centeredIIFL">@ViewBag.Name</p>
+ }
+ else
+ {
+    <img src="~/images/NibfCertificate.png" />
+    <p class="centeredNibf">@ViewBag.Name</p> 
+    <p class="centeredNibf" style="top:60%">@ViewBag.CourseName</p>
+ }
+    </div>
+ 
+
+ 

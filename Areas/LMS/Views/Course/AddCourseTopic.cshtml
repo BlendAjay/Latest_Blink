@@ -1,0 +1,195 @@
+﻿@using AJSolutions.Areas.LMS.Models;
+@model COURSETOPICS
+@{
+    ViewBag.Title = "Add Sector Topic";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+
+    AJSolutions.Models.CourseMaster course = ViewData["CourseMaster"] as AJSolutions.Models.CourseMaster;
+    List<TopicMaster> topic = ViewData["TopicMaster"] as List<TopicMaster>;
+    List<COURSETOPICSVIEW> coursetopic = ViewData["COURSETOPICS"] as List<COURSETOPICSVIEW>;
+    int Count = 0;
+    var CountStr = "countdown-ex";
+}
+
+@using (Html.BeginForm("AddCourseTopic", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "AddCourseTopic", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    <div class="container">
+        <div class="row">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h4>Add Topic to @Html.DisplayFor(modelItem => course.CourseName) (@Html.DisplayFor(modelItem => course.CourseCode)@Html.HiddenFor(modelItem => course.CourseCode, htmlAttributes: new { Id = "CourseCode" }))</h4>
+            </div>
+        </div>
+        <div class="col_half">
+            <a href="@Url.Action("TopicMaster", "Course", new { Area = "LMS" })" class="btn btn-default btn-xs" style="float:right" target="_blank">Add Topics</a><br /><br />
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped nobottommargin">
+                    <tr>
+                        <th>
+                            Select
+                        </th>
+                        <th>
+                            Topic Id
+                        </th>
+                        <th>
+                            Topic Name
+                        </th>
+
+                    </tr>
+                    @if (topic != null)
+                    {
+                        foreach (var item in topic)
+                        {
+                            Count = Count + 1;
+                            CountStr = "countdown-ex" + Count;
+                            <tr>
+                                <td data-title="Parameter">
+                                    <input type="checkbox" id="TopicId" name="TopicId[]" value="@item.TopicId" class="required" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TopicName)
+                                </td>
+                                <td>
+                                    @Html.ActionLink(item.TopicId, "TopicDetails", "Course", new { Id = item.TopicId }, htmlAttributes: new { target = "_blank" })
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </table>
+                <br />
+                <input type="submit" id="AddCourseTopic" value="Assign Topic(s)" style="float: right;" class="button button-3d button-rounded button-teal" />
+            </div>
+        </div>
+        <div class="col_half col_last">
+            <br /><br />
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped nobottommargin">
+
+                    <tr>
+
+                        <th>Topic Id</th>
+                        <th>Topic Name</th>
+                        <th>Unassign</th>
+                        <th>Add</th>
+                    </tr>
+                    @if (coursetopic != null)
+                    {
+                        foreach (var item in coursetopic)
+                        {
+                            Count = Count + 1;
+                            CountStr = "countdown-ex" + Count;
+                            <tr>
+
+                                <td>
+                                    @Html.ActionLink(@item.TopicId, "TopicDetails", "Course", new { Id = item.TopicId }, htmlAttributes: new { target = "_blank" })
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TopicName)
+                                </td>
+                                <td>
+                                    @*<a href="@Url.Action("AddCourseTopic", "Course", new { CourseTopicId = item.CourseTopicId, UserAction = "Delete" })" title="Remove"><i class="icon-remove"></i></a>*@
+                                    <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.CourseTopicId', 'Delete');" title="Remove"><i class="icon-remove"></i></a>
+                                </td>
+                                <td><a href="@Url.Action("AddTopicLecture", "Course", new { Area = "LMS", Id = item.TopicId })" class="btn btn-default btn-xs" align="right" target="_blank">Lectures</a></td>
+                            </tr>
+                        }
+                    }
+                </table>
+                @if (Count == 0)
+                {
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Topics Assigned<span class="subtitle"></span></h3>
+                    </div>
+                }
+                <br />
+
+            </div>
+        </div>
+        <br /><br /><br /><br /><br />
+        @if (topic == null && coursetopic == null)
+        {
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-thumbs-down2"></i>
+                </div>
+                <h3>No Topics<span class="subtitle"></span></h3>
+            </div>
+        }
+        @Html.Hidden("RedirectToHome", Url.Action("AddCourseTopic", "Course"))
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("AddCourseTopic", "Course"));
+}
+
+<script>
+    $("#AddCourseTopic").validate({
+        submitHandler: function (form) {
+            var topicid = "";
+
+            $.each($("input[name='TopicId[]']"), function () {
+                if ($(this).prop('checked') == true) {
+                    topicid = topicid + $(this).val() + ",";
+                }
+            });
+
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/LMS/Course/AddCourseTopic",
+                data: {
+                    CourseCode: $('#CourseCode').val(),
+                    TopicSortOrder: $('#TopicSortOrder').val(),
+                    TopicId: topicid,
+                    //TopicId: $('#TopicId').val(),
+                    CourseTopicId: $('#CourseTopicId').val(),
+                    TopicType: $('#TopicType').val()
+
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Topic(s) <b> SUCCESSFULLY.</b> Assigned to  Course',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+
+            });
+
+        }
+    });
+
+    function ConfirmationDialogs(CourseTopicId, UserAction) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Unassign this Topic?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-success',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-danger',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'Zoom',
+            confirm: function (ff) {
+
+                var url = $("#RedirectTo").val() + "?CourseTopicId=" + CourseTopicId + "&UserAction=" + UserAction;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>

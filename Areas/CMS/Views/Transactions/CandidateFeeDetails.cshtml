@@ -1,0 +1,260 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model IEnumerable<AJSolutions.Areas.Candidate.Models.CandidateViewModel>
+@{
+    ViewBag.Title = "Candidate Fee Details";
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    double remaining = 0;
+}
+@using (Html.BeginForm("CandidateFeeDetails", "Transactions", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", id = "CandidateCourse", role = "form" }))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col_half">
+                <label>Select Course</label><br />
+                @Html.DropDownList("CourseCode", null, "---  Select Course ---", htmlAttributes: new { @class = "form-control", id = "CourseCode", placeholder = "Select Course" })
+            </div>
+            <div class="col_half col_last">
+                <label>Select Batch</label><br />
+                @Html.DropDownList("BatchId", null, "---  Select Batch ---", htmlAttributes: new { @class = "form-control", id = "BatchId", placeholder = "Select course batch" })
+            </div>
+            @*<a href="/CMS/Transactions/DownloadCandidateFeeRecord?CourseCode=@Model.FirstOrDefault().CourseCode&BatchId=@Model.FirstOrDefault().BatchId">Download Candidate Fee Record</a>*@
+            @if (ViewBag.Batch != 0 && ViewBag.Course != null && Model.Count() > 0)
+            {
+                <div class="col_half" id="report">
+                    <a href="#" onclick="btnGenerateReport();" title="Click here to add installment">Generate Report</a>
+                </div>
+            }
+        </div>
+        <br />
+        <div class="row">
+            <div class="fancy-title title-bottom-border title-right">
+                <h4>Candidate Fee Details</h4>
+            </div>
+        </div>
+        @if (Model != null)
+        {
+            <div class="table-responsive">
+
+                <table class="table table-striped" id="CandiadateDT">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Candidate Name</th>
+                            @*<th>Course Name</th>
+                                <th>Batch Name</th>*@
+                            <th>Course Fee <br /> (Remaining)/TotalFee</th>
+                            <th>Installment</th>
+                            <th>Fee Setting</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            int a = 1;
+                            foreach (var item in Model)
+                            {
+                                remaining = @item.TotalFeeAmount - @item.PaidAmount;
+                                <tr>
+                                    <td>
+                                        @(a++)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink(item.Name, "CandidateProfile", "Candidate", new { area = "Candidate", UserId = item.UserId }, htmlAttributes: new { target = "_blank" })
+                                    </td>
+                                    <td>(@remaining)/@item.TotalFeeAmount</td>
+                                    <td>
+                                        <a href="#" onclick="PaymentDetails('@item.CourseCode', '@item.BatchId', '@item.UserId');" title="Click here to view payment details">@item.InstallmentId</a>
+                                    </td>
+                                    <td>
+                                        @if (item.PaidAmount <= 0.0)
+                                        {
+                                            <a href="#" onclick="UpdateInstallment('@item.UserId');" title="Click here to add installment">Fee Setting</a>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.Installment</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.PaidAmount < item.TotalFeeAmount)
+                                        {
+                                            if (item.LastInstallmentStatus != "Initiate")
+                                            {
+                                                <a href="@Url.Action("Payment", "Transactions", new { area = "CMS", CandidateId = @item.UserId, BatchId = @item.BatchId, CourseCode = @item.CourseCode })" title="Click here For Payment">Make Payment</a>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-default btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Last Transaction is Not Aproved yet. Approve or Disapprove for next Transaction" data-original-title="" title=""><i class="icon-warning-sign"></i></button>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>Paid</span>
+                                        }
+                                    </td>
+                                </tr>
+                                        remaining = 0;
+                            }
+                        }
+                        else
+                        {
+                            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                                <div class="fbox-icon">
+                                    <i class="icon-thumbs-down2"></i>
+                                </div>
+                                <h3>No Candidate(s)<span class="subtitle"></span></h3>
+                            </div>
+                        }
+                    </tbody>
+                </table>
+            </div><!-- /.table-responsive -->
+
+
+        }
+        else
+        {
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-user3"></i>
+                </div>
+                <h3>Select Course & Batch</h3>
+            </div>
+        }
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="cutoff">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Fee Setting
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <br />
+
+                        </div>
+                        <div class="modal-body" id="cndBody">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="installment">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            Payment Details
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <br />
+
+                        </div>
+                        <div class="modal-body" id="installmentBody">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+    @Html.Hidden("RedirectTo", Url.Action("CandidateFeeDetails", "Transactions", new { area = "CMS" }));
+}
+<script type="text/javascript">
+    $('[data-toggle=popover]').popover();
+</script>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        //$('#datatable1').DataTable();
+
+        $('.form-process').fadeOut();
+        if ($('#Success').val() == "Success") {
+            $.alert({
+                title: 'Info',
+                content: 'Successfully Assigned',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-up2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+
+        $('#CourseCode').change(function () {
+
+            $('.form-process').fadeIn();
+
+            var url = $("#RedirectTo").val() + "?CourseCode=" + $('#CourseCode :selected').val();
+            location.href = url;
+
+        });
+
+        $('#BatchId').change(function () {
+
+            $('.form-process').fadeIn();
+
+            var url = $("#RedirectTo").val() + "?CourseCode=" + $('#CourseCode :selected').val() + "&BatchId=" + $('#BatchId :selected').val();
+            location.href = url;
+
+        });
+    });
+
+
+    function UpdateInstallment(UserId) {
+        var paramPub;
+        var CourseCode = $('#CourseCode :selected').val();
+        var BatchId = $('#BatchId :selected').val();
+        paramPub = "UserId=" + UserId + "&CourseCode=" + CourseCode + "&BatchId=" + BatchId;
+        paramPub = $('#weburl').val() + "/CMS/Transactions/InstallmentDetails?" + paramPub;
+        //$('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $("#cutoff").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+    function btnGenerateReport() {
+        var CourseCode = $('#CourseCode :selected').val();
+        var BatchId = $('#BatchId :selected').val();
+        var url = $('#weburl').val() + "/CMS/Transactions/DownloadCandidateFeeRecord?CourseCode=" + CourseCode + "&BatchId=" + BatchId;
+        location.href = url;
+    }
+
+
+</script>
+<script type="text/javascript">
+
+    function PaymentDetails(CourseCode, BatchId, CandidateId) {
+        var paramPub;
+
+        paramPub = "?CourseCode=" + CourseCode + "&BatchId=" + BatchId + "&CandidateId=" + CandidateId;
+        paramPub = $('#weburl').val() + "/CMS/Transactions/PaymentDetails" + paramPub;
+
+        //$('.form-process').fadeIn();
+        $('#installmentBody').load(paramPub);
+        $("#installment").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

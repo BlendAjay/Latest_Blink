@@ -1,0 +1,150 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model IEnumerable<EndUserTrainingOrder>
+@{
+    ViewBag.Title = "Delete";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<AJSolutions.Models.CourseBatch> Batches = ViewData["Batch"] as List<AJSolutions.Models.CourseBatch>;
+
+}
+@using (Html.BeginForm())
+{
+    <div class="container clearfix">
+        <div class="postcontent nobottommargin clearfix">
+            <h3>End User Training</h3>
+            <div class="tabs tab-nav2  tabs-justify clearfix" id="tabs">
+                <ul class="tab-nav clearfix">
+                    <li id="tabCourseDetails"><a href=" #tabs-1"><nobr>Training Order (@Model.Count())</nobr></a></li>
+                    <li id="tabBatches"><a href="#tabs-2" data-toggle="tab">Training Batches (@Batches.Count())</a></li>
+                </ul>
+                <div class="tab-container">
+                    <div class="tab-content clearfix" id="tabs-1">
+                        <div class="col_full clearfix">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-responsive nobottommargin small">
+                                    <thead>
+                                        <tr>
+                                            <th class="success center">EUTrainingOrderId</th>
+                                            <th class="center success">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            var To = "TRO";
+                                            var EUId = @item.EUTrainingOrderId;
+                                            var year = DateTime.Now.Year;
+                                            var type = @item.TrainingType;
+                                            var finalId = @To + @EUId + type + year;
+                                            <tr>
+                                                <td class="info center">@finalId</td>
+                                                <td class="info center">
+                                                    <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.EUTrainingOrderId');" title="Delete Training Order" class="btn btn-default btn-xs" style="float:right;">Delete</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content clearfix" id="tabs-2">
+                        <div class="col_full clearfix">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-responsive nobottommargin small">
+                                    <thead>
+                                        <tr>
+                                            <th class="success center">Batch</th>
+                                            <th class="center success">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var qitem in Batches)
+                                        {
+                                            <tr>
+                                                <td class="info center">@qitem.BatchName</td>
+                                                <td class="info center">
+                                                    <a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@qitem.BatchName');" title="Deletet Training" class="btn btn-default btn-xs" style="float:right;">Delete</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Hidden("RedirectTo", Url.Action("DeleteTrainingOrder", "Course", new { area = "TMS" }))
+    </div>
+}
+
+<script>
+    function ConfirmationDialogs(TrainingOrderId) {
+        $('.form-process').fadeIn();
+        $.ajax({
+            type: "Post",
+            url: "/TMS/Course/DeleteTrainingOrder",
+            data: {
+                TrainingOrderId: TrainingOrderId,
+                BatchName: BatchName
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('.form-process').fadeOut()
+                if (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Deleted Training Order Successfully',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    function ConfirmationDialogs(Batch) {
+        $('.form-process').fadeIn();
+        $.ajax({
+            type: "Post",
+            url: "/TMS/Course/DeleteTrainingOrder",
+            data: {
+                Batch: Batch
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $('.form-process').fadeOut()
+                if (data) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Deleted Batch Successfully',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+</script>

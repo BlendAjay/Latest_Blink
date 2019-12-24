@@ -1,0 +1,113 @@
+﻿@model IEnumerable<AJSolutions.Models.EducationLevelMaster>
+@{
+    ViewBag.Title = "Education Level";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+
+
+    @Html.AntiForgeryToken()
+
+    <!-- Page Title
+    ============================================= -->
+    <section id="page-title">
+
+        <div class="container clearfix">
+            <h1></h1>
+            <span>Add Education level</span>
+            <ol class="breadcrumb">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Add Education level</a></li>
+            </ol>
+        </div>
+
+    </section><!-- #page-title end -->
+    <!-- Content
+    ============================================= -->
+    <section id="content">
+
+        <div class="content-wrap">
+            <div class="row">
+
+                <form id="widget-subscribe-form" action="include/subscribe-name.php" role="form" method="post" class="nobottommargin" style="position: relative;">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="col-md-1"></div>
+
+
+                    <div class="col-md-4">
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-email2"> </i></span>
+
+                            @if (ViewBag.Action == "Add")
+                            {
+                                @Html.TextBox("EducationLevelName", ViewBag.EducationLevelName as string, new { @class = "form-control", @id = "EducationLevelName", placeholder = "EducationLevelName " })
+                            }
+                            else
+                            {
+                                @Html.TextBox("EducationLevelName", ViewBag.EducationLevelName as string, new { @class = "form-control", @id = "EducationLevelName", placeholder = "EducationLevelName " })
+                            }
+
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" value="Create" style="float: right;" class="button button-3d button-rounded button-teal" />
+                    </div>
+                    <div class="col-md-1"></div>
+                </form>
+            </div>
+        </div>
+        <br />
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="container">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EducationLevelId)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EducationLevelName)
+                                </th>
+                                <th></th>
+                            </tr>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.EducationLevelId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.EducationLevelName)
+                                    </td>
+                                    <td>
+                                        @*@Html.ActionLink("Edit", "Edit", new { id = item.RoleId }) |
+                                            @Html.ActionLink("Details", "Details", new { id = item.RoleId }) |
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.RoleId })*@
+
+
+                                        @Html.ActionLink("Edit", "EducationLevelMaster", "Admin", new { EducationLevelId = item.EducationLevelId, EducationLevelName = item.EducationLevelName, useraction = "Edit" }, new { title = "Edit" })
+
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+    </section><!-- #content end -->
+}
+
+
+

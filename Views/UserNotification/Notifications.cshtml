@@ -1,0 +1,218 @@
+﻿@model IEnumerable<AJSolutions.Models.UserNotificationView>
+@using AJSolutions.Models
+
+@using AJSolutions.DAL
+@{
+    List<EmployeeConfirmation> empconfirm = ViewData["ConfirmEmployee"] as List<EmployeeConfirmation>;
+    ViewBag.Title = "Notifications";
+    AJSolutions.Models.UserViewModel pro = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (pro.Role == "Admin" || pro.Role == "Client")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    if (pro.Role == "Employee")
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+<div class="container">
+
+    <br />
+    @using (Html.BeginForm("Notifications", "UserNotification", FormMethod.Post, new { @class = "form-horizontal", id = "Notifications", role = "form" }))
+    {
+        if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <div class="row">
+                    @if (item.Status == true)
+                    {
+                        if (item.NotificationFor == "Confirmation")
+                        {
+                            <div class="alert alert-success">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <i class="icon-thumbs-up"></i>  <a href="@Url.Action("Notifications","UserNotification",new {Id = item.ReferenceId,NotificationId = item.NotificationId, NType = item.NotificationFor})" class="alert-link">  @item.NotificationBody of @item.Name  </a>
+                                @if (empconfirm.Count >= 0)
+                                {
+                                    var ec = empconfirm.Where(c => c.UserId == item.AssingedBy).ToList();
+
+
+                                    if (item.AssingedBy == ec.Select(e => e.UserId).FirstOrDefault() && ec.Select(e => e.Status == 1).FirstOrDefault())
+                                    {
+                                        <a class=" right-icon" style="float:right">Confirmed</a>
+                                    }
+                                    else if (item.AssingedBy == ec.Select(e => e.UserId).FirstOrDefault() && ec.Select(e => e.Status == 2).FirstOrDefault())
+                                    {
+                                        <a class="right-icon" style="float:right;color:red">Rejected</a>
+                                    }
+                                    else if (item.AssingedBy == ec.Select(e => e.UserId).FirstOrDefault() && ec.Select(e => e.Status == 3).FirstOrDefault())
+                                    {
+                                        <a class="right-icon" style="float:right;color:blue">Extended</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn-sm btn-success right-icon" style="float:right" onclick="ConfirmationPopUp('@item.AssingedBy')">Confirm</a>
+                                    }
+
+
+                                }
+                                <br />
+                            </div>
+
+                        }
+                        else if (item.NotificationFor == "EmpConfirmed")
+                        {
+                            
+                                <div class="alert alert-success">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <i class="icon-thumbs-up"></i>  <a href="@Url.Action("Notifications","UserNotification",new {Id = item.ReferenceId,NotificationId = item.NotificationId, NType = item.NotificationFor})" class="alert-link">  @item.NotificationBody  </a>
+                                    @*<a class="btn-sm btn-success right-icon" style="margin-left:500px" onclick="DownloadLetter('@item.AssingedTo',''@item.AssingedBy')">Download</a>*@
+                                    @if (ViewBag.cdate <= ViewBag.Date)
+                                    {
+                                        <a class="btn-sm btn-success right-icon" style="float:right" href="/CMS/User/DownloadOfferletter?SubscriberId=@item.AssingedBy">Download</a>
+                                    }
+                                    else
+                                    {
+                                        <p>You can download your confirmation letter on - @ViewBag.cdate </p>
+                                    }
+                                    <br />
+                                </div>
+                            
+                        }
+                        else if (item.NotificationFor == "RejectedConfirmation")
+                        {
+
+                            <div class="alert alert-success">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <i class="icon-thumbs-up"></i>  <a href="@Url.Action("Notifications","UserNotification",new {Id = item.ReferenceId,NotificationId = item.NotificationId, NType = item.NotificationFor})" class="alert-link">  @item.NotificationBody of @item.Name  </a>
+                                <br />
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="alert alert-success">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <i class="icon-thumbs-up"></i>  <a href="@Url.Action("Notifications","UserNotification",new {Id = item.ReferenceId,NotificationId = item.NotificationId, NType = item.NotificationFor})" class="alert-link">@item.Name  @item.NotificationBody  </a>
+                                <br />
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="row">
+                    @if (item.Status != true)
+                    {
+                        if (item.NotificationFor == "Confirmation")
+                        {
+                            <div class="alert alert-info">
+                                <span type="button" class="label label-danger bnews-title" data-dismiss="alert" aria-hidden="true">unread </span><a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.NotificationId', 'Delete');" title="Remove" class="close"><i class="icon-remove"></i></a>
+                                <i class="icon-thumbs-up"></i> <a href="@Url.Action("Notifications", "UserNotification", new {Id = item.ReferenceId, NotificationId = item.NotificationId, NType = item.NotificationFor })" class="alert-link"> @item.NotificationBody On Date @item.ViewTime</a>
+
+
+                                <br />
+                            </div>
+
+                        }
+                        else if (item.NotificationFor == "EmpConfirmed")
+                        {
+
+                            <div class="alert alert-info">
+                                <span type="button" class="label label-danger bnews-title" data-dismiss="alert" aria-hidden="true">unread </span><a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.NotificationId', 'Delete');" title="Remove" class="close"><i class="icon-remove"></i></a>
+                                <i class="icon-thumbs-up"></i> <a href="@Url.Action("Notifications", "UserNotification", new {Id = item.ReferenceId, NotificationId = item.NotificationId, NType = item.NotificationFor })" class="alert-link"> @item.NotificationBody On Date @item.ViewTime</a>
+                                @if (ViewBag.cdate <= ViewBag.Date)
+                                {
+                                    <a class="btn-sm btn-success right-icon" style="float:right" href="/CMS/User/DownloadOfferletter?SubscriberId=@item.AssingedBy">Download</a>
+                                }
+                                else
+                                {
+
+                                }
+                                <br />
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <span type="button" class="label label-danger bnews-title" data-dismiss="alert" aria-hidden="true">unread </span><a href="#" id="Remove" onclick="javascript: ConfirmationDialogs('@item.NotificationId', 'Delete');" title="Remove" class="close"><i class="icon-remove"></i></a>
+                                <i class="icon-thumbs-up"></i> <a href="@Url.Action("Notifications", "UserNotification", new {Id = item.ReferenceId, NotificationId = item.NotificationId, NType = item.NotificationFor })" class="alert-link">@item.Name @item.NotificationBody On Date @item.ViewTime</a>
+
+                                <br />
+                            </div>
+                        }
+
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-thumbs-down2"></i>
+                </div>
+                <h3>No Notifications<span class="subtitle"></span></h3>
+            </div>
+        }
+        <div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="ConfirmE">
+            <div class="form-process"></div>
+            <div class="modal-dialog modal-md">
+                <div class="modal-body">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Would you like to confirm </h4>
+                            <br />
+                        </div>
+                        <div class="modal-body" id="cndBody">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*@Html.Hidden("RedirectTo", Url.Action("Notifications", "UserNotification"))
+            <input type="submit" id="btnSubmit" value="submit" hidden />
+            @Html.Hidden("NotificationId", string.Empty)*@
+        //onclick="SubmitData(@item.NotificationId)"
+        //@Url.Action("Notifications", "UserNotification", new { NotificationId = item.NotificationId }) class="alert-link"
+        <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+    }
+    @Html.Hidden("RedirectTo", Url.Action("Notifications", "UserNotification"))
+</div>
+<script>
+    function ConfirmationDialogs(NotificationId, UserAction) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to Delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-success',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-danger',
+            icon: 'fa fa-thumbs-up fa-2x',
+            animation: 'Zoom',
+            confirm: function () {
+
+                var url = $("#RedirectTo").val() + "?NotificationId=" + NotificationId + "&UserAction=" + UserAction;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+    function ConfirmationPopUp(a) {
+        var paramPub;
+        paramPub = "UserId=" + a;
+        paramPub = $('#weburl').val() + "/CMS/User/ConfirmEmployee?" + paramPub;
+        $('.form-process').fadeIn();
+        $('#cndBody').load(paramPub);
+        $('.form-process').fadeOut();
+        $("#ConfirmE").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+
+    }
+    function DownloadLetter() {
+
+    }
+</script>

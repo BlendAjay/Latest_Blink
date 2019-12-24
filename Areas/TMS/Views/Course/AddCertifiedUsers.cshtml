@@ -1,0 +1,482 @@
+﻿@model AJSolutions.Models.OPSData
+@{
+    ViewBag.Title = "Add Certified Users";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role == "Client")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    }
+}
+@using (Html.BeginForm("AddCertifiedUsers", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "AddCertifiedUsers", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    if (Model != null)
+    {
+        @Html.Hidden("CertifiedUsersId", Model.CertifiedUsersId)
+    }
+    <div class="container">
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add OPS</h4>
+                </div>
+                <div class="row">
+                    <div class="col_half">
+                        <label>Name of Circle</label>
+                        <select name="CircleName" id="CircleName" tabindex="9" class="form-control required">
+                            @if (string.IsNullOrEmpty(Model.CircleName))
+                            {
+                                <option value="" selected="selected">-- Select --</option>
+                            }
+                            else
+                            {
+                                <option value="">-- Select --</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "ANDHRA PRADESH")
+                            {
+                                <option value="ANDHRA PRADESH" selected="selected">Andhra Pradesh</option>
+                            }
+                            else
+                            {
+                                <option value="ANDHRA PRADESH">Andhra Pradesh</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "ASSAM")
+                            {
+                                <option value="ASSAM" selected="selected">Assam</option>
+                            }
+                            else
+                            {
+                                <option value="ASSAM">Assam</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "BIHAR")
+                            {
+                                <option value="BIHAR" selected="selected">Bihar</option>
+                            }
+                            else
+                            {
+                                <option value="BIHAR">Bihar</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "CHATTISGARH")
+                            {
+                                <option value="CHATTISGARH" selected="selected">Chattisgarh</option>
+                            }
+                            else
+                            {
+                                <option value="CHATTISGARH">Chattisgarh</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "DELHI")
+                            {
+                                <option value="DELHI" selected="selected">Delhi</option>
+                            }
+                            else
+                            {
+                                <option value="DELHI">Delhi</option>
+                            }@if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "GUJARAT")
+                            {
+                                <option value="GUJARAT" selected="selected">Gujarat</option>
+                            }
+                            else
+                            {
+                                <option value="GUJARAT">Gujarat</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "HARYANA")
+                            {
+                                <option value="HARYANA" selected="selected">Haryana</option>
+                            }
+                            else
+                            {
+                                <option value="HARYANA">Haryana</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "HIMACHAL PRADESH")
+                            {
+                                <option value="HIMACHAL PRADESH" selected="selected">Himachal Pradesh</option>
+                            }
+                            else
+                            {
+                                <option value="HIMACHAL PRADESH">Himachal Pradesh</option>
+                            }@if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "JAMMUKASHMIR")
+                            {
+                                <option value="Jammukashmir" selected="selected">Jammukashmir</option>
+                            }
+                            else
+                            {
+                                <option value="Jammukashmir">Jammukashmir</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "JHARKHAND")
+                            {
+                                <option value="JHARKHAND" selected="selected">Jharkhand</option>
+                            }
+                            else
+                            {
+                                <option value="JHARKHAND">Jharkhand</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "KARNATAKA")
+                            {
+                                <option value="KARNATAKA" selected="selected">Karnataka</option>
+                            }
+                            else
+                            {
+                                <option value="KARNATAKA">Karnataka</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "KERALA")
+                            {
+                                <option value="KERALA" selected="selected">Kerala</option>
+                            }
+                            else
+                            {
+                                <option value="KERALA">Kerala</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "MADHYA PRADESH")
+                            {
+                                <option value="MADHYA PRADESH" selected="selected">Madhya Pradesh</option>
+                            }
+                            else
+                            {
+                                <option value="MADHYA PRADESH">Madhya Pradesh</option>
+                            }@if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "MAHARASHTRA")
+                            {
+                                <option value="MAHARASHTRA" selected="selected">Maharashtra</option>
+                            }
+                            else
+                            {
+                                <option value="MAHARASHTRA">Maharashtra</option>
+                            }@if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "NORTH EASTERN")
+                            {
+                                <option value="NORTH EASTERN" selected="selected">North Eastern</option>
+                            }
+                            else
+                            {
+                                <option value="NORTH EASTERN">North Eastern</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "ODISHA")
+                            {
+                                <option value="ODISHA" selected="selected">Odisha</option>
+                            }
+                            else
+                            {
+                                <option value="ODISHA">Odisha</option>
+                            }@if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "PUNJAB")
+                            {
+                                <option value="PUNJAB" selected="selected">Punjab</option>
+                            }
+                            else
+                            {
+                                <option value="PUNJAB">Punjab</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "RAJASTHAN")
+                            {
+                                <option value="RAJASTHAN" selected="selected">Rajasthan</option>
+                            }
+                            else
+                            {
+                                <option value="RAJASTHAN">Rajasthan</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "TAMILNADU")
+                            {
+                                <option value="TAMILNADU" selected="selected">Tamilnadu</option>
+                            }
+                            else
+                            {
+                                <option value="TAMILNADU">Tamilnadu</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "UTTAR PRADESH")
+                            {
+                                <option value="UTTAR PRADESH" selected="selected">Uttar Pradesh</option>
+                            }
+                            else
+                            {
+                                <option value="UTTAR PRADESH">Uttar Pradesh</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "UTTARAKHAND")
+                            {
+                                <option value="UTTARAKHAND" selected="selected">Uttarakhand</option>
+                            }
+                            else
+                            {
+                                <option value="UTTARAKHAND">Uttarakhand</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "WEST BENGAL")
+                            {
+                                <option value="WEST BENGAL" selected="selected">West Bengal</option>
+                            }
+                            else
+                            {
+                                <option value="WEST BENGAL">West Bengal</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.CircleName) && Model.CircleName.ToUpper() == "TELENGANA")
+                            {
+                                <option value="TELENGANA" selected="selected">Telangana</option>
+                            }
+                            else
+                            {
+                                <option value="TELENGANA">Telangana</option>
+                            }
+
+                        </select>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.IPPBSOLID, "IPPB SOL ID")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                            @Html.EditorFor(model => model.IPPBSOLID, new { htmlAttributes = new { @class = "form-control required", id = "IPPBSOLID", @Placeholder = "Enter IPPB SOL ID" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IPPBSOLID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.IPPBSolName, "IPPB Sol Name")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                            @Html.EditorFor(model => model.IPPBSolName, new { htmlAttributes = new { @class = "form-control required", id = "IPPBSolName", @Placeholder = "Enter IPPB Sol Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IPPBSolName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.FacilityID, "Facility ID")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-building"> </i></span>
+                            @Html.EditorFor(model => model.FacilityID, new { htmlAttributes = new { @class = "form-control required", id = "FacilityID", minlength = 13, maxlength = 13, @Placeholder = "Enter Facility ID" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FacilityID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        <label>Faclity Type</label>
+                        <select name="FacilityType" id="FacilityType" tabindex="9" class="form-control required">
+                            @if (string.IsNullOrEmpty(Model.FacilityType))
+                            {
+                                <option value="" selected="selected">-- Select --</option>
+                            }
+                            else
+                            {
+                                <option value="">-- Select --</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.FacilityType) && Model.FacilityType == "HO")
+                            {
+                                <option value="HO" selected="selected">HO</option>
+                            }
+                            else
+                            {
+                                <option value="HO">HO</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.FacilityType) && Model.FacilityType == "SO")
+                            {
+                                <option value="SO" selected="selected">SO</option>
+                            }
+                            else
+                            {
+                                <option value="SO">SO</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.FacilityType) && Model.FacilityType == "BO")
+                            {
+                                <option value="BO" selected="selected">BO</option>
+                            }
+                            else
+                            {
+                                <option value="BO">BO</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.EmpID, "Employee Id")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                            @Html.EditorFor(model => model.EmpID, new { htmlAttributes = new { @class = "form-control", id = "EmpID", @Placeholder = "Enter Employee Id" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.EmpID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.FullName, "Full Name")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                            @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control required", @id = "FullName", @Placeholder = "Enter Full Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.MobileNumber, "Mobile Number")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control required", @id = "MobileNumber", @Placeholder = "Enter Mobile Number" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.EmailID, "Email ID")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                            @Html.EditorFor(model => model.EmailID, new { htmlAttributes = new { @class = "form-control", id = "EmailID", @Placeholder = "Enter Email ID" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.EmailID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.EmployeeDesignation, "Employee Designation")
+                        <select name="EmployeeDesignation" id="EmployeeDesignation" tabindex="9" class="form-control required">
+                            @if (string.IsNullOrEmpty(Model.EmployeeDesignation))
+                            {
+                                <option value="" selected="selected">-- Select --</option>
+                            }
+                            else
+                            {
+                                <option value="">-- Select --</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.EmployeeDesignation) && Model.EmployeeDesignation == "PostMen")
+                            {
+                                <option value="PostMen" selected="selected">PostMen</option>
+                            }
+                            else
+                            {
+                                <option value="PostMen">PostMen</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.EmployeeDesignation) && Model.EmployeeDesignation == "GDS")
+                            {
+                                <option value="GDS" selected="selected">GDS</option>
+                            }
+                            else
+                            {
+                                <option value="GDS">GDS</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.EmployeeDesignation) && Model.EmployeeDesignation == "PA")
+                            {
+                                <option value="PA" selected="selected">PA</option>
+                            }
+                            else
+                            {
+                                <option value="PA">PA</option>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.EmployeeDesignation) && Model.EmployeeDesignation == "Super User")
+                            {
+                                <option value="Super User" selected="selected">Super User</option>
+                            }
+                            else
+                            {
+                                <option value="Super User">Super User</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.ReportingOfficerName, "Reporting Officer Name")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                            @Html.EditorFor(model => model.ReportingOfficerName, new { htmlAttributes = new { @class = "form-control required", id = "ReportingOfficerName", @Placeholder = "Enter Reporting Officer Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ReportingOfficerName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.ReportingOfficerEmpID, "Reporting Officer Employee Id")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                            @Html.EditorFor(model => model.ReportingOfficerEmpID, new { htmlAttributes = new { @class = "form-control required", id = "ReportingOfficerEmpID", @Placeholder = "Enter Reporting Officer EmpID" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ReportingOfficerEmpID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.ReportingOfficerDesignation, "Reporting Officer Designation")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                            @Html.EditorFor(model => model.ReportingOfficerDesignation, new { htmlAttributes = new { @class = "form-control required", id = "ReportingOfficerDesignation", @Placeholder = "Enter Reporting Officer Designation" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ReportingOfficerDesignation, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.Reporting_ASP_IPO_Name, "Reporting ASP / IPO Name")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                            @Html.EditorFor(model => model.Reporting_ASP_IPO_Name, new { htmlAttributes = new { @class = "form-control required", id = "Reporting_ASP_IPO_Name", @Placeholder = "Enter Reporting ASP / IPO Name" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Reporting_ASP_IPO_Name, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.Reporting_ASP_IPO_EmpID, "Reporting ASP / IPO Employee Id")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-graduation"> </i></span>
+                            @Html.EditorFor(model => model.Reporting_ASP_IPO_EmpID, new { htmlAttributes = new { @class = "form-control required", id = "Reporting_ASP_IPO_EmpID", @Placeholder = "Enter Reporting ASP / IPO EmpID" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Reporting_ASP_IPO_EmpID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.DOP_SOL_ID, "DOP SOL ID")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-line2-speech"> </i></span>
+                            @Html.EditorFor(model => model.DOP_SOL_ID, new { htmlAttributes = new { @class = "form-control required", id = "DOP_SOL_ID", @Placeholder = "Enter DOP SOL ID" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.DOP_SOL_ID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_one_third">
+                        @Html.LabelFor(model => model.IsCertified, "IsCertified")
+                        @Html.CheckBoxFor(model => model.IsCertified, new { htmlAttributes = new { @class = "form-control", @id = "IsCertified" } })
+                        @Html.ValidationMessageFor(model => model.IsCertified, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_one_third">
+                        @Html.LabelFor(model => model.IsAvailableLaunch, "End-User available for Launch")
+                        @Html.CheckBoxFor(model => model.IsAvailableLaunch, new { htmlAttributes = new { @class = "form-control", @id = "IsMobileDevice" } })
+                        @Html.ValidationMessageFor(model => model.IsAvailableLaunch, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_one_third col_last">
+                        @Html.LabelFor(model => model.IsMobileDevice, "Mobile Device Available")
+                        @Html.CheckBoxFor(model => model.IsMobileDevice, new { htmlAttributes = new { @class = "form-control", @id = "IsMobileDevice" } })
+                        @Html.ValidationMessageFor(model => model.IsMobileDevice, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_full">
+                        @Html.LabelFor(model => model.Comments, "Enter your Comments", htmlAttributes: new { @class = "control-label" })<small>*</small>
+                        @Html.TextAreaFor(model => model.Comments, 5, 124, htmlAttributes: new { @class = "form-control ", id = "Comments", @placeholder = "Comments here.." })
+                        <div id="textarea_feedback" class="text-danger"></div>
+                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+
+                    </div>
+                    <input type="submit" id="AddCertifiedUsers" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+    <br /><br />
+    @Html.Hidden("RedirectTo", Url.Action("CertifiedUsers", "Course", new { area = "TMS" }))
+
+
+}
+
+
+<script type="text/javascript">
+
+
+
+    $("#AddCertifiedUsers").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

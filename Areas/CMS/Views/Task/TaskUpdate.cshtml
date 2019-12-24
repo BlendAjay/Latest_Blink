@@ -1,0 +1,145 @@
+﻿@model AJSolutions.Models.TaskMaster
+@{
+    ViewBag.Title = "TaskUpdate";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @*<section id="page-title">
+
+            @Html.AntiForgeryToken()
+            <div class="container clearfix">
+                <h1></h1>
+                <span>Task Details</span>
+                <ol class="breadcrumb">
+                    <li><a href="@Url.Action("Index", "Admin", new { Area = "Admin" })">Home</a></li>
+                    <li style="color:#dc0e0e">Task</li>
+                </ol>
+            </div>
+
+        </section>*@<!-- #page-title end -->
+
+    <section id="content">
+
+        <div class="content-wrap">
+
+            <div class="container">
+
+                <div class="row">
+
+                    <form id="widget-subscribe-form" action="include/subscribe-name.php" role="form" method="post" class="nobottommargin" style="position: relative;">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="col-md-4" style="padding: 20px;">
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Job Order Number</i></span>
+                                @Html.DropDownList("JobOrderNumber", ViewBag.JobOrderList as SelectList, "--- Select Job Order Number ---", htmlAttributes: new { @readonly = true, @class = "form-control", @id = "JobOrderNumber", placeholder = "Enter Your Job Order Number" })
+                            </div>
+                            <br>
+
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Task Type</i></span>
+                                @Html.DropDownList("TaskTypeId", ViewBag.JobOrderTypeList as SelectList, "--- Select Task Type ---", htmlAttributes: new { @readonly = true, @class = "form-control", @id = "TaskTypeId", placeholder = "Enter Your TaskTypeId" })
+                            </div>
+                            <br>
+
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                                @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "Enter Your Name" } })
+                                @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "Enter Your Name" } })
+                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Start Date</i></span>
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "MM-DD-YYYY" } })
+                                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            
+                        </div>
+
+
+
+                        <div class="col-md-4" style="padding: 20px;">
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Duration</i></span>
+                                @Html.EditorFor(model => model.Duration, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "Duration" } })
+                                @Html.ValidationMessageFor(model => model.Duration, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                                @Html.EditorFor(model => model.Venue, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "Venue" } })
+                                @Html.ValidationMessageFor(model => model.Venue, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Invoice Frequency</i></span>
+                                @Html.EditorFor(model => model.InvoiceFrequency, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "InvoiceFrequency" } })
+                                @Html.ValidationMessageFor(model => model.InvoiceFrequency, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "City" } })
+                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                                @Html.TextBox("State", ViewBag.State as string, htmlAttributes: new { @readonly = true, @class = "form-control", @id = "State", placeholder = "Enter State" })
+                                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            
+                        </div>
+
+
+
+                        <div class="col-md-4" style="padding: 20px;">
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "Country" } })
+                                @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Task Status</i></span>
+                                @Html.DropDownList("TaskStatus", ViewBag.TaskStatusList as SelectList,"--- Select Task Status ---", htmlAttributes: new { @class = "form-control", @id = "TaskStatus", placeholder = "Enter Your Task Status" })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Assigned To</i></span>
+                                @Html.DropDownList("AssignedTo", ViewBag.AssignedToList as SelectList,"--- Select Assigned To ---", htmlAttributes: new { @readonly = true, @class = "form-control", @id = "AssignedTo", placeholder = "Enter AssignedTo " })
+                            </div>
+                            <br>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-email2"> Task Amount</i></span>
+                                @Html.EditorFor(model => model.TaskAmount, new { htmlAttributes = new { @readonly = true, @class = "form-control", placeholder = "TaskAmount" } })
+                                @Html.ValidationMessageFor(model => model.TaskAmount, "", new { @class = "text-danger" })
+                            </div>
+                            <br>
+
+                            @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+                            @Html.Hidden("TaskId", ViewBag.TaskId as string)
+                            <input type="submit" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" id="SubmitForm" />
+                        </div>
+                    </form>
+                    <div class="col-md-1"></div>
+                </div>
+
+                <div class="line"></div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+
+    </section>
+}
+
+
+

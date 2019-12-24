@@ -1,0 +1,216 @@
+﻿@using AJSolutions.Models;
+@model LanguagesView
+@{
+    ViewBag.Title = "Languages";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    IEnumerable<LanguagesView> language = ViewData["Language"] as IEnumerable<LanguagesView>;
+}
+
+@using (Html.BeginForm("Languages", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "Languages", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Result", ViewBag.Data as string)
+    if (Model != null)
+    {
+        @Html.Hidden("UserLanguageId", Model.UserLanguageId)
+    }
+    <div class="container">
+
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Languages</h4>
+                </div>
+                <div class="col_full">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="table-responsive">
+                        <table id="dataTable" class="table table-bordered table-striped">
+                            <thead>
+                                <!-------------------Title Section---------------------->
+                                <tr>
+                                    <th class="strong">Language</th>
+                                    <th class="strong">Read</th>
+                                    <th class="strong">Write</th>
+                                    <th class="strong">Speak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-------------------First Language Section---------------------->
+                                <tr>
+
+                                    <td data-title="Language">
+                                        @Html.DropDownList("LanguageId", null, "---Select Language---", htmlAttributes: new { @class = "sm-form-control required", @id = "Language" })
+                                        @Html.ValidationMessageFor(model => model.LanguageId, "", new { @class = "text-danger" })
+                                    </td>
+
+                                    <td data-title="Read">
+                                        @Html.CheckBoxFor(model => model.Read, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Read, "", new { @class = "text-danger" })
+                                    </td>
+                                    <td data-title="Write">
+                                        @Html.CheckBoxFor(model => model.Write, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Write, "", new { @class = "text-danger" })
+                                    </td>
+                                    <td data-title="Speak">
+                                        @Html.CheckBoxFor(model => model.Speak, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Speak, "", new { @class = "text-danger" })
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <input type="submit" id="language" value="Save" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>
+
+                <br />
+                @if (language != null)
+                {
+                    <div class="col_full">
+                        <div class="fancy-title title-bottom-border">
+                            <h4>Languages Known</h4>
+                        </div>
+                        <br />
+                        <div class="table-responsive">
+                            <table id="dataTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <!-------------------Title Section---------------------->
+                                    <tr>
+                                        <th class="strong">Language</th>
+                                        <th class="strong">Read</th>
+                                        <th class="strong">Write</th>
+                                        <th class="strong">Speak</th>
+                                        <th class="strong">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-------------------First Language Section---------------------->
+                                    @foreach (var item in language)
+                                    {
+                                        <tr>
+                                            <td data-title="Language">
+                                                @Html.DisplayFor(modelItem => item.Language)
+                                            </td>
+                                            <td data-title="Read">
+                                                @Html.DisplayFor(modelItem => item.ReadLanguage)
+                                            </td>
+                                            <td data-title="Write">
+                                                @Html.DisplayFor(modelItem => item.Write)
+                                            </td>
+                                            <td data-title="Speak">
+                                                @Html.DisplayFor(modelItem => item.Speak)
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Edit", "Languages", "Candidate", new { UserLanguageId = item.UserLanguageId, UserAction = "Edit" }, new { title = "Edit" })
+                                                |
+                                                @Html.ActionLink("Delete", "Languages", "Candidate", new { UserLanguageId = item.UserLanguageId, UserAction = "Delete" }, new { title = "Delete" })
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("Languages", "Candidate"));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page gives facility of adding languages known by the candidate.                         </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/language.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/language.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($("#Result").val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Language has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    $("#Languages").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

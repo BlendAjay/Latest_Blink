@@ -1,0 +1,482 @@
+﻿@model AJSolutions.Models.TrackerReportView
+@{
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    ViewBag.Title = "UserFeedbackStatus";
+}
+@using (Html.BeginForm("UserFeedbackStatus", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "UserFeedbackStatus", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="fancy-title title-bottom-border">
+                <h4>IPPB Tracker</h4>
+            </div>
+            <div class="row">
+                <div class="fancy-title title-dotted-border title-center">
+                    <h4><span>Wave:</span></h4>
+                </div>
+                <div class="clear"></div>
+                <div class="fancy-title title-dotted-border title-center">
+                    <h4><span>General Information</span></h4>
+                </div>
+                <div class="col_half">
+                    <label>Name of Circle</label>
+                    <span>@Model.Answer1</span>
+                </div>
+                <div class="col_half col_last">
+                    <label>Name of IPPB Branch</label>
+                    <span>@Model.Answer2</span>
+                </div>
+                <div class="col_half ">
+                    <label>Training  Order Issued in Prescribed Format</label>
+                    <span>@Model.Answer3</span>
+                </div>
+                <div class="clear"></div>
+                <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Number Of Candidates:</div>
+                <div class="col_half">
+                    <label>Postal Assisstant</label>
+                    <span>@Model.Answer4</span>
+                </div>
+                <div class="col_half col_last">
+                    <label>GDS</label>
+                    <span>@Model.Answer5</span>
+                </div>
+                <div class="col_half">
+                    <label>Postmen</label>
+                    <span>@Model.Answer6</span>
+                </div>
+                <div class="col_half col_last">
+                    <label>Super Users</label>
+                    <span>@Model.Answer7</span>
+                </div>
+                <div class="clear"></div>
+                <div class="acctitle"></div>
+                <div class="col_half ">
+                    <label>User IDs checked</label>
+                    <span>@Model.Answer8</span>
+                </div>
+
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h4><span>Training Location</span></h4>
+                    </div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>WCTC</div>
+
+                    <div class="col_half ">
+                        <label>Name of the Office</label>
+                    <span>@Model.Answer9</span>
+                </div>
+                <div class="col_half col_last">
+                        <label>Division</label>
+                    <span>@Model.Answer10</span>
+                </div>
+                    <div class="col_half ">
+                        <label>Town / City </label>
+                    <span>@Model.Answer11</span>
+                </div>
+                <div class="col_half col_last">
+                        <label>Circle </label>
+                    <span>@Model.Answer12</span>
+                </div>
+                    <div class="clear"></div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Other Location 1</div>
+
+                <div class="col_half ">
+                        <label>Name of the Office</label>
+                    <span>@Model.Answer13</span>
+                </div>
+                <div class="col_half col_last">
+                        <label>Division</label>
+                    <span>@Model.Answer14</span>
+                </div>
+                    <div class="col_half ">
+                        <label>Town / City </label>
+                    <span>@Model.Answer15</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>Circle </label>
+                    <span>@Model.Answer16</span>
+                </div>
+                    <div class="clear"></div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Other Location 2</div>
+
+                    <div class="col_half ">
+                        <label>Name of the Office</label>
+                    <span>@Model.Answer17</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>Division</label>
+                    <span>@Model.Answer18</span>
+                </div>
+                    <div class="col_half ">
+                        <label>Town / City </label>
+                    <span>@Model.Answer19</span>
+                </div>
+                <div class="col_half col_last">
+                        <label>Circle </label>
+                        <span>@Model.Answer20</span>
+                    </div><div class="clear"></div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Other Location 3</div>
+
+                    <div class="col_half ">
+                        <label>Name of the Office</label>
+                    <span>@Model.Answer21</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>Division</label>
+                    <span>@Model.Answer22</span>
+                </div>
+                    <div class="col_half ">
+                        <label>Town / City </label>
+                    <span>@Model.Answer23</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>Circle </label>
+                    <span>@Model.Answer24</span>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col_half">
+                        <label>Reckonn is accessible at the Training Location</label>
+                    <span>@Model.Answer25</span>
+                </div>
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>SPOC - IPPB:</div>
+                <div class="col_half">
+                        <label>Name </label>
+                        <span>@Model.Answer26</span>
+                </div>
+                <div class="col_half col_last">
+                        <label>Designation </label>
+                        <span>@Model.Answer27</span>
+                </div>
+                <div class="col_half">
+                        <label>Contact Number</label>
+                        <span>@Model.Answer28</span>
+                </div>
+                <div class="col_half col_last">
+                        <label>E-Mail </label>
+                        <span>@Model.Answer29</span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h4><span>Master Trainer Certified For</span></h4>
+                    </div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>PA</div>
+                    <div class="col_half ">
+                        <label>Name </label>
+                    <span>@Model.Answer30</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>Designation </label>
+                    <span>@Model.Answer31</span>
+                </div>
+                    <div class="col_half ">
+                        <label>Contact Number</label>
+                    <span>@Model.Answer32</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>E-Mail </label>
+                    <span>@Model.Answer33</span>
+                </div>
+                    <div class="clear"></div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>GDS_PostMen</div>
+
+                    <div class="col_half ">
+                        <label>Name </label>
+                    <span>@Model.Answer34</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>Designation </label>
+                    <span>@Model.Answer35</span>
+                </div>
+                    <div class="col_half ">
+                        <label>Contact Number</label>
+                        <span>@Model.Answer36</span>
+                </div>
+                    <div class="col_half col_last">
+                        <label>E-Mail </label>
+                    <span>@Model.Answer37</span>
+                </div>
+            </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h4><span>End User</span></h4>
+                    </div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Number of Users:</div>
+                    <div class="col_half">
+                        <label>Number of PA</label>
+                        <span>@Model.Answer38</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Duration for PA / Super User Training</label>
+                        <span>@Model.Answer39</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Number of GDS</label>
+                        <span>@Model.Answer40</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Duration for GDS Training</label>
+                        <span>@Model.Answer41</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Number of Postmen</label>
+                        <span>@Model.Answer42</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Duration for Postmen Training</label>
+                        <span>@Model.Answer43</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Number of Super Users</label>
+                        <span>@Model.Answer44</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Duration for Super Users</label>
+                        <span>@Model.Answer45</span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h4><span>Infrastructure</span></h4>
+                    </div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>For Training Postal Assistants</div>
+                    <div class="col_half ">
+                        <label>Number of Desktop Available</label>
+                        <span>@Model.Answer46</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Number of Desktop Configured</label>
+                        <span>@Model.Answer47</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Alternate Desktop IP</label>
+                        <span>@Model.Answer48</span>
+                    </div>
+
+                    <div class="col_half col_last">
+                        <label>Configuration of Biometric Device to Done in</label>
+                        <span>@Model.Answer49</span>
+                    </div>
+                </div>
+                    <div class="clear"></div>
+
+                <div class="row">
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>For Training Postmen</div>
+                    <div class="col_half">
+                        <label>Smartphones Supplied By DOP</label>
+                        <span>@Model.Answer50</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Smartphones Supplied By IPPB</label>
+                        <span>@Model.Answer51</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Smartphones Supplied By Own</label>
+                        <span>@Model.Answer52</span>
+                    </div>
+                    @*<div class="col_half col_last">
+                            <label>Number of Smartphones Suppied</label>
+                            <input type="text" name="Answer53" id="Answer53" value="" size="22" tabindex="7" class="form-control number" placeholder="Number of Airtel SIMs available" />
+                        </div>*@
+                    <div class="clear"></div>
+                    <label>Mobile service provider (SIM provisioning from)</label>
+                    <div class="col_half">
+                        <label>Airtel</label>
+                        <span>@Model.Answer54</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>BSNL</label>
+                        <span>@Model.Answer55</span>
+                    </div>
+                    <div class="col_half">
+                        <label>IDEA</label>
+                        <span>@Model.Answer56</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>JIO</label>
+                        <span>@Model.Answer57</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Vodafone</label>
+                        <span>@Model.Answer58</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Others</label>
+                        <span>@Model.Answer50</span>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="col_half">
+                        <label>Number of Biometric Device Supplied</label>
+                        <span>@Model.Answer60</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label for="template-jobform-website">Number of Biometric  Device for Mobile Tested</label>
+                        <span>@Model.Answer61</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Availability of Mobile Data connectivity</label>
+                        <span>@Model.Answer63</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label for="template-jobform-website">If no, Alternate mobile data connectivity Name of TSP</label>
+                        <span>@Model.Answer64</span>
+                    </div>
+                    <div class="col_full">
+                        <label>Whether Provisioned</label>
+                        <span>BroadBand: @Model.Answer65</span>
+                        <span>Dongle: @Model.Answer66</span>
+                        <span>SIMs: @Model.Answer67</span>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>For Training GDS</div>
+                    <div class="col_half">
+                        <label>Number of Smartphones Supplied By IPPB</label>
+                        <span>@Model.Answer68</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Projector availablity is ensured</label>
+                        <span>Yes: @Model.Answer69</span>
+                    </div>
+                    <div class="clear"></div>
+                    <label>Mobile service provider (sim provisioning from)</label>
+                    <div class="col_half">
+                        <label>Airtel</label>
+                        <span>@Model.Answer70</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>BSNL</label>
+                        <span>@Model.Answer71</span>
+                    </div>
+                    <div class="col_half">
+                        <label>IDEA</label>
+                        <span>@Model.Answer72</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>JIO</label>
+                        <span>@Model.Answer73</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Vodafone</label>
+                        <span>@Model.Answer74</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Others</label>
+                        <span>@Model.Answer75</span>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="col_half">
+                        <label>Number of Biometric Device Supplied</label>
+                        <span>@Model.Answer76</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Number of Biometric  Device for Mobile Tested</label>
+                        <span>@Model.Answer77</span>
+                    </div>
+                    <div class="col_half">
+                        <label for="template-jobform-website">If no, Alternate mobile data connectivity Name of TSP</label>
+                        <span>@Model.Answer78</span>
+                    </div>
+                    <div class="col_full">
+                        <label>Whether Provisioned</label>
+                        <span>BroadBand: @Model.Answer79</span>
+                        <span>Dongle: @Model.Answer80</span>
+                        <span>SIMs: @Model.Answer81</span>
+                    </div>
+
+                </div>
+                <div class="clear"></div>
+                <div class="row">
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h4><span>Training Content</span></h4>
+                    </div>
+                    <div class="col_half">
+                        <label>Language of Training Content</label>
+                        <span>@Model.Answer82</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Availabity of Training Content (PPTs)</label>
+                        <span>@Model.Answer83</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Date of Availabity of Soft Copy of participant manual in the identified language</label>
+                        <span>@Model.Answer84</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Availbility of participant manual in adequate numbers</label>
+                        <span>@Model.Answer85</span>
+                    </div>
+                    <div class="col_half">
+                        <label>All Readiness completed</label>
+                        <span>@Model.Answer86</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="clear"></div>
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h4><span>Post Training details</span></h4>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Batch 1</div>
+                    <div class="col_half">
+                        <label>Training Start Date</label>
+                        <span>@Model.Answer87</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Traning End Date</label>
+                        <span>@Model.Answer88</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Number of users trained</label>
+                        <span>@Model.Answer89</span>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="acctitle"><i class="acc-closed icon-ok-circle"></i><i class="acc-open icon-remove-circle"></i>Batch 2</div>
+                    <div class="col_half">
+                        <label>Training Start Date</label>
+                        <span>@Model.Answer90</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Traning End Date</label>
+                        <span>@Model.Answer91</span>
+                    </div>
+                    <div class="col_half">
+                        <label>Number of users trained</label>
+                        <span>@Model.Answer92</span>
+                    </div>
+
+                </div>
+            <div class="row">
+                <div class="col_half">
+                        <label>Language in which training was conducted</label>
+                        <span>@Model.Answer93</span>
+                    </div>
+                    <div class="col_half col_last">
+                        <label>Language of participant Manual Supplied</label>
+                        <span>@Model.Answer94</span>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>
+}

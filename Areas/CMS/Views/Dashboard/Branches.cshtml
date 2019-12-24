@@ -1,0 +1,57 @@
+﻿@using AJSolutions.Areas.CMS.Models;
+@model CorporateBranch
+@{
+    ViewBag.Title = "Branches";
+    //ViewBag.Title = "AddressDetails";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<CorporateBranch> branches = ViewData["BranchList"] as IEnumerable<CorporateBranch>;
+}
+
+
+@using (Html.BeginForm("Branches", "Dashboard", FormMethod.Post, new {@area = "CMS",  @class = "form-horizontal", id = "Braches", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Address</h4>
+                </div>
+
+                <div class="col_full">
+                    @Html.LabelFor(model => model.BranchName, "Branch Name")<small>*</small>
+
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-road"> </i></span>
+                        @Html.EditorFor(model => model.BranchName, new { htmlAttributes = new { @class = "form-control required", placeholder = "e.g. Gem Knowledge Park Raipur", id = "BranchName" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.BranchName, "", new { @class = "text-danger" })
+                </div>
+                <div class="col_full">
+                    @Html.Hidden("CorporateId", ViewBag.UserId as string)
+                    <input type="submit" value="Submit" id="SubmitData" name="SubmitData" style="float: right;" class="button button-3d button-rounded button-teal" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col_full">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped nobottommargin">
+                            <tr>
+                                <th>Branch Name</th>
+                            </tr>
+                            @foreach (var branch in branches)
+                            {
+                            <tr>
+                                <td>@branch.BranchName</td>
+                            </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+}

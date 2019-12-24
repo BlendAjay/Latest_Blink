@@ -1,0 +1,79 @@
+﻿@using AJSolutions.Models
+@model List<EmployeeConfirmationView>
+@{
+    ViewBag.Title = "EmployeeConfirmation";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+
+        @if (Model != null)
+        {
+
+            <div class="col_full">
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped nobottommargin">
+                        <tr>
+                            <th>Name</th>
+                            <th>Date Of Joining</th>
+                            <th>Date Of Confirmation</th>
+                            <th>Approved On</th>
+                            <th>status</th>
+                            <th>Remarks</th>
+                            <th>Download Letter</th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.JoininDate</td>
+                                <td>@item.ConfirmationDate</td>
+                                <td>@item.AprrovedOn</td>
+                                <td>
+                                    @if (item.Status == 1)
+                                    {
+                                        <span style="color:green">Approved</span>
+                                    }
+                                    else if (item.Status == 2)
+                                    {
+                                        <span style="color:red">Rejected</span>
+                                    }
+                                    else if (item.Status == 3)
+                                    {
+                                        <span style="color:blue">Extended</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.Remarks == null)
+                                    {
+                                        <span>-</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@item.Remarks</span>
+                                    }
+                            </td>
+                            <td><a class="btn-sm" style="float:right" href="@Url.Action("DownloadOfferletter", "User", new { area = "CMS", subscriberid = item.SubscriberId, uid = item.UserId })">Download</a></td>
+                        </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+        }
+
+        else
+        {
+            <br /><br />
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-thumbs-down2"></i>
+                </div>
+                <h3>No Records Found<span class="subtitle"></span></h3>
+            </div>
+        }
+
+    </div>
+</div>

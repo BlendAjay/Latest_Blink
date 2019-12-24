@@ -1,0 +1,139 @@
+﻿@using AJSolutions.Areas.RMS.Models;
+@model TrainerAssignView
+@{
+    ViewBag.Title = "Add Trainer";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    List<TrainerAssignView> trainer = ViewData["Trainer"] as List<TrainerAssignView>;
+}
+
+@using (Html.BeginForm("AssignTrainer", "RMS", FormMethod.Post, new { @class = "form-horizontal", id = "AssignTrainer", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.HiddenFor(model => model.TrainerAssignId)
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>Assign Trainer</h4>
+                </div>
+                    <div class=" col_half">
+                        @Html.LabelFor(model => model.BranchCode, "Select Branch")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.DropDownList("BranchCode", null, "--- Select Branch ---", htmlAttributes: new { @class = "form-control required", id = "BranchCode" })
+                        </div>
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.TrainerId, "Trainer")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.DropDownList("TrainerId", null, "--- Select Trainer ---", htmlAttributes: new { @class = "form-control required", id = "TrainerId" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.TrainerId)
+                    </div>
+                <div class="col_half">
+                    @Html.LabelFor(model => model.DateOfJoining, "Joining Date")
+                    <div class="input-group travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        <input type="text" value="@ViewBag.joiningdate" class="form-control past-enabled" placeholder="DD/MM/YYYY" name="JoiningDate" id="JoiningDate">
+                    </div>
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.LeavingDate, "Leaving Date")
+                    <div class="input-group travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        <input type="text" value="@ViewBag.LeavingDate" class="form-control past-enabled" placeholder="DD/MM/YYYY" name="LeavingDate" id="LeavingDate">
+                    </div>
+                </div>
+            </div>
+            <input type="submit" id="assign" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+
+        </div>
+    </div>
+    <br />
+    <br /><br />
+
+    <div class="row">
+        <div class="container">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Branch Name</th>
+                        <th>Employee</th>
+                        <th>Date Of Joining</th>
+                        <th>Leaving Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    @if (trainer != null)
+                    {
+                        foreach (var item in trainer)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.BranchCode)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DateOfJoining)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LeavingDate)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "AssignTrainer", "RMS", new { TrainerAssignId = item.TrainerAssignId, UserAction = "Edit" }, new { title = "Edit" })
+                                    |
+                                    @Html.ActionLink("Delete", "AssignTrainer", "RMS", new { TrainerAssignId = item.TrainerAssignId, UserAction = "Delete" }, new { title = "Delete" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    @Html.Hidden("RedirectToHome", Url.Action("AssignTrainer", "RMS"));
+    @Html.Hidden("RedirectTo", Url.Action("AssignTrainer", "RMS"));
+}
+<script type="text/javascript">
+
+    $("#AssignTrainer").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/RMS/RMS/AssignTrainer",
+                data: {
+                    BranchCode: $('#BranchCode: selected').val(),
+                    TrainerId: $('#TrainerId: selected').val(),
+                    JoiningDate: $('#JoiningDate').val(),
+                    LeavingDate: $('#LeavingDate').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+</script>

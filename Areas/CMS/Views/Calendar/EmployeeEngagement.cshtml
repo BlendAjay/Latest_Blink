@@ -1,0 +1,146 @@
+﻿@model PagedList.IPagedList<AJSolutions.Models.TrainerPlannerView>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Employee Leaves";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="fancy-title title-bottom-border">
+            <h4>Employee Leaves</h4>
+        </div>
+        <div class="row">
+            @if (Model.Count() > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered nobottommargin">
+                        <tr>
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.NameSortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> Employee Name&nbsp;<span class="icon-sort"></span></a></th>
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.FromDateSortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> Start Date&nbsp;<span class="icon-sort"></span></a></th>
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.ToDateSortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> End Date&nbsp;<span class="icon-sort"></span></a></th>
+                            <th>Time From</th>
+                            <th>Time To</th>
+                            <th>Total Days</th> 
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.EngagementTypeSortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> Enagement Type&nbsp;<span class="icon-sort"></span></a></th>
+                            <th>Reason</th>
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.IsApprovedSortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> Status&nbsp;<span class="icon-sort"></span></a></th>
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.ApprovedBySortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> Approved By&nbsp;<span class="icon-sort"></span></a></th>
+                            <th><a href="@Url.Action("EmployeeEngagement", "Calendar", new { sortOrder = ViewBag.ApprovalDateSortParam, Name = ViewBag.Name, ApprovedBy = ViewBag.ApprovedBy, ApprovalDate = ViewBag.ApprovalDate, ToDate = ViewBag.ToDate, FromDate = ViewBag.FromDate, EngagementType = ViewBag.EngagementType, IsApproved = ViewBag.IsApproved, page = ViewBag.Page, PageSize = ViewBag.Paging })"> Approved On&nbsp;<span class="icon-sort"></span></a></th>
+                            <th>Report</th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @item.FromDate.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    @item.ToDate.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FromTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ToTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TotalDays)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EngagementType)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Reson)
+                                </td>
+                                <td>
+                                    @if (item.IsApproved == 1)
+                                    {
+                                        <span>Approved</span>
+                                    }
+                                    else if (item.IsApproved == 2)
+                                    {
+                                        <span>DisApproved</span>
+                                    }
+                                    else if (item.IsApproved == 3)
+                                    {
+                                        <span>Canceled</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Pending</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.ApprovedByName != null)
+                                    {
+                                        @Html.DisplayFor(modelItem => item.ApprovedByName)
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                @if (@item.ApprovalDate != null)
+                                {
+                                    <td>
+                                        @item.ApprovalDate.Value.ToString("dd-MMM-yyyy")
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>NA</td>
+                                }
+                                @if (@item.EngagementType == "Business Tour")
+                                {
+                                    if (item.TourId != 0 && item.IsApproved != 3)
+                                    { 
+                                    <td>
+                                        <a href="@Url.Action("TourDetails", "Calendar", new { Area = "CMS",TourId = item.TourId, PlannerId = item.PlannerId })" align="right">Tour Detail</a>
+                                    </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            </tr>
+                        }
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                    <div class="fbox-icon">
+                        <i class="icon-thumbs-down2"></i>
+                    </div>
+                    <h3>No Employee Leave(s)<span class="subtitle"></span></h3>
+                </div>
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("EmployeeEngagement", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("EmployeeEngagement", "Calendar"));
+}
+<script>
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+</script>

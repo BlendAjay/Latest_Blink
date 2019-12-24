@@ -1,0 +1,378 @@
+﻿@model IEnumerable<AJSolutions.Models.TaskMasterView>
+@{
+    ViewBag.Title = "Task";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h3>Create Task</h3>
+            </div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="col_full">
+                <label>Subject</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("Subject", ViewBag.Subject as string, htmlAttributes: new { @class = "form-control", @id = "Subject", placeholder = "Enter Subject" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("Subject", ViewBag.Subject as string, htmlAttributes: new { @class = "form-control", @id = "Subject", placeholder = "Enter Subject" })
+                    }
+                </div>
+                <br>
+            </div>
+            <div class="col_one_third">
+                <label>Select Job Order</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"></i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.DropDownList("JobOrderNumber", ViewBag.JobOrderList as SelectList, htmlAttributes: new { @class = "form-control", @id = "JobOrderNumber", placeholder = "Enter Your Job Order Number" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("JobOrderNumber", ViewBag.JobOrderList as SelectList, htmlAttributes: new { @class = "form-control", @id = "JobOrderNumber", placeholder = "Enter Your Job Order Number" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_one_third">
+                <label>Select Task Type</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"></i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.DropDownList("TaskTypeId", ViewBag.JobOrderTypeList as SelectList, htmlAttributes: new { @class = "form-control", @id = "TaskTypeId", placeholder = "Enter Your TaskTypeId" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("TaskTypeId", ViewBag.JobOrderTypeList as SelectList, htmlAttributes: new { @class = "form-control", @id = "TaskTypeId", placeholder = "Enter Your TaskTypeId" })
+                    }
+                </div>
+                <br>
+            </div>
+            <div class="col_one_third col_last">
+                <label>Select Invoice Frequency</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"></i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.DropDownList("InvoiceFrequency", ViewBag.InvoiceFrequencyList as SelectList, htmlAttributes: new { @class = "form-control", @id = "InvoiceFrequency", placeholder = "Enter Your Invoice Frequency" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("InvoiceFrequency", ViewBag.InvoiceFrequencyList as SelectList, htmlAttributes: new { @class = "form-control", @id = "InvoiceFrequency", placeholder = "Enter Your Invoice Frequency" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_full">
+                <label>Enter Description</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("Description", ViewBag.Description as string, htmlAttributes: new { @class = "form-control", @id = "Description", placeholder = "Enter Description" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("Description", ViewBag.Description as string, htmlAttributes: new { @class = "form-control", @id = "Description", placeholder = "Enter Description" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_one_third">
+                <label>Select Country</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("Country", ViewBag.Country as string, htmlAttributes: new { @class = "form-control", @id = "Country", placeholder = "Enter Country" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("Country", ViewBag.Country as string, htmlAttributes: new { @class = "form-control", @id = "Country", placeholder = "Enter Country" })
+                    }
+                </div>
+                <br>
+            </div>
+
+
+            <div class="col_one_third">
+                <label>Select State</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("State", ViewBag.State as string, htmlAttributes: new { @class = "form-control", @id = "State", placeholder = "Enter State" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("State", ViewBag.State as string, htmlAttributes: new { @class = "form-control", @id = "State", placeholder = "Enter State" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_one_third col_last">
+                <label>Select City</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("City", ViewBag.City as string, htmlAttributes: new { @class = "form-control", @id = "City", placeholder = "Enter  City" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("City", ViewBag.City as string, htmlAttributes: new { @class = "form-control", @id = "City", placeholder = "Enter  City" })
+                    }
+                </div>
+                <br>
+
+            </div>
+
+            <div class="col_one_third">
+                <label> Start Date</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"></i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("StartDate", ViewBag.StartDate as string, htmlAttributes: new { @class = "form-control", @id = "StartDate", placeholder = "MM-DD-YYYY" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("StartDate", ViewBag.StartDate as string, htmlAttributes: new { @class = "form-control", @id = "StartDate", placeholder = "MM-DD-YYYY" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_one_third">
+                <label>Duration</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("Duration", ViewBag.Duration as string, htmlAttributes: new { @class = "form-control", @id = "Duration", placeholder = "Enter Duration" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("Duration", ViewBag.Duration as string, htmlAttributes: new { @class = "form-control", @id = "Duration", placeholder = "Enter Duration" })
+                    }
+                </div>
+                <br>
+            </div>
+            <div class="col_one_third col_last">
+                <label>End Date</label>
+                <input class="form-control" />
+
+            </div>
+
+            <div class="col_one_third">
+                <label>Venue</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"> </i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("Venue", ViewBag.Venue as string, htmlAttributes: new { @class = "form-control", @id = "Venue", placeholder = "Enter Venue" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("Venue", ViewBag.Venue as string, htmlAttributes: new { @class = "form-control", @id = "Venue", placeholder = "Enter Venue" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_one_third">
+                <label>Assign To</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"></i></span>
+
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.DropDownList("AssignedTo", ViewBag.AssignedToList as SelectList, htmlAttributes: new { @class = "form-control", @id = "AssignedTo", placeholder = "Enter Assigned To" })
+                    }
+                    else
+                    {
+                        @Html.DropDownList("AssignedTo", ViewBag.AssignedToList as SelectList, htmlAttributes: new { @class = "form-control", @id = "AssignedTo", placeholder = "Enter AssignedTo " })
+                    }
+                </div>
+                <br>
+            </div>
+            <div class="col_one_third  col_last">
+                <label> Task Amount</label>
+                <div class="input-group divcenter">
+                    <span class="input-group-addon"><i class="icon-email2"></i></span>
+                    @if (ViewBag.Action == "Add")
+                    {
+                        @Html.TextBox("TaskAmount", ViewBag.TaskAmount as string, htmlAttributes: new { @class = "form-control", @id = "TaskAmount", placeholder = "Enter Task Amount" })
+                    }
+                    else
+                    {
+                        @Html.TextBox("TaskAmount", ViewBag.TaskAmount as string, htmlAttributes: new { @class = "form-control", @id = "TaskAmount", placeholder = "Enter Task Amount" })
+                    }
+                </div>
+                <br>
+            </div>
+
+            <div class="col_full">
+                @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+                <input type="submit" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" id="SubmitForm" />
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        $('#SubmitForm').click(function () {
+
+            if ($("#Subject").val() == undefined || $("#Subject").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>Subject</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#Subject").focus();
+                return false;
+            }
+
+            if ($("#StartDate").val() == undefined || $("#StartDate").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>Start Date</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#StartDate").focus();
+                return false;
+            }
+            if ($("#Duration").val() == undefined || $("#Duration").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>Duration</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#StartDate").focus();
+                return false;
+            }
+            if ($("#Venue").val() == undefined || $("#Venue").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>Venue</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#Venue").focus();
+                return false;
+            }
+            if ($("#City").val() == undefined || $("#City").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>City</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#City").focus();
+                return false;
+            }
+            if ($("#State").val() == undefined || $("#State").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>State</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#State").focus();
+                return false;
+            }
+            if ($("#Country").val() == undefined || $("#Country").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>Country</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#Country").focus();
+                return false;
+            }
+            if ($("#AssignedTo").val() == undefined || $("#AssignedTo").val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select <b>Assigned To</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#AssignedTo").focus();
+                return false;
+            }
+
+            try {
+                var TAmt = parseFloat($("#TaskAmount").val())
+            }
+            catch (e) {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Enter <b>Task Amount In Number</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#TaskAmount").focus();
+                return false;
+
+            }
+        });
+    </script>
+    <div class="col-md-1"></div>
+
+
+}
+

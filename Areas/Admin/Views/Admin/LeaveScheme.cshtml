@@ -1,0 +1,114 @@
+﻿@using AJSolutions.Models
+@model AJSolutions.Models.LeaveSchemeMaster 
+@{
+    ViewBag.Title = "LeaveScheme";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+     List<LeaveSchemeMaster> leavescheme = ViewData["SchemeType"] as List<LeaveSchemeMaster>;
+}
+}
+
+ @using (Html.BeginForm("LeaveScheme", "Admin", FormMethod.Post, new { @area = "Admin", @class = "form-horizontal needs-validation", id = "LeaveScheme", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.Hidden("SaveStatus", ViewBag.Result as string)*@
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Add LeaveScheme</h4>
+                </div>
+                <div class="col_half">
+                    @Html.LabelFor(m=>m.SchemeName, "Leave Scheme Type")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.SchemeName, new { htmlAttributes = new { @class = "form-control required", id = "SchemeName", placeholder = "Enter Leave Scheme Name" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SchemeName, "", new { @class = "text-danger" })
+                    <br>
+
+                </div>
+                <br />
+                <input type="submit" id="companydetails" value="Add" class="button button-rounded button-teal" />
+
+                @Html.Hidden("SchemeId", ViewBag.ItemTypeId as string)
+            </div>
+            @if (leavescheme != null)
+            {
+                <div class="row">
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>ITEM NAME</th>
+                                <th>ACTIONS</th>
+                            </tr>
+
+                            @foreach (var item in leavescheme)
+                            {
+                                <tr>
+                                    <td>@item.SchemeName</td>
+                                    <td>
+                                        
+                                            <a href="@Url.Action("LeaveScheme", "Admin", new { SchemeId = item.SchemeId, UserAction = "Edit" })" title="Edit"><i class="icon-pen"></i></a> @*<span>&nbsp;|&nbsp;</span>*@
+                                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.SchemeId');" title="Remove"><i class="icon-remove"></i> </a>
+                                       
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+        @Html.Hidden("RedirectToHome", Url.Action("LeaveScheme", "Admin"))
+        @Html.Hidden("RedirectTo", Url.Action("RemoveLeaveScheme", "Admin"))
+        
+    </div>
+ }
+<script type="text/javascript">
+
+    $("#LeaveScheme").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Leave Scheme Added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+    function ConfirmationDialog(SchemeId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + SchemeId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+</script>

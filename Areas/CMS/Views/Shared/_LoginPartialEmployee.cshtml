@@ -1,0 +1,215 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    AJSolutions.Models.EmployeeBasicDetails details = ViewData["EmpDetails"] as AJSolutions.Models.EmployeeBasicDetails;
+    AJSolutions.Areas.CMS.Models.AdminLogoFile content = ViewData["CompanyLogo"] as AJSolutions.Areas.CMS.Models.AdminLogoFile;
+}
+<li class="nav-item">
+    <a class="nav-link" href="@Url.Action(" index", "Dashboard" , new { area="EMS" })"><i class="icon-home2"></i>Home</a>
+</li>
+@if (user.CompanyAttendance == true)
+{
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action(" biometric", "Payroll" , new { area="PMS" })"><i class="icon-clock"></i>Attendance </a>
+
+        @*<a class="nav-link" href="https://www.reckonn.com/PMS/Payroll/BioMetric"><i class="icon-clock"></i>Attendance </a>*@
+    </li>
+}
+<li class="current">
+    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-1" aria-controls="submenu-1"><i class="icon-bolt2"></i>My Account</a>
+    <div id="submenu-1" class="collapse submenu" style="">
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" basicdetails", "Employee" , new { area="EMS" })"><i class="icon-info-sign"></i>My Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" addressdetails", "Employee" , new { area="EMS" })"><i class="icon-location"></i>Address Details</a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" educationaldetails", "Employee" , new { area="EMS" })"><i class="icon-study"></i>Education </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" certifications", "Employee" , new { area="EMS" })"><i class="icon-study"></i>Certification </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" experiencedetails", "Employee" , new { area="EMS" })"><i class="icon-briefcase"></i>Experience </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" bankdetails", "DashBoard" , new { area="CMS" })"><i class="icon-money"></i>Bank Details </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" skilldetails", "Employee" , new { area="EMS" })"><i class="icon-cog"></i>Skill </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" identificationdetails", "Employee" , new { area="EMS" })"><i class="icon-code-fork"></i>Identification </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" socialdetails", "Employee" , new { area="EMS" })"><i class="icon-line2-social-twitter"></i>Social </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" languages", "Employee" , new { area="EMS" })"><i class="icon-line2-speech"></i>Languages </a></li>
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" changepassword", "Manage" , new { area="" })"><i class="icon-lock3"></i>Change Password</a></li>
+
+        </ul>
+    </div>
+</li>
+
+@*@if (user.Department == "Human Resource Management")
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-2" aria-controls="submenu-2"><i class="icon-bolt2"></i>HRMS</a>
+            <div id="submenu-2" class="collapse submenu" style="">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" employees", "User" , new { area="CMS" })"><i class="icon-table"></i>My Employees</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" biometricresult", "Payroll" , new { area="PMS" })"><i class="icon-clock"></i>Attendance Records</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3"><i class="icon-stack"></i>Payroll</a>
+            <div id="submenu-3" class="collapse submenu" style="">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" salaryprocess", "Payroll" , new { area="PMS" })"><i class="icon-file"></i>Salary Process</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" salarystatement", "Payroll" , new { area="PMS" })"><i class="icon-file"></i>Salary Statement</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" payslip", "Payroll" , new { area="PMS" })"><i class="icon-file"></i>Payslip</a></li>
+                </ul>
+            </div>
+        </li>
+    }*@
+<li class="nav-item">
+    <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><i class="icon-play"></i>My Stuff</a>
+    <div id="submenu-4" class="collapse submenu" style="">
+        <ul class="nav flex-column">
+            @*@if (details.ManagerLevel == true)
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" task", "Task" , new { area="CMS" })"><i class="icon-plus"></i>Create Task</a></li>
+            }
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" mytasks", "Task" , new { area="CMS" })"><i class="icon-tasks"></i>Tasks</a></li>*@
+            @*<li class="nav-item"><a class="nav-link" href="@Url.Action(" myinvoices", "Invoice" , new { area="CMS" , isclientview=false, tag="Incoming" })"><i class="icon-list2"></i>Invoices</a></li>*@
+            @if (user.DepartmentId == "FAC" || user.DepartmentId == "VFA")
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" mytraining", "TMS" , new { area="TMS" , tid=user.UserId})"><i class="icon-tabl><i class=" icon-table"></i>Trainings</a></li>
+            }
+            @if (user.ManagerLevel == true && user.DepartmentId == "FAC")
+            {
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" mentortrainings", "TMS" , new { area="TMS" })"><i class="icon-table"></i>My Mentor Trainings</a></li>
+            }
+            @*@if (AJSolutions.DAL.Global.IsStatusReportAccess(user.SubscriberId) && details.ManagerLevel == true && user.DepartmentId == "FAC")
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" index", "Trainer" , new { area="CMS" })"><i class="icon-table"></i>Instructor Lead</a></li>
+
+                }*@
+
+            @*@if (user.DepartmentId == "ACD")
+                {
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" mytraining", "TMS" , new { area="TMS" })"><i class="icon-table"></i>Trainings</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" trainingschedule", "TMS" , new { area="TMS" })" title="Schedule Training"><i class="icon-certificate"></i>Schedule Training</a></li>
+                }*@
+        </ul>
+    </div>
+</li>
+@if (user.DepartmentId == "ACD" || user.DepartmentId == "FIN" || user.DepartmentId == "VFA")
+{
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-5" aria-controls="submenu-5"><i class="icon-book"></i>TMS</a>
+        <div id="submenu-5" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+                @if (user.DepartmentId == "ACD" || user.DepartmentId == "FIN")
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" coursemasters", "TMS" , new { area="TMS" })"><i class="icon-plus"></i>Add New Sector</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" mycourses", "TMS" , new { area="TMS" })"><i class="icon-plus"></i>My Sector</a></li>
+                }
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" mytraining", "TMS" , new { area="TMS" })"><i class="icon-table"></i>My Trainings</a></li>
+                @*
+                    <li class="nav-item"><a class="nav-link" href="javascript: LoginToPrelore();" target="_blank"><i class="icon-clipboard"></i>Assessments</a></li>*@
+            </ul>
+        </div>
+    </li>
+}
+@if (user.DepartmentId == "FIN")
+{
+    <li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-6" aria-controls="submenu-6"><i class=" icon-users"></i>User Directory</a>
+        <div id="submenu-6" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+                @if (AJSolutions.DAL.Global.IsStatusReportAccess(user.SubscriberId))
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" coursefeesetting", "TMS" , new { area="TMS" })"><i class="icon-user"></i>Add Candidate </a></li>
+                }
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" candidates", "User" , new { area="CMS" })"><i class="icon-table"></i>My Candidates</a></li>
+            </ul>
+        </div>
+    </li>
+}
+<li class="nav-item">
+    @if (user.DepartmentId == "WAR")
+    {
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-7" aria-controls="submenu-7"><i class="icon-play"></i>HMS</a>
+        <div id="submenu-7" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" candidatecheckin", "Accommodation" , new { area="CMS" })"><i class="icon-table"></i>Candidate CheckIn</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" candidatecheckout", "Accommodation" , new { area="CMS" })"><i class="icon-table"></i>Candidate CheckOut</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" checkincheckoutbulkupload", "Candidate" , new { area="CMS" })"><i class="icon-table"></i>Candidate CIn/Out Bulk</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" accomodationhistory", "Accommodation" , new { area="CMS" })"><i class="icon-table"></i>Accomodation history</a></li>
+            </ul>
+        </div>
+    }
+</li>
+@*@if (user.DepartmentId == "FIN")
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-8" aria-controls="submenu-8"><i class="icon-money"></i>My Transactions</a>
+            <div id="submenu-8" class="collapse submenu" style="">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action(" candidatefeedetails", "Transactions" , new { area="CMS" })">Candidate Fee Details</a>
+                        <a class="nav-link" href="@Url.Action(" candidate", "Transactions" , new { area="CMS" })">Candidate </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    }*@
+
+@*<li class="nav-item">
+        <a class="nav-link" href="#"><i class="icon-line-paper-stack"></i>Create New</a>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="@Url.Action(" invoice", "Task" , new { area="CMS" })">Invoice</a></li>
+
+        </ul>
+    </li>*@
+<li class="nav-item"><a class="nav-link" href="@Url.Action(" meetingminuteslisting", "User" , new { area="CMS" })"><i class="icon-list"></i>Meeting Minutes</a></li>
+<li class="nav-item">
+    <a class="nav-link" href="@Url.Action(" notifications", "UserNotification" , new { area="" })">
+        <i class="icon-briefcase"></i>Notifications @if (ViewBag.NotificationCount != 0)
+        {<label style="color:white" class="badge">@ViewBag.NotificationCount</label>}
+    </a>
+</li>
+@*<li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-9" aria-controls="submenu-9"><i class="icon-calendar-1"></i>Calendar</a>
+        <div id="submenu-9" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" index", "Calendar" , new { area="CMS" })"><i class="icon-calendar3"></i>My Calendar</a></li>
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" trainerplanner", "TMS" , new { area="TMS" })"><i class="icon-calendar-1"></i>Apply Leave</a></li>
+                @if (user.Role == "Employee" && details.ManagerLevel == true)
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" trainers", "Calendar" , new { area="CMS" })"><i class="icon-calendar-1"></i>Employee Calendar </a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action(" employeesleaverecords", "Payroll" , new { area="PMS" , role="Employee" })"><i class="icon-file"></i>My Leave Records</a></li>
+                }
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" holidaycalendar", "Calendar" , new { area="CMS" })"><i class="icon-calendar-1"></i>Holiday Calendar</a></li>
+
+                <li class="nav-item"><a class="nav-link" href="@Url.Action(" employeesleaverecords", "Payroll" , new { area="PMS" })"><i class="icon-file"></i>Employee Leave Records</a></li>
+            </ul>
+        </div>
+    </li>*@
+
+@*<li class="nav-item">
+        <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-10" aria-controls="submenu-10"><i class="icon-pen"></i>PMS</a>
+        <div id="submenu-10" class="collapse submenu" style="">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.Action("Resignation", "Letter", new { Area = "EMS" })"><i class="icon-file"></i>Resignation</a>
+                </li>
+                @if (user.Role == "Employee" && details.ManagerLevel == true)
+                {
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Letter", new { Area = "EMS" })"><i class="icon-calendar-1"></i>Employee Resigantion</a></li>
+
+                }
+            </ul>
+        </div>
+    </li>*@
+
+@*<li class="nav-item"><a class="nav-link" href="@Url.Action(" payslip", "Payroll" , new { area="PMS" })"><i class="icon-file"></i>Payslip</a></li>*@
+@*<li class="nav-item"><a class="nav-link" href="@Url.Action(" index", "RMS" , new { area="RMS" })"><i class="icon-lock3"></i>Report Status</a></li>*@
+
+<li class="nav-item"><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()"><i class="icon-login"></i>Logout</a></li>
+
+
+
+
+
+
+
+
+
+

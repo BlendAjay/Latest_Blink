@@ -1,0 +1,202 @@
+﻿@using AJSolutions.Models
+@model FeeDetails
+@{
+
+    Layout = "~/Areas/Candidate/Views/Shared/_PrintLayout.cshtml";
+    FeeDetailsView transactiondetails = ViewData["Transactiondetails"] as FeeDetailsView;
+    AJSolutions.Areas.CMS.Models.AdminLogoFile content = ViewData["CompanyLogo"] as AJSolutions.Areas.CMS.Models.AdminLogoFile;
+}
+
+
+<br /><br />
+<section id="content">
+    @if (@transactiondetails != null)
+    {
+        <div class="container nobottommargin">
+            <div class="row">
+                <div class="col_half" style="border:groove; padding-left: 25px; padding-right: 20px;">
+                    <div id="logo">
+                        @if (content != null)
+                        {
+                            <img src="~/File/CompanyLogo?id=@content.FileId" alt="Canvas Logo">
+                        }
+                        else
+                        {
+                            <img src="~/images/logo.png" alt="Canvas Logo">
+                        }
+                    </div>
+                    <br />
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h3>Payment Receipt - Office Copy</h3>
+                    </div>
+
+                    <!-- Contact Form
+                    ============================================= -->
+                    <div class="row">
+                        <div class="col_half">
+                            <label>Payee Name  </label> @transactiondetails.Name <br />
+
+                            <label>Mobile </label> @transactiondetails.PhoneNumber  <br />
+                            <label>Regd. No </label> @transactiondetails.UserName <br />
+                            <label>Email  </label> @transactiondetails.Email <br />
+                        </div>
+
+                        <div class="col_half col_last">
+                            <label>Receipt No. </label> @transactiondetails.TransactionId <br />
+                            <label>Issue Date. </label> @transactiondetails.TransactionDate.ToString("dd-MMM-yyyy") <br />
+                            <label>Course</label> @transactiondetails.CourseName (@transactiondetails.CourseCode) - @transactiondetails.BatchName (@transactiondetails.BatchId) <br />
+
+                        </div>
+
+                        <div class="col_half">
+                            <label>Payment Mode  </label> @transactiondetails.PaymentMode <br />
+                            @if (@transactiondetails.PaymentMode.ToUpper() != "ONLINE")
+                            {
+                                <label>Ref No. </label> @transactiondetails.ReferenceNumber <br />
+                                <label>Bank Name  </label> @transactiondetails.BankName <br />
+                            }
+                            <label>Course Fee</label> @transactiondetails.TotalFeeAmount <b>inr</b><br />
+                            <label>Total Installments</label> @transactiondetails.Installment <br />
+                            <label>Installment Number</label> @transactiondetails.InstallmentNumber <br />
+                            <label>Installment Amount</label> @transactiondetails.FeePaid <b>inr</b><br />
+                            <label>Remaining Amount</label> @transactiondetails.RemainingAmount inr<br />
+                        </div>
+
+                        <div class="col_half col_last nobottommargin" style="border: ridge; border-radius: 20px;">
+                            <center>
+                                <br />  <h3>
+                                    Amount Paid <br /> @transactiondetails.FeePaid INR <br />
+
+                                </h3>
+                                @if (transactiondetails.PaymentMode.ToUpper() == "ONLINE")
+                                {
+                                    <label>Convenience Fee: @transactiondetails.ConveyanceFee INR</label>
+                                }
+                            </center>
+                            <br />
+                        </div>
+
+
+                        <div class="col_half nobottommargin">
+                            <label> Signature of Candidate  </label> <br /><h5"> @transactiondetails.Name </h5">
+                        </div>
+
+                        <div class="col_half col_last nobottommargin">
+                            <label> Authorized Signatory </label><br /><h5> @transactiondetails.ApprovedByName </h5>
+                        </div>
+                        <div class="col_full nobottommargin">
+                            <center><span>@transactiondetails.CompanyName</span></center>
+                        </div>
+                    </div>
+                </div><!-- Contact Form Overlay End -->
+
+                <div class="col_half col_last" style="border:groove; padding-left: 25px; padding-right: 20px;">
+                    <div id="logo">
+                        @if (content != null)
+                        {
+                            <img src="~/File/CompanyLogo?id=@content.FileId" alt="Canvas Logo">
+                        }
+                        else
+                        {
+                            <img src="~/images/logo.png" alt="Canvas Logo">
+                        }
+                    </div>
+                    <br />
+
+                    <input type="submit" class="button button-3d nomargin" id="printpagebutton" value="Print" onclick="printpage();" style="float:right" />
+                    <br />
+                    <div class="fancy-title title-dotted-border title-center">
+                        <h3>Payment Receipt - Customer Copy</h3>
+                    </div>
+
+                    <!-- Contact Form
+                    ============================================= -->
+                    <div class="row">
+                        <div class="col_half">
+                            <label>Payee Name  </label> @transactiondetails.Name <br />
+
+                            <label>Mobile </label> @transactiondetails.PhoneNumber  <br />
+                            <label>Regd. No </label> @transactiondetails.UserName <br />
+                            <label>Email  </label> @transactiondetails.Email <br />
+                        </div>
+
+                        <div class="col_half col_last">
+                            <label>Receipt No. </label> @transactiondetails.TransactionId <br />
+                            <label>Issue Date. </label> @transactiondetails.TransactionDate.ToString("dd-MMM-yyyy") <br />
+                            <label>Course</label> @transactiondetails.CourseName (@transactiondetails.CourseCode) - @transactiondetails.BatchName (@transactiondetails.BatchId) <br />
+
+                        </div>
+
+                        <div class="col_half">
+                            <label>Payment Mode  </label> @transactiondetails.PaymentMode <br />
+                            @if (@transactiondetails.PaymentMode.ToUpper() != "ONLINE")
+                            {
+                                <label>Ref No. </label> @transactiondetails.ReferenceNumber <br />
+                                <label>Bank Name  </label> @transactiondetails.BankName <br />
+                            }
+                            <label>Course Fee</label> @transactiondetails.TotalFeeAmount <b>inr</b><br />
+                            <label>Total Installments</label> @transactiondetails.Installment <br />
+                            <label>Installment Number</label> @transactiondetails.InstallmentNumber <br />
+                            <label>Installment Amount</label> @transactiondetails.FeePaid <b>inr</b><br />
+                            <label>Remaining Amount</label> @transactiondetails.RemainingAmount inr<br />
+                        </div>
+
+                        <div class="col_half col_last nobottommargin" style="border: ridge; border-radius: 20px;">
+                            <center>
+                                <br />  <h3>
+                                    Amount Paid <br /> @transactiondetails.FeePaid INR <br />
+                                   
+                                </h3>
+                                @if (transactiondetails.PaymentMode.ToUpper() == "ONLINE")
+                                {
+                                    <label>Convenience Fee: @transactiondetails.ConveyanceFee INR</label>
+                                }
+                            </center>
+                            <br />
+                        </div>
+
+
+                        <div class="col_half nobottommargin">
+                            <label> Signature of Candidate  </label> <br /><h5"> @transactiondetails.Name </h5">
+                        </div>
+
+                        <div class="col_half col_last nobottommargin">
+                            <label> Authorized Signatory </label><br /><h5> @transactiondetails.ApprovedByName </h5>
+                        </div>
+                        <div class="col_full nobottommargin">
+                            <center><span>@transactiondetails.CompanyName</span></center>
+                        </div>
+                    </div>
+                </div><!-- Contact Form Overlay End -->
+            </div>
+        </div>
+    }
+    else
+    {
+        @ViewBag.Message
+        <br />
+        <a href="@Url.Action("Index","Home", new{area = ""}) " class="button button-3d button-rounded button-teal">Go Home</a>
+    }
+</section><!-- Contact Form & Map Overlay Section End -->
+<script type="text/javascript">
+    function printpage() {
+
+
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden'
+        printButton.style.visibility = 'hidden';
+
+        //  var w = window.open(window.location.href, "_blank")
+
+
+
+        //Print the page content
+        window.print();
+
+        //Set the print button to 'visible' again
+        //[Delete this line if you want it to stay hidden after printing]
+        // printButton.style.visibility = 'visible';
+        return false;
+    }
+</script>

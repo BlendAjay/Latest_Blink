@@ -1,0 +1,288 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@{
+
+    ViewBag.Title = "CheckIn CheckOut Bulk Upload";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+ 
+    if (user.DepartmentId == "ADI")
+    {
+        Layout = " ~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = " ~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+
+@using (Html.BeginForm("CheckInCheckOutBulkUpload", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "CheckInCheckOutBulkUpload", enctype = "multipart/form-data", role = "form" }))
+{
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>CheckIn CheckOut Bulk Upload</h4>
+                </div>
+                <br /><br />
+
+                <div class="col_half filter-group">
+                    <label>Select Course</label>
+                    @Html.DropDownList("CourseCode", null, "---  Select Course ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Course", id = "CourseCode" })
+                </div>
+                <div class="col_half col_last filter-group" id="Batch">
+                    <label>Select Batch</label>
+                    @Html.DropDownList("BatchId", null, "---  Select Batch ---", htmlAttributes: new { @class = "form-control required", placeholder = "Select Batch", id = "BatchId" })
+                </div>
+                <br />
+                <div class="col_full">
+                    <center>
+                        <ul class="process-steps process-3 bottommargin clearfix">
+                            <li class="active">
+                                <a href='#' class=" i-bordered i-circled divcenter icon-download-alt" onclick="GetCandidateList();">
+                                    @*<input type="button" value='Submit' />*@
+                                </a>
+                                <h5>Download Candidate List</h5>
+                            </li>
+                            <li>
+                                <span class="i-bordered i-circled divcenter icon-table"></span>
+                                <h5>Fill Excel sheet</h5>
+                            </li>
+                            <li>
+
+                                <input type="file" name="csvFile" id="csvFile" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter" onchange="ValidatePreviewImage(@Global.MaxSize("CSV"), this, 'CSV')" />
+                                <h5>Select File to Upload</h5>
+                                <label id="lblgetfilename"></label>
+                            </li>
+                        </ul>
+                        <input type="submit" name="Submit" id="Submit" value="Upload" class="button button-3d button-rounded button-teal" />
+
+                        <p>@Html.Encode(ViewData["Feedback"])</p>
+
+                        @if (ViewBag.result == "Success")
+                        {
+                            @ViewBag.SuccessCount <span>uploaded Successfully</span><br />
+                            @ViewBag.FailureCount <span>Failed</span><br />
+                            if (@ViewBag.Download == "Yes")
+                            {
+                                <a href="~/CMS/Candidate/CheckInCheckOutDownload">Download Result</a>
+                            }
+                        }
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("DownloadCandidateList", "Candidate", new { area = "CMS" }))
+    @Html.Hidden("SelBatch")
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                    This page has the facility of adding  candidate accomodation detail in bulk like their checkin and checkout date and time .
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/checkincheckoutbulk.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/checkincheckoutbulk.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script src="~/Scripts/CustomValidation.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#CourseCode').change(function () {
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "post",
+                url: "/CMS/Candidate/GetBatch",
+                data: { CourseCode: $('#CourseCode').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var batch = "<label>Select Batch</label><select class='form-control' id='BatchId'>";
+                    batch = batch + '<option value="">--- Select Batch ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        batch = batch + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    batch = batch + '</select>';
+                    $('#Batch').html(batch);
+                    $('.form-process').fadeOut();
+                }
+            });
+        });
+
+        $('#Batch').change(function () {
+            $('#SelBatch').val($("#BatchId :selected").val());
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "get",
+                url: "/CMS/Candidate/GetBatchWiseCandidateToCSV",
+                data: {
+                    CourseCode: $("#CourseCode :selected").val(),
+                    BatchId: $("#BatchId :selected").val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut();
+                }
+            });
+        });
+    });
+
+    function GetCandidateList() {
+
+        if ($("#CourseCode :selected").val() == null || $("#CourseCode :selected").val() == '' || $("#CourseCode :selected").val() == undefined) {
+            $.alert({
+                title: 'Alert',
+                content: 'Select <b>Sector Code</b> to download <b>Candidate List</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+
+            return false;
+        }
+
+
+        if ($("#BatchId :selected").val() == null || $("#BatchId :selected").val() == '' || $("#BatchId :selected").val() == undefined) {
+            $.alert({
+                title: 'Alert',
+                content: 'Select <b>Batch</b> to download <b>Candidate List</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+
+            return false;
+        }
+
+        if($("#CourseCode :selected").val() != null && $("#CourseCode :selected").val() != '' && $("#CourseCode :selected").val() != undefined &&
+            $("#BatchId :selected").val() != null && $("#BatchId :selected").val() != '' && $("#BatchId :selected").val() != undefined)
+        {
+            var url = $("#RedirectTo").val();
+            window.location.href = url;
+        }
+
+    }
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ($('#Success').val() == "Success") {
+            $('.form-process').fadeOut();
+        }
+
+        $('#csvFile').change(function () {
+            var path = $(this).val();
+            if (path != '' && path != null) {
+                var q = path.substring(path.lastIndexOf('\\') + 1);
+                $('#lblgetfilename').html(q);
+            }
+        });
+
+    });
+
+    $('#Submit').click(function () {
+
+        if ($("#CourseCode :selected").val() == null || $("#CourseCode :selected").val() == '' || $("#CourseCode :selected").val() == undefined) {
+            $.alert({
+                title: 'Alert',
+                content: 'Select <b>Sector Code</b> to download <b>Candidate List</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+
+            return false;
+        }
+
+
+        if ($("#BatchId :selected").val() == null || $("#BatchId :selected").val() == '' || $("#BatchId :selected").val() == undefined) {
+            $.alert({
+                title: 'Alert',
+                content: 'Select <b>Batch</b> to download <b>Candidate List</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+
+            return false;
+        }
+
+        var fileUpload = document.getElementById('csvFile');
+        if (fileUpload.files.length == 0) {
+            $.alert({
+                title: 'Alert',
+                content: 'Select <b>file</b> to upload',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-thumbs-down2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+
+            return false;
+        }
+
+
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>

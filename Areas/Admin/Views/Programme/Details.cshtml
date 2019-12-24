@@ -1,0 +1,26 @@
+﻿@model AJSolutions.Models.ProgrammeMaster
+
+@{
+    ViewBag.Title = "Details";
+}
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h3>Programme Details</h3>
+            </div>
+            <div class="col_half">
+                <b>@Html.DisplayNameFor(model => model.ProgrammeId)</b>
+                @Html.DisplayFor(model => model.ProgrammeId)
+            </div>
+            <div class="col_half col_last">
+                <b>  @Html.DisplayNameFor(model => model.ProgrammeName)</b>
+                @Html.DisplayFor(model => model.ProgrammeName)
+            </div>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.ProgrammeId }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+</div>

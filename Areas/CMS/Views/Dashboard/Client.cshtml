@@ -1,0 +1,306 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.GetCountEntryView
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    GetJoborderStatusCountView JOStatus = ViewData["JobOrderStatus"] as GetJoborderStatusCountView;
+    GetInvoiceStatusCountView InvStatus = ViewData["InvoiceStatus"] as GetInvoiceStatusCountView;
+    GetTrainingStatusCountView TrainingStatus = ViewData["TrainingStatus"] as GetTrainingStatusCountView;
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+}
+<div class="container">
+    <div class="row">
+
+        @if (Model.TOTALCLINT > 0 || Model.TOTALCOURSE > 0 || Model.TOTALEMPLOYEE > 0 || Model.TOTALINVOICE > 0 || Model.TOTALJOBS > 0 || Model.TOTALSTUDENT > 0 || Model.TOTALTASK > 0 || Model.TOTALTRAINING > 0 || Model.TOTALVENDOR > 0)
+        {
+            <div class="col_full">
+                <br />
+                @*@if (AJSolutions.DAL.Global.IsIPPBStatusReportAccess(user.SubscriberId))
+                {
+                    <div class="col_full ">
+                        <a href=@Url.Action("EndUserDashBoard", "Course", new { Area = "TMS" }) title="Click here to View Live Dashboard" target="_blank"><strong class="blink right">Live Data Trends</strong></a>
+
+                    </div>
+                }*@
+                @*@if (@Model.TOTALJOBS > 0)
+                    {*@
+                <div class="col_one_fourth">
+
+                    <a href=@Url.Action("MyJobOrders", "JobOrder", new { Area = "CMS", IsClientView = true })>
+                        <div class="feature-box fbox-center fbox-bg fbox-light fbox-effect">
+                            <div class="fbox-icon">
+                                <div class="counter counter-large"><i class="i-alt"><span data-from="100" data-to='@Model.TOTALJOBS' data-refresh-interval="50" data-speed="2000">  </span></i></div>
+                            </div>
+                            <label>Job Orders</label>
+                        </div>
+                    </a>
+                </div>
+                @*}
+                    @if (@Model.TOTALCOURSE > 0)
+                    {*@
+                <div class="col_one_fourth">
+                    <a href="@Url.Action("Mycourses", "TMS", new { Area = "TMS" })">
+                        <div class="feature-box fbox-center fbox-bg fbox-light fbox-effect">
+                            <div class="fbox-icon">
+                                <div class="counter counter-large"><i class="i-alt"><span data-from="100" data-to='@Model.TOTALCOURSE' data-refresh-interval="50" data-speed="2000">  </span></i></div>
+                            </div>
+                            <label>Courses</label>
+                        </div>
+                    </a>
+
+                </div>
+                @*}
+
+                    @if (@Model.TOTALTRAINING > 0)
+                    {*@
+                <div class="col_one_fourth ">
+                    <a href="@Url.Action("MyTraining", "TMS", new { Area = "TMS" })">
+                        <div class="feature-box fbox-center fbox-bg fbox-light fbox-effect">
+                            <div class="fbox-icon">
+                                <div class="counter counter-large"><i class="i-alt"><span data-from="100" data-to='@Model.TOTALTRAINING' data-refresh-interval="50" data-speed="2000">  </span></i></div>
+                            </div>
+                            <label>Trainings</label>
+                        </div>
+                    </a>
+                </div>
+                @*}
+                    @if (Model.TOTALINVOICE > 0)
+                    {*@
+                <div class="col_one_fourth col_last">
+                    <a href="@Url.Action("MyInvoices", "Invoice", new { Area = "CMS" })">
+                        <div class="feature-box fbox-center fbox-bg fbox-light fbox-effect">
+                            <div class="fbox-icon">
+                                <div class="counter counter-large"><i class="i-alt"><span data-from="100" data-to='@Model.TOTALINVOICE' data-refresh-interval="50" data-speed="2000">  </span></i></div>
+                            </div>
+                            <label>Invoices</label>
+                        </div>
+                    </a>
+                </div>
+                @*}*@
+            </div>
+            @*</div>
+                <div class="col_full">*@
+            <div class="col_full">
+                @if (JOStatus.TotalAssigned > 0 || JOStatus.TotalCompleted > 0 || JOStatus.TotalRejected > 0 || JOStatus.TotalUnAssigned > 0)
+                {
+                    <div class="col_one_third center" id="pieChart" style="background-color: #fff">
+
+                        <label class="center">Job Order Status</label>
+
+                        <canvas id="pieChartCanvas" width="200" height="200" class="topmargin bottommargin"></canvas>
+
+                        <script type="text/javascript">
+                            jQuery(window).load(function () {
+
+                                var pieChartData = [
+                                        {
+                                            label: "UnAssigned",
+                                            value: @JOStatus.TotalUnAssigned,
+                                            color: "pink"
+                                        },
+                                        {
+                                            label: "Assigned",
+                                            value: @JOStatus.TotalAssigned,
+                                            color: "#FDB45C"
+                                        },
+                                        {
+                                            label: "Completed",
+                                            value: @JOStatus.TotalCompleted,
+                                            color: "teal"
+                                        },
+                                        {
+                                            label: "Rejected",
+                                            value: @JOStatus.TotalRejected,
+                                            color: "green"
+                                        }
+
+                                ];
+                                var globalGraphSettings = { animation: Modernizr.canvas };
+                                function showPieChart() {
+                                    var ctx = document.getElementById("pieChartCanvas").getContext("2d");
+                                    new Chart(ctx).Pie(pieChartData, globalGraphSettings);
+                                }
+                                $('#pieChart').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showPieChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+                            });
+                        </script>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="col_one_third center" id="pieChart" style="background-color: #fff">
+
+                        <label class="center">Job Order Status</label>
+                        <br /><br /><br />
+                        <div class="rounded-skill nobottommargin" data-color="#3F729B" data-size="200" data-percent="0" data-width="3" data-speed="6500">
+                            <div class="counter counter-inherit"><span data-from="100" data-to="0" data-refresh-interval="50" data-speed="6000"></span> JobOrders</div>
+                        </div>
+                        <br /><br /><br /><br />
+
+                    </div>
+                }
+                @if (TrainingStatus.TotalAssigned > 0 || TrainingStatus.TotalCancelled > 0 || TrainingStatus.TotalCompleted > 0 || TrainingStatus.TotalInProgress > 0 || TrainingStatus.TotalRejected > 0)
+                {
+                    <div class="col_one_third center" id="pieChart1" style="background-color: #fff">
+                        <label class="center">Training Status</label>
+
+                        <canvas id="pieChartCanvas1" width="200" height="200" class="topmargin bottommargin"></canvas>
+
+                        <script type="text/javascript">
+                            jQuery(window).load(function () {
+                                var pieChartData = [
+                                        {
+                                            label: "Assigned",
+                                            value: @TrainingStatus.TotalAssigned,
+                                            color: "GREY"
+                                        },
+                                        {
+                                            label: "InProgress",
+                                            value: @TrainingStatus.TotalInProgress,
+                                            color: "pink"
+                                        },
+                                        {
+                                            label: "Completed",
+                                            value: @TrainingStatus.TotalCompleted,
+                                            color: "teal"
+                                        },
+                                        {
+                                            label: "Cancelled",
+                                            value: @TrainingStatus.TotalCancelled,
+                                            color: "#FDB45C"
+                                        },
+                                        {
+                                            label: "Rejected",
+                                            value: @TrainingStatus.TotalRejected,
+                                            color: "red"
+                                        }
+                                ];
+                                var globalGraphSettings = { animation: Modernizr.canvas };
+                                function showPieChart() {
+                                    var ctx = document.getElementById("pieChartCanvas1").getContext("2d");
+                                    new Chart(ctx).Pie(pieChartData, globalGraphSettings);
+                                }
+                                $('#pieChart1').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showPieChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+                            });
+                        </script>
+
+
+                    </div>
+                }
+                else
+                {
+                    <div class="col_one_third center" id="pieChart" style="background-color: #fff">
+
+                        <label class="center">Training Status</label>
+                        <br /><br /><br />
+                        <div class="rounded-skill nobottommargin" data-color="#3F729B" data-size="200" data-percent="0" data-width="3" data-speed="6500">
+                            <div class="counter counter-inherit"><span data-from="100" data-to="0" data-refresh-interval="50" data-speed="6000"></span> Trainings</div>
+                        </div>
+                        <br /><br /><br /><br />
+
+                    </div>
+                }
+                @if (InvStatus.TotalAccepted > 0 || InvStatus.TotalOnHold > 0 || InvStatus.TotalPaid > 0 || InvStatus.TotalRejected > 0 || InvStatus.TotalSubmitted > 0 || InvStatus.TotalUnPaid > 0)
+                {
+                    <div class="col_one_third col_last center" id="pieChart2" style="background-color: #fff">
+
+                        <label class="center">Invoice Status</label>
+
+                        <canvas id="pieChartCanvas2" width="200" height="200" class="topmargin bottommargin"></canvas>
+                        <script type="text/javascript">
+                            jQuery(window).load(function () {
+                                var pieChartData = [
+                                        {
+                                            label: "Submitted",
+                                            value: @InvStatus.TotalSubmitted,
+                                            color: "GREY"
+                                        },
+                                        {
+                                            label: "Accepted",
+                                            value: @InvStatus.TotalAccepted,
+                                            color: "pink"
+                                        },
+                                        {
+                                            label: "Paid",
+                                            value: @InvStatus.TotalPaid,
+                                            color: "teal"
+                                        },
+                                        {
+                                            label: "OnHold",
+                                            value: @InvStatus.TotalOnHold,
+                                            color: "#FDB45C"
+                                        },
+                                        {
+                                            label: "UnPaid",
+                                            value: @InvStatus.TotalUnPaid,
+                                            color: "green"
+                                        },
+                                        {
+                                            label: "Rejected",
+                                            value: @InvStatus.TotalRejected,
+                                            color: "AQUA"
+                                        }
+
+                                ];
+                                var globalGraphSettings = { animation: Modernizr.canvas };
+                                function showPieChart() {
+                                    var ctx = document.getElementById("pieChartCanvas2").getContext("2d");
+                                    new Chart(ctx).Pie(pieChartData, globalGraphSettings);
+                                }
+                                $('#pieChart2').appear(function () { $(this).css({ opacity: 1 }); setTimeout(showPieChart, 300); }, { accX: 0, accY: -155 }, 'easeInCubic');
+                            });
+                        </script>
+
+
+                    </div>
+                }
+                else
+                {
+                    <div class="col_one_third col_last center" id="pieChart" style="background-color: #fff">
+
+                        <label class="center">Invoice Status</label>
+                        <br /><br /><br />
+                        <div class="rounded-skill nobottommargin" data-color="#3F729B" data-size="200" data-percent="0" data-width="3" data-speed="6500">
+                            <div class="counter counter-inherit"><span data-from="100" data-to="0" data-refresh-interval="50" data-speed="6000"></span> Invoices</div>
+                        </div>
+                        <br /><br /><br /><br />
+
+                    </div>
+                }
+            </div>
+
+        }
+        else
+        {
+
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-user3"></i>
+                </div>
+                <h3>Welcome @user.Name @*<span class="subtitle">You do not have any Job Orders yet. <a href="@Url.Action("Create", "JobOrder", new { area = "CMS" })">CLICK HERE to Create one now.</a></span>*@</h3>
+            </div>
+
+        }
+
+    </div>
+</div>
+<style>
+    .blink {
+        animation-duration: 1s;
+        animation-name: blink;
+        color: red;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-in-out;
+    }
+
+    @@keyframes blink {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: .1;
+        }
+    }
+</style>

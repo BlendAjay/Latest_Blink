@@ -1,0 +1,156 @@
+﻿@using AJSolutions.Models;
+@{
+    ViewBag.Title = "My Calender";
+    UserViewModel userdetails = ViewData["UserProfile"] as UserViewModel;
+    if (userdetails.Role.ToUpper() == "ADMIN")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    IEnumerable<TrainerPlannerView> Planner = ViewData["Planner"] as IEnumerable<TrainerPlannerView>;
+}
+
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("Index", "Calendar", FormMethod.Post, new { @class = "form-horizontal", id = "Calendar", role = "form" }))
+{
+    <div class="container">
+        <div data-provide="calendar" id="calendar"></div>
+    </div>
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel12" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel16"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                <li><a href="#tabs-3">Video</a></li>
+                            </ul>
+                            <div class="tab-container">
+
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4> Navigation to My Calendar</h4>
+                                    <img src="~/images/gif/navigation to my calender.gif" alt="Save icon" />
+
+                                </div>
+
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6>In My Calendar Page, you can see your Engagement records.</h6>
+                                    <h6> Navigation to see Engagement Records</h6>
+                                    <p>Click on Navigation bar "Calendar" then click on MenuItem "My Calendar".</p>
+                                    <img src="~/images/Images1/calendar.jpg" width="300" height="500"><br></br>
+
+                                    <h6>In My Calendar Page, you can see your Engagement records with Reason.</h6>
+                                    <img src="~/images/Images1/Calendar page.png" width="400" height="300"><br></br>
+                                    <p> - here you will see your engagement schedule date is highlighted with different color. you can see your Engagement Reason.</p>
+                                    <img src="~/images/Images1/Leave Rezon.jpg" width="250" height="150"><br></br>
+
+                                </div>
+
+                                <div class="tab-content clearfix" id="tabs-3">
+
+                                    <h4> Help video for See Engagements Records</h4>
+                                    <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/Rrr4KXofjWY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script>
+
+
+    $(function () {
+        var currentYear = new Date().getFullYear();
+
+        $('#calendar').calendar({
+
+            enableContextMenu: true,
+            mouseOnDay: function (e) {
+                if (e.events.length > 0) {
+                    var content = '';
+
+                    for (var i in e.events) {
+                        content += '<div class="event-tooltip-content">'
+                                + '<div class="event-name" style="color:' + e.events[i].color + '">' + e.events[i].name + '</div>'
+                                + '</div>';
+
+                    }
+
+                    $(e.element).popover({
+                        trigger: 'manual',
+                        container: 'body',
+                        html: true,
+                        content: content
+                    });
+
+                    $(e.element).popover('show');
+                }
+            },
+            mouseOutDay: function (e) {
+                if (e.events.length > 0) {
+                    $(e.element).popover('hide');
+                }
+            },
+            dayContextMenu: function (e) {
+                $(e.element).popover('hide');
+            },
+            dataSource: []
+        });
+
+        $(document).ready(function () {
+
+            var calList = [
+                @if (Planner != null)
+                    {
+                        foreach (var item in Planner)
+                        {
+                            @:{id: @item.PlannerId, name:  "@item.Remarks", startDate: new Date(@item.FromDate.Year, @item.FromDate.Month - 1, @item.FromDate.Day), endDate: new Date(@item.ToDate.Year, @item.ToDate.Month -1, @item.ToDate.Day) },
+                        }
+                    }]
+
+            $('#calendar').data('calendar').setDataSource(calList, false);
+
+        });
+
+
+    });
+
+
+    
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

@@ -1,0 +1,375 @@
+﻿@using AJSolutions.Models;
+@model AddressViewModel
+@{
+    ViewBag.Title = "Address";
+    //ViewBag.Title = "AddressDetails";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<AddressViewModel> addresses = ViewData["AddressList"] as IEnumerable<AddressViewModel>;
+}
+
+@using (Html.BeginForm("AddressDetails", "CMS", FormMethod.Post, new { @class = "form-horizontal", id = "AddressDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Data", @ViewBag.Data as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Address Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Address</h5>
+                <div class="card-body">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.AddressLine1, "Address Line 1")<small>*</small>
+
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-road"> </i></span>
+                            @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. Street address, P.O. box, company name, c/o", id = "AddressLine1", required = "required" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        @Html.LabelFor(model => model.AddressLine2, "Address Line 2")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-road"> </i></span>
+                            @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. Apartment, suite , unit, building, floor, etc.", id = "AddressLine2" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.CountryId, "Select Country")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("CountryId", null, "---  Select Country ---", htmlAttributes: new { @class = "form-control", placeholder = "Select Country", id = "CountryId", required = "required", @onchange="FillCity()" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CountryId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.StateId, "Select State")<small>*</small>
+                            <div class="input-group divcenter" id="State">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("StateId", null, "---  Select State ---", htmlAttributes: new { @class = "form-control", placeholder = "Select State", id = "StateId", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.StateId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.CityId, "Select City")<small>*</small>
+                            <div class="input-group divcenter" id="City">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.DropDownList("CityId", null, "---  Select City ---", htmlAttributes: new { @class = "form-control", placeholder = "Select City", id = "CityId", required = "required" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.CityId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.PostalCode, "Postal Code")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-location"> </i></span>
+                                @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. 493554", id = "PostalCode" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.PostalCode, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.FaxNo, "Fax No")
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-printer"> </i></span>
+                                @Html.EditorFor(model => model.FaxNo, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g.  234-1-345346", id = "FaxNo" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.FaxNo, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            @Html.LabelFor(model => model.AddressType, "Address Type")<small>*</small>
+                            <div class="input-group divcenter">
+                                <span class="input-group-addon"><i class="icon-line-anchor"> </i></span>
+                                @if (ViewBag.UserAction == "Edit")
+                                {
+                                    @Html.DropDownList("AddressType", null, "---  Select Address Type ---", htmlAttributes: new { @disabled = "disabled", @class = "form-control required", @id = "AddressType", required = "required" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("AddressType", null, "---  Select Address Type ---", htmlAttributes: new { @class = "form-control", @id = "AddressType", required = "required" })
+                                }
+                            </div>
+                            @Html.ValidationMessageFor(model => model.AddressType, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <br />
+                        @Html.Hidden("CorporateId", ViewBag.CorporateId as string)
+                        <input type="submit" value="Submit" id="SubmitData" name="SubmitData" style="float: right;" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        @foreach (var item in addresses)
+        {
+            if (item.AddressType == "CO")
+            {
+                <div class="row container">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Correspondence Address <a href="@Url.Action("AddressDetails", "Dashboard", new { AddressType = item.AddressType, UserAction = "Edit" })" title="Edit" style="float:right"><i class="icon-pen"></i></a> <a id="Remove" onclick="javascript: ConfirmationDialog('@item.AddressType');" title="Remove" style="float:right; padding-right:2em"><i class="icon-line-cross"></i></a> </div>
+                        <div class="panel-body">
+                            <ul class="iconlist nobottommargin">
+                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                {
+                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                }
+                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                <li>
+                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                    {<i> - </i> @item.PostalCode}
+                                </li>
+                                @if (!string.IsNullOrEmpty(item.FaxNo))
+                                {
+                                    <li><i class="icon-printer"></i> @item.FaxNo</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+            if (item.AddressType == "PR")
+            {
+                <div class="row container">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Present Address <a href="@Url.Action("AddressDetails", "Dashboard", new { AddressType = item.AddressType, UserAction = "Edit" })" title="Edit" style="float:right"><i class="icon-pen"></i></a> <a id="Remove" onclick="javascript: ConfirmationDialog('@item.AddressType');" title="Remove" style="float:right; padding-right:2em"><i class="icon-line-cross"></i></a> </div>
+                        <ul class="iconlist nobottommargin">
+                            <li><i class="icon-road"></i> @item.AddressLine1</li>
+                            @if (!string.IsNullOrEmpty(item.AddressLine2))
+                            {
+                                <li><i class="icon-road"></i> @item.AddressLine2</li>
+                            }
+                            <li><i class="icon-location"></i> @item.City , @item.State</li>
+                            <li>
+                                <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                {<i> - </i> @item.PostalCode}
+                            </li>
+                            @if (!string.IsNullOrEmpty(item.FaxNo))
+                            {
+                                <li><i class="icon-printer"></i> @item.FaxNo</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            if (item.AddressType == "PE")
+            {
+                <div class="row container">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">Permanent Address <a href="@Url.Action("AddressDetails", "Dashboard", new { AddressType = item.AddressType, UserAction = "Edit" })" title="Edit" style="float:right"><i class="icon-pen"></i></a> <a id="Remove" onclick="javascript: ConfirmationDialog('@item.AddressType');" title="Remove" style="float:right; padding-right:2em"><i class="icon-line-cross"></i></a> </div>
+                        <div class="panel-body">
+                            <ul class="iconlist nobottommargin">
+                                <li><i class="icon-road"></i> @item.AddressLine1</li>
+                                @if (!string.IsNullOrEmpty(item.AddressLine2))
+                                {
+                                    <li><i class="icon-road"></i> @item.AddressLine2</li>
+                                }
+                                <li><i class="icon-location"></i> @item.City , @item.State</li>
+                                <li>
+                                    <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                    {<i> - </i> @item.PostalCode}
+                                </li>
+                                @if (!string.IsNullOrEmpty(item.FaxNo))
+                                {
+                                    <li><i class="icon-printer"></i> @item.FaxNo</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+            if (item.AddressType == "CM")
+            {
+                <div class="row container">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">Company Address <a href="@Url.Action("AddressDetails", "Dashboard", new { AddressType = item.AddressType, UserAction = "Edit" })" title="Edit" style="float:right"><i class="icon-pen"></i></a> <a id="Remove" onclick="javascript: ConfirmationDialog('@item.AddressType');" title="Remove" style="float:right; padding-right:2em"><i class="icon-line-cross"></i></a> </div>
+                        <ul class="iconlist nobottommargin">
+                            <li><i class="icon-road"></i> @item.AddressLine1</li>
+                            @if (!string.IsNullOrEmpty(item.AddressLine2))
+                            {
+                                <li><i class="icon-road"></i> @item.AddressLine2</li>
+                            }
+                            <li><i class="icon-location"></i> @item.City , @item.State</li>
+                            <li>
+                                <i class="icon-location"></i> @item.Country @if (!string.IsNullOrEmpty(item.PostalCode))
+                                {<i> - </i> @item.PostalCode}
+                            </li>
+                            @if (!string.IsNullOrEmpty(item.FaxNo))
+                            {
+                                <li><i class="icon-printer"></i> @item.FaxNo</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveAddressDetails", "Dashboard"));
+    @Html.Hidden("RedirectToHome", Url.Action("AddressDetails", "Dashboard"));
+
+}
+<script type="text/javascript">
+    function FillCity() 
+    alert("jdhfjdf");
+    var stateId = $('#State').val();
+    $.ajax({
+        url: '/Employees/FillCity',
+        type: "GET",
+        dataType: "JSON",
+        data: { State: stateId},
+        success: function (cities) {                    
+            $("#City").html(""); // clear before appending new list 
+            $.each(cities, function (i, city) {
+                $("#City").append(
+                    $('<option></option>').val(city.CityId).html(city.CityName));
+            });
+        }
+    });
+  }
+
+     $(document).ready(function () {
+        $('#CountryId').change(function () {
+            alert("hello");
+            $.ajax({
+                type: "post",
+                url: "/CMS/Dashboard/GetState",
+                data: { CountryId: $('#CountryId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var state = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='StateId'>";
+                    state = state + '<option value="">--- Select State ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        state = state + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    state = state + '</select>';
+                    $('#State').html(state);
+                }
+            });
+        });
+
+
+        $('#State').change(function () {
+            $.ajax({
+                type: "post",
+                url: "/CMS/Dashboard/GetCity",
+                data: { StateId: $('#StateId').val() },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    var city = "   <span class='input-group-addon'><i class='icon-location'> </i></span><select class='form-control required' id='CityId'>";
+                    city = city + '<option value="">--- Select City ---</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        city = city + '<option value=' + data[i].Value + '>' + data[i].Text + '</option>';
+                    }
+                    city = city + '</select>';
+                    $('#City').html(city);
+                }
+            });
+        });
+
+    });
+    $("#AddressDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/CMS/Dashboard/AddressDetails",
+                data: {
+                    AddressType: $('#AddressType :selected').val(),
+                    AddressLine1: $('#AddressLine1').val(),
+                    AddressLine2: $('#AddressLine2').val(),
+                    CityId: $('#CityId').val(),
+                    StateId: $('#StateId').val(),
+                    PostalCode: $('#PostalCode').val(),
+                    CountryId: $('#CountryId').val(),
+                    FaxNo: $('#FaxNo').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+
+        }
+    });
+
+
+   
+
+    function ConfirmationDialog(AddressType) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'btn-info',
+            cancelButton: 'No',
+            cancelButtonClass: 'btn-warning',
+            icon: 'fa fa-question-circle fa-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?AT=" + AddressType;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+
+    $(document).ready(function () {
+        if ($("#Data").val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Address has been Deleted Successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

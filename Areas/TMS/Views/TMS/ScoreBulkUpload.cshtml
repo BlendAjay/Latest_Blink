@@ -1,0 +1,110 @@
+﻿@using AJSolutions.Models;
+@using AJSolutions.DAL;
+@model IEnumerable<TrainingAssessmentView>
+@{
+    ViewBag.Title = "ScoreBulkUpload";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+}
+@using (Html.BeginForm("ScoreBulkUpload", "TMS", FormMethod.Post, new { @class = "form-horizontal", id = "ScoreBulkUpload", enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.Hidden("Status", ViewBag.Status as string) 
+    @Html.Hidden("Id", ViewBag.TrainingId as string)
+    @Html.Hidden("Assessment", ViewBag.AssessId as string)
+
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>Score Bulk Upload</h4>
+                </div>
+                <div class="col_full">
+                    <center>
+                        <ul class="process-steps process-3 bottommargin clearfix">
+                            <li class="active">
+                                <a href="#" class=" i-bordered i-circled divcenter icon-download-alt" onclick="GenreateBulk();"></a>
+                                <h5>
+                                    Download Score Template
+                                </h5>
+                            </li>
+                            <li>
+                                <span class="i-bordered i-circled divcenter icon-table"></span>
+                                <h5>Fill Excel sheet</h5>
+                            </li>
+                            <li>
+                                @*<input type="file" name="files" id="files" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewImage(@Global.MaxSize("CSV"), this, 'CSV')" />*@
+                                <input type="file" name="FileUpload" id="csvFile" style="padding-left:12px;" class="icon-upload-alt i-bordered i-circled divcenter required" onchange="ValidatePreviewfile(@Global.MaxSize("CSV"), this, 'CSV')" accept="text/csv" />
+                                @*<input type="file" id="uploadImage" name="uploadPhoto" class="icon-upload-alt i-bordered i-circled divcenter required" />*@
+                                <h5>Select File to Upload</h5>
+                                <label id="lblgetfilename"></label>
+                            </li>
+                        </ul>
+                        
+                        <input type="submit" name="Submit" id="Submit" value="Upload" class="button button-3d button-rounded button-teal" />
+                        <p>@Html.Encode(ViewData["Feedback"])</p>
+                        @if (ViewBag.result == "Success")
+                        {
+                            @ViewBag.SuccessCount <span>uploaded Successfully</span><br />
+                            @ViewBag.FailureCount <span>Failed</span><br />
+                            if (@ViewBag.Download == "Yes")
+                            {
+                                <a href="/TMS/TMS/DownoladFile">Download Result</a>
+                            }
+                        }
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+    @Html.Hidden("RedirectTo", Url.Action("ScoreBulkUpload", "TMS", new { area = "TMS", Id = @ViewBag.TrainingId }))
+}
+<script src="~/Scripts/CustomValidation.js"></script>
+<script type="text/javascript">
+    function GenreateBulk() {
+        var AssessId = @Html.Raw(Json.Encode(ViewBag.AssessId));
+        var url = $('#weburl').val() + "/TMS/TMS/DownloadScoreTemplate?Id=" + $('#Id').val() + "&Assessment=" + AssessId;
+        location.href = url;
+    }
+
+    $('#csvFile').change(function () {
+        var path = $(this).val();
+        if (path != '' && path != null) {
+            var q = path.substring(path.lastIndexOf('\\') + 1);
+            $('#lblgetfilename').html(q);
+        }
+    })
+
+    $("#ScoreBulkUpload").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn();
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Upload <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+           
+        }
+    });
+</script>

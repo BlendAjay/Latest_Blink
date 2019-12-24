@@ -1,0 +1,138 @@
+﻿@using AJSolutions.Models;
+@using PagedList.Mvc;
+@using AJSolutions.Helpers;
+@model  PagedList.IPagedList<AJSolutions.Models.ResignationViewModel>
+@using AJSolutions.DAL;
+@{
+    ViewBag.Title = "Index";
+    if (User.IsInRole("Employee"))
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+            <div class="fancy-title title-bottom-border title-right">
+                <h4>Employee Resignation</h4>
+            </div>
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    <div class="col_full">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped nobottommargin">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Reason</th>
+                                    <th>RelievingReason</th>
+                                    <th>DateofResignation</th>
+                                    <th>LastWorkingDate</th>
+                                    <th>AprrovedOn</th>
+                                    <th>ApprovedBy</th>
+                                    <th>Status</th>
+
+                                </tr>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.Reason</td>
+                                        <td>@item.RelievingReason</td>
+                                        <td>@item.DateofResignation</td>
+                                        <td>@item.LastWorkingDate</td>
+                                        <td>@item.AprrovedOn</td>
+                                        <td>@item.ApprovedByName</td>
+                                        @if (item.Status == 0)
+                                        {
+                                            <td>
+                                                <small><a href="#" title="Approve" class="btn btn-default btn-xs" onclick="Approved('@item.UserId','@item.ResignationId','App')">Approve</a><a href="#" title="DisApprove" class="btn btn-default btn-xs" onclick="Approved('@item.UserId','@item.ResignationId','Dis')">DisApprove</a></small>
+                                            </td>
+                                        }
+                                        else if (item.Status == 1)
+                                        {
+                                            <td><label style='color:green;'>Approved</label></td>
+                                        }
+                                        else if (item.Status == 2)
+                                        {
+                                            <td><label style='color:red;'>DisApproved</label></td>
+                                        }
+                                        else if (item.Status == 3)
+                                        {
+                                            <td><label style='color:red;'>Canceled</label></td>
+                                        }
+
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <br /><br />
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Resignation<span class="subtitle"></span></h3>
+                    </div>
+                }
+            }
+        </div>
+        <ul class="pagination">
+            <li>@Html.PagedListPager(Model, page => Url.Action("Index", new { page, PageSize = ViewBag.Paging }))</li>
+            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+        </ul>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Index", "Letter"), new { area = "EMS" })
+}
+<script>
+    function Approved(userid, resignationid, action) {
+        $.ajax({
+            type: "post",
+            url: "/EMS/Letter/ApproveResignation",
+            data: {
+                UserId: userid,
+                ResignationId: resignationid,
+                Action: action
+
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Rasignation Approved <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                        var url = $('#RedirectTo').val();
+                        window.location = url;
+                    }
+                });
+            }
+
+        });
+    }
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+</script>

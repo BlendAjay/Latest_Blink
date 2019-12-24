@@ -1,0 +1,128 @@
+﻿@using AJSolutions.Models;
+
+@{
+    ViewBag.Title = "MDM Details";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    AJSolutions.Areas.EMS.Models.EmployeeViewModel faculty = ViewData["TrainerDetail"] as AJSolutions.Areas.EMS.Models.EmployeeViewModel;
+    List<AJSolutions.Areas.Candidate.Models.CandidateViewModel> stu = ViewData["Candidate"] as List<AJSolutions.Areas.Candidate.Models.CandidateViewModel>;
+    CourseBatchViewModel attendence = ViewData["CourseBatch"] as CourseBatchViewModel;
+    int c = 1;
+}
+@using (Html.BeginForm("MDMDetail", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "TMS", role = "form" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.Hidden("hdnFdate", ViewBag.StartDate as string)
+    @Html.Hidden("hdnTdate", ViewBag.Enddate as string)
+    @Html.Hidden("Status", ViewBag.Status as string)
+    @Html.Hidden("BatchId", ViewBag.BatchId as string)
+    <div class="container">
+        <div class="form-process"></div>
+        <div class="col_one_fourth">
+            <label>Trainer Name: @faculty.Name</label>
+            <br />
+            <label>Training From: @ViewBag.StartDate.ToString("dd-MMM-yyyy")</label>
+
+        </div>
+        <div class="col_one_fourth">
+            <label>Total Trainee: @ViewBag.CandidateCount</label>
+            <br />
+            <label>Training To: @ViewBag.Enddate.ToString("dd-MMM-yyyy")</label>
+        </div>
+        @if (stu.Count > 0)
+        {
+            <div class="col_full">
+                <table class="table table-bordered table-striped table-responsive nobottommargin">
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Candidate Name (Reckonn Id)</th>
+                            <th>SI UserId</th>
+                            <th>Trainee Phone Number</th>
+                            <th>MDM Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in stu)
+                        {
+                            <tr>
+                                <td>@(c++)<input type="hidden" name="UserId[]" id="UserId" value="@item.UserId" /></td>
+                                <td>@item.Name (@item.UserName)</td>
+                                <td>@item.RegistrationId</td>
+                                <td>@item.PhoneNumber</td>
+                                <td><input type="text" class="form-control" id="OtherId" name="OtherId[]" placeholder="Enter MDM Number" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col_full">
+                @Html.Hidden("TrainingId", ViewBag.TrainingId as string)
+                @Html.Hidden("UId")
+                @Html.Hidden("URemark")
+                @Html.Hidden("UAttendance")
+
+                <input type="submit" id="btnRecord" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+            </div>
+        }
+        else
+        {
+            <br /><br /><hr />
+            <div class="fancy-title title-bottom-border title-right">
+                <h3></h3>
+            </div>
+            <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                <div class="fbox-icon">
+                    <i class="icon-thumbs-down2"></i>
+                </div>
+                <h3>No Trainee Assign<span class="subtitle"></span></h3>
+            </div>
+        }
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("TrainingDetails", "TMS", new { area = "TMS", Id = @ViewBag.TrainingId }))
+}
+<script type="text/javascript">
+    $("#btnRecord").click(function () {
+
+        $('.form-process').fadeIn();
+        var userid = "";
+        var otherId = "";
+
+        $.each($("input[name='UserId[]']"), function () {
+            userid = userid + $(this).val() + ",";
+        });
+
+        $.each($("input[name='OtherId[]']"), function () {
+            otherId = otherId + $(this).val() + ",";
+        });
+
+        $("#UId").val(userid);
+        $("#OtherId").val(otherId);
+        this.form.submit(); $("#RedirectTo").val()
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+
+        $('.form-process').fadeOut();
+
+        if ($('#Status').val() == "True") {
+            $.alert({
+                title: 'Info',
+                content: 'MDM Number saved successfully',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-up2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectTo").val();
+                    location.href = url;
+                }
+            });
+        }
+    });
+
+</script>

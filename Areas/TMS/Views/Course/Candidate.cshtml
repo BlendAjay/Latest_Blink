@@ -1,0 +1,295 @@
+﻿@model PagedList.IPagedList<AJSolutions.Areas.Candidate.Models.CorporateCandidateViewModel>
+@using PagedList.Mvc;
+@using AJSolutions.Models;
+@using AJSolutions.DAL;
+
+@{
+    ViewBag.Title = "Assign Candidate";
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    if (user.Role != "Employee")
+    {
+        Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    }
+    //IEnumerable<AJSolutions.Areas.Candidate.Models.CorporateCandidateViewModel> candidateList = ViewData["CandidateList"] as IEnumerable<AJSolutions.Areas.Candidate.Models.CorporateCandidateViewModel>;
+}
+
+@using (Html.BeginForm("Candidate", "Course", FormMethod.Post, new { @class = "form-horizontal", id = "CandidateCourse", role = "form" }))
+{
+    @Html.Hidden("Success", ViewBag.result as string)
+
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Assign Course batch to Candidates</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Assign Course batch to Candidates</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Select Course</label><br />
+                            <small style="float:right"><a href="@Url.Action("CourseMasters", "TMS", new { Area = "TMS" })" target="_blank">Add Sector</a></small>
+                            @Html.DropDownList("CourseCode", null, "---  Select Course ---", htmlAttributes: new { @class = "form-control", id = "CourseCode", placeholder = "Select Course" })
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <label>Select Batch</label><br />
+                            <small style="float:right"><a href="@Url.Action("CourseBatch", "TMS", new { Area = "TMS" })" target="_blank">Add Batch</a></small>
+                            @Html.DropDownList("BatchId", null, "---  Select Batch ---", htmlAttributes: new { @class = "form-control", id = "BatchId", placeholder = "Select course batch" })
+                        </div>
+
+                        <br /><br />
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            @*<form action="~/search.html" method="get">*@
+                            <input type="text" id="q" name="q" class="form-control" value="@ViewBag.SearchText" placeholder="Type &amp; Hit Enter..">
+                            @*</form>*@
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="table-responsive">
+                                @if (Model != null)
+                                {
+                                    if (Model.Count > 0)
+                                    {
+                                        <table id="datatable1" class="table table-bordered nobottommargin">
+                                            <tr>
+                                                <th class="text-center"><input type='checkbox' class='InvChkAll' id='InvChkAll' name='InvChkAll' value='checkAll' onclick="CheckUncheckAllToInvite();" /></th>
+                                                <th><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.NameSortParam, page = ViewBag.Page, PageSize = ViewBag.Paging })">Name&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                                <th class="text-center"><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.EmailSortParam, page = ViewBag.Page, PageSize = ViewBag.Paging })">Email&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                                <th class="text-center"><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.DesignationSortParam, page = ViewBag.Page, PageSize = ViewBag.Paging })">Designation&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                                <th class="text-center"><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.EmployeeSortParam, page = ViewBag.Page, PageSize = ViewBag.Paging })">Employee Id&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                                <th class="text-center"><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.CategorySortParam, page = ViewBag.Page, PageSize = ViewBag.Paging })">Category&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                                <th class="text-center"><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.StateSortParam, page = ViewBag.Page, PageSize = ViewBag.Paging })">State&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                                <th class="text-center"><nobr><a href="@Url.Action("Candidate", "Course", new { CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.RegisteredOnSortParam,  page = ViewBag.Page, PageSize = ViewBag.Paging })">Registered On&nbsp;<span class="icon-sort"></span></a></nobr></th>
+                                            </tr>
+
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <input type='checkbox' class='InvChk' id='InvChk' name='InvChk[]' value='@item.UserId' />
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Name)
+                                                        <br />
+                                                        <small>  (@item.UserName)</small>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="mailto:@item.Email" title="mail:@item.Email"><i class="icon-mail"></i></a>&nbsp;
+                                                        <a href="tel:@item.PhoneNumber" title="tel:@item.PhoneNumber"><i class="icon-call"></i></a>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Designation)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.RegistrationId)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.BranchCategory)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.BranchState)
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (item.RegisteredOn != null)
+                                                        {
+                                                            <nobr>@item.RegisteredOn.ToString("dd-MMM-yyyy")</nobr>
+                                                        }
+                                                    </td>
+
+                                                </tr>
+
+                                            }
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                                            <div class="fbox-icon">
+                                                <i class="icon-thumbs-down2"></i>
+                                            </div>
+                                            <h3>Candidate list not found<span class="subtitle">Select Course & Batch</span></h3>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <input type="submit" name="Submit" id="Submit" value="Assign" class="btn btn-primary btn-xs" style="float:right" />
+                        </div>
+                    </div>
+                    @if (Model != null)
+                    {
+                        <ul class="pagination">
+                            <li>@Html.PagedListPager(Model, page => Url.Action("Candidate", new { page, CourseCode = ViewBag.Course, q = ViewBag.SearchText, BatchId = ViewBag.BatchCode, sortOrder = ViewBag.NameSortParam, PageSize = ViewBag.Paging }))</li>
+                            <li>@Html.DropDownList("PageSize", null, htmlAttributes: new { @id = "PageSize", @onchange = "submitform();" })</li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Hidden("CandidateList");
+    @Html.Hidden("RedirectTo", Url.Action("Candidate", "Course"));
+    @Html.Hidden("NotSubmit", "")
+    @Html.Hidden("PageId", ViewBag.Page as string)
+    @Html.Hidden("Sorting", ViewBag.CurrentSort as string)
+}
+<script src="~/Scripts/CustomValidation.js"></script>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        //$('#datatable1').DataTable();
+
+        $('.form-process').fadeOut();
+        if ($('#Success').val() == "Success") {
+            $.alert({
+                title: 'Info',
+                content: 'Successfully Assigned',
+                confirmButton: 'OK',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                icon: 'icon-thumbs-up2 icon-2x ',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+        }
+
+        $('#CourseCode').change(function () {
+
+            $('.form-process').fadeIn();
+
+            var url = $("#RedirectTo").val() + "?CourseCode=" + $('#CourseCode :selected').val();
+            location.href = url;
+
+        });
+
+        $('#q').change(function () {
+
+            $('#NotSubmit').val("YES");
+
+            $('.form-process').fadeIn();
+
+            var url = $("#RedirectTo").val() + "?CourseCode=" + $('#CourseCode :selected').val() + "&BatchId=" + $('#BatchId :selected').val() + "&q=" + $(this).val() + "&sortOrder=" + $('#Sorting').val() + "&page=" + $('#PageId').val() + "&PageSize=" + $("#PageSize :selected").val();
+            location.href = url;
+
+        });
+
+        $('#Submit').click(function () {
+            if ($('#NotSubmit').val() == "YES") {
+                return false;
+            }
+
+            if ($("#CourseCode").val() == undefined || $('#CourseCode').val() == '') {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select <b>Course</b> to assign candidate',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+
+            if ($("#BatchId").val() == undefined || $('#BatchId').val() == '') {
+                $.alert({
+                    title: 'Alert',
+                    content: 'Select <b>batch</b> to assign candidate',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+
+                return false;
+            }
+
+            var inviteSelected = new Array();
+            $.each($("input[name='InvChk[]']"), function () {
+
+                if ($(this).prop('checked') == true) {
+                    inviteSelected.push($(this).val());
+                }
+            });
+
+            if (inviteSelected.length == 0) {
+                $.alert({
+                    title: 'Info',
+                    content: 'No Profies selected to assign Course Batch',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                return false;
+            }
+            $('#CandidateList').val(inviteSelected);
+            $('.form-process').fadeIn();
+            $.ajax({
+                type: "get",
+                url: "/Consultant/GeneratePassword",
+                data: {
+                    CourseCode: $('#CourseCode :selected').val()
+                    , BatchId: $('#BatchId :selected').val()
+                    , CandidateList: $('#CandidateList').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+
+                }
+            });
+
+        });
+    });
+
+    function submitform() {
+        if ($("#PageSize :selected").val() != 0) {
+            $('#spinner').show();
+            var PageSize = $("#PageSize :selected").val();
+            var url = $("#RedirectTo").val() + "?CourseCode=" + $('#CourseCode :selected').val() + "&BatchId=" + $('#BatchId :selected').val() + "&q=" + $('#q').val() + "&sortOrder=" + $('#Sorting').val() + "&page=" + $('#PageId').val() + "&PageSize=" + PageSize;
+            location.href = url;
+        }
+    }
+
+    function CheckUncheckAllToInvite() {
+
+        if ($("input[name='InvChkAll']").prop('checked') == true) {
+            $.each($("input[name='InvChk[]']"), function () {
+                $(this).prop('checked', true);
+            });
+        }
+        else {
+            $.each($("input[name='InvChk[]']"), function () {
+                $(this).prop('checked', false);
+            });
+        }
+
+    }
+</script>
+

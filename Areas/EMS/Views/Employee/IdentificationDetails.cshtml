@@ -1,0 +1,468 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.EmpIdentificationDetailsView
+@{
+    ViewBag.Title = "Identification Details";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<EmpIdentificationDetailsView> identificationtype = ViewData["IdentificationList"] as IEnumerable<EmpIdentificationDetailsView>;
+}
+
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("IdentificationDetails", "Employee", FormMethod.Post, new { @class = "form-horizontal needs-validation", id = "IdentificationDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Data", ViewBag.data as string)
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Identification Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">Identification Details</h5>
+                <div class="card-body">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <span><b>Id Type<small>*</small></b></span>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-list"> </i></span>
+                            @Html.Hidden("IdentityType", ViewBag.IdentityType as string)
+                            @if (ViewBag.Action == "Add")
+                            {
+                                @Html.DropDownList("IdentificationTypeId", null, "--- Select Identification Type ---", htmlAttributes: new { @class = "form-control required", @id = "IdentificationTypeId", required = "required" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("IdentificationTypeId", null, "--- Select Identification Type ---", htmlAttributes: new { @disabled = "disabled", @class = "form-control", @id = "IdentificationTypeId" })
+                            }
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IdentificationTypeName, "", new { @class = "text-danger" })
+                        <br>
+                        <span><b>Id Number<small>*</small></b></span>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-file-text"> </i></span>
+                            @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control required", id = "IdNumber", placeholder = " e.g. adhar card,pan Card,voter Id,passport,other etc.", required = "required" } })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+                        <br>
+
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <span><b>Issuing Date<small>*</small></b></span>
+                        <div class="input-group divcenter  travel-date-group">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" value="@ViewBag.issuingDate" class="form-control past-enabled required" placeholder="DD/MM/YYYY" id="IssuingDate" name="IssuingDate" required="required">
+                            @*@Html.EditorFor(model => model.IssuingDate, new { htmlAttributes = new { @class = "form-control", id = "IssuingDate", placeholder = "yyyy-MM-dd" } } )*@
+                        </div>
+                        @Html.ValidationMessageFor(model => model.IssuingDate, "", new { @class = "text-danger" })
+                        <br>
+                        <span><b>Valid Till</b></span>
+                        <div class="input-group divcenter  travel-date-group">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" value="@ViewBag.validTill" class="form-control past-enabled" placeholder="DD/MM/YYYY" id="ValidTill" name="ValidTill">
+                            @*@Html.EditorFor(model => model.ValidTill, new { htmlAttributes = new { @class = "form-control", id = "ValidTill", placeholder = "yyyy-MM-dd" } } )*@
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ValidTill, "", new { @class = "text-danger" })
+                        <br>
+                    </div>
+                    <br>
+                    <input type="submit" id="identificationdetails" value="Save" style="float: right;" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <br /><br />
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>
+                            Identification Type Name
+                        </th>
+                        <th>
+                            Id Number
+                        </th>
+                        <th>
+                            Issuing Date
+                        </th>
+                        <th>
+                            Valid Till
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+
+                    @if (identificationtype != null)
+                    {
+                        foreach (var item in identificationtype)
+                        {
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdentificationTypeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdNumber)
+                        </td>
+                        <td>
+                            @if (item.IssuingDate != null)
+                                    {
+                                    @item.IssuingDate.Value.ToString("dd-MMM-yyyy")
+                                    }
+                        </td>
+                        <td>
+                            @if (item.ValidTill != null)
+                                    {
+                                    @item.ValidTill.Value.ToString("dd-MMM-yyyy")
+                                    }
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "IdentificationDetails", "Employee", new { IdentificationTypeId = item.IdType, useraction = "Edit" }, new { title = "Edit" })
+                            |
+                            <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.IdType');" title="Remove">Delete</a>
+                        </td>
+                    </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+        @Html.Hidden("RedirectTo", Url.Action("RemoveIdentificationDetails", "Employee"))
+        @Html.Hidden("RedirectToHome", Url.Action("IdentificationDetails", "Employee"))
+    </div>
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ($('#SaveStatus').val() == "Succeeded") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+    });
+
+    $(document).ready(function () {
+
+        if ($('#Data').val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been <b> Deleted.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+    });
+    $("#IdentificationDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/EMS/Employee/IdentificationDetails",
+                data: {
+                    IdNumber: $('#IdNumber').val(),
+                    IssuingDate: $("#IssuingDate").val(),
+                    ValidTill: $('#ValidTill').val(),
+                    IdentificationTypeId: $('#IdentificationTypeId: selected').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+
+    if ($("#IssuingDate").val() != undefined && $('#IssuingDate').val() != '' && $("#ValidTill").val() != undefined && $('#ValidTill').val() != '') {
+
+        var issuing_date = $("#IssuingDate").val(); //2013-09-5
+        var validtill_date = $("#ValidTill").val();
+
+        if (Date.parse(validtill_date) <= Date.parse(issuing_date)) {
+            // alert("Leaving Date should be less than Joinging Date");
+            $.alert({
+                title: 'Alert',
+                content: '<b>Valid Till Date</b> should be grater than <b>Issuing Date </b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn-primary',
+                icon: 'icon-thumbs-down2 icon-2x',
+                animation: 'zoom',
+                confirm: function () {
+                }
+            });
+            $("#ValidTill").focus();
+            //$('#LeavingDate').val(null);
+            return false;
+        }
+    }
+
+    $('#IdentificationDetails').submit();
+    });
+
+
+
+
+</script>
+<script type="text/javascript">
+    function ConfirmationDialog(IdType) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?Id=" + IdType;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+</script>
+@*<script type="text/javascript">
+
+        $(document).ready(function () {
+
+            if ($('#SaveStatus').val() == "Succeeded") {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+            }
+
+        });
+
+
+
+        function ConfirmationDialog(IdType) {
+            $.confirm({
+                title: 'Confirmation',
+                content: 'Are you sure you want to delete?',
+                confirmButton: 'Yes',
+                confirmButtonClass: 'button button-3d button-rounded button-green',
+                cancelButton: 'No',
+                cancelButtonClass: 'button button-3d button-rounded button-red',
+                icon: 'icon-warning-sign icon-2x',
+                animation: 'scale',
+                animationClose: 'top',
+                confirm: function () {
+                    var url = $("#RedirectTo").val() + "?Id=" + IdType;
+                    location.href = url;
+                }
+            });
+            return false;
+        }
+    </script>*@
+
+<link href="~/css/jquery-confirm.css" rel="stylesheet" />
+<script type="text/javascript" src="~/js/jquery-confirm.js"></script>
+
+
+
+<script type="text/javascript">
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+
+
+
+
+
+@*@using (Html.BeginForm("IdentificationDetails", "Employee", FormMethod.Post, new { @class = "form-horizontal", id = "IdentificationDetails", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+        <div class="container">
+            <div class="row">
+                <div id="contact-form-overlay" class="clearfix">
+                    <div class="fancy-title title-bottom-border">
+                        <h3>Identification</h3>
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.IdType, "Id Type")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user3"> </i></span>
+                            @Html.EditorFor(model => model.IdType, new { htmlAttributes = new { @class = "form-control", id = "IdType", @Placeholder = "Id type" } })
+                            @Html.ValidationMessageFor(model => model.IdType, "", new { @class = "text-danger" })
+                        </div>
+                        <br>
+                        @Html.LabelFor(model => model.IdNumber, "Id Number")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-barcode"> </i></span>
+                            @Html.EditorFor(model => model.IdNumber, new { htmlAttributes = new { @class = "form-control", id = "IdNumber", @Placeholder = "Id Number" } })
+                            @Html.ValidationMessageFor(model => model.IdNumber, "", new { @class = "text-danger" })
+                        </div>
+                        <br>
+                         </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(model => model.IssuingDate, "Issuing Date")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                            @Html.EditorFor(model => model.IssuingDate, new { htmlAttributes = new { @class = "form-control", id = "IssuingDate", @Placeholder = "Issuing Date" } })
+                            @Html.ValidationMessageFor(model => model.IssuingDate, "", new { @class = "text-danger" })
+                        </div>
+                        <br>
+                        @Html.LabelFor(model => model.ValidTill, "Valid Till")
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                            @Html.EditorFor(model => model.ValidTill, new { htmlAttributes = new { @class = "form-control", id = "ValidTill", @Placeholder = "Valid Till" } })
+                            @Html.ValidationMessageFor(model => model.ValidTill, "", new { @class = "text-danger" })
+                        </div>
+                        <br>
+                    </div>
+                    <div class="col_full">
+                        @Html.Hidden("UserId", ViewBag.UserId as string)
+                        <input type="submit" id="identificationdetails" value="Save" style="float: right;" class="button button-3d button-rounded button-teal" />
+                    </div>
+                </div>
+        </div>
+            <br /><center><script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script></center>
+    </div>
+    }
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            if ($('#SaveStatus').val() == "Succeeded") {
+
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Your Date has been saved <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+            }
+
+        });
+
+        $('#identificationdetails').click(function (e) {
+            e.preventDefault();
+
+            if ($("#IdType").val() == undefined || $('#IdType').val() == '') {
+                $.alert({
+                    title: 'Info',
+                    content: '<b>Id Type</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#IdType").focus();
+                return false;
+            }
+
+            if ($("#IdNumber").val() == undefined || $('#IdNumber').val() == '') {
+                $.alert({
+                    title: 'Info',
+                    content: '<b>Id Number</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#IdNumber").focus();
+                return false;
+            }
+
+
+            if ($("#IssuingDate").val() == undefined || $('#IssuingDate').val() == '') {
+                $.alert({
+                    title: 'Info',
+                    content: '<b>Issuing Date</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#IssuingDate").focus();
+                return false;
+            }
+
+            if ($("#ValidTill").val() == undefined || $('#ValidTill').val() == '') {
+                $.alert({
+                    title: 'Info',
+                    content: '<b>Valid Till</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#ValidTill").focus();
+                return false;
+            }
+
+
+            $('#IdentificationDetails').submit();
+        });
+    </script>*@

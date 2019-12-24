@@ -1,0 +1,150 @@
+﻿@model AJSolutions.Models.CandidateLeadsView
+@{
+    ViewBag.Title = "Candidate Details";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div id="contact-form-overlay" class="clearfix">
+        <div class="form-process"></div>
+        <div class="row">
+            <div class="fancy-title title-bottom-border">
+                <h4>Lead Details</h4>
+            </div>
+            <div class="col_half">
+                <label> Candidate Name:</label> @Model.Name
+                <br />
+                @if (@Model.DOB != null)
+                {
+                    <label> Date Of Birth ::</label> @Model.DOB.Value.ToString("dd-MMM-yyyy")
+                    <br />
+                }
+                @if (@Model.FatherName != null)
+                {
+                    <label> Father Name:</label> @Model.FatherName
+                    <br />
+                }
+                @if (@Model.FatherOccupation != null)
+                {
+                    <label> Father Occupation:</label> @Model.FatherOccupation
+                    <br />
+                }
+                @if (@Model.IdName != null)
+                {
+                    <label> Id Name:</label> @Model.IdName
+                    <br />
+                }
+                @if (@Model.IdNumber != null)
+                {
+                    <label> Id Number:</label> @Model.IdNumber
+                    <br />
+                }
+                @if (@Model.MaritalStatus != null)
+                {
+                    <label> Marital Status:</label> @Model.MaritalStatus
+                    <br />
+                }
+                @if (@Model.Category != null)
+                {
+                    <label> Category:</label> @Model.Category
+                    <br />
+                }
+                @if (@Model.Religion != null)
+                {
+                    <label> Religion:</label> @Model.Religion
+                    <br />
+                }
+                @*@if (@Model.Country != null)
+                {
+                    <label> Country:</label> @Model.Country
+                    <br />
+                }
+                @if (@Model.State != null)
+                {
+                    <label> State:</label> @Model.State
+                    <br />
+                }
+                @if (@Model.City != null)
+                {
+                    <label> City:</label> @Model.City
+                    <br />
+                }*@
+            </div>
+            <div class="col_half col_last">
+
+                @if (@Model.PhoneNumber != null)
+                {
+                    <label> Phone Number:</label> @Model.PhoneNumber
+                    <br />
+                }
+                @if (@Model.EmailId != null)
+                {
+                    <label> Email Id:</label> @Model.EmailId
+                    <br />
+                }
+                @if (@Model.MediumOfEducation != null)
+                {
+                    <label> Medium Of Education:</label> @Model.MediumOfEducation
+                    <br />
+                }
+                @if (@Model.Relocate != null)
+                {
+                    if (Model.Relocate == true)
+                    {
+                        <label>Relocate:</label><span> Yes</span>
+                        <br />
+                    }
+                    else
+                    {
+                        <label> Relocate:</label><span> No</span>
+                        <br />
+                    }
+                }
+                @if (@Model.MotherName != null)
+                {
+                    <label> Mother Name:</label> @Model.MotherName
+                    <br />
+                }
+                @if (@Model.MotherOccupation != null)
+                {
+                    <label> Mother Occupation:</label> @Model.MotherOccupation
+                    <br />
+                }
+                @if (@Model.Gender != null)
+                {
+                    <label> Gender:</label> @Model.Gender
+                    <br />
+                }
+                @if (@Model.FamilyIncome != null)
+                {
+                    <label> Family Income:</label> @Model.FamilyIncome
+                    <br />
+                }
+                @if (@Model.Qualification != null)
+                {
+                    <label> Qualification:</label> @Model.Qualification
+                    <br />
+                }
+                @if (@Model.DifferentlyAbled != null)
+                {
+                    if (Model.DifferentlyAbled == true)
+                    {
+                        <label>Differently Abled:</label><span> Yes</span>
+                        <br />
+                    }
+                    else
+                    {
+                        <label> Differently Abled:</label><span> No</span>
+                        <br />
+                    }
+                }
+                @if (@Model.BelowPoverty != null)
+                {
+                    <label> Below Poverty:</label> @Model.BelowPoverty
+                    <br />
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,172 @@
+﻿@model List<AJSolutions.Models.TrainingAssessmentView>
+@{
+    ViewBag.Title = "MyAssessments";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    List<AJSolutions.Models.TrainingAssessmentView> training = ViewData["Training"] as List<AJSolutions.Models.TrainingAssessmentView>;
+    string trainingId = "";
+}
+@using (Html.BeginForm("MyAssessments", "TMS", FormMethod.Post, new { @class = "form-horizontal", id = "MyAssessments", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("CourseCode", ViewBag.CourseCode as string)
+    <input type="hidden" id="BatchId" value="@ViewBag.BatchId" />
+    <div class="container">
+        <div id="" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <h4>My Assessments <span> (@ViewBag.CourseName)</span></h4>
+                </div>
+
+                <div class="col_full">
+                    <div class="table-responsive">
+                        @if (Model.Count > 0)
+                        {
+                            foreach (var qitem in training)
+                            {
+                                if (trainingId != qitem.TrainingId)
+                                {
+                                    trainingId = qitem.TrainingId;
+
+                                    <b>@qitem.SubjectLine</b>
+                                    <table class="table table-bordered nobottommargin">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Assessment
+                                                </th>
+
+                                                @*<th>
+                                                        Start From
+                                                    </th>
+                                                    <th>
+                                                        Available Till
+                                                    </th>
+                                                    <th>
+                                                        Start Time
+                                                    </th>
+                                                    <th>
+                                                        End Time
+                                                    </th>*@
+                                                <th>
+                                                    Mark Obtained
+                                                </th>
+                                                <th>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach (var item in Model.Where(c => c.TrainingId == qitem.TrainingId))
+                                            {
+                                                <tr>
+                                                    <td><button type="button" class="btn btn-default btn-xs" data-container="body" data-toggle="popover" data-placement="bottom" data-content="@item.StartDate.ToString("dd/MMM/yyyy") - @item.EndDate.ToString("dd/MMM/yyyy") - @item.StartTime.ToString("hh:mm tt") - @item.EndTime.ToString("hh:mm tt")" data-original-title="" title=""><i class="icon-time"></i></button>&nbsp; @item.Assessment </td>
+                                                    @*<td>@item.StartDate.ToString("dd/MMM/yyyy")</td>
+                                                        <td>@item.EndDate.ToString("dd/MMM/yyyy")</td>
+                                                        <td>@item.StartTime.ToString("hh:mm tt")</td>
+                                                        <td>@item.EndTime.ToString("hh:mm tt")</td>*@
+
+                                                    @if (item.Percentage == 0)
+                                                    {
+                                                        <td>
+                                                            NA
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            @*  @item.Percentage*@
+                                                        </td>
+                                                    }
+
+                                                    <td>                                                     
+
+                                                        @if (!string.IsNullOrEmpty(item.PublicationId) && item.PublicationId != "0")
+                                                        {
+                                                            if (item.Percentage == 0)
+                                                            {
+                                                                //if (item.StartDate.Date <= DateTime.Now.Date && item.EndDate.Date >= DateTime.Now.Date)
+                                                                if (item.StartDate.Date <= ViewBag.CurrentDate && item.StartTime.TimeOfDay <= ViewBag.CurrentTime && item.EndTime.TimeOfDay >= ViewBag.CurrentTime && item.EndDate.Date >= ViewBag.CurrentDate)
+                                                                {
+                                                                    <a href="javascript: TakeExam('@item.TrainingId', '@item.PublicationId')">Start Test</a>
+                                                                }
+                                                                else if (item.StartDate.Date > DateTime.Now.Date)
+                                                                {
+                                                                    <span class="text-warning">Check your schedule</span>
+                                                                }
+                                                                else if (item.EndDate.Date < DateTime.Now.Date)
+                                                                {
+                                                                    <span class="text-warning">Check your schedule</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-warning">Check your schedule</span>
+                                                                }
+                                                            }
+                                                            @*else
+                                                                {
+                                                                    <a href="#" onclick="javascript: ViewReport('@item.TrainingId', '@item.PublicationId', '@ViewBag.UserId')" title="Score Card"><i class="icon-download"></i></a>
+                                                                }*@
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-warning">Offline</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <br />
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="postcontent nobottommargin">
+                                <div class="post-timeline events">
+                                    @*<div class="timeline-border"></div>*@
+                                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                                        <div class="fbox-icon">
+                                            <i class="icon-thumbs-down2"></i>
+                                        </div>
+                                        <h3>You Didn't have any assessments for course : @ViewBag.CourseName</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <br /><center>
+                <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- JEResponsive -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-6029014565691295"
+                     data-ad-slot="6109277368"
+                     data-ad-format="auto"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </center>
+        </div>
+        @Html.Hidden("RedirectToReport", Url.Action("CandidateReport", "TMS"))
+        @Html.Hidden("RedirectLoginToPrelore", Url.Action("CandidateLoginToPrelore", "TMS"))
+    </div>
+}
+<script>
+    function ViewReport(TrainingId, PublicationId, UserId) {
+        var url = $("#RedirectToReport").val() + "?Id=" + TrainingId + "&PublicationId=" + PublicationId + "&CandidateId=" + UserId;
+        location.href = url;
+    }
+
+    function TakeExam(TrainingId, PublicationId) {
+        var url = $("#RedirectLoginToPrelore").val() + "?Id=" + TrainingId + "&PublicationId=" + PublicationId;
+        location.href = url;
+    }
+</script>
+<script type="text/javascript">
+    $('[data-toggle=popover]').popover();
+</script>
+

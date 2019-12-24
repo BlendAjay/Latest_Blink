@@ -1,0 +1,268 @@
+﻿@using AJSolutions.Models;
+@model EmpSkillView
+@{
+    ViewBag.Title = "Skill Details";
+    Layout = "~/Areas/EMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<UserProfileTypeDetails>
+    profile = ViewData["Profile"] as IEnumerable<UserProfileTypeDetails>
+        ;
+    IEnumerable<EmpSkillView>
+        empSkills = ViewData["EmpSkills"] as IEnumerable<EmpSkillView>
+            ;
+}
+
+@using (Html.BeginForm("SkillDetails", "Employee", FormMethod.Post, new { @class = "form-horizontal needs-validation", id = "SkillDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+    @Html.Hidden("Data", ViewBag.Data as string)
+
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Skill Details</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <div class="form-process"></div>
+                <h5 class="card-header">My Skills</h5>
+                <div class="card-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <label>Select Profile<small>*</small></label><small style="float:right"><a href="@Url.Action(" profiletype", "Employee" , new {p="skill" , area="EMS" })">Add New Profile</a></small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-trophy"></i></span>
+                            @if (ViewBag.Action == "Edit")
+                            {
+                                @Html.Hidden("ProfileTypeId", ViewBag.ProfileTypeId as string)
+                                @Html.DropDownList("ProfileId", null, "--- Select Profile ---", new { @disabled = "disabled", @class = "form-control ", @id = "ProfileId", @required = "required" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("ProfileId", null, "--- Select Profile ---", new { @class = "form-control required", @id = "ProfileId", @required = "required" })
+
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <label>Skills<small>*</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-food2"> </i></span>
+                            @if (ViewBag.Action == "Add")
+                            {
+                                @Html.TextBox("SkillName", "", new { @class = "form-control required", @id = "SkillName", placeholder = "Skill Name ", @required = "required"  })
+                            }
+                            else
+                            {
+                                @Html.TextBox("SkillName", ViewBag.SkillName as string, new { @class = "form-control required", @id = "SkillName", placeholder = "Skills Name ", @readonly = true, @required = "required" })
+                            }
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <label>Years of Experience<small>*</small></label>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-cog"> </i></span>
+
+                            @Html.DropDownList("YearofExperience", null, "--- Year of Experience ---", new { @class = "form-control required ", @id = "YearofExperience", placeholder = "Year of Experience", @required = "required"  })
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <input type="submit" id="skilldetails" value="Submit" style="float: right;" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            @if (empSkills != null)
+            {
+                foreach (var pitem in profile)
+                {
+                    <br />
+                    <div class="fancy-title title-bottom-border">
+                        <h4> @pitem.ProfileName</h4>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered nobottommargin">
+                            <tr>
+                                <th>
+                                    Profile Name
+                                </th>
+                                <th>
+                                    Skill Name
+                                </th>
+                                <th>
+                                    Years of Experience
+                                </th>
+                                <th>
+                                    Actions
+                                </th>
+                            </tr>
+
+                            @foreach (var item in empSkills.Where(p => p.ProfileId == pitem.ProfileId))
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ProfileName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SkillName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.YearofExperience)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "SkillDetails", "Employee", new { ProfileId = item.ProfileId, SkillName = item.SkillName, YearofExperience = item.YearofExperience, useraction = "Edit" }, new { title = "Edit" })
+                                        |
+                                        <a href="#" id="Remove" onclick="javascript: ConfirmationDialog('@item.SkillName','@item.ProfileId');" title="Remove">Delete</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("RemoveSkills", "Employee"))
+    @Html.Hidden("RedirectToHome", Url.Action("SkillDetails", "Employee"))
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ($('#Data').val() == "Deleted") {
+            $.alert({
+                title: 'Cheers',
+                content: 'Your Data has been <b> Deleted.</b>',
+                confirmButton: 'OK',
+                confirmButtonClass: 'btn btn-primary',
+                icon: 'fa fa-thumbs-up fa-2x',
+                animation: 'zoom',
+                confirm: function () {
+                    var url = $("#RedirectToHome").val();
+                    location.href = url;
+                }
+            });
+        }
+
+    });
+    $("#SkillDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>
+<script type="text/javascript">
+
+    //$(document).ready(function () {
+
+    //    if ($('#SaveStatus').val() == "Succeeded") {
+    //        $.alert({
+    //            title: 'Cheers',
+    //            content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'btn btn-primary',
+    //            icon: 'fa fa-thumbs-up fa-2x',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+
+    //        });
+    //    }
+    //});
+
+    //$('#skilldetails').click(function (e) {
+    //    e.preventDefault();
+
+    //    if ($("#ProfileId :selected").val() == undefined || $('#ProfileId :selected').val() == '' || $('#ProfileId :selected').val() == 0) {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: 'Select <b>Profile</b>',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#ProfileId").focus();
+    //        return false;
+    //    }
+
+    //    if ($("#SkillName").val() == undefined || $('#SkillName').val() == '') {
+    //        $.alert({
+    //            title: 'Alert',
+    //            content: '<b>Skill Name</b> is required',
+    //            confirmButton: 'OK',
+    //            confirmButtonClass: 'button button-3d button-rounded button-red',
+    //            icon: 'icon-thumbs-down2 icon-2x ',
+    //            animation: 'zoom',
+    //            confirm: function () {
+    //            }
+    //        });
+    //        $("#SkillName").focus();
+    //        return false;
+    //    }
+
+    //    $('#SkillDetails').submit();
+    //});
+
+    function ConfirmationDialog(SkillName, ProfileId) {
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Are you sure you want to delete?',
+            confirmButton: 'Yes',
+            confirmButtonClass: 'button button-3d button-rounded button-green',
+            cancelButton: 'No',
+            cancelButtonClass: 'button button-3d button-rounded button-red',
+            icon: 'icon-warning-sign icon-2x',
+            animation: 'scale',
+            animationClose: 'top',
+            confirm: function () {
+                var url = $("#RedirectTo").val() + "?SN=" + SkillName + "&PId=" + ProfileId;
+                location.href = url;
+            }
+        });
+        return false;
+    }
+
+</script>

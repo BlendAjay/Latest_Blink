@@ -1,0 +1,82 @@
+﻿@model AJSolutions.Models.RegisterViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    ViewBag.Title = "Register";
+}
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "splash-container", role = "form" }))
+{
+    @Html.Hidden("PreviousPage", ViewBag.PreviousPage as string)
+    @Html.Hidden("Status", ViewBag.Status as string)
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="card">
+        <div class="card-header text-center"><a href="../index.html"><img class="logo-img" src="~/img/BlinkLogo.png" alt="logo"></a><span class="splash-description">Please enter your user information.</span></div>
+        <div class="card-body">
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control form-control-lg", @required = "", placeholder = "Full Name *" })
+            </div>
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-control-lg", @required = "", placeholder = "Email Address *" })
+            </div>
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control form-control-lg", @required = "", placeholder = "Phone / Mobile Number *" })
+            </div>
+
+            <div class="form-group">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control form-control-lg", @required = "", placeholder = "Password *" })
+            </div>
+            <div class="form-group">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control form-control-lg", @required = "", placeholder = "Retype Password *" })
+            </div>
+            <div class="form-group pt-2">
+                <button type="submit" class="btn btn-block btn-primary" value="Register">Register My Account</button>
+            </div>
+            <div class="form-group">
+                <label class="custom-control custom-checkbox">
+                    <input class="custom-control-input" type="checkbox"><span class="custom-control-label">By creating an account, you agree the <a href="#">terms and conditions</a></span>
+                </label>
+            </div>
+            @*<div class="form-group row pt-0">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mb-2">
+                        <button class="btn btn-block btn-social btn-facebook " type="button">Facebook</button>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <button class="btn  btn-block btn-social btn-twitter" type="button">Twitter</button>
+                    </div>
+                </div>*@
+        </div>
+        <div class="card-footer bg-white">
+            @*<p>Already member? <a href="#" class="text-secondary">Login Here.</a></p>*@
+            @Html.ActionLink("Existing user?", "Login")
+        </div>
+    </div>
+    @Html.Hidden("RedirectTo", Url.Action("Index", "Home"))
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <link href="~/css/jquery-confirm.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/js/jquery-confirm.js"></script>
+    <script>
+
+            $(document).ready(function () {
+
+                if ($("#Status").val() == "Succeeded") {
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'You have successfully registered</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectTo").val() + "?Id = " + $('#Mod').val() + "&savestatus=Succeeded";
+                            location.href = url;
+                        }
+
+                    });
+                }
+            });
+    </script>
+}

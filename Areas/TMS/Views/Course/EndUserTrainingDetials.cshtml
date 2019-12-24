@@ -1,0 +1,139 @@
+﻿@model List<AJSolutions.Models.EndUserTrainingOrderView>
+@{
+    ViewBag.Title = "End UserTraining Order Details";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+    List<AJSolutions.Models.EndUserTrainingOrderView> PATrainingOrders = ViewData["PATrainingOrders"] as List<AJSolutions.Models.EndUserTrainingOrderView>;
+    List<AJSolutions.Models.EndUserTrainingOrderView> GDSTrainingOrders = ViewData["GDSTrainingOrders"] as List<AJSolutions.Models.EndUserTrainingOrderView>;
+}
+@using (Html.BeginForm("EndUserTrainingDetials", "Course", FormMethod.Post, new { area = "TMS", @class = "form-horizontal needs-validation", id = "EndUserTrainingDetials", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Data as string)
+    @Html.Hidden("Result", ViewBag.Result as string)
+
+    <div class="container">
+        <div class="row">
+            <div class="container">
+
+                @if (PATrainingOrders.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <h6>Training Order for PA End Users
+                        </h6>
+                        <table class="table table-bordered nobottommargin small">
+                            <tr>
+                                <th>Training Order Id</th>
+                                @*<th>Training Division</th>*@
+                                <th>Office Name</th>
+                                <th>Trainer</th>
+                                <th>Training Schedules</th>
+                                <th>Trainee</th>
+                            </tr>
+
+                            @foreach (var item in PATrainingOrders)
+                            {
+                                var To = "TRO";
+                                var EUId = @item.EUTrainingOrderId;
+                                var year = DateTime.Now.Year;
+                                var type = @item.TrainingType;
+                                var finalId = @To + @EUId + type + year;
+                                <tr>
+                                    <td>
+                                        <span><a href="@Url.Action("EndUserTraineeDetails", "Course", new { area = "TMS", Id = item.EUTrainingOrderId })" target="_blank">@finalId </a><br /> @item.UpdatedOn.ToString("dd-MMM-yyyy")</span>
+                                    </td>
+                                    @*<td>
+                                        @Html.DisplayFor(modelItem => item.PADivision)
+                                    </td>*@
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PAOfficeName)
+                                    </td>
+                                    <td>
+                                        @if (item.Status == "Freezed")
+                                        {
+                                            @Html.DisplayFor(modelItem => item.MTReckonnId) <span>-</span>   @Html.DisplayFor(modelItem => item.BatchName)     <br />
+                                        }
+                                        @Html.DisplayFor(modelItem => item.PAMTName) <br />@Html.DisplayFor(modelItem => item.PAMTContact)
+                                    </td>
+                                    <td>
+                                        <span>@item.PATrainingStartDate.ToString("dd-MMM-yyyy") <br />@item.PATrainingEndDate.ToString("dd-MMM-yyyy")</span>
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.TotalTrainee) </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <h4>Training Order for PA End Users</h4>
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Training Order Added for PA / Finacle <span class="subtitle"></span></h3>
+                    </div>
+                }
+                <br /><br />
+                @if (GDSTrainingOrders.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <h6>Training Order for GDS End Users</h6>
+                        <table class="table table-bordered nobottommargin small">
+                            <tr>
+                                <th>Training Order Id</th>
+                                <th>Office Name</th>
+                                <th>Trainer</th>
+                                <th>Training Schedules</th>
+                                <th>Trainee</th>
+                            </tr>
+
+                            @foreach (var item in GDSTrainingOrders)
+                            {
+                                var To = "TRO";
+                                var EUId = @item.EUTrainingOrderId;
+                                var year = DateTime.Now.Year;
+                                var type = @item.TrainingType;
+                                var finalId = @To + @EUId + type + year;
+                                <tr>
+                                    <td>
+                                        <span><a href="@Url.Action("EndUserTraineeDetails", "Course", new { area = "TMS", Id = item.EUTrainingOrderId })" target="_blank">@finalId </a><br /> @item.UpdatedOn.ToString("dd-MMM-yyyy")</span>
+                                    </td>
+                                   
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.GDSOfficeName)
+                                    </td>
+                                    <td>
+                                        @if (item.Status == "Freezed")
+                                        {
+                                            @Html.DisplayFor(modelItem => item.MTReckonnId)    <span>-</span>          @Html.DisplayFor(modelItem => item.BatchName)         <br />
+                                        }
+                                        @Html.DisplayFor(modelItem => item.GDSMTName) <br />@Html.DisplayFor(modelItem => item.GDSMTContact)
+                                    </td>
+                                    <td>
+                                        <span>@item.GDSTrainingStartDate.ToString("dd-MMM-yyyy") <br />@item.GDSTrainingEndDate.ToString("dd-MMM-yyyy")</span>
+                                    </td>
+                                    <td>@Html.DisplayFor(modelItem => item.TotalTrainee)</td>
+                                </tr>
+                            }
+
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <h4>Training Order for GDS End Users</h4>
+                    <div class="feature-box fbox-center fbox-bg fbox-border fbox-effect">
+                        <div class="fbox-icon">
+                            <i class="icon-thumbs-down2"></i>
+                        </div>
+                        <h3>No Training Order Added for Postmen / GDS / Mobile App<span class="subtitle"></span></h3>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+}
+
+
+

@@ -1,0 +1,375 @@
+﻿@using AJSolutions.Models;
+@model AJSolutions.Models.ClientTeamMemberProfileView
+@{
+    ViewBag.Title = "Add Team Member";
+    Layout = "~/Areas/CMS/Views/Shared/_Layout.cshtml";
+    IEnumerable<AJSolutions.Models.ClientTeamRights> rights = ViewData["Rights"] as IEnumerable<AJSolutions.Models.ClientTeamRights>;
+    AJSolutions.Models.UserViewModel user = ViewData["UserProfile"] as AJSolutions.Models.UserViewModel;
+    IEnumerable<ClientTeamMemberProfileView> team = ViewData["TeamMember"] as IEnumerable<ClientTeamMemberProfileView>;
+    //  ClientTeamMemberRights teamright = ViewData["TeamRights"] as ClientTeamMemberRights;
+
+}
+
+<br />
+<div class="si-sticky toast-top-left topmargin-sm">
+    <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+        <i class="icon-question"></i>
+        <i class="icon-question"></i>
+    </a>
+</div>
+@using (Html.BeginForm("AddTeamMember", "Client", FormMethod.Post, new { @class = "form-horizontal", id = "AddTeamMember", role = "form" }))
+{
+    @Html.Hidden("MemberId", ViewBag.MemberId as string)
+
+    var i = 0;
+    <div class="container">
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="row">
+                <div class="form-process"></div>
+                <div class="fancy-title title-bottom-border">
+                    <div class="col_half">
+                        @Html.LabelFor(model => model.Name, "Name")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control required", placeholder = "e.g. john smith", id = "FullName" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(m => m.EmailId, "Email")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                            @if (Model != null)
+                            {
+                                @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control required email", placeholder = "e.g. xyz@domain.com", id = "Email", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control required email", placeholder = "e.g. xyz@domain.com", id = "Email" })
+                            }
+                        </div>
+                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half">
+                        @Html.LabelFor(m => m.PhoneNumber, "Phone Number")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-phone"> </i></span>
+                            @if (Model != null)
+                            {
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control required", placeholder = "e.g. +917876543456", id = "PhoneNumber", @readonly = "readonly" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control required", placeholder = "e.g. +917876543456", id = "PhoneNumber" })
+                            }
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col_half col_last">
+                        @Html.LabelFor(m => m.Designation, "Designation")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"></i></span>
+                            @Html.TextBoxFor(m => m.Designation, new { @class = "form-control required", placeholder = "e.g. Accountant", id = "Designation" })
+                        </div>
+                    </div>
+                    <div class="col_half ">
+                        @Html.LabelFor(m => m.EmpRoleId, "Roles")<small>*</small>
+                        <div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-user2"></i></span>
+                            @Html.DropDownList("EmpRoleId", null, "---  Select Roles ---", htmlAttributes: new { @class = "form-control required", id = "EmpRoleId" })
+                        </div>
+                    </div>
+                    <div class="col_full" id="userRights">
+                        <div class="fancy-title title-bottom-border">
+                            <h4>User Rights</h4>
+                        </div>
+                        @foreach (var item in rights)
+                        {
+                            if (Model != null)
+                            {
+                                if (Model.ClientTeamRights.Count() != 0)
+                                {
+                                    if (Model.ClientTeamRights.Any(h => h.EmpRightsId == item.EmpRightsId))
+                                    {
+                                        <div class="col-md-6" id="EmpRightsId_@item.EmpRightsId">   <label>  <input type="checkbox" id="EmpRightsId" name="EmpRightsId" value="@item.EmpRightsId" checked="checked" /> &nbsp; @item.Rights</label></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-md-6" id="EmpRightsId_@item.EmpRightsId">   <label>  <input type="checkbox" id="EmpRightsId" name="EmpRightsId" value="@item.EmpRightsId" /> &nbsp; @item.Rights</label></div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="col-md-6" id="EmpRightsId_@item.EmpRightsId">   <label>  <input type="checkbox" id="EmpRightsId" name="EmpRightsId" value="@item.EmpRightsId" /> &nbsp; @item.Rights</label></div>
+                                }
+                                i++;
+                            }
+                            else
+                            {
+                                <div class="col-md-6" id="EmpRightsId_@item.EmpRightsId">   <label>  <input type="checkbox" id="EmpRightsId" name="EmpRightsId" value="@item.EmpRightsId" checked="checked" /> &nbsp; @item.Rights</label></div>
+                            }
+                        }
+                    </div>
+                    <div class="col_full">
+                        <input type="Submit" value="Submit" class="button button-3d button-rounded button-teal" style="float: right;" id="SubmitForm" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="container">
+        <div class="fancy-title title-bottom-border">
+            <h4>My Teams</h4>
+        </div>
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered nobottommargin">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email Id</th>
+                        <th>Phone Number</th>
+                        <th>Role</th>
+                        <th>Designation</th>
+                        <th>Registered On</th>
+                        <th>Last Logged In</th>
+                        <th></th>
+                    </tr>
+                    @if (team != null)
+                    {
+                        foreach (var item in team)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmailId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EmpRole)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Designation)
+                                </td>
+                                <td>
+                                    @if (item.RegisteredOn != null)
+                                    {
+                                        <nobr>@item.RegisteredOn.Value.ToString("dd-MMM-yyyy")</nobr>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.LastLogin != null)
+                                    {
+                                        <nobr>@item.LastLogin.Value.ToString("dd-MMM-yyyy")</nobr>
+                                    }
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "AddTeamMember", new { MemberId = item.MemberId, UserAction = "Edit" }, new { title = "Edit" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("AddTeamMember", "Client"));
+
+
+    <div class="modal fade" id="Popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content ">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel4"><b>Help & Support</b> </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="tabs clearfix" id="tab-1">
+
+                            <ul class="tab-nav clearfix">
+                                <li><a href="#tabs-1"><nobr>Navigation</nobr></a></li>
+                                <li><a href="#tabs-2">Page Elements </a></li>
+                                @*<li><a href="#tabs-3">Video</a></li>*@
+                            </ul>
+                            <div class="tab-container">
+                                <div class="tab-content clearfix" id="tabs-1">
+                                    <h4> Navigation to "Add Team"</h4>
+                                    <img src="~/images/gif/navigation to add team.gif" alt="Save icon" />
+                                </div>
+                                <div class="tab-content clearfix" id="tabs-2">
+                                    <h6> Navigation to "Add Team" .</h6>
+
+                                    <p>•Click on Navigation bar "Add Team"  Then  click on Menu item "Add Team" . </p>
+
+                                    <img src="~/images/Images1/navigation to add team.png" width="150" height="300">
+
+                                    <h6> Client can add team member    </h6>
+                                    <img src="~/images/Images1/add team member.PNG" width="500" height="300">
+                                    <h6>Add Team Member Details </h6>
+                                    <h6>Name-Enter Name</h6>
+                                    <img src="~/images/Images1/team name.png" width="500" height="300">
+                                    <h6>
+                                        • You can see Name is with asterisk Mark means that it is  Mandatory field.
+                                        if you not enter details on this field  Validation appears in red.
+                                    </h6>
+                                    <img src="~/images/Images1/team name alert.PNG" width="600" height="100">
+                                    <h6>Email-Enter Email.</h6>
+
+                                    <img src="~/images/Images1/team email.png" width="500" height="300">
+                                    <h6>
+                                        You can see Email is with asterisk Mark means that it is  Mandatory field.
+                                        '           if you not enter details on this field Validation appears in red.
+                                    </h6>
+                                    <img src="~/images/Images1/team email alrt.PNG" width="600" height="80">
+                                    <h6>Phone Number- Enter Phone Number.</h6>
+                                    <img src="~/images/Images1/team phn no..png" width="500" height="300">
+                                    <h6>
+                                        You can see Phone Number  is with asterisk Mark means that it is  Mandatory field.
+                                        '           if you not enter details on this field Validation appears in red.
+                                    </h6>
+                                    <img src="~/images/Images1/team phn no. alert.PNG" width="600" height="80">
+                                    <h6>Desingnation- Enter Desingnation.</h6>
+                                    <img src="~/images/Images1/team desingnation.png" width="500" height="300">
+                                    <h6>
+                                        You can see Desingnatio is with asterisk Mark means that it is  Mandatory field.
+                                        '           if you not enter details on this field Validation appears in red.
+                                    </h6>
+                                    <img src="~/images/Images1/team desingnation alert.PNG" width="600" height="80">
+                                    <h6>Team Roles- Select Team Role.</h6>
+                                    <img src="~/images/Images1/team roles.png" width="500" height="300">
+                                    <h6>
+                                        You can see Team Role is with asterisk Mark means that it is  Mandatory field.
+                                        '           if you not enter details on this field Validation appears in red.
+                                    </h6>
+                                    <img src="~/images/Images1/team role alert.PNG" width="600" height="80">
+                                    <h6>User Rights-Client Can give User Rights to the team member. .</h6>
+                                    <img src="~/images/Images1/team user rights.PNG" width="500" height="150">
+                                    <h6>
+                                        In Add Team Page ,You can see name,email,phone number,desingnation & team role is with asterisk Mark means that they all are  Mandatory field.
+                                        '           if you not enter details on this field Validation appears in red.
+                                    </h6>
+                                    <img src="~/images/Images1/team all detail alert.PNG" width="500" height="300">
+                                    <h6>Enter all details then click on submit button.</h6>
+                                    <img src="~/images/Images1/team all details.PNG" width="500" height="300">
+                                    <h6>
+                                        After clicking on submit button a popup window opens indicating that your
+                                        data has been saved successfully.
+                                    </h6>
+                                    <img src="~/images/Images1/screenshot(6).png" width="300" height="150">
+                                    <h6>After adding team members you can see the list of team members here.</h6>
+                                    <img src="~/images/Images1/team my team.PNG" width="1118" height="138">
+                                    <h6>If you want to edit details of team member then click on edit </h6>
+                                    <img src="~/images/Images1/team member edit.png" width="1118" height="138">
+                                </div>
+                                @*<div class="tab-content clearfix" id="tabs-3">
+
+                                    <h4> Training Video to Create New Job Order </h4>
+
+                                    <iframe style="width:100%;height:200px" src="https://www.youtube.com/embed/cxD4v3ENqkk" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+                                </div>*@
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script type="text/javascript">
+    $("#Email").change(function () {
+        EmailExists();
+    });
+    function EmailExists() {
+        $.ajax({
+            type: "post",
+            url: "/CMS/User/EmailPhoneExist",
+            data: {
+                Email: $('#Email').val(),
+                Uid: $('#Uid').val()
+            },
+            datatype: "json",
+            traditional: true,
+            success: function (data) {
+                if (data != null) {
+                    $.alert({
+                        title: 'Cheers',
+                        content: data,
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-down fa-2x ',
+                        animation: 'zoom',
+                        confirm: function () {
+                            $('#Email').val("");
+                        }
+                    });
+                }
+            }
+        });
+    }
+    $(document).on("keydown", "#PhoneNumber", function () {
+        if ($("#PhoneNumber").val() != undefined || $('#PhoneNumber').val() != '') {
+            // Allow: backspace, delete, tab, escape, and enter
+            if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 ||
+                // Allow: Ctrl+A
+                (event.keyCode == 65 && event.ctrlKey === true) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                // let it happen, don't do anything
+                return;
+            }
+            else {
+                // Ensure that it is a number and stop the keypress
+                if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $("#AddTeamMember").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $(form).ajaxSubmit({
+                success: function () {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Team member added <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+</script>

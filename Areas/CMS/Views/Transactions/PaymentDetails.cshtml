@@ -1,0 +1,245 @@
+﻿@using AJSolutions.DAL;
+@using AJSolutions.Models;
+@model AJSolutions.Areas.Candidate.Models.CandidateViewModel
+@{
+    ViewBag.Title = "Payment Details";
+    Layout = "~/Areas/CMS/Views/Shared/_LayoutNoHeaderNoFooter.cshtml";
+    List<FeeDetailsView> feedetails = ViewData["feedetails"] as List<FeeDetailsView>;
+    UserViewModel user = ViewData["UserProfile"] as UserViewModel;
+    float RemainingInstallment = 0;
+    double RemainingInstallmentAmount = 0;
+}
+@using (Html.BeginForm("PaymentDetails", "Transactions", FormMethod.Post, new { area = "CMS", @class = "form-horizontal needs-validation", id = "PaymentDetails", role = "form" }))
+{
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-striped" id="CandiadateDT">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Installments Amount</th>
+                        <th>Remaining Installments Amount </th>
+                        <th>Installments Paid Amount</th>
+                        <th>Remaining Amount</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Payment Date</th>
+                        <th>Approval Date</th>
+                        <th>Approved By</th>
+                        <th>Payment Mode</th>
+                        <th>Transaction Id</th>
+                        @if (AJSolutions.DAL.Global.IsStatusReportAccess(user.SubscriberId))
+                        {
+                            <th>Download Pdf Reciept</th>
+                        }
+                        else
+                        {
+                            <th>Download Reciept</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        TimeSpan? ts = Model.CourseEndDate - Model.CourseStartDate;
+                        int differenceInDays = ts.Value.Days;
+                        var durationgap = (@differenceInDays / Model.InstallmentId);
+                        DateTime? coursedate = Model.CourseStartDate;
+                        if (@ViewBag.LastIntallment != null)
+                        {
+                            RemainingInstallment = (Model.InstallmentId - @ViewBag.LastIntallment);
+                            RemainingInstallmentAmount = ((Model.TotalFeeAmount - Model.PaidAmount) / @RemainingInstallment);
+                        }
+                        for (Int16 i = 1; i <= Model.InstallmentId; i++)
+                        {
+                            var item = feedetails.Where(j => j.InstallmentNumber == i).FirstOrDefault();
+                            <tr>
+                                <td>@(i)</td>
+                                <td>@(Model.TotalFeeAmount / Model.InstallmentId)</td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        <span>PAID</span>
+                                    }
+                                    else
+                                    {
+                                        if (RemainingInstallmentAmount != null)
+                                        {
+                                            <span>@RemainingInstallmentAmount</span>
+                                        }
+                                        else
+                                        {
+                                            <span>NA</span>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        if (@item.FeePaid != null)
+                                        {
+                                            <span>@item.FeePaid</span>
+                                        }
+                                        else
+                                        {
+                                            <span>NA</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        if (@item.RemainingAmount != null)
+                                        {
+                                            <span>@item.RemainingAmount</span>
+                                        }
+                                        else
+                                        {
+                                            <span>NA</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                <td>@coursedate.Value.AddDays(durationgap).ToString("dd-MM-yyyy")</td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        if (item.Status == "Approved")
+                                        {
+                                            <span>Paid & Approved </span>
+                                        }
+                                        else
+                                        {
+                                            <span> @item.Status</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>Unpaid</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        <span> @item.PaymentDate.ToString("dd-MMM-yyyy")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        if (@item.PaymentMode.ToUpper() != "ONLINE")
+                                        {
+                                            <span>@item.PaymentDate.ToString("dd-MMM-yyyy")</span>
+                                        }
+                                        else
+                                        {
+                                            if (item.ApprovalDate != null)
+                                            {
+                                                <span> @item.ApprovalDate.Value.ToString("dd-MMM-yyyy")</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Not Approved</span>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+
+                                </td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        if (item.ApprovedByName != null)
+                                        {
+                                            <span> @item.ApprovedByName</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Not Approved</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        <span> @item.PaymentMode</span>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item != null)
+                                    {
+                                        <span> @item.TransactionId</span>
+                                    }
+                                    else
+                                    {
+                                        <span>NA</span>
+                                    }
+                                </td>
+
+                                @if (AJSolutions.DAL.Global.IsStatusReportAccess(user.SubscriberId))
+                                {
+                                    <td>
+                                        @if (item != null)
+                                        {
+                                            <a href="/TMS/TMS/DownloadCandidateReceipt?TransactionId=@item.TransactionId">Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>NA</span>
+                                        }
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @if (item != null)
+                                        {
+                                            <a href="#" placeholder="Download Receipt" onclick="DownloadReceipt('@item.TransactionId')" target="_blank"><i class="icon-download"></i></a>//@Url.Action("PaymentConfirmation", "Candidate", new { area = "Candidate", TId = @item.TransactionId, PMId = 1 })
+                                        }
+                                        else
+                                        {
+                                            <span>NA</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                                coursedate = coursedate.Value.AddDays(durationgap);
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <input type="hidden" id="weburl" value="@Global.WebsiteUrl()" />
+}
+
+<script>
+    function DownloadReceipt(TransactionId) {
+        paramPub = "TId=" + TransactionId + "&PMId=1";
+        window.location.href = $('#weburl').val() + "/Candidate/Candidate/PaymentConfirmation?" + paramPub;
+    };
+</script>

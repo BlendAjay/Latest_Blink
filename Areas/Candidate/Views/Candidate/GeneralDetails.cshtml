@@ -1,0 +1,315 @@
+﻿@model AJSolutions.Models.UserProfile
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Areas/Candidate/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("GeneralDetails", "Candidate", FormMethod.Post, new { @class = "form-horizontal", id = "GeneralDetails", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("SaveStatus", ViewBag.Result as string)
+
+    <div class="container">
+        <div class="si-sticky toast-top-left topmargin-sm">
+            <a href="#" class="social-icon si-rounded si-colored si-aim si-small" onclick="pagehelp();" title="Help For You">
+                <i class="icon-question"></i>
+                <i class="icon-question"></i>
+            </a>
+        </div>
+
+        <div id="contact-form-overlay" class="clearfix">
+            <div class="form-process"></div>
+            <div class="row">
+                <div class="fancy-title title-bottom-border">
+                    <h4>General Details</h4>
+                </div>
+
+                <div class="col_half">
+                    @Html.LabelFor(model => model.Name, " Name")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-user2"> </i></span>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "sm-form-control required", id = "Name", placeholder = "Enter Your Name" } })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <br>
+                    @*<div class="input-group divcenter">
+                            <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                            <input type="text" value="" class="sm-form-control tleft default" placeholder="MM/DD/YYYY">
+                            @Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "sm-form-control tleft today required", placeholder = "yyyy-MM-dd" } })
+                        </div>*@
+                    @Html.Label("Date of Birth")<small>*</small>
+                    <div class="input-group travel-date-group">
+                        <span class="input-group-addon"><i class="icon-calendar"> </i></span>
+                        @*@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "sm-form-control past-enabled required", placeholder = "MM/DD/YYYY" } })*@
+                        <input type="text" value="@ViewBag.dob" class="sm-form-control past-enabled" placeholder="DD/MM/YYYY" id="DOB">
+                    </div>
+                    @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.Gender, "Gender")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-male"> </i><i class="icon-female"> </i></span>
+                        @Html.DropDownList("Gender", null, "--- Select Gender ---", htmlAttributes: new { @class = "sm-form-control required", @id = "Gender" })
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.MaritalStatus, "Marital Status")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-glass"></i></span>
+                        @Html.DropDownList("MaritalStatus", null, "--- Select Marital Status ---", htmlAttributes: new { @class = "sm-form-control required", @id = "MaritalStatus" })
+                        @*@Html.EditorFor(model => model.MaritalStatus, new { htmlAttributes = new { @class = "sm-form-control", placeholder = "Enter Marital Status" } })*@
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.MaritalStatus, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                <div class="col_half col_last">
+                    @Html.LabelFor(model => model.Nationality, "Nationality")<small>*</small>
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-flag"> </i></span>
+                        @Html.DropDownList("Nationality", null, "--- Select Nationality ---", htmlAttributes: new { @class = "sm-form-control required" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Nationality, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.AlternateContact, "Alternate Contact")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mobile"> </i></span>
+                        @Html.EditorFor(model => model.AlternateContact, new { htmlAttributes = new { @class = "sm-form-control", placeholder = "Alternate Contact Number" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AlternateContact, "", new { @class = "text-danger" })
+                    <br>
+                    @Html.LabelFor(model => model.AlternateEmail, "Alternate Email")
+                    <div class="input-group divcenter">
+                        <span class="input-group-addon"><i class="icon-mail"> </i></span>
+                        @Html.EditorFor(model => model.AlternateEmail, new { htmlAttributes = new { @class = "sm-form-control", placeholder = "Alternate Email Id" } })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.AlternateEmail, "", new { @class = "text-danger" })
+                    <br>
+                </div>
+                @Html.Hidden("SubscriberId", ViewBag.SubscriberId as string)
+                @Html.Hidden("DepartmentId", ViewBag.DepartmentId as string)
+                <input type="submit" id="generaldetails" value="Submit" style="float: right;" class="button button-3d button-rounded button-teal" />
+            </div>
+        </div>
+        <br /><center>
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- JEResponsive -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-6029014565691295"
+                 data-ad-slot="6109277368"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </center>
+    </div>
+    @Html.Hidden("RedirectToHome", Url.Action("GeneralDetails", "Candidate"));
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="Popup">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Help</h4>
+                    </div>
+                    <div class="modal-body" id="moBody">
+
+                        <div class="container-fluid">
+                            <div class="col_half">
+                                <p>
+                                   In this page candidate can fill his/her general details.
+                                </p>
+
+                            </div>
+                            <div class="col_half col_last">
+                                <div class="feature-box center media-box fbox-bg">
+                                    <div class="fbox-media">
+
+                                        <a href="~/images/HelpImages/generalcandidate.png" target="_blank" data-lightbox="gallery-item">
+                                            <img src="~/images/HelpImages/generalcandidate.png" />
+                                        </a>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+
+    $("#GeneralDetails").validate({
+        submitHandler: function (form) {
+            $('.form-process').fadeIn()
+            $.ajax({
+                type: "post",
+                url: "/Candidate/Candidate/GeneralDetails",
+                data: {
+                    Name: $('#Name').val(),
+                    DOBirth: $('#DOB').val(),
+                    Gender: $('#Gender').val(),
+                    MaritalStatus: $('#MaritalStatus').val(),
+                    Nationality: $('#Nationality :selected').val(),
+                    AlternateContact: $('#AlternateContact').val(),
+                    AlternateEmail: $('#AlternateEmail').val()
+                },
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    $('.form-process').fadeOut()
+                    $.alert({
+                        title: 'Cheers',
+                        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                        confirmButton: 'OK',
+                        confirmButtonClass: 'btn btn-primary',
+                        icon: 'fa fa-thumbs-up fa-2x',
+                        animation: 'zoom',
+                        confirm: function () {
+                            var url = $("#RedirectToHome").val();
+                            location.href = url;
+                        }
+                    });
+                }
+                //success: function () {
+                //    $('.form-process').fadeOut()
+                //    $.alert({
+                //        title: 'Cheers',
+                //        content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                //        confirmButton: 'OK',
+                //        confirmButtonClass: 'btn btn-primary',
+
+                //        icon: 'fa fa-thumbs-up fa-2x',
+                //        animation: 'zoom',
+                //        confirm: function () {
+                //            var url = $("#RedirectToHome").val();
+                //            location.href = url;
+                //        }
+                //    });
+                //}
+            });
+        }
+    });
+
+    function pagehelp() {
+        $('#Popup').modal('show');
+        $("#Popup").modal({
+            backdrop: 'static',
+            keyboard: false,
+        })
+    };
+
+</script>
+@*<script type="text/javascript">
+        $('#generaldetails').click(function (e) {
+            e.preventDefault();
+
+            if ($("#Name").val() == undefined || $('#Name').val() == '') {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Name</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#Name").focus();
+                return false;
+            }
+
+            if ($("#DOB").val() == undefined || $('#DOB').val() == '') {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Date of Birth</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#DOB").focus();
+                return false;
+            }
+
+            if ($("#Nationality :selected").val() == undefined || $('#Nationality :selected').val() == '' || $('#Nationality :selected').val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Nationality</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#Nationality").focus();
+                return false;
+            }
+
+            if ($("#Gender :selected").val() == undefined || $('#Gender :selected').val() == '' || $('#Gender :selected').val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Gender</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#Gender").focus();
+                return false;
+            }
+
+            if ($("#MaritalStatus :selected").val() == undefined || $('#MaritalStatus :selected').val() == '' || $('#MaritalStatus :selected').val() == 0) {
+                $.alert({
+                    title: 'Alert',
+                    content: '<b>Marital Status</b> is required',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'button button-3d button-rounded button-red',
+                    icon: 'icon-thumbs-down2 icon-2x ',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+                $("#MaritalStatus").focus();
+                return false;
+            }
+            $('#GeneralDetails').submit();
+        });
+    </script>*@
+
+@*<script type="text/javascript">
+
+        $(document).ready(function () {
+
+            if ($('#SaveStatus').val() == "Succeeded") {
+                $.alert({
+                    title: 'Cheers',
+                    content: 'Your Data has been saved <b> SUCCESSFULLY.</b>',
+                    confirmButton: 'OK',
+                    confirmButtonClass: 'btn btn-primary',
+                    icon: 'fa fa-thumbs-up fa-2x',
+                    animation: 'zoom',
+                    confirm: function () {
+                    }
+                });
+            }
+
+        });
+
+    </script>*@
+
+
+<link href="~/css/jquery-confirm.css" rel="stylesheet" />
+<script type="text/javascript" src="~/js/jquery-confirm.js"></script>
